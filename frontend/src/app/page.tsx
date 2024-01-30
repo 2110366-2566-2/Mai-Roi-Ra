@@ -1,9 +1,11 @@
-import Image from "next/image";
+import Image from 'next/image'
+import styles from "@/styles/page.module.css"
+import HomePage from '@/components/HomePage'
 
 export default function Home() {
   return (
-    <main className="flex text-[100px] w-screen justify-center items-center h-screen">
-      PUBPAB
+    <main className="dark:bg-black">
+      <HomePage/>
     </main>
-  );
+  )
 }

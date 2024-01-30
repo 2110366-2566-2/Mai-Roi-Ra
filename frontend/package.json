@@ -1,25 +1,44 @@
 {
-  "name": "pubpab",
+  "name": "mai-roi-ra",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "cypress": "cypress open",
+    "e2e": "start-server-and-test dev 3000 cypress"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.6",
+    "@mui/x-date-pickers": "^6.19.2",
+    "@reduxjs/toolkit": "^2.1.0",
+    "dayjs": "^1.11.10",
+    "mongoose": "^8.1.1",
+    "next": "14.1.0",
+    "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.1.0"
+    "react-redux": "^9.1.0",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "cypress": "^13.6.3",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0"
+    "start-server-and-test": "^2.0.3",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
   }
 }

@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css?family=Monserrat&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Kanit:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Itim&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=FiraSans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+
+.allFont {
+    font-family: Montserrat;
+}
+
+.componentFont{
+    font-family: Kanit;
+    font-weight: 300;
+}
+
+.fontItim {
+    font-family: Itim;
+}
+
+.campgroundFont {
+    font-family: Comfortaa;
+}
+
+.FiraSans {
+    font-family: 'Fira Sans', Comfortaa, sans-serif; /* Use the correct font family name */
+}
+
+.Roboto{
+    font-family: Roboto;
+}
