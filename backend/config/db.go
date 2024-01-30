@@ -2,9 +2,11 @@ package config
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
 
-	constant "github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,9 +17,27 @@ type Database struct {
 }
 
 func InitMongoDB() (*Database, error) {
-	clientOptions := options.Client().ApplyURI(constant.MONGO_URI)
+	if err := godotenv.Load("config/config.env"); err != nil {
+		log.Fatal(".env file couldn't be load: ", err)
+	}
+
+	uri := os.Getenv("MONGODB_URI")
+	database := os.Getenv("MONGODB_DATABASE")
+	username := os.Getenv("MONGODB_USERNAME")
+	password := os.Getenv("MONGODB_PASSWORD")
+
+	clientOptions := options.Client().ApplyURI(uri)
+	if username != "" && password != "" {
+		clientOptions.Auth = &options.Credential{
+			Username: username,
+			Password: password,
+		}
+	}
+
+	// Connect to MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
+		fmt.Println("Failed to connect to MongoDB:", err)
 		return nil, err
 	}
 
@@ -25,9 +45,9 @@ func InitMongoDB() (*Database, error) {
 		return nil, err
 	}
 
-	db := client.Database("Mai-Roi-Ra")
+	db := client.Database(database)
 
-	log.Println("Connected to mongoDB!")
+	log.Println("Connected to mongoDB with path: ", uri)
 
 	return &Database{
 		Client:   client,
