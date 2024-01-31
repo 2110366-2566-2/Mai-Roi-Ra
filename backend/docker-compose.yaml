@@ -1,13 +1,39 @@
 version: '3.9'
 
 services:
-  event_db:
-    image: mongo
-    container_name: event_db
+  # event_db:
+  #   image: mongo
+  #   container_name: event_db
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: rRLkKLMbDmEqNH0E
+  #   ports:
+  #     - "2000:27017"
+  #   command: "--bind_ip_all"
+  pg_db:
+    container_name: pg_container
+    image: postgres
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: rRLkKLMbDmEqNH0E
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "db"
     ports:
-      - "2000:27017"
-    command: "--bind_ip_all"
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+  # gin_app:
+  #   build:
+  #     context: .
+  #     # Correct the path to your Dockerfile
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   # Important to bind/mount your codebase dir to /app dir for live reload
+  #   volumes:
+  #     - ./:/app
+
+volumes:
+  pg-data:
