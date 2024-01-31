@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
@@ -30,10 +31,10 @@ func InitPgDB() error {
 	log.Println("Config path from PG:", cfg)
 
 	dsn := fmt.Sprintf(
-		"host=db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Bangkok",
-		cfg.PgDB.Username,
-		cfg.PgDB.Password,
-		cfg.PgDB.DbName,
+		"host=pg_db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Bangkok",
+		os.Getenv("PG_USER"),
+		os.Getenv("PG_PASSWORD"),
+		os.Getenv("PG_DB"),
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

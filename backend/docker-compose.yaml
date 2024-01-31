@@ -21,6 +21,7 @@ services:
     volumes:
       - .:/usr/src/app
     command: air main.go -b 127.0.0.1
+
   pg_db:
     container_name: pg_container
     image: postgres:alpine
@@ -28,11 +29,23 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: mai-roi-ra-db
+      POSTGRES_DB: test_db
     ports:
       - "5432:5432"
     volumes:
       - pg-db:/var/lib/postgresql/data
+
+  pg_admin:
+    container_name: pg_admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    depends_on:
+      - pg_db
 
 volumes:
   pg-db:

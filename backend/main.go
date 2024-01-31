@@ -18,7 +18,7 @@ func main() {
 	// }
 
 	if err := db.InitPgDB(); err != nil {
-		log.Fatal("Error connecting PG");
+		log.Fatal("Error connecting PG")
 	}
 
 	r.GET("/", services.GetTest)
