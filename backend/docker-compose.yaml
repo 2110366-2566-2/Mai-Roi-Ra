@@ -11,29 +11,28 @@ services:
   #   ports:
   #     - "2000:27017"
   #   command: "--bind_ip_all"
+  web:
+    container_name: mai-roi-ra
+    build: .
+    env_file:
+      - .env
+    ports: 
+      - "8080:8080"
+    volumes:
+      - .:/usr/src/app
+    command: air main.go -b 127.0.0.1
   pg_db:
     container_name: pg_container
-    image: postgres
+    image: postgres:alpine
     restart: always
     environment:
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
-      POSTGRES_DB: "db"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mai-roi-ra-db
     ports:
       - "5432:5432"
     volumes:
-      - pg-data:/var/lib/postgresql/data
-  # gin_app:
-  #   build:
-  #     context: .
-  #     # Correct the path to your Dockerfile
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
-  #   # Important to bind/mount your codebase dir to /app dir for live reload
-  #   volumes:
-  #     - ./:/app
+      - pg-db:/var/lib/postgresql/data
 
 volumes:
-  pg-data:
+  pg-db:

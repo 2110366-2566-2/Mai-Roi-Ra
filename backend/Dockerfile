@@ -2,13 +2,14 @@
 FROM golang:latest
 
 # # Set the working directory inside the container
-# WORKDIR /app
+WORKDIR /usr/src/app
 
-# RUN go install github.com/cosmtrek/air@v1.41.0
+RUN go install github.com/cosmtrek/air@v1.41.0
 
-# COPY go.mod go.sum ./
-# RUN go mod download
+COPY . .
+
+RUN go mod tidy
 
 # COPY . ./
 
-# CMD ["~/.air", "-c", ".air.toml"]
+CMD ["air", "-c", ".air.toml"]

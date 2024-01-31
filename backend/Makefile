@@ -2,11 +2,8 @@
 
 all: build run
 
-build:
-	go build -o server main.go
-
 run:
-	~/.air
+	docker compose up
 
-docker-up:
-	docker-compose up -d
+build_docker:
+	docker compose build

@@ -9,6 +9,6 @@ import (
 
 func GetTest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello Worlddd, Test GET by PubPab backend",
+		"message": "Hello World, Test GET by PubPab backend",
 	})
 }
