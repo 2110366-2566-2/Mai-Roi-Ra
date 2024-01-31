@@ -2,14 +2,38 @@
 import { FormEvent, useState } from "react";
 import styles from "@/styles/FontPage.module.css";
 import Image from "next/image";
+import RegisterInformationForm from "./RegisterInformationForm";
+import RegisterAccountForm from "./RegisterAccountForm";
 
 export default function RegisterForm() {
   // State if user want to sign up with phone number or email
   const [useEmail, setUseEmail] = useState(false);
+  // State if user submit first sign up and begin to sign up information form
+  const [fillInfo, setFillInfo] = useState(false);
 
   // Function to toggle between using email or phone number
   const toggleInputType = () => {
     setUseEmail(!useEmail);
+  };
+
+  // To make phone number input accept only numbers
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const handlePhoneNumberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    // Allow only digits
+    const validCharacters = /^[0-9]*$/;
+    if (validCharacters.test(event.target.value)) {
+      setPhoneNumber(event.target.value);
+    }
+  };
+
+  const handleFirstSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    // Add your form submission logic here
+    console.log("Form Submitted");
+    setFillInfo(true);
   };
 
   return (
@@ -27,68 +51,24 @@ export default function RegisterForm() {
         </div>
         <div className="w-full">
           <div className={`${styles.Roboto} text-3xl my-6 text-gray-800`}>
-            Create an account
+            {fillInfo ? "Information" : "Create an account"}
           </div>
         </div>
-        <div className="w-full">
-          <form className="space-y-6">
-            <div>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                className="w-full px-4 py-4 border rounded-lg text-gray-700"
-                placeholder="Name"
-              />
-            </div>
-            <div>
-              {useEmail ? (
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="w-full px-4 py-4 border rounded-lg text-gray-700"
-                  placeholder="Email"
-                />
-              ) : (
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  className="w-full px-4 py-4 border rounded-lg text-gray-700"
-                  placeholder="Phone number"
-                />
-              )}
-            </div>
-            <div className="flex">
-              <div
-                style={{ color: "#1EA1F1" }}
-                className="cursor-pointer"
-                onClick={toggleInputType}
-              >
-                {useEmail ? "Use Phone Number" : "Use Email"}
-              </div>
-            </div>
-            <div>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="w-full px-4 py-4 border rounded-lg text-gray-700"
-                placeholder="Password"
-              />
-            </div>
-            <div className="pt-8">
-              <button
-                type="submit"
-                className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
-                style={{ backgroundColor: "#1EA1F1" }}
-              >
-                Next
-              </button>
-            </div>
-          </form>
-        </div>
+        {fillInfo ? (
+          <RegisterInformationForm
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
+            handlePhoneNumberChange={handlePhoneNumberChange}
+          ></RegisterInformationForm>
+        ) : (
+          <RegisterAccountForm
+            useEmail={useEmail}
+            phoneNumber={phoneNumber}
+            toggleInputType={toggleInputType}
+            handlePhoneNumberChange={handlePhoneNumberChange}
+            handleFirstSubmit={handleFirstSubmit}
+          ></RegisterAccountForm>
+        )}
       </div>
     </div>
   );
