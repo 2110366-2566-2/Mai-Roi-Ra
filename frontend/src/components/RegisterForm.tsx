@@ -10,6 +10,12 @@ export default function RegisterForm() {
   const [useEmail, setUseEmail] = useState(false);
   // State if user submit first sign up and begin to sign up information form
   const [fillInfo, setFillInfo] = useState(false);
+  // State if user fill all inputs
+  const [allInputsFilled, setAllInputsFilled] = useState(true);
+  // State if password is touched
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  // State if phone number is touched
+  const [phoneNumberTouched, setPhoneNumberTouched] = useState(false);
 
   // USER INPUT
   const [name, setName] = useState("");
@@ -29,7 +35,9 @@ export default function RegisterForm() {
     // Allow only digits
     const validCharacters = /^[0-9]*$/;
     if (validCharacters.test(event.target.value)) {
-      setPhoneNumber(event.target.value);
+      const newPhoneNumber = event.target.value;
+      setPhoneNumber(newPhoneNumber);
+      setPhoneNumberTouched(true);
     }
   };
 
@@ -42,7 +50,9 @@ export default function RegisterForm() {
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+    const newPassword = event.target.value;
+    setPasswordTouched(true);
+    setPassword(newPassword);
   };
   ///////////////////////////////////////////////////////////
 
@@ -50,6 +60,16 @@ export default function RegisterForm() {
     event.preventDefault();
 
     // Check if all fields are filled
+    if (phoneNumber.length < 10 || phoneNumber[0] != "0") {
+      setAllInputsFilled(false);
+      console.log("invalid phone number");
+      return;
+    }
+    if (password.length < 6) {
+      setAllInputsFilled(false);
+      console.log("invalid password");
+      return;
+    }
     if (
       (useEmail && name && email && password) ||
       (!useEmail && name && phoneNumber && password)
@@ -59,6 +79,7 @@ export default function RegisterForm() {
       // Here you can proceed with further form submission logic
     } else {
       console.log("Please fill in all fields.");
+      setAllInputsFilled(false);
       // Here you can set error messages or highlight unfilled fields
     }
   };
@@ -98,11 +119,14 @@ export default function RegisterForm() {
             useEmail={useEmail}
             phoneNumber={phoneNumber}
             toggleInputType={toggleInputType}
+            allInputsFilled={allInputsFilled}
             handlePhoneNumberChange={handlePhoneNumberChange}
             handleNameChange={handleNameChange}
             handleEmailChange={handleEmailChange}
             handlePasswordChange={handlePasswordChange}
             handleFirstSubmit={handleFirstSubmit}
+            passwordTouched={passwordTouched}
+            phoneNumberTouched={phoneNumberTouched}
           ></RegisterAccountForm>
         )}
       </div>

@@ -11,7 +11,12 @@ interface RegisterAccountFormProps {
 
   useEmail: boolean;
   phoneNumber: string;
+
   toggleInputType: () => void;
+  allInputsFilled: boolean;
+  passwordTouched: boolean;
+  phoneNumberTouched: boolean;
+
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -29,6 +34,9 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
   useEmail,
   phoneNumber,
   toggleInputType,
+  allInputsFilled,
+  passwordTouched,
+  phoneNumberTouched,
   handlePhoneNumberChange,
   handleNameChange,
   handleEmailChange,
@@ -43,7 +51,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             type="text"
             id="name"
             name="name"
-            className="w-full px-4 py-4 border rounded-lg text-gray-700"
+            className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
             placeholder="Name"
             onChange={handleNameChange}
           />
@@ -54,7 +62,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               type="email"
               id="email"
               name="email"
-              className="w-full px-4 py-4 border rounded-lg text-gray-700"
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
               placeholder="Email"
               onChange={handleEmailChange}
             />
@@ -65,10 +73,24 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               onChange={handlePhoneNumberChange}
               id="phone"
               name="phone"
-              className="w-full px-4 py-4 border rounded-lg text-gray-700"
-              placeholder="Phone number"
+              className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none ${
+                phoneNumberTouched &&
+                (phoneNumber.length !== 10 || !phoneNumber.startsWith("0"))
+                  ? "border-red-500"
+                  : ""
+              }`}
+              placeholder="Phone number (eg. 0968800127)"
+              maxLength={10}
             />
           )}
+        </div>
+        <div className="flex flex-col">
+          <div style={{ color: "#F16E1E" }}>
+            {phoneNumberTouched &&
+            (phoneNumber.length !== 10 || !phoneNumber.startsWith("0"))
+              ? "Phone number must be valided"
+              : ""}
+          </div>
         </div>
         <div className="flex">
           <div
@@ -84,10 +106,24 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             type="password"
             id="password"
             name="password"
-            className="w-full px-4 py-4 border rounded-lg text-gray-700"
-            placeholder="Password"
+            className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none ${
+              passwordTouched && password.length < 6 ? "border-red-500" : ""
+            }`}
+            placeholder="Password (at least 6 letters)"
+            value={password}
             onChange={handlePasswordChange}
           />
+        </div>
+
+        <div className="flex flex-col">
+          <div style={{ color: "#F16E1E" }}>
+            {passwordTouched && password.length < 6
+              ? "Password must contain at least 6 letters"
+              : ""}
+          </div>
+          <div style={{ color: "#F16E1E" }}>
+            {allInputsFilled ? "" : "All fields must be filled correctly !"}
+          </div>
         </div>
         <div className="pt-8">
           <button
