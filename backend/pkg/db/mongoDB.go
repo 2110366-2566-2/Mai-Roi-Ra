@@ -1,9 +1,8 @@
-package config
+package db
 
 import (
 	"context"
 	"log"
-	"os"
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
@@ -14,10 +13,11 @@ import (
 
 func InitMongoDB() (*mongo.Client, error) {
 	cfg, err := config.NewConfig(func() string {
-		if len(os.Args) > 1 {
-			return os.Args[1]
-		}
-		return "config.env"
+		// if len(os.Args) > 1 {
+		// 	return os.Args[1]
+		// }
+		// return "config.env"
+		return ".env"
 	}())
 
 	if err != nil {
