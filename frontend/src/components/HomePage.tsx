@@ -1,77 +1,66 @@
 'use client'
 import Image from "next/image";
 import styles from "@/styles/FontPage.module.css"
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import ThemeToggleButton from "./ThemeToggleButton";
+import Link from "next/link";
+
 
 export default function HomePage() {
-    const [index, setIndex] = useState(0);
-    const router = useRouter();
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIndex(index + 1);
-        }, 3000);
-
-        return () => clearTimeout(timer);
-    }, [index]);
-
-    const covers = [
-        "/images/banner.jpg",
-        "/images/banner2.jpg",
-        "/images/banner3.jpg",
-        "/images/banner4.jpg",
-        "/images/banner5.jpg"
-    ];
-
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
 
     return (
-        <div className={`${styles.allFont} flex justify-center items-center 
-        relative w-screen h-screen text-white`}>
-            <Image src="/images/informationBg.jpg"
-                className="blur-sm saturate-100 opacity-60"
-                alt="Error For Load Home Background"
-                fill={true} />
+        <div className={`${styles.Roboto} w-screen h-screen flex flex-row justify-start`}>
 
-            <div className="relative">
-                <div className=" flex flex-row justify-center">
-                    <h1 className="text-[80px]">CAMP GROUND</h1>
-                </div>
-                <div className={`${styles.allFont} flex flex-row justify-center text-[30px] 
-                mt-[-20px] items-center`}>
-                    <span className="mb-[22px] mr-[10px]">__</span>
-                    <span>Your Gateway to Nature's Playground</span>
-                    <span className="mb-[22px] ml-[10px]">__</span>
-                </div>
-                <div className="mt-[25px] flex flex-row items-center  border-5">
-                    <Image src={covers[index % 5]}
-                        alt="Banner"
-                        className="w-[680px] h-[320px] rounded-[30px] flex flex-row ml-[10px]"
-                        width={1000}
-                        height={1000} />
-                </div>
-                <div className="text-white font-medium text-[30px] text-center pt-4 relative">
-                    {session ? (
-                        <span>Welcome {session.user?.name} to our website !</span>
-                    ) : (
-                        <div className="flex flex-col space-y-3">
-                            <p>Please sign in to our website to see our amazing contents !</p>
-                            <button
-                                className="bg-slate-950 text-gray-300 border-2 border-white border-opacity-100
-          font-semibold py-2 px-2 rounded-lg transition-colors duration-300 hover:bg-black 
-          hover:text-white hover:border-transparent"
-                                onClick={() => {
-                                    router.push("/auth/signin");
-                                }}
-                            >
-                                Sign In / Register Here !
-                            </button>
-                        </div>
-                    )}
-                </div>
+            {/* Banner Home Page On Left Size */}
+            <div className="w-[50%] h-screen">
+                <Image className="w-full h-full"
+                src="/img/banner_homePage.png"
+                alt="Failed To Load Image"
+                width={1000}
+                height={1000}/>
             </div>
+
+            {/*InFormation On Right Side*/}
+            <div className="flex justify-center flex-row flex-wrap px-[8%] py-[10%] w-[50%] h-screen">
+
+                <div className="w-full flex items-end">
+                    <Image className="w-[60px] h-[60px]"
+                    src="/img/icon_sunlight.png"
+                    alt="Failed To Load Image"
+                    width={1000}
+                    height={1000}/>
+                </div>
+
+                <div className="text-[30px] lg:text-[84px] md:text-[64px] sm:text-[40px] font-black w-full flex items-center">
+                    Happening now
+                </div>
+
+                <div className="text-[20px] lg:text-[42px] md:text-[30px] sm:text-[20px] font-black w-full">
+                    Join MAI-ROI-RA today
+                </div>
+
+                <div className="w-full">
+                    <Link className="bg-sky-500 font-black lg:text-[20px] md:text-[15px] sm:text-[10px] text-[7px] 
+                    py-[15px] font=black rounded-full 
+                    px-[65px] hover:bg-sky-400" 
+                    href="/auth/register">
+                        Sign up with phone or email
+                    </Link>
+                </div>
+
+                <div className="w-full">
+                    <span>
+                        Already have an acoount?
+                    </span>
+                    <span className="ml-[3px]">
+                        <Link className="text-sky-500 hover:underline hover:text-sky-600" 
+                        href="/auth/signin">
+                            Log in
+                        </Link>
+                    </span>
+                </div>
+
+            </div>
+
         </div>
     )
 }
