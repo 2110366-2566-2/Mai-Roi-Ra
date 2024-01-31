@@ -1,10 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 
-	db "github.com/2110366-2566-2/Mai-Roi-Ra/backend/config"
 	constant "github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+	db "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
 	services "github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +13,9 @@ import (
 func main() {
 	r := gin.Default()
 
-	_, err := db.InitMongoDB()
+	dbMongoClient, err := db.InitMongoDB()
 	if err != nil {
+		defer dbMongoClient.Disconnect(context.Background())
 		log.Fatal("Error initializing MongoDB:", err)
 	}
 
