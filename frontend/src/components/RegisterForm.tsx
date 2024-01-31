@@ -11,14 +11,18 @@ export default function RegisterForm() {
   // State if user submit first sign up and begin to sign up information form
   const [fillInfo, setFillInfo] = useState(false);
 
+  // USER INPUT
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   // Function to toggle between using email or phone number
   const toggleInputType = () => {
     setUseEmail(!useEmail);
   };
 
-  // To make phone number input accept only numbers
-  const [phoneNumber, setPhoneNumber] = useState("");
-
+  // To make phone number input accept only numbers ////////
   const handlePhoneNumberChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -29,11 +33,34 @@ export default function RegisterForm() {
     }
   };
 
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+  ///////////////////////////////////////////////////////////
+
   const handleFirstSubmit = (event: FormEvent) => {
     event.preventDefault();
-    // Add your form submission logic here
-    console.log("Form Submitted");
-    setFillInfo(true);
+
+    // Check if all fields are filled
+    if (
+      (useEmail && name && email && password) ||
+      (!useEmail && name && phoneNumber && password)
+    ) {
+      console.log("All fields are filled. Form submitted.");
+      setFillInfo(true);
+      // Here you can proceed with further form submission logic
+    } else {
+      console.log("Please fill in all fields.");
+      // Here you can set error messages or highlight unfilled fields
+    }
   };
 
   return (
@@ -62,10 +89,19 @@ export default function RegisterForm() {
           ></RegisterInformationForm>
         ) : (
           <RegisterAccountForm
+            name={name}
+            setName={setName}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
             useEmail={useEmail}
             phoneNumber={phoneNumber}
             toggleInputType={toggleInputType}
             handlePhoneNumberChange={handlePhoneNumberChange}
+            handleNameChange={handleNameChange}
+            handleEmailChange={handleEmailChange}
+            handlePasswordChange={handlePasswordChange}
             handleFirstSubmit={handleFirstSubmit}
           ></RegisterAccountForm>
         )}

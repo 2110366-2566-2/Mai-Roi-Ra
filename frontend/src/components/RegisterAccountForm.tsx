@@ -2,18 +2,37 @@
 import React, { useState } from "react";
 
 interface RegisterAccountFormProps {
+  email: string;
+  name: string;
+  password: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+
   useEmail: boolean;
   phoneNumber: string;
   toggleInputType: () => void;
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleFirstSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
+  email,
+  name,
+  setEmail,
+  setName,
+  password,
+  setPassword,
   useEmail,
   phoneNumber,
   toggleInputType,
   handlePhoneNumberChange,
+  handleNameChange,
+  handleEmailChange,
+  handlePasswordChange,
   handleFirstSubmit,
 }) => {
   return (
@@ -26,6 +45,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             name="name"
             className="w-full px-4 py-4 border rounded-lg text-gray-700"
             placeholder="Name"
+            onChange={handleNameChange}
           />
         </div>
         <div>
@@ -36,6 +56,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               name="email"
               className="w-full px-4 py-4 border rounded-lg text-gray-700"
               placeholder="Email"
+              onChange={handleEmailChange}
             />
           ) : (
             <input
@@ -65,6 +86,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             name="password"
             className="w-full px-4 py-4 border rounded-lg text-gray-700"
             placeholder="Password"
+            onChange={handlePasswordChange}
           />
         </div>
         <div className="pt-8">
