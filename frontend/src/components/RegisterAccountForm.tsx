@@ -129,7 +129,6 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             value={password}
             onChange={handlePasswordChange}
           />
-          <button className="ml-2 text-sm text-blue-500 bg-red-500">HI</button>
         </div>
 
         <div className="flex flex-col">
