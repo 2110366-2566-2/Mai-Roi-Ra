@@ -5,7 +5,7 @@ import (
 )
 
 type Moderate struct {
-	UserID      string    `json:"user_id"`
-	OrganizerID string    `json:"organizer_id"`
-	CreatedAt   time.Time `json:"created_at"`
+	UserId      string    `json:"user_id" binding:"required"`
+	OrganizerId string    `json:"organizer_id" binding:"required"`
+	CreatedAt   time.Time `json:"created_at" binding:"required"`
 }
