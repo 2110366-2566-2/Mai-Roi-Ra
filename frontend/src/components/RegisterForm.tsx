@@ -16,6 +16,8 @@ export default function RegisterForm() {
   const [passwordTouched, setPasswordTouched] = useState(false);
   // State if phone number is touched
   const [phoneNumberTouched, setPhoneNumberTouched] = useState(false);
+  // State if email is touched
+  const [emailTouched, setEmailTouched] = useState(false);
 
   // USER INPUT
   const [name, setName] = useState("");
@@ -41,12 +43,20 @@ export default function RegisterForm() {
     }
   };
 
+  const isValidEmail = (email: string) => {
+    const emailRegex =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email.toLowerCase());
+  };
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
+    const newEmail = event.target.value;
+    setEmail(newEmail);
+    setEmailTouched(true);
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,15 +64,25 @@ export default function RegisterForm() {
     setPasswordTouched(true);
     setPassword(newPassword);
   };
+
+  const handleBackwardClick = () => {
+    setFillInfo(false);
+  };
+
   ///////////////////////////////////////////////////////////
 
   const handleFirstSubmit = (event: FormEvent) => {
     event.preventDefault();
 
     // Check if all fields are filled
-    if (phoneNumber.length < 10 || phoneNumber[0] != "0") {
+    if (!useEmail && (phoneNumber.length < 10 || phoneNumber[0] != "0")) {
       setAllInputsFilled(false);
       console.log("invalid phone number");
+      return;
+    }
+    if (useEmail && !isValidEmail(email)) {
+      setAllInputsFilled(false);
+      console.log("invalid email");
       return;
     }
     if (password.length < 6) {
@@ -76,11 +96,9 @@ export default function RegisterForm() {
     ) {
       console.log("All fields are filled. Form submitted.");
       setFillInfo(true);
-      // Here you can proceed with further form submission logic
     } else {
       console.log("Please fill in all fields.");
       setAllInputsFilled(false);
-      // Here you can set error messages or highlight unfilled fields
     }
   };
 
@@ -107,6 +125,7 @@ export default function RegisterForm() {
             phoneNumber={phoneNumber}
             setPhoneNumber={setPhoneNumber}
             handlePhoneNumberChange={handlePhoneNumberChange}
+            handleBackwardClick={handleBackwardClick}
           ></RegisterInformationForm>
         ) : (
           <RegisterAccountForm
@@ -118,6 +137,7 @@ export default function RegisterForm() {
             setPassword={setPassword}
             useEmail={useEmail}
             phoneNumber={phoneNumber}
+            emailTouched={emailTouched}
             toggleInputType={toggleInputType}
             allInputsFilled={allInputsFilled}
             handlePhoneNumberChange={handlePhoneNumberChange}
@@ -125,6 +145,7 @@ export default function RegisterForm() {
             handleEmailChange={handleEmailChange}
             handlePasswordChange={handlePasswordChange}
             handleFirstSubmit={handleFirstSubmit}
+            isValidEmail={isValidEmail}
             passwordTouched={passwordTouched}
             phoneNumberTouched={phoneNumberTouched}
           ></RegisterAccountForm>

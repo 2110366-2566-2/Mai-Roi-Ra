@@ -5,15 +5,26 @@ interface RegisterInformationFormProps {
   phoneNumber: string;
   setPhoneNumber: (phoneNumber: string) => void;
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleBackwardClick: () => void;
 }
 
 const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
   phoneNumber,
   setPhoneNumber,
   handlePhoneNumberChange,
+  handleBackwardClick,
 }) => {
   return (
     <div className="w-full">
+      <div className="absolute top-0 left-0 mt-12 ml-16">
+        <button
+          className="text-4xl"
+          style={{ color: "#1EA1F1" }}
+          onClick={handleBackwardClick}
+        >
+          &#60; {/* Backward button */}
+        </button>
+      </div>
       <form className="space-y-6">
         <div className="flex">
           <input

@@ -9,13 +9,17 @@ interface RegisterAccountFormProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
 
+  isValidEmail: (email: string) => boolean;
+
   useEmail: boolean;
   phoneNumber: string;
 
   toggleInputType: () => void;
   allInputsFilled: boolean;
+
   passwordTouched: boolean;
   phoneNumberTouched: boolean;
+  emailTouched: boolean;
 
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,12 +35,14 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
   setName,
   password,
   setPassword,
+  isValidEmail,
   useEmail,
   phoneNumber,
   toggleInputType,
   allInputsFilled,
   passwordTouched,
   phoneNumberTouched,
+  emailTouched,
   handlePhoneNumberChange,
   handleNameChange,
   handleEmailChange,
@@ -51,6 +57,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             type="text"
             id="name"
             name="name"
+            value={name}
             className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
             placeholder="Name"
             onChange={handleNameChange}
@@ -59,11 +66,14 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
         <div>
           {useEmail ? (
             <input
-              type="email"
+              type="text"
               id="email"
               name="email"
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
-              placeholder="Email"
+              value={email}
+              className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none ${
+                !isValidEmail(email) && emailTouched ? "border-red-500" : ""
+              }`}
+              placeholder="Email (eg. example@xmail.com)"
               onChange={handleEmailChange}
             />
           ) : (
@@ -87,8 +97,14 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
         <div className="flex flex-col">
           <div style={{ color: "#F16E1E" }}>
             {phoneNumberTouched &&
-            (phoneNumber.length !== 10 || !phoneNumber.startsWith("0"))
+            (phoneNumber.length !== 10 || !phoneNumber.startsWith("0")) &&
+            !useEmail
               ? "Phone number must be valided"
+              : ""}
+          </div>
+          <div style={{ color: "#F16E1E" }}>
+            {!isValidEmail(email) && useEmail && emailTouched
+              ? "Email must be valided"
               : ""}
           </div>
         </div>
