@@ -30,19 +30,6 @@ export default function RegisterForm() {
     setUseEmail(!useEmail);
   };
 
-  // To make phone number input accept only numbers ////////
-  const handlePhoneNumberChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    // Allow only digits
-    const validCharacters = /^[0-9]*$/;
-    if (validCharacters.test(event.target.value)) {
-      const newPhoneNumber = event.target.value;
-      setPhoneNumber(newPhoneNumber);
-      setPhoneNumberTouched(true);
-    }
-  };
-
   const isValidEmail = (email: string) => {
     const emailRegex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -51,6 +38,18 @@ export default function RegisterForm() {
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+  };
+
+  // To make phone number input accept only numbers ////////
+  const handlePhoneNumberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const validCharacters = /^[0-9]*$/;
+    if (validCharacters.test(event.target.value)) {
+      const newPhoneNumber = event.target.value;
+      setPhoneNumber(newPhoneNumber);
+      setPhoneNumberTouched(true);
+    }
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +95,7 @@ export default function RegisterForm() {
     ) {
       console.log("All fields are filled. Form submitted.");
       setFillInfo(true);
+      setAllInputsFilled(true);
     } else {
       console.log("Please fill in all fields.");
       setAllInputsFilled(false);

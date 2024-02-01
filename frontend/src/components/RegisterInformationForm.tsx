@@ -76,7 +76,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             id="contactnumber"
             name="contactnumber"
             className="w-full px-4 py-4 border rounded-lg text-gray-700"
-            placeholder="Contact Number"
+            placeholder="Phone number"
+            readOnly
           />
         </div>
         <div className="pt-8">

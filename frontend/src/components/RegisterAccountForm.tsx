@@ -59,7 +59,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             name="name"
             value={name}
             className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
-            placeholder="Name"
+            placeholder="Username"
             onChange={handleNameChange}
           />
         </div>
@@ -129,6 +129,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             value={password}
             onChange={handlePasswordChange}
           />
+          <button className="ml-2 text-sm text-blue-500 bg-red-500">HI</button>
         </div>
 
         <div className="flex flex-col">
