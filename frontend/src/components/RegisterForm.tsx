@@ -148,7 +148,7 @@ export default function RegisterForm() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white p-8">
-      <div className="flex flex-col items-center justify-center bg-white p-8 w-full sm:w-3/5 lg:w-3/5 xl:w-2/5 h-auto">
+      <div className="flex flex-col items-center justify-center bg-white p-8 w-full sm:w-4/5 lg:w-3/5 xl:w-2/5 h-auto">
         <div className="">
           <div className="w-[60px] h-[60px]">
             <Image
