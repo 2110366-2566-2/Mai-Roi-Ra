@@ -1,11 +1,26 @@
 "use client";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/FontPage.module.css";
 import Image from "next/image";
 import RegisterInformationForm from "./RegisterInformationForm";
 import RegisterAccountForm from "./RegisterAccountForm";
 
 export default function RegisterForm() {
+  // ** I don't know why `import { useRouter } from "next/navigation";` works, I thought it should be `next/router`
+  const router = useRouter();
+
+  const handleRedirect = () => {
+    router.push("/auth/signin");
+  };
+
+  // USER INPUT
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   // State if user want to sign up with phone number or email
   const [useEmail, setUseEmail] = useState(false);
   // State if user submit first sign up and begin to sign up information form
@@ -14,33 +29,46 @@ export default function RegisterForm() {
   const [allInputsFilled, setAllInputsFilled] = useState(true);
   // State if password is touched
   const [passwordTouched, setPasswordTouched] = useState(false);
+  // State if confirm-password is touched
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
   // State if phone number is touched
   const [phoneNumberTouched, setPhoneNumberTouched] = useState(false);
   // State if email is touched
   const [emailTouched, setEmailTouched] = useState(false);
-
-  // USER INPUT
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  // State if show password
+  const [showPassword, setShowPassword] = useState(false);
+  // State if show confirm-password
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // State if password and confirm-password is matched
+  const [passwordAreMatched, setPasswordAreMatched] = useState(true);
 
   // Function to toggle between using email or phone number
   const toggleInputType = () => {
     setUseEmail(!useEmail);
   };
 
+  // Function if the email is valid
   const isValidEmail = (email: string) => {
     const emailRegex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return emailRegex.test(email.toLowerCase());
   };
 
+  // Function to toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Function to toggle confirm-password visibility
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  // Handlers for fields
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  // To make phone number input accept only numbers ////////
   const handlePhoneNumberChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -62,6 +90,14 @@ export default function RegisterForm() {
     const newPassword = event.target.value;
     setPasswordTouched(true);
     setPassword(newPassword);
+  };
+
+  const handleConfirmPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newConfirmPassword = event.target.value;
+    setConfirmPasswordTouched(true);
+    setConfirmPassword(newConfirmPassword);
   };
 
   const handleBackwardClick = () => {
@@ -89,9 +125,17 @@ export default function RegisterForm() {
       console.log("invalid password");
       return;
     }
+    if (confirmPassword != password) {
+      setPasswordAreMatched(false);
+      setAllInputsFilled(false);
+      console.log("password do not match");
+      return;
+    } else {
+      setPasswordAreMatched(true);
+    }
     if (
-      (useEmail && name && email && password) ||
-      (!useEmail && name && phoneNumber && password)
+      (useEmail && name && email && password && confirmPassword) ||
+      (!useEmail && name && phoneNumber && password && confirmPassword)
     ) {
       console.log("All fields are filled. Form submitted.");
       setFillInfo(true);
@@ -126,28 +170,34 @@ export default function RegisterForm() {
             setPhoneNumber={setPhoneNumber}
             handlePhoneNumberChange={handlePhoneNumberChange}
             handleBackwardClick={handleBackwardClick}
+            handleRedirect={handleRedirect}
           ></RegisterInformationForm>
         ) : (
           <RegisterAccountForm
             name={name}
-            setName={setName}
             email={email}
-            setEmail={setEmail}
             password={password}
-            setPassword={setPassword}
+            confirmPassword={confirmPassword}
             useEmail={useEmail}
             phoneNumber={phoneNumber}
-            emailTouched={emailTouched}
             toggleInputType={toggleInputType}
             allInputsFilled={allInputsFilled}
+            passwordAreMatched={passwordAreMatched}
             handlePhoneNumberChange={handlePhoneNumberChange}
             handleNameChange={handleNameChange}
             handleEmailChange={handleEmailChange}
             handlePasswordChange={handlePasswordChange}
+            handleConfirmPasswordChange={handleConfirmPasswordChange}
             handleFirstSubmit={handleFirstSubmit}
             isValidEmail={isValidEmail}
-            passwordTouched={passwordTouched}
+            emailTouched={emailTouched}
             phoneNumberTouched={phoneNumberTouched}
+            passwordTouched={passwordTouched}
+            confirmPasswordTouched={confirmPasswordTouched}
+            showPassword={showPassword}
+            showConfirmPassword={showConfirmPassword}
+            togglePasswordVisibility={togglePasswordVisibility}
+            toggleConfirmPasswordVisibility={toggleConfirmPasswordVisibility}
           ></RegisterAccountForm>
         )}
       </div>

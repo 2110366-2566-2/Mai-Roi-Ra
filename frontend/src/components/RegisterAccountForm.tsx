@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface RegisterAccountFormProps {
   email: string;
   name: string;
   password: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  setName: React.Dispatch<React.SetStateAction<string>>;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  confirmPassword: string;
 
   isValidEmail: (email: string) => boolean;
 
@@ -18,35 +17,51 @@ interface RegisterAccountFormProps {
   allInputsFilled: boolean;
 
   passwordTouched: boolean;
+  confirmPasswordTouched: boolean;
   phoneNumberTouched: boolean;
   emailTouched: boolean;
+
+  showPassword: boolean;
+  showConfirmPassword: boolean;
+  togglePasswordVisibility: () => void;
+  toggleConfirmPasswordVisibility: () => void;
+
+  passwordAreMatched: boolean;
 
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleConfirmPasswordChange: (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void;
   handleFirstSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
   email,
   name,
-  setEmail,
-  setName,
   password,
-  setPassword,
+  confirmPassword,
   isValidEmail,
   useEmail,
   phoneNumber,
   toggleInputType,
   allInputsFilled,
   passwordTouched,
+  confirmPasswordTouched,
+  passwordAreMatched,
   phoneNumberTouched,
+  showPassword,
+  showConfirmPassword,
+  togglePasswordVisibility,
+  toggleConfirmPasswordVisibility,
   emailTouched,
   handlePhoneNumberChange,
   handleNameChange,
   handleEmailChange,
   handlePasswordChange,
+  handleConfirmPasswordChange,
   handleFirstSubmit,
 }) => {
   return (
@@ -117,9 +132,9 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             {useEmail ? "Use Phone Number" : "Use Email"}
           </div>
         </div>
-        <div>
+        <div className="relative">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
             name="password"
             className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none ${
@@ -129,12 +144,50 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             value={password}
             onChange={handlePasswordChange}
           />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 right-0 mr-4 text-gray-300 hover:text-gray-400"
+            tabIndex={-1}
+          >
+            {showPassword ? <FaEyeSlash size="18px" /> : <FaEye size="18px" />}
+          </button>
+        </div>
+        <div>
+          <div style={{ color: "#F16E1E" }}>
+            {passwordTouched && password.length < 6
+              ? "Password must contain at least 6 letters"
+              : ""}
+          </div>
+        </div>
+        <div className="relative">
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            id="confirm-password"
+            name="confirm-password"
+            className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none`}
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+          <button
+            type="button"
+            onClick={toggleConfirmPasswordVisibility}
+            className="absolute inset-y-0 right-0 mr-4 text-gray-300 hover:text-gray-400"
+            tabIndex={-1}
+          >
+            {showConfirmPassword ? (
+              <FaEyeSlash size="18px" />
+            ) : (
+              <FaEye size="18px" />
+            )}
+          </button>
         </div>
 
         <div className="flex flex-col">
           <div style={{ color: "#F16E1E" }}>
-            {passwordTouched && password.length < 6
-              ? "Password must contain at least 6 letters"
+            {passwordTouched && confirmPasswordTouched && !passwordAreMatched
+              ? "Passwords are not matched"
               : ""}
           </div>
           <div style={{ color: "#F16E1E" }}>

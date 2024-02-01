@@ -6,6 +6,7 @@ interface RegisterInformationFormProps {
   setPhoneNumber: (phoneNumber: string) => void;
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleBackwardClick: () => void;
+  handleRedirect: () => void;
 }
 
 const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
@@ -13,6 +14,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
   setPhoneNumber,
   handlePhoneNumberChange,
   handleBackwardClick,
+  handleRedirect,
 }) => {
   return (
     <div className="w-full">
@@ -82,9 +84,10 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
         </div>
         <div className="pt-8">
           <button
-            type="submit"
+            type="button"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
             style={{ backgroundColor: "#1EA1F1" }}
+            onClick={handleRedirect}
           >
             Done
           </button>
