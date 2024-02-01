@@ -1,10 +1,9 @@
-package api
+package services
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	
 )
 
 func GetTest(c *gin.Context) {
