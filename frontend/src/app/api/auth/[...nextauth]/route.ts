@@ -14,16 +14,16 @@ export const authOptions:AuthOptions = {
             // e.g. domain, username, password, 2FA token, etc.
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-              email: { label: "Email", type: "text", placeholder: "email" },
+              username: { label: "Username", type: "text", placeholder: "username" },
               password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
               
-              if (!credentials?.email || !credentials.password || !credentials) {
-                throw new Error("Please fill email and password.")
+              if (!credentials?.username || !credentials.password || !credentials) {
+                throw new Error("Please fill email and password.");
               }
 
-              const user = await userLogin(credentials.email, credentials.password)
+              const user = await userLogin(credentials.username, credentials.password);
               
               if (user) {
                 // Any object returned will be saved in `user` property of the JWT

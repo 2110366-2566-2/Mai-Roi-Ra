@@ -1,6 +1,5 @@
 'use client'
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/FontPage.module.css"
 import Link from "next/link";
@@ -47,24 +46,24 @@ const SignInForm = () => {
                     <div className="mt-[20px] w-full lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]">
                      
                         <div>
-                            <input className="w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
-                            border-[1px] indent-[20px]" 
+                            <input className={`w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
+                            border-[1px] indent-[20px] ${errorUser ? "border-red-500": "border-black"}`}
                             type="text" placeholder="Phone number, email address" value={user} onChange={(e) => {setUser(e.target.value)}}/>
 
                             {
-                               errorUser ? <div className="w-full text-start mt-[5px] text-red-600 lg:text-[16px] md:text-[14px] sm:text-[12px] text-[10px]">
+                               errorUser ? <div className="w-full text-start mt-[20px] text-red-500 lg:text-[16px] md:text-[14px] sm:text-[12px] text-[10px]">
                                     {ErrorUser[errorUser-1]}
                                 </div> : null
                             }
                         </div>
 
                         <div className="mt-[20px]">
-                            <input className="w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
-                            border-[1px] indent-[20px]" 
+                            <input className={`w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
+                            border-[1px] indent-[20px] ${errorPassword ? "border-red-500": "border-black"}`}
                             type="password" placeholder="Password" value={password} onChange={(e) => {setPassword(e.target.value)}}/>
 
                             {
-                               errorPassword ? <div className="w-full text-start mt-[5px] text-red-600 lg:text-[16px] md:text-[14px] sm:text-[12px] text-[10px]">
+                               errorPassword ? <div className="w-full text-start mt-[20px] text-red-500 lg:text-[16px] md:text-[14px] sm:text-[12px] text-[10px]">
                                     {ErrorPassword[errorPassword-1]}
                                 </div> : null
                             }
