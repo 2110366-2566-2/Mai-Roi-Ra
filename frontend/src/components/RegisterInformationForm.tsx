@@ -2,19 +2,45 @@
 import React, { useState } from "react";
 
 interface RegisterInformationFormProps {
+  firstName: string;
+  lastName: string;
+  address: string;
+  district: string;
+  province: string;
   phoneNumber: string;
-  setPhoneNumber: (phoneNumber: string) => void;
+
+  allInfoInputsFilled: boolean;
+
+  handleFirstNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleLastNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAddressChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDistrictChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleProvinceChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+
   handleBackwardClick: () => void;
-  handleRedirect: () => void;
+  handleInfoSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
+  firstName,
+  lastName,
+  address,
+  district,
+  province,
   phoneNumber,
-  setPhoneNumber,
+
+  allInfoInputsFilled,
+
+  handleFirstNameChange,
+  handleLastNameChange,
+  handleAddressChange,
+  handleDistrictChange,
+  handleProvinceChange,
   handlePhoneNumberChange,
+
   handleBackwardClick,
-  handleRedirect,
+  handleInfoSubmit,
 }) => {
   return (
     <div className="w-full">
@@ -27,12 +53,14 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
           &#60; {/* Backward button */}
         </button>
       </div>
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleInfoSubmit}>
         <div className="flex">
           <input
             type="text"
             id="firstname"
             name="firstname"
+            value={firstName}
+            onChange={handleFirstNameChange}
             className="w-full px-4 py-4 mr-2 border rounded-lg text-gray-700"
             placeholder="First name"
           />
@@ -40,6 +68,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             type="text"
             id="lastname"
             name="lastname"
+            value={lastName}
+            onChange={handleLastNameChange}
             className="w-full px-4 py-4 ml-2 border rounded-lg text-gray-700"
             placeholder="Last name"
           />
@@ -49,6 +79,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             type="text"
             id="address"
             name="address"
+            value={address}
+            onChange={handleAddressChange}
             className="w-full px-4 py-4 border rounded-lg text-gray-700"
             placeholder="Address"
           />
@@ -58,6 +90,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             type="text"
             id="district"
             name="district"
+            value={district}
+            onChange={handleDistrictChange}
             className="w-full px-4 py-4 mr-2 border rounded-lg text-gray-700"
             placeholder="District"
           />
@@ -65,6 +99,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             type="text"
             id="province"
             name="province"
+            value={province}
+            onChange={handleProvinceChange}
             className="w-full px-4 py-4 ml-2 border rounded-lg text-gray-700"
             placeholder="Province"
           />
@@ -73,21 +109,25 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
         <div className="flex">
           <input
             type="tel"
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
             id="contactnumber"
             name="contactnumber"
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
             className="w-full px-4 py-4 border rounded-lg text-gray-700"
             placeholder="Phone number"
             readOnly
           />
         </div>
+        <div>
+          <div style={{ color: "#F16E1E" }}>
+            {allInfoInputsFilled ? "" : "All fields must be filled correctly !"}
+          </div>
+        </div>
         <div className="pt-8">
           <button
-            type="button"
+            type="submit"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
             style={{ backgroundColor: "#1EA1F1" }}
-            onClick={handleRedirect}
           >
             Done
           </button>
