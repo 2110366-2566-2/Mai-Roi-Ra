@@ -7,3 +7,6 @@ run:
 
 build_docker:
 	docker compose build
+
+migrate:
+	migrate -path ./migration -database "postgresql://root:root@localhost:5432/test_db?sslmode=disable" -verbose up
