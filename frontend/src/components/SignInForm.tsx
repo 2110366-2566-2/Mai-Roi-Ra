@@ -1,10 +1,11 @@
 'use client'
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/FontPage.module.css"
 import Link from "next/link";
 import Image from "next/image";
+import SignInHandleSubmit from "./SignInHandleSubmit";
 
 const SignInForm = () => {
     const [user, setUser] = useState<string>("");
@@ -26,51 +27,6 @@ const SignInForm = () => {
 
     const router = useRouter();
     
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        setError(false);
-        setErrorUser(0);
-        setErrorPassword(0);
-
-        if (user == ""){
-            setErrorUser(1);
-            setError(true);
-            setPassword("");
-            console.log("Error: Plase fill your phone number or email adress");
-        } else if (password == ""){
-            setErrorPassword(1);
-            setError(true);
-            setPassword("");
-            console.log("Error: PLease fill your password");
-        } else if (user.length < 10 || user.slice(-10) != "@gmail.com" 
-        || (user.length == 10 && user[0] == '0' && !isNaN(Number(user))) ) {
-            setErrorUser(2);
-            setError(true);
-            setPassword("");
-            return;
-            console.log("Error: Not phone number or email address format");
-        } else {
-            // try {
-            //     const res = await signIn("credentials", {
-            //         user,
-            //         password,
-            //         redirect: false
-            //     });
-            //     if (res?.error) {
-            //         setError(res?.error);
-            //         return;
-            //     }
-            //     router.replace('/')
-            //     // I don't know how to fix this one but this works
-            //     setTimeout(() => {
-            //         window.location.reload();
-            //     }, 1000);
-            // } catch (error) {
-            //     setError("Sign in failed. Account isn't existed.");
-            // }
-        }       
-    }
-
     return (
         <div className="text-black bg-white w-screen h-screen flex justify-center items-center">
 
@@ -87,7 +43,7 @@ const SignInForm = () => {
                     Log in to MAI-ROI-RA
                 </div>
                 
-                <form onSubmit={handleSubmit}>  
+                <form onSubmit={(e) => SignInHandleSubmit(e, setUser, setPassword, setError, setErrorUser, setErrorPassword, user, password, router)}>  
                     <div className="mt-[20px] w-full lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]">
                      
                         <div>
