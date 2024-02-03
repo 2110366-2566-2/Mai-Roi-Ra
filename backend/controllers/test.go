@@ -34,9 +34,9 @@ func GetTest(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *TestController) GetInformationByUserId(c *gin.Context, userId string) (models.User, error) {
+func (c *TestController) GetInformationByUserId(ctx *gin.Context, userId string) (models.User, error) {
 	log.Println("[Service:CreateOrUpdateTransfer] Called")
-	result, err := s.ServiceGateway.TestService.GetInformationByUserId(c, userId)
+	result, err := c.ServiceGateway.TestService.GetInformationByUserId(ctx, userId)
 	if err != nil {
 		log.Println(c, "[Service:GetInformationByUserId]: Call Service GetInformationByUserId error", err)
 		return models.User{}, err
