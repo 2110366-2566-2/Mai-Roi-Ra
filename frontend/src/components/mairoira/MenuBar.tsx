@@ -9,16 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 
 export default function MenuBar() {
   const pathname = usePathname();
-
-  const navigation = {
-    home :{ name: "Home", href: "/homepage", current: pathname === "/" },
-    noti: {
-      name: "Notifications",
-      href: "/notifications",
-      current: pathname === "/homepage/notifications",
-    },
-    profile: { name: "Profile", href: "/homepage/profile", current: pathname === "/profile" },
-  };
+  
   console.log(pathname)
 
   return (
@@ -28,8 +19,8 @@ export default function MenuBar() {
           <Image className="w-[60px] h-[60px]"
             src="/img/icon_sunlight.png"
             alt="Failed To Load Image"
-            width={1000}
-            height={1000}/>
+            width={60}
+            height={60}/>
         </div>
         <div className="flex-grow overflow-y-auto">
           <div className="space-y-2">
@@ -40,7 +31,7 @@ export default function MenuBar() {
         </div>
       </div>
       <div className="p-4 flex justify-center">
-        <button className="text-white rounded-full hover:bg-blue-600 bg-[#1EA1F1] h-[50px] w-[150px]">
+        <button className="text-white rounded-full hover:bg-blue-600 bg-[#1EA1F1] h-[40px] w-[150px]">
           Logout
         </button>
       </div>
