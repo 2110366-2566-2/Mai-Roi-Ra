@@ -12,6 +12,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.3
 	go.mongodb.org/mongo-driver v1.13.1
+	go.uber.org/dig v1.17.1
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.6
 )
