@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -49,8 +48,8 @@ func InitPgDB() error {
 	log.Println("Connected to PG !")
 	db.Logger = logger.Default.LogMode(logger.Info)
 
-	log.Println("Running Migrations")
-	db.AutoMigrate(&models.User{})
+	// log.Println("Running Migrations")
+	// db.AutoMigrate(&models.User{})
 
 	DB = DbInstance{
 		Db: db,

@@ -1,32 +1,31 @@
 "use client";
+import { divide } from "cypress/types/lodash";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface RegisterAccountFormProps {
-  email: string;
   name: string;
+  phoneNumber: string;
+  email: string;
   password: string;
   confirmPassword: string;
 
-  isValidEmail: (email: string) => boolean;
-
   useEmail: boolean;
-  phoneNumber: string;
-
   toggleInputType: () => void;
-  allInputsFilled: boolean;
 
-  passwordTouched: boolean;
-  confirmPasswordTouched: boolean;
+  isValidEmail: (email: string) => boolean;
+  allInputsFilled: boolean;
+  passwordAreMatched: boolean;
+
   phoneNumberTouched: boolean;
   emailTouched: boolean;
+  passwordTouched: boolean;
+  confirmPasswordTouched: boolean;
 
   showPassword: boolean;
   showConfirmPassword: boolean;
   togglePasswordVisibility: () => void;
   toggleConfirmPasswordVisibility: () => void;
-
-  passwordAreMatched: boolean;
 
   handlePhoneNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -35,69 +34,85 @@ interface RegisterAccountFormProps {
   handleConfirmPasswordChange: (
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
+
   handleFirstSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
-  email,
   name,
+  phoneNumber,
+  email,
   password,
   confirmPassword,
-  isValidEmail,
+
   useEmail,
-  phoneNumber,
   toggleInputType,
+
+  isValidEmail,
   allInputsFilled,
+  passwordAreMatched,
+
+  phoneNumberTouched,
+  emailTouched,
   passwordTouched,
   confirmPasswordTouched,
-  passwordAreMatched,
-  phoneNumberTouched,
+
   showPassword,
   showConfirmPassword,
   togglePasswordVisibility,
   toggleConfirmPasswordVisibility,
-  emailTouched,
+
   handlePhoneNumberChange,
   handleNameChange,
   handleEmailChange,
   handlePasswordChange,
   handleConfirmPasswordChange,
+
   handleFirstSubmit,
 }) => {
   return (
     <div className="w-full">
       <form className="space-y-6" onSubmit={handleFirstSubmit}>
-        <div>
+        <div className="relative">
           <input
             type="text"
             id="name"
             name="name"
             value={name}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
-            placeholder="Username"
+            className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none`}
+            placeholder={name ? "" : "Username"}
             onChange={handleNameChange}
+            onCopy={(e) => e.preventDefault()}
+            onPaste={(e) => e.preventDefault()}
           />
+          {name.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Username
+            </div>
+          )}
         </div>
-        <div>
+
+        <div className="relative">
           {useEmail ? (
             <input
               type="text"
               id="email"
               name="email"
               value={email}
-              className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none ${
+              className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none ${
                 !isValidEmail(email) && emailTouched ? "border-red-500" : ""
               }`}
               placeholder="Email (eg. example@xmail.com)"
               onChange={handleEmailChange}
+              onCopy={(e) => e.preventDefault()}
+              onPaste={(e) => e.preventDefault()}
             />
           ) : (
             <input
               type="tel"
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
               id="phone"
               name="phone"
+              value={phoneNumber}
               className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none ${
                 phoneNumberTouched &&
                 (phoneNumber.length !== 10 || !phoneNumber.startsWith("0"))
@@ -106,7 +121,20 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               }`}
               placeholder="Phone number (eg. 0968800127)"
               maxLength={10}
+              onChange={handlePhoneNumberChange}
+              onCopy={(e) => e.preventDefault()}
+              onPaste={(e) => e.preventDefault()}
             />
+          )}
+          {phoneNumber.length != 0 && !useEmail && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Phone number
+            </div>
+          )}
+          {email.length != 0 && useEmail && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Email
+            </div>
           )}
         </div>
         <div className="flex flex-col">
@@ -143,7 +171,14 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             placeholder="Password (at least 6 letters)"
             value={password}
             onChange={handlePasswordChange}
+            onCopy={(e) => e.preventDefault()}
+            onPaste={(e) => e.preventDefault()}
           />
+          {password.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Password
+            </div>
+          )}
           <button
             type="button"
             onClick={togglePasswordVisibility}
@@ -169,7 +204,14 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
+            onCopy={(e) => e.preventDefault()}
+            onPaste={(e) => e.preventDefault()}
           />
+          {confirmPassword.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Confirm Password
+            </div>
+          )}
           <button
             type="button"
             onClick={toggleConfirmPasswordVisibility}

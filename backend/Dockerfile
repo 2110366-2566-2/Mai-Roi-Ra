@@ -1,15 +1,20 @@
-# # Use the official Golang image as a base image
 FROM golang:latest
 
-# # Set the working directory inside the container
 WORKDIR /usr/src/app
 
 RUN go install github.com/cosmtrek/air@v1.41.0
 
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . .
 
-RUN go mod tidy
+RUN swag init
 
-# COPY . ./
+COPY swagger/ ./docs
+
+RUN go mod tidy
 
 CMD ["air", "-c", ".air.toml"]

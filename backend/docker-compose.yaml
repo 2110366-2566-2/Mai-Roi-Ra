@@ -1,16 +1,6 @@
 version: '3.9'
 
 services:
-  # event_db:
-  #   image: mongo
-  #   container_name: event_db
-  #   restart: always
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: admin
-  #     MONGO_INITDB_ROOT_PASSWORD: rRLkKLMbDmEqNH0E
-  #   ports:
-  #     - "2000:27017"
-  #   command: "--bind_ip_all"
   web:
     container_name: mai-roi-ra
     build: .
@@ -44,6 +34,18 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
+    depends_on:
+      - pg_db
+
+  pg_migration:
+    container_name: pg_migration
+    build:
+      context: .
+      dockerfile: Dockerfile.migration
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=test_db
     depends_on:
       - pg_db
 
