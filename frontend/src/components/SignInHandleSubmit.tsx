@@ -2,7 +2,7 @@ import { signIn } from "next-auth/react";
 import { FormEvent } from "react";
 
 const SignInHandleSubmit = async (e: FormEvent, setUser: Function, setPassword: Function, 
-setError: Function, setErrorUser: Function, setErrorPassword: Function, user: string, password: string,error: string, router: any) => {
+setError: Function, setErrorUser: Function, setErrorPassword: Function, user: string, password: string,error: boolean, router: any) => {
   // Set Default
     e.preventDefault();
     setError(false);
@@ -44,7 +44,7 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
       const result = await signIn("credentials",{
         username : user,
         password : password,
-        redirect: false,
+        redirect: true,
         callbackUrl: "/", 
       });
 
