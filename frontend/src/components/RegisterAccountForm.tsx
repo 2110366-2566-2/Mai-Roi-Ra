@@ -1,4 +1,5 @@
 "use client";
+import { divide } from "cypress/types/lodash";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -72,27 +73,33 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
   return (
     <div className="w-full">
       <form className="space-y-6" onSubmit={handleFirstSubmit}>
-        <div>
+        <div className="relative">
           <input
             type="text"
             id="name"
             name="name"
             value={name}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700 outline-none"
-            placeholder="Username"
+            className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none`}
+            placeholder={name ? "" : "Username"}
             onChange={handleNameChange}
             onCopy={(e) => e.preventDefault()}
             onPaste={(e) => e.preventDefault()}
           />
+          {name.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Username
+            </div>
+          )}
         </div>
-        <div>
+
+        <div className="relative">
           {useEmail ? (
             <input
               type="text"
               id="email"
               name="email"
               value={email}
-              className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none ${
+              className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none ${
                 !isValidEmail(email) && emailTouched ? "border-red-500" : ""
               }`}
               placeholder="Email (eg. example@xmail.com)"
@@ -118,6 +125,16 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               onCopy={(e) => e.preventDefault()}
               onPaste={(e) => e.preventDefault()}
             />
+          )}
+          {phoneNumber.length != 0 && !useEmail && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Phone number
+            </div>
+          )}
+          {email.length != 0 && useEmail && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Email
+            </div>
           )}
         </div>
         <div className="flex flex-col">
@@ -157,6 +174,11 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             onCopy={(e) => e.preventDefault()}
             onPaste={(e) => e.preventDefault()}
           />
+          {password.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Password
+            </div>
+          )}
           <button
             type="button"
             onClick={togglePasswordVisibility}
@@ -185,6 +207,11 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             onCopy={(e) => e.preventDefault()}
             onPaste={(e) => e.preventDefault()}
           />
+          {confirmPassword.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Confirm Password
+            </div>
+          )}
           <button
             type="button"
             onClick={toggleConfirmPasswordVisibility}

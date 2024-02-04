@@ -8,6 +8,9 @@ interface RegisterInformationFormProps {
   district: string;
   province: string;
   phoneNumber: string;
+  email: string;
+
+  useEmail: boolean;
 
   allInfoInputsFilled: boolean;
 
@@ -29,6 +32,9 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
   district,
   province,
   phoneNumber,
+  email,
+
+  useEmail,
 
   allInfoInputsFilled,
 
@@ -55,68 +61,122 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
       </div>
       <form className="space-y-6" onSubmit={handleInfoSubmit}>
         <div className="flex">
-          <input
-            type="text"
-            id="firstname"
-            name="firstname"
-            value={firstName}
-            onChange={handleFirstNameChange}
-            className="w-full px-4 py-4 mr-2 border rounded-lg text-gray-700"
-            placeholder="First name"
-          />
-          <input
-            type="text"
-            id="lastname"
-            name="lastname"
-            value={lastName}
-            onChange={handleLastNameChange}
-            className="w-full px-4 py-4 ml-2 border rounded-lg text-gray-700"
-            placeholder="Last name"
-          />
+          <div className="relative w-full mr-2">
+            <input
+              type="text"
+              id="firstname"
+              name="firstname"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+              placeholder="First name"
+            />
+            {firstName.length != 0 && (
+              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                First Name
+              </div>
+            )}
+          </div>
+          <div className="relative w-full ml-2">
+            <input
+              type="text"
+              id="lastname"
+              name="lastname"
+              value={lastName}
+              onChange={handleLastNameChange}
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+              placeholder="Last name"
+            />
+            {lastName.length != 0 && (
+              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                Last Name
+              </div>
+            )}
+          </div>
         </div>
-        <div>
+        <div className="relative">
           <input
             type="text"
             id="address"
             name="address"
             value={address}
             onChange={handleAddressChange}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700"
+            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
             placeholder="Address"
           />
+          {address.length != 0 && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Address
+            </div>
+          )}
         </div>
-        <div className="flex">
-          <input
-            type="text"
-            id="district"
-            name="district"
-            value={district}
-            onChange={handleDistrictChange}
-            className="w-full px-4 py-4 mr-2 border rounded-lg text-gray-700"
-            placeholder="District"
-          />
-          <input
-            type="text"
-            id="province"
-            name="province"
-            value={province}
-            onChange={handleProvinceChange}
-            className="w-full px-4 py-4 ml-2 border rounded-lg text-gray-700"
-            placeholder="Province"
-          />
+        <div className="flex ">
+          <div className="relative w-full mr-2">
+            <input
+              type="text"
+              id="district"
+              name="district"
+              value={district}
+              onChange={handleDistrictChange}
+              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none"
+              placeholder="District"
+            />
+            {district.length != 0 && (
+              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                Distirct
+              </div>
+            )}
+          </div>
+          <div className="relative w-full ml-2">
+            <input
+              type="text"
+              id="province"
+              name="province"
+              value={province}
+              onChange={handleProvinceChange}
+              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none"
+              placeholder="Province"
+            />
+            {province.length != 0 && (
+              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                Province
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="flex">
-          <input
-            type="tel"
-            id="contactnumber"
-            name="contactnumber"
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700"
-            placeholder="Phone number"
-            readOnly
-          />
+        <div className="relative">
+          {!useEmail ? (
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={phoneNumber}
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+              placeholder="Phone number"
+              readOnly
+            />
+          ) : (
+            <input
+              type="text"
+              id="email"
+              name="email"
+              value={email}
+              className="w-full px-4 py-4 border rounded-lg text-gray-700"
+              placeholder="Phone number"
+              readOnly
+            />
+          )}
+          {phoneNumber.length != 0 && !useEmail && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Phone number
+            </div>
+          )}
+          {email.length != 0 && useEmail && (
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Email
+            </div>
+          )}
         </div>
         <div>
           <div style={{ color: "#F16E1E" }}>

@@ -241,6 +241,8 @@ export default function RegisterForm() {
             district={district}
             province={province}
             phoneNumber={phoneNumber}
+            email={email}
+            useEmail={useEmail}
             allInfoInputsFilled={allInfoInputsFilled}
             handleFirstNameChange={handleFirstNameChange}
             handleLastNameChange={handleLastNameChange}
