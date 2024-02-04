@@ -5,6 +5,7 @@ import styles from "@/styles/FontPage.module.css"
 import Link from "next/link";
 import Image from "next/image";
 import SignInHandleSubmit from "./SignInHandleSubmit";
+import { TextField } from "@mui/material";
 
 const SignInForm = () => {
     const [user, setUser] = useState<string>("");
@@ -42,14 +43,14 @@ const SignInForm = () => {
                     Log in to MAI-ROI-RA
                 </div>
                 
-                <form onSubmit={(e) => SignInHandleSubmit(e, setUser, setPassword, setError, setErrorUser, setErrorPassword, user, password, router)}>  
+                <form onSubmit={(e) => SignInHandleSubmit(e, setUser, setPassword, setError, setErrorUser, setErrorPassword, user, password, error, router)}>  
                     <div className="mt-[20px] w-full lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]">
                      
                         <div>
                             <input className={`w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
                             border-[1px] indent-[20px] ${errorUser ? "border-red-500": "border-black"}`}
                             type="text" placeholder="Phone number, email address" value={user} onChange={(e) => {setUser(e.target.value)}}/>
-
+                            
                             {
                                errorUser ? <div className="w-full text-start mt-[20px] text-red-500 lg:text-[16px] md:text-[14px] sm:text-[12px] text-[10px]">
                                     {ErrorUser[errorUser-1]}
