@@ -79,7 +79,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             id="name"
             name="name"
             value={name}
-            className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none focus:border-gray-400`}
+            className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none `}
             placeholder={name ? "" : "Username"}
             onChange={handleNameChange}
             onCopy={(e) => e.preventDefault()}
@@ -99,7 +99,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               id="email"
               name="email"
               value={email}
-              className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none focus:border-gray-400 ${
+              className={`w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none  ${
                 !isValidEmail(email) && emailTouched ? "border-red-500" : ""
               }`}
               placeholder="Email (eg. example@xmail.com)"
@@ -113,7 +113,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               id="phone"
               name="phone"
               value={phoneNumber}
-              className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none focus:border-gray-400 ${
+              className={`w-full px-4 py-4 border rounded-lg text-gray-700 outline-none  ${
                 phoneNumberTouched &&
                 (phoneNumber.length !== 10 || !phoneNumber.startsWith("0"))
                   ? "border-red-500"
@@ -165,7 +165,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             type={showPassword ? "text" : "password"}
             id="password"
             name="password"
-            className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none focus:border-gray-400 ${
+            className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none  ${
               passwordTouched && password.length < 6 ? "border-red-500" : ""
             }`}
             placeholder="Password (at least 6 letters)"
@@ -200,7 +200,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             type={showConfirmPassword ? "text" : "password"}
             id="confirm-password"
             name="confirm-password"
-            className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none focus:border-gray-400`}
+            className={`w-full px-4 py-4 rounded-lg text-gray-700 border outline-none `}
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
