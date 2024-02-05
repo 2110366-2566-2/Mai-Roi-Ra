@@ -1,0 +1,56 @@
+package repository
+
+import (
+	"gorm.io/gorm"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	"github.com/gin-gonic/gin"
+)
+
+// UserRepository represents the repository for the User model.
+type UserRepository struct {
+	DB *gorm.DB
+}
+
+// NewUserRepository creates a new instance of the UserRepository.
+func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
+	return &UserRepository{
+		DB: db,
+	}
+}
+
+// GetUserByID retrieves a user by their ID.
+func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.User, error) {
+	var user models.User
+	result := repo.DB.Where("user_id = ?", userID).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+// CreateUser adds a new user to the database.
+func (repo *UserRepository) CreateUser(c *gin.Context, user *models.User) error {
+	result := repo.DB.Create(user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+// UpdateUser updates an existing user in the database.
+func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error {
+	result := repo.DB.Save(user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+// DeleteUser deletes a user from the database.
+func (repo *UserRepository) DeleteUser(c *gin.Context, userID string) error {
+	result := repo.DB.Delete(&models.User{}, "user_id = ?", userID)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
