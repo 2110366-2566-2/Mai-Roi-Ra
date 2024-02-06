@@ -1,13 +1,9 @@
 package models
 
-import (
-	"github.com/google/uuid"
-)
-
 type Review struct {
-	UserID  uuid.UUID `gorm:"type:uuid;not null" json:"user_id" binding:"required"`
-	EventID uuid.UUID `gorm:"type:uuid;not null" json:"event_id" binding:"required"`
-	PostID  uuid.UUID `gorm:"type:uuid;not null" json:"post_id" binding:"required"`
+	UserId  string `gorm:"column:UserId;not null" json:"user_id" binding:"required"`
+	EventId string `gorm:"column:EventId;not null" json:"event_id" binding:"required"`
+	PostId  string `gorm:"column:PostId;not null" json:"post_id" binding:"required"`
 }
 
 func (Review) TableName() string {
