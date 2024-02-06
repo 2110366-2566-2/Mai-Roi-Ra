@@ -43,6 +43,7 @@ func main() {
 	}
 
 	r.GET("/api/v1/test", controllers.GetTest)
+	r.POST("/api/v1/events", controllers.CreateEvent)
 
 	// Initialize swagger docs
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

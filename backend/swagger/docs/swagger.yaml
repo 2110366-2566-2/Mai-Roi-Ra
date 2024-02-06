@@ -1,6 +1,52 @@
 basePath: /api/v1
 definitions:
-  controllers.TestResponse:
+  structure.CreateEventRequest:
+    properties:
+      activities:
+        type: string
+      admin_id:
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_id:
+        type: string
+      organizer_id:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+    required:
+    - activities
+    - admin_id
+    - deadline
+    - description
+    - end_date
+    - event_name
+    - location_id
+    - organizer_id
+    - participant_fee
+    - start_date
+    - status
+    type: object
+  structure.CreateEventResponse:
+    properties:
+      created_at:
+        type: string
+      event_id:
+        type: string
+    type: object
+  structure.TestResponse:
     properties:
       message:
         type: string
@@ -22,6 +68,36 @@ info:
   title: Mai-Roi-Ra Swagger API
   version: "1.0"
 paths:
+  /events:
+    post:
+      consumes:
+      - application/json
+      description: Create a new event with the provided details.
+      parameters:
+      - description: Create Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/structure.CreateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create new event
+      tags:
+      - events
   /test:
     get:
       consumes:
@@ -33,7 +109,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.TestResponse'
+            $ref: '#/definitions/structure.TestResponse'
       summary: GetTest
       tags:
       - Test

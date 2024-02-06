@@ -3,7 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
-
+	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
@@ -19,7 +19,7 @@ type TestController struct {
 // @Tags Test
 // @Accept json
 // @Produce json
-// @Success 200 {object} TestResponse
+// @Success 200 {object} st.TestResponse
 // @Router /test [get]
 func GetTest(c *gin.Context) {
 	log.Println("[CTRL: GetTest] Called")
@@ -29,7 +29,11 @@ func GetTest(c *gin.Context) {
 	if err != nil {
 		log.Fatal("[CTRL: GetTest] error: ", err)
 	}
-	c.JSON(http.StatusOK, res)
+
+	respo := st.TestResponse{
+		Message: res.Message,
+	}
+	c.JSON(http.StatusOK, respo)
 }
 
 func (c *TestController) GetInformationByUserId(ctx *gin.Context, userId string) (models.User, error) {

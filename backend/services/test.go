@@ -4,10 +4,10 @@ import (
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
 	"github.com/gin-gonic/gin"
-	test "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers/struct"
 )
 
 type TestService struct {
@@ -19,14 +19,14 @@ type ITestService interface {
 	GetInformationByUserId(c *gin.Context, userId string) (models.User, error)
 }
 
-func GetTest() (*test.TestResponse, error) {
+func GetTest() (*st.TestResponse, error) {
 	log.Println("[Service: GetTest] Called")
 
 	res, err := repository.GetTest()
 	if err != nil {
 		return nil, err
 	}
-	response := test.TestResponse{
+	response := st.TestResponse{
 		Message: res,
 	}
 
