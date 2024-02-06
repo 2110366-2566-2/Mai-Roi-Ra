@@ -43,3 +43,11 @@ func (c *TestController) GetInformationByUserId(ctx *gin.Context, userId string)
 	}
 	return result, nil
 }
+
+// @Summary GetTest
+// @Description Get a test message
+// @Tags Test
+// @Accept json
+// @Produce json
+// @Success 200 {object} TestResponse
+// @Router /test [get]
