@@ -1,9 +1,11 @@
 package repository
 
 import (
-	"gorm.io/gorm"
+	"log"
+
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // UserRepository represents the repository for the User model.
@@ -20,6 +22,7 @@ func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
 
 // GetUserByID retrieves a user by their ID.
 func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.User, error) {
+	log.Println("[REPO: GetUserByID]: Called")
 	var user models.User
 	result := repo.DB.Where("user_id = ?", userID).First(&user)
 	if result.Error != nil {
@@ -30,6 +33,7 @@ func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.
 
 // CreateUser adds a new user to the database.
 func (repo *UserRepository) CreateUser(c *gin.Context, user *models.User) error {
+	log.Println("[REPO: CreateUser]: Called")
 	result := repo.DB.Create(user)
 	if result.Error != nil {
 		return result.Error
@@ -39,6 +43,7 @@ func (repo *UserRepository) CreateUser(c *gin.Context, user *models.User) error 
 
 // UpdateUser updates an existing user in the database.
 func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error {
+	log.Println("[REPO: UpdateUser]: Called")
 	result := repo.DB.Save(user)
 	if result.Error != nil {
 		return result.Error
@@ -48,6 +53,7 @@ func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error 
 
 // DeleteUser deletes a user from the database.
 func (repo *UserRepository) DeleteUser(c *gin.Context, userID string) error {
+	log.Println("[REPO: DeleteUser]: Called")
 	result := repo.DB.Delete(&models.User{}, "user_id = ?", userID)
 	if result.Error != nil {
 		return result.Error
