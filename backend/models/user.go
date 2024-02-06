@@ -40,5 +40,3 @@ func (CustomValidator) ValidatePhoneLength(field interface{}) bool {
 	}
 	return false
 }
-
-//Validate email is legit or not
