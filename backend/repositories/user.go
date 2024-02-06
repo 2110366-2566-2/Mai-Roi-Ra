@@ -14,7 +14,8 @@ type UserRepository struct {
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
-func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
+// oldone-func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
+func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{
 		DB: db,
 	}
@@ -32,7 +33,7 @@ func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.
 }
 
 // CreateUser adds a new user to the database.
-func (repo *UserRepository) CreateUser(c *gin.Context, user *models.User) error {
+func (repo *UserRepository) CreateUser(user *models.User) error {
 	log.Println("[REPO: CreateUser]: Called")
 	result := repo.DB.Create(user)
 	if result.Error != nil {

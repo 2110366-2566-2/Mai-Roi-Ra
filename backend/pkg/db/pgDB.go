@@ -15,9 +15,7 @@ type DbInstance struct {
 	Db *gorm.DB
 }
 
-var (
-	DB DbInstance
-)
+var DB DbInstance
 
 func InitPgDB() error {
 	cfg, err := config.NewConfig(func() string {

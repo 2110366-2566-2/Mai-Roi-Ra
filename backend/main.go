@@ -5,6 +5,7 @@ import (
 
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
+	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -39,8 +40,11 @@ func main() {
 	// }
 
 	if err := db.InitPgDB(); err != nil {
-		log.Fatal("Error connecting PG")
+		log.Fatal("Error connecting to the database:", err)
 	}
+
+	//initialize everything and inject the UserRepository into the controller
+	controllers.InitializeUserController(repository.NewUserRepository(db.DB.Db))
 
 	r.GET("/api/v1/test", controllers.GetTest)
 
