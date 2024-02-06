@@ -5,9 +5,9 @@ import (
 )
 
 type Admin struct {
-	AdminId   string    `gorm:"primaryKey;column:AdminId" json:"admin_id" binding:"required"`
-	Password  string    `gorm:"column:Password" json:"password" binding:"required"`
-	CreatedAt time.Time `gorm:"column:CreatedAt;autoCreateTime" json:"created_at"`
+	AdminId   string    `gorm:"primaryKey;column:admin_id" json:"admin_id" binding:"required"`
+	Password  string    `gorm:"column:password" json:"password" binding:"required"`
+	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 }
 
 func (Admin) TableName() string {

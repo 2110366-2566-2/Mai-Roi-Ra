@@ -5,12 +5,11 @@ import (
 )
 
 type Response struct {
-	OrganizerId string    `gorm:"column:OrganizerId;not null" json:"organizer_id" binding:"required"`
-	PostId      string    `gorm:"column:PostId;not null" json:"post_id" binding:"required"`
-	Detail      string    `gorm:"column:Detail" json:"detail"`
-	CreatedAt   time.Time `gorm:"column:CreatedAt;autoCreateTime" json:"created_at"`
+	OrganizerId string    `gorm:"column:organizer_id;not null" json:"organizer_id" binding:"required"`
+	PostId      string    `gorm:"column:post_id;not null" json:"post_id" binding:"required"`
+	Detail      string    `gorm:"column:detail" json:"detail"`
+	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 }
-
 
 func (Response) TableName() string {
 	return "Responses"
