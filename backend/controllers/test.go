@@ -7,9 +7,12 @@ import (
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
-
 	"github.com/gin-gonic/gin"
 )
+type TestController struct {
+	logger         *log.Logger
+	ServiceGateway services.ServiceGateway
+}
 
 // @Summary GetTest
 // @Description Get a test message
@@ -18,11 +21,6 @@ import (
 // @Produce json
 // @Success 200 {object} TestResponse
 // @Router /test [get]
-type TestController struct {
-	logger         *log.Logger
-	ServiceGateway services.ServiceGateway
-}
-
 func GetTest(c *gin.Context) {
 	log.Println("[CTRL: GetTest] Called")
 
@@ -43,11 +41,3 @@ func (c *TestController) GetInformationByUserId(ctx *gin.Context, userId string)
 	}
 	return result, nil
 }
-
-// @Summary GetTest
-// @Description Get a test message
-// @Tags Test
-// @Accept json
-// @Produce json
-// @Success 200 {object} TestResponse
-// @Router /test [get]

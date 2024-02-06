@@ -7,7 +7,7 @@ import (
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
 	"github.com/gin-gonic/gin"
-	test "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+	test "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers/struct"
 )
 
 type TestService struct {
