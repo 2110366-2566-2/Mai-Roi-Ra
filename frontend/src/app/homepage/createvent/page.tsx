@@ -3,7 +3,7 @@ import CreateEventForm from "@/components/CreateEventForm";
 
 const CreateEvent = () => {
     return (
-        <div className="w-[87%] h-screen border-r-[1px] border-gray-300">
+        <div className="w-[87%] h-screen border-r-[1px] border-gray-300 text-black">
             
             {/* Topic */}
             <div className={`${styles.Roboto} w-full flex flex-row flex-wrap justify-between h-[20%] 

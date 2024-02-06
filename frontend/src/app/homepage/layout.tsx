@@ -23,7 +23,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`{inter.className} h-full`}>
+      <body className={`{inter.className} h-full text-black`}>
         {/* <ReduxProvider> */}
           <NextAuthProvider session={session}>
             <MenuBar />
