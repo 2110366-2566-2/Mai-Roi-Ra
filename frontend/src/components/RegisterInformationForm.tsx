@@ -123,7 +123,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             />
             {district.length != 0 && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                Distirct
+                District
               </div>
             )}
           </div>

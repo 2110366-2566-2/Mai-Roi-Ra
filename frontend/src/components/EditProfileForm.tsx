@@ -128,7 +128,7 @@ export default function EditProfileForm() {
                 />
                 {district.length != 0 && (
                   <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                    Distirct
+                    District
                   </div>
                 )}
               </div>
@@ -157,6 +157,73 @@ export default function EditProfileForm() {
                 value={phoneNumber}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Phone number"
+                readOnly
+              />
+              {phoneNumber.length != 0 && (
+                <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                  Phone number
+                </div>
+              )}
+            </div>
+            <div className="flex">
+              <div className="relative w-full mr-2">
+                <input
+                  type="text"
+                  id="month"
+                  name="month"
+                  //   value={firstName}
+                  //   onChange={handleFirstNameChange}
+                  className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                  placeholder="Month"
+                />
+                {/* {firstName.length != 0 && (
+                  <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                    Month
+                  </div>
+                )} */}
+              </div>
+              <div className="relative w-full ml-2">
+                <input
+                  type="text"
+                  id="date"
+                  name="date"
+                  //   value={lastName}
+                  //   onChange={handleLastNameChange}
+                  className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                  placeholder="Date"
+                />
+                {/* {lastName.length != 0 && (
+                  <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                    Date
+                  </div>
+                )} */}
+              </div>
+              <div className="relative w-full ml-4">
+                <input
+                  type="text"
+                  id="year"
+                  name="year"
+                  //   value={lastName}
+                  //   onChange={handleLastNameChange}
+                  className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                  placeholder="Year"
+                />
+                {/* {lastName.length != 0 && (
+                  <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                    Date
+                  </div>
+                )} */}
+              </div>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                id="paymentmethod"
+                name="paymentmethod"
+                // value={phoneNumber}
+                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="Payment method"
                 readOnly
               />
             </div>
