@@ -178,12 +178,17 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             </div>
           )}
         </div>
-        <div>
+        {!allInfoInputsFilled && (
+          <div className="" style={{ color: "#F16E1E" }}>
+            All fields must be filled correctly !
+          </div>
+        )}
+        {/* <div>
           <div style={{ color: "#F16E1E" }}>
             {allInfoInputsFilled ? "" : "All fields must be filled correctly !"}
           </div>
-        </div>
-        <div className="pt-8">
+        </div> */}
+        <div className="">
           <button
             type="submit"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"

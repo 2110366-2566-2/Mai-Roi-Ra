@@ -137,7 +137,19 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             </div>
           )}
         </div>
-        <div className="flex flex-col">
+        {phoneNumberTouched &&
+          (phoneNumber.length !== 10 || !phoneNumber.startsWith("0")) &&
+          !useEmail && (
+            <div className="!mt-2" style={{ color: "#F16E1E" }}>
+              Phone number must be valided
+            </div>
+          )}
+        {!isValidEmail(email) && useEmail && emailTouched && (
+          <div className="!mt-2" style={{ color: "#F16E1E" }}>
+            Email must be valided
+          </div>
+        )}
+        {/* <div className="flex flex-col">
           <div style={{ color: "#F16E1E" }}>
             {phoneNumberTouched &&
             (phoneNumber.length !== 10 || !phoneNumber.startsWith("0")) &&
@@ -150,8 +162,8 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
               ? "Email must be valided"
               : ""}
           </div>
-        </div>
-        <div className="flex">
+        </div> */}
+        <div className="flex !mt-3">
           <div
             style={{ color: "#1EA1F1" }}
             className="cursor-pointer"
@@ -188,13 +200,18 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             {showPassword ? <FaEyeSlash size="18px" /> : <FaEye size="18px" />}
           </button>
         </div>
-        <div>
+        {passwordTouched && password.length < 6 && (
+          <div className="!mt-2" style={{ color: "#F16E1E" }}>
+            Password must contain at least 6 letters
+          </div>
+        )}
+        {/* <div>
           <div style={{ color: "#F16E1E" }}>
             {passwordTouched && password.length < 6
               ? "Password must contain at least 6 letters"
               : ""}
           </div>
-        </div>
+        </div> */}
         <div className="relative">
           <input
             type={showConfirmPassword ? "text" : "password"}
@@ -226,7 +243,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
           </button>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col !mt-2">
           <div style={{ color: "#F16E1E" }}>
             {passwordTouched && confirmPasswordTouched && !passwordAreMatched
               ? "Passwords are not matched"
@@ -236,7 +253,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             {allInputsFilled ? "" : "All fields must be filled correctly !"}
           </div>
         </div>
-        <div className="pt-8">
+        <div className="">
           <button
             type="submit"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
