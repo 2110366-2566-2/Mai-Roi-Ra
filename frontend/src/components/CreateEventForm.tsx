@@ -4,10 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
 import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 
 const CreateEventForm = () => {
     const router = useRouter();
-    const [showModal,setShowModal] = useState(true);
+    const [showModal,setShowModal] = useState(false);
     const [eventName,setEventName] = useState("");
     const [eventDescription,setEventDescription] = useState("");
     const [uploading, setUploading] = useState(false);
@@ -23,7 +24,7 @@ const CreateEventForm = () => {
     }
 
     return (
-        <div className={`${styles.Roboto} w-full h-full pt-[5%] pl-[5%] pr-[10%]`}>
+        <div className={`${styles.Roboto} w-full h-full pt-[5%] pl-[5%] pr-[10%] text-black`}>
             <form onSubmit={handleSubmit} action="" className="w-full h-full">
                 
                 {/* Form */}
@@ -46,8 +47,11 @@ const CreateEventForm = () => {
 
                         <div className="w-full h-[13%] relative">
                             <input className="border-[1px] border-gray-300 w-[60%] indent-4 h-full text-[18px]
-                            rounded-md"
+                            rounded-md relative"
                             type="text" placeholder="Date Start/End"/>
+                            <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
+                                <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
+                            </span>
 
                             {eventName.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -64,18 +68,17 @@ const CreateEventForm = () => {
 
                             {eventDescription.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Event Name
+                                    Event Description
                                 </div>
                             )}
                         </div> 
                     </div>
 
                     {/* Right Form */}
-                    <div className="h-[90%] w-[30%] border-[1px] border-gray-300 rounded-md flex justify-center items-center
-                    cursor-pointer">
-                        <div className="text-center text-gray-400 hover:text-black"
+                    <div className="h-[90%] w-[30%] border-[1px] border-gray-300 rounded-md flex justify-center items-center">
+                        <div className="text-center text-gray-400 hover:text-black  cursor-pointer"
                             onClick={uploadImage}>
-                            <PhotoSizeSelectActualIcon className="w-[15%] h-[15%]"/>
+                            <PhotoSizeSelectActualIcon className=""/>
                             <div className="">
                                 Add Picture
                             </div>
