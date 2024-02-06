@@ -32,6 +32,24 @@ func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.
 	return &user, nil
 }
 
+// GetUserByEmail retrieves a user by their email address.
+func (repo *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	if err := repo.DB.Where("email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// GetUserByPhoneNumber retrieves a user by their phone number.
+func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.User, error) {
+	var user models.User
+	if err := repo.DB.Where("phone_number = ?", phoneNumber).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // CreateUser adds a new user to the database.
 func (repo *UserRepository) CreateUser(user *models.User) error {
 	log.Println("[REPO: CreateUser]: Called")
