@@ -3,12 +3,13 @@ package controllers
 import (
 	"log"
 	"net/http"
-	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
 	"github.com/gin-gonic/gin"
 )
+
 type TestController struct {
 	logger         *log.Logger
 	ServiceGateway services.ServiceGateway
@@ -30,10 +31,7 @@ func GetTest(c *gin.Context) {
 		log.Fatal("[CTRL: GetTest] error: ", err)
 	}
 
-	respo := st.TestResponse{
-		Message: res.Message,
-	}
-	c.JSON(http.StatusOK, respo)
+	c.JSON(http.StatusOK, res)
 }
 
 func (c *TestController) GetInformationByUserId(ctx *gin.Context, userId string) (models.User, error) {
