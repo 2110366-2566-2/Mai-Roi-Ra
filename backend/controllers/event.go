@@ -10,8 +10,15 @@ import (
 )
 
 type EventController struct {
-	logger         *log.Logger
 	ServiceGateway services.ServiceGateway
+}
+
+func NewEventController(
+	sg services.ServiceGateway,
+) *EventController {
+	return &EventController{
+		ServiceGateway: sg,
+	}
 }
 
 // @Summary Create new event
@@ -24,17 +31,14 @@ type EventController struct {
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events [post]
-func CreateEvent(c *gin.Context) {
-	var req st.CreateEventRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (c *EventController) CreateEvent(ctx *gin.Context, req st.CreateEventRequest) {
+	log.Println("[CTRL: CreateEvent] Input:", req)
+
+	res, err := c.ServiceGateway.EventService.CreateEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Simulated response for the purpose of Swagger documentation.
-	res := st.CreateEventResponse{
-		EventId:   "123",
-		CreatedAt: "Hello",
-	}
-	c.JSON(http.StatusOK, res)
+	log.Println("[CTRL: CreateEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
 }

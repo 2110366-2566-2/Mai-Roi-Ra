@@ -13,6 +13,7 @@ type Repository struct {
 type RepositoryGateway struct {
 	dig.In
 	TestRepository ITestRepository
+	EventRepository IEventRepository
 }
 
 // NewRepository ...

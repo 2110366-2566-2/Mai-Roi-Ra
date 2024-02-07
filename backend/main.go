@@ -3,11 +3,8 @@ package main
 import (
 	"log"
 
-	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	container "github.com/2110366-2566-2/Mai-Roi-Ra/backend/container"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/routers"
 )
 
 // @title           Mai-Roi-Ra Swagger API
@@ -30,23 +27,11 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	r := gin.Default()
+	c := container.NewContainer()
 
-	// dbMongoClient, err := db.InitMongoDB()
-	// if err != nil {
-	// 	defer dbMongoClient.Disconnect(context.Background())
-	// 	log.Fatal("Error initializing MongoDB:", err)
-	// }
+	r := routers.SetupRouter(c.Container)
 
-	if err := db.InitPgDB(); err != nil {
-		log.Fatal("Error connecting PG")
+	if err := r.Run(":8080"); err != nil {
+		log.Fatal("Failed to start server:", err)
 	}
-
-	r.GET("/api/v1/test", controllers.GetTest)
-	r.POST("/api/v1/events", controllers.CreateEvent)
-
-	// Initialize swagger docs
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	r.Run(":8080")
 }

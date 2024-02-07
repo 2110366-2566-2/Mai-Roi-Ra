@@ -16,6 +16,14 @@ type ITestRepository interface {
 	GetInformationByUserId(c *gin.Context, userId string) (models.User, error)
 }
 
+func NewTestRepository(
+	db *gorm.DB,
+) ITestRepository {
+	return &TestRepository{
+		db: db,
+	}
+}
+
 func GetTest() (string, error) {
 	return "Hello World, Test GET by PubPab backend", nil
 }

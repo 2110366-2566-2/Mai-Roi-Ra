@@ -17,5 +17,4 @@ type CreateEventRequest struct {
 
 type CreateEventResponse struct {
 	EventId   string `json:"event_id"`
-	CreatedAt string `json:"created_at"`
 }

@@ -67,3 +67,13 @@ func (t *TimeUtils) CheckWorkingDate(dateString string) (string, bool) {
 	}
 	return date.Format("20060102"), isWorkingDay
 }
+
+// Converts a string in format "YYYY-MM-DD" to a time.Time object.
+func StringToTime(timeStr string) (time.Time, error) {
+    layout := "20060102" // This layout specifies the format as YYYY-MM-DD
+    parsedTime, err := time.Parse(layout, timeStr)
+    if err != nil {
+        return time.Time{}, err // Return zero value of time.Time if an error occurs
+    }
+    return parsedTime, nil
+}
