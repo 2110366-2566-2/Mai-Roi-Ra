@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -37,4 +38,32 @@ func CreateEvent(c *gin.Context) {
 		CreatedAt: "Hello",
 	}
 	c.JSON(http.StatusOK, res)
+}
+
+func UpdateEvent(c *gin.Context) {
+	// Get the eventid parameter from the URL
+	eventID := c.Param("eventid")
+
+	// Parse the JSON request body into an Event struct
+	var updatedEvent st.UpdateEventRequest
+	if err := c.ShouldBindJSON(&updatedEvent); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Return a successful response
+	c.JSON(http.StatusOK, gin.H{
+		"message": fmt.Sprintf("Updated event with ID: %s", eventID),
+		"event":   updatedEvent,
+	})
+}
+
+func DeleteEvent(c *gin.Context) {
+	// Get the eventid parameter from the URL
+	eventID := c.Param("eventid")
+
+	// Return a successful response
+	c.JSON(http.StatusOK, gin.H{
+		"message": fmt.Sprintf("Deleted event with ID: %s", eventID),
+	})
 }

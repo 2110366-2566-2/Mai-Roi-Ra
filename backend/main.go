@@ -48,6 +48,8 @@ func main() {
 
 	r.GET("/api/v1/test", controllers.GetTest)
 	r.POST("/api/v1/events", controllers.CreateEvent)
+	r.PUT("/api/v1/events/:eventid", controllers.UpdateEvent)
+	r.DELETE("/api/v1/events/:eventid", controllers.DeleteEvent)
 
 	// Initialize swagger docs
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
