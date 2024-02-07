@@ -44,7 +44,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.CreateEventResponse"
                         }
@@ -146,9 +146,6 @@
         "structure.CreateEventResponse": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
                 "event_id": {
                     "type": "string"
                 }

@@ -18,8 +18,8 @@ type TestController struct {
 
 func NewTestController(
 	sg services.ServiceGateway,
-) *EventController {
-	return &EventController{
+) *TestController {
+	return &TestController{
 		ServiceGateway: sg,
 	}
 }

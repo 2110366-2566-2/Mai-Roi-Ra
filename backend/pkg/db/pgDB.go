@@ -11,11 +11,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type DbInstance struct {
-	Db *gorm.DB
-}
-
-func InitPgDB() (*DbInstance) {
+func InitPgDB() (*gorm.DB) {
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
@@ -44,9 +40,5 @@ func InitPgDB() (*DbInstance) {
 	log.Println("Connected to PG !")
 	db.Logger = logger.Default.LogMode(logger.Info)
 
-	DB := DbInstance{
-		Db: db,
-	}
-
-	return &DB
+	return db
 }

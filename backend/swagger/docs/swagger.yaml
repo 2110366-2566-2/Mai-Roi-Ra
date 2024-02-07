@@ -41,8 +41,6 @@ definitions:
     type: object
   structure.CreateEventResponse:
     properties:
-      created_at:
-        type: string
       event_id:
         type: string
     type: object
@@ -84,7 +82,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Success
+          description: OK
           schema:
             $ref: '#/definitions/structure.CreateEventResponse'
         "400":

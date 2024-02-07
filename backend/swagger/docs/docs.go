@@ -50,7 +50,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.CreateEventResponse"
                         }
@@ -152,9 +152,6 @@ const docTemplate = `{
         "structure.CreateEventResponse": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
                 "event_id": {
                     "type": "string"
                 }
