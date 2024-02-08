@@ -26,7 +26,19 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			eventController.CreateEvent(ctx, req)
+			eventController.CreateEvent(ctx, &req)
+		})
+		r.GET("/api/v1/events", func(ctx *gin.Context) {
+			req := &st.GetEventListsRequest{
+
+			}
+			eventController.GetEventLists(ctx, req)
+		})
+		r.GET("/api/v1/events/:id", func(ctx *gin.Context) {
+			req := st.GetEventDataByIdRequest{
+				EventId: ctx.Param("id"),
+			}
+			eventController.GetEventDataById(ctx, req)
 		})
 	})
 
