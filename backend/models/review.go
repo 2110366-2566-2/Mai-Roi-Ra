@@ -7,5 +7,5 @@ type Review struct {
 }
 
 func (Review) TableName() string {
-	return "Reviews"
+	return "reviews"
 }

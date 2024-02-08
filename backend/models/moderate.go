@@ -11,5 +11,5 @@ type Moderate struct {
 }
 
 func (Moderate) TableName() string {
-	return "Moderates"
+	return "moderates"
 }

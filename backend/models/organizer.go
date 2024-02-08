@@ -11,5 +11,5 @@ type Organizer struct {
 }
 
 func (Organizer) TableName() string {
-	return "Organizers"
+	return "organizers"
 }

@@ -12,5 +12,5 @@ type Response struct {
 }
 
 func (Response) TableName() string {
-	return "Responses"
+	return "responses"
 }
