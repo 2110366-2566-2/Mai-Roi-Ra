@@ -32,7 +32,7 @@ func NewEventController(
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events [post]
-func (c *EventController) CreateEvent(ctx *gin.Context, req st.CreateEventRequest) {
+func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventRequest) {
 	log.Println("[CTRL: CreateEvent] Input:", req)
 
 	res, err := c.ServiceGateway.EventService.CreateEvent(req)
@@ -41,5 +41,50 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req st.CreateEventReques
 		return
 	}
 	log.Println("[CTRL: CreateEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary GetEventLists
+// @Description Get list of events
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param filter query string false "Filter query"
+// @Param sort query string false "Sort order"
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Success 200 {object} structure.GetEventListsResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events [get]
+func (c *EventController) GetEventLists(ctx *gin.Context, req *st.GetEventListsRequest) {
+	log.Println("[CTRL: GetEventLists] Input:", req)
+	res, err := c.ServiceGateway.EventService.GetEventLists(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetEventLists] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary GetEventDataById
+// @Description Get a test message
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param event_id path string true "Event ID"
+// @Success 200 {object} structure.GetEventDataByIdResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/{event_id} [get]
+func (c *EventController) GetEventDataById(ctx *gin.Context, req st.GetEventDataByIdRequest) {
+	log.Println("[CTRL: GetEventDataById] Input:", req)
+	res, err := c.ServiceGateway.EventService.GetEventDataById(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetEventDataById] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

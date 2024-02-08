@@ -14,7 +14,9 @@ type EventRepository struct {
 }
 
 type IEventRepository interface {
-	CreateEvent(st.CreateEventRequest) (*st.CreateEventResponse, error)
+	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
+	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
+	GetEventDataById(string) (*models.Event, error)
 }
 
 func NewEventRepository(
@@ -25,7 +27,7 @@ func NewEventRepository(
 	}
 }
 
-func (r *EventRepository) CreateEvent(req st.CreateEventRequest) (*st.CreateEventResponse, error) {
+func (r *EventRepository) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventResponse, error) {
 	log.Println("[Repo: CreateEvent]: Called")
 	startDate, err := utils.StringToTime(req.StartDate)
 	if err != nil {
@@ -76,4 +78,25 @@ func (r *EventRepository) CreateEvent(req st.CreateEventRequest) (*st.CreateEven
 	return &st.CreateEventResponse{
 		EventId: eventModel.EventId,
 	}, nil
+}
+
+func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error) {
+	log.Println("[Repo: GetEventLists] Called")
+	var eventLists []*models.Event
+	// will declare filter later in sprint 2
+	if err := r.db.Find(&eventLists).Error; err != nil {
+		log.Println("[Repo: GetEventLists]: cannot query the events:", err)
+		return nil, err
+	}
+	return eventLists, nil
+}
+
+func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error) {
+	log.Println("[Repo: GetEventDataById]: Called")
+	var event models.Event
+	if err := r.db.Where(`event_id=?`, eventId).Find(&event).Error; err != nil {
+		log.Println("[Repo: GetEventDataById]: cannot find event_id:", err)
+		return nil, err
+	}
+	return &event, nil
 }
