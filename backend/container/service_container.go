@@ -14,4 +14,7 @@ func (c *Container) ServiceProvider() {
 	if err := c.Container.Provide(services.NewEventService); err != nil {
 		c.Error = err
 	}
+	if err := c.Container.Provide(services.NewUserService); err != nil {
+		c.Error = err
+	}
 }

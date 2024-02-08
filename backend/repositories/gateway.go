@@ -14,6 +14,7 @@ type RepositoryGateway struct {
 	dig.In
 	TestRepository ITestRepository
 	EventRepository IEventRepository
+	UserRepository IUserRepository
 	LocationRepository ILocationRepository
 }
 
