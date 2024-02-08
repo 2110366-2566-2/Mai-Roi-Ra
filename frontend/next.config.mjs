@@ -2,6 +2,7 @@
 const nextConfig = {
     images: {
         domains: ['drive.google.com'],
+        domains: ['images.unsplash.com']
     },
     experimental: {
         serverActions: true

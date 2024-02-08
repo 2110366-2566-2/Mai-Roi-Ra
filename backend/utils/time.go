@@ -51,7 +51,7 @@ func (t *TimeUtils) GetDateTime(ct time.Time) string {
 	return time.Time(ct).In(time.Now().Location()).Format("20060102150405")
 }
 
-func (t *TimeUtils) GetDate(ct time.Time) string {
+func GetDate(ct time.Time) string {
 	return time.Time(ct).In(time.Now().Location()).Format("20060102")
 }
 
@@ -66,4 +66,14 @@ func (t *TimeUtils) CheckWorkingDate(dateString string) (string, bool) {
 		isWorkingDay = false
 	}
 	return date.Format("20060102"), isWorkingDay
+}
+
+// Converts a string in format "YYYY-MM-DD" to a time.Time object.
+func StringToTime(timeStr string) (time.Time, error) {
+	layout := "2006-01-02"
+	parsedTime, err := time.Parse(layout, timeStr)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return parsedTime, nil
 }

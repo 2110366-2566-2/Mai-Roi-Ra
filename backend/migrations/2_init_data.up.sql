@@ -1,47 +1,56 @@
 DO $$ 
 BEGIN
     -- Insert data into Admins table
-    INSERT INTO Admins (AdminId, Password, CreatedAt)
-    VALUES ('adminId001', 'password123', CURRENT_TIMESTAMP);
-    VALUES ('adminId002', 'password234', CURRENT_TIMESTAMP);
-    VALUES ('adminId003', 'password345', CURRENT_TIMESTAMP);
+    INSERT INTO admins (admin_id, password, created_at)
+    VALUES 
+    ('adminid001', 'password123', CURRENT_TIMESTAMP),
+    ('adminid002', 'password234', CURRENT_TIMESTAMP),
+    ('adminid003', 'password345', CURRENT_TIMESTAMP);
 
     -- Insert data into Users table
-    INSERT INTO Users (UserId, PaymentGatewayCustomerId, PhoneNumber, BirthDate, Email, FirstName, LastName, UserImage, CreatedAt)
-    VALUES ('userId0001', 'paymentId1', '1234567890', '1990-01-01', 'user1@example.com', 'Terrance', 'Jeffords', 'user1.jpg', CURRENT_TIMESTAMP);
-    VALUES ('userId0002', 'paymentId2', '1234567891', '1992-01-01', 'user2@example.com', 'Jake', 'Peralta', 'user2.jpg', CURRENT_TIMESTAMP);
-    VALUES ('userId0003', 'paymentId3', '1234567892', '1994-01-01', 'user3@example.com', 'Charles', 'Boyle', 'user3.jpg', CURRENT_TIMESTAMP);
+    INSERT INTO users (user_id, payment_gateway_customer_id, phone_number, birth_date, email, first_name, last_name, user_image, created_at)
+    VALUES 
+    ('userid0001', 'paymentid1', '1234567890', '1990-01-01', 'user1@example.com', 'Terrance', 'Jeffords', 'user1.jpg', CURRENT_TIMESTAMP),
+    ('userid0002', 'paymentid2', '1234567891', '1992-01-01', 'user2@example.com', 'Jake', 'Peralta', 'user2.jpg', CURRENT_TIMESTAMP),
+    ('userid0003', 'paymentid3', '1234567892', '1994-01-01', 'user3@example.com', 'Charles', 'Boyle', 'user3.jpg', CURRENT_TIMESTAMP);
 
     -- Insert data into Organizers table
-    INSERT INTO Organizers (OrganizerId, OfficeHours, CreatedAt, UserId)
-    VALUES ('organizer1', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP], CURRENT_TIMESTAMP, 'userId0001');
-    VALUES ('organizer2', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP], CURRENT_TIMESTAMP, 'userId0002');
+    INSERT INTO organizers (organizer_id, office_hours, created_at)
+    VALUES 
+    ('organizer1', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP], CURRENT_TIMESTAMP),
+    ('organizer2', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP], CURRENT_TIMESTAMP);
 
     -- Insert data into Moderates table
-    INSERT INTO Moderates (UserId, OrganizerId, CreatedAt)
-    VALUES ('userId0001', 'organizer1', CURRENT_TIMESTAMP);
+    INSERT INTO moderates (user_id, organizer_id, created_at)
+    VALUES 
+    ('userid0001', 'organizer1', CURRENT_TIMESTAMP);
 
     -- Insert data into Locations table
-    INSERT INTO Locations (LocationId, Country, City, District, LocationName)
-    VALUES ('location01', 'Country1', 'City1', 'District1', 'LocationName1');
-    VALUES ('location02', 'Country2', 'City2', 'District2', 'LocationName2');
-    VALUES ('location03', 'Country3', 'City3', 'District3', 'LocationName3');
+    INSERT INTO locations (location_id, country, city, district, location_name)
+    VALUES 
+    ('location01', 'Country1', 'City1', 'District1', 'LocationName1'),
+    ('location02', 'Country2', 'City2', 'District2', 'LocationName2'),
+    ('location03', 'Country3', 'City3', 'District3', 'LocationName3');
 
     -- Insert data into Events table
-    INSERT INTO Events (EventId, StartDate, EndDate, Status, Participantfee, Description, EventName, CreatedAt, Deadline, Activities, EventImage, OrganizerId, AdminId, LocationId)
-    VALUES ('eventId001', '2024-03-01', '2024-03-05', 'Approved', 50.0, 'Event description 1', 'Event 1', CURRENT_TIMESTAMP, '2024-02-15', 'Activity1', 'event1.jpg', 'organizer1', 'adminId001', 'location01');
+    INSERT INTO events (event_id, start_date, end_date, status, participant_fee, description, event_name, created_at, deadline, activities, event_image, organizer_id, admin_id, location_id)
+    VALUES 
+    ('eventid001', '2024-03-01', '2024-03-05', 'Approved', 50.0, 'Event description 1', 'Event 1', CURRENT_TIMESTAMP, '2024-02-15', 'Activity1', 'event1.jpg', 'organizer1', 'adminid001', 'location01');
 
     -- Insert data into Posts table
-    INSERT INTO Posts (PostId, CreatedAt, PostImage, caption, RatingScore, UserId)
-    VALUES ('postId0001', CURRENT_TIMESTAMP, 'post1.jpg', 'Caption for post 1', 4, 'userId0001');
+    INSERT INTO posts (post_id, created_at, post_image, caption, rating_score, user_id)
+    VALUES 
+    ('postid0001', CURRENT_TIMESTAMP, 'post1.jpg', 'Caption for post 1', 4, 'userid0001');
 
     -- Insert data into Responses table
-    INSERT INTO Responses (OrganizerId, PostId, Detail, CreatedAt)
-    VALUES ('organizer1', 'postId0001', 'Response to post 1', CURRENT_TIMESTAMP);
+    INSERT INTO responses (organizer_id, post_id, detail, created_at)
+    VALUES 
+    ('organizer1', 'postid0001', 'Response to post 1', CURRENT_TIMESTAMP);
 
     -- Insert data into Reviews table
-    INSERT INTO Reviews (UserId, EventId, PostId)
-    VALUES ('userId0001', 'eventId001', 'postId0001');
+    INSERT INTO reviews (user_id, event_id, post_id)
+    VALUES 
+    ('userid0001', 'eventid001', 'postid0001');
 
 EXCEPTION
     WHEN OTHERS THEN

@@ -13,10 +13,11 @@ type Service struct {
 type ServiceGateway struct {
 	dig.In
 	TestService ITestService
+	EventService IEventService
 }
 
-// NewRepository ...
-func NewRepository(sg ServiceGateway) *Service {
+// NewService ...
+func NewService(sg ServiceGateway) *Service {
 	return &Service{
 		ServiceGateway: sg,
 	}

@@ -11,12 +11,20 @@ import (
 )
 
 type TestService struct {
-	logger            *log.Logger
+	// logger            *log.Logger
 	RepositoryGateway repository.RepositoryGateway
 }
 
 type ITestService interface {
 	GetInformationByUserId(c *gin.Context, userId string) (models.User, error)
+}
+
+func NewTestService(
+	repoGateway repository.RepositoryGateway,
+) ITestService {
+	return &TestService{
+		RepositoryGateway: repoGateway,
+	}
 }
 
 func GetTest() (*st.TestResponse, error) {

@@ -10,6 +10,7 @@ import (
 // User model struct
 type User struct {
 	gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
+	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
 	Username                 string    `gorm:"type:varchar(255);unique;not null" json:"username"`
 	PhoneNumber              string    `gorm:"type:char(10);unique;not null" json:"phone_number"`
 	Email                    string    `gorm:"type:varchar(64);unique;not null" json:"email"`
@@ -23,9 +24,10 @@ type User struct {
 	District                 string    `gorm:"type:varchar(64);not null"`
 	Province                 string    `gorm:"type:varchar(64);not null"`
 	BannerImage              string    `gorm:"type:varchar(1024);not null"`
+	// UserImage                string    `gorm:"column:user_image" json:"user_image"`
+	CreatedAt time.Time `gorm:"column:created_at;not null" json:"created_at"`
 }
 
-// TableName specifies the table name for the User model
 func (User) TableName() string {
 	return "Users"
 }

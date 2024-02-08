@@ -41,10 +41,70 @@ definitions:
     type: object
   structure.CreateEventResponse:
     properties:
-      created_at:
-        type: string
       event_id:
         type: string
+    type: object
+  structure.GetEventDataByIdResponse:
+    properties:
+      activities:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_name:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+    required:
+    - activities
+    - deadline
+    - description
+    - end_date
+    - event_name
+    - participant_fee
+    - start_date
+    - status
+    type: object
+  structure.GetEventList:
+    properties:
+      city:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      end_date:
+        type: string
+      event_name:
+        type: string
+      start_date:
+        type: string
+      status:
+        type: string
+    type: object
+  structure.GetEventListsResponse:
+    properties:
+      event_lists:
+        items:
+          $ref: '#/definitions/structure.GetEventList'
+        type: array
     type: object
   structure.TestResponse:
     properties:
@@ -69,6 +129,45 @@ info:
   version: "1.0"
 paths:
   /events:
+    get:
+      consumes:
+      - application/json
+      description: Get list of events
+      parameters:
+      - description: Filter query
+        in: query
+        name: filter
+        type: string
+      - description: Sort order
+        in: query
+        name: sort
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetEventListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetEventLists
+      tags:
+      - events
     post:
       consumes:
       - application/json
@@ -84,7 +183,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Success
+          description: OK
           schema:
             $ref: '#/definitions/structure.CreateEventResponse'
         "400":
@@ -96,6 +195,35 @@ paths:
           schema:
             type: object
       summary: Create new event
+      tags:
+      - events
+  /events/{event_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a test message
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetEventDataByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetEventDataById
       tags:
       - events
   /test:

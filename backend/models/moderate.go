@@ -5,12 +5,11 @@ import (
 )
 
 type Moderate struct {
-	UserId      string    `gorm:"column:UserId;not null;primaryKey" json:"user_id" binding:"required"`
-	OrganizerId string    `gorm:"column:OrganizerId;not null" json:"organizer_id" binding:"required"`
-	CreatedAt   time.Time `gorm:"column:CreatedAt;autoCreateTime" json:"created_at"`
+	UserId      string    `gorm:"column:user_id;not null;primaryKey" json:"user_id" binding:"required"`
+	OrganizerId string    `gorm:"column:organizer_id;not null" json:"organizer_id" binding:"required"`
+	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 }
 
-
 func (Moderate) TableName() string {
-	return "Moderates"
+	return "moderates"
 }

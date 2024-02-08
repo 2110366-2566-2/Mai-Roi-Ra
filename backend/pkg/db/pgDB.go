@@ -17,13 +17,13 @@ type DbInstance struct {
 
 var DB DbInstance
 
-func InitPgDB() error {
+func InitPgDB() *gorm.DB {
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return err
+		return nil
 	}
 	log.Println("Config path from PG:", cfg)
 
@@ -46,12 +46,5 @@ func InitPgDB() error {
 	log.Println("Connected to PG !")
 	db.Logger = logger.Default.LogMode(logger.Info)
 
-	// log.Println("Running Migrations")
-	// db.AutoMigrate(&models.User{})
-
-	DB = DbInstance{
-		Db: db,
-	}
-
-	return nil
+	return db
 }
