@@ -12,9 +12,9 @@ type Service struct {
 // RepositoryGateway ...
 type ServiceGateway struct {
 	dig.In
-	TestService ITestService
-	EventService IEventService
-	UserService IUserService
+	TestService     ITestService
+	EventService    IEventService
+	LocationService ILocationService
 }
 
 

@@ -173,6 +173,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/locations/{location_id}": {
+            "get": {
+                "description": "Get location by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "GetLocationById",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "location_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetLocationByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -348,6 +392,23 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.GetEventList"
                     }
+                }
+            }
+        },
+        "structure.GetLocationByIdResponse": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "location_name": {
+                    "type": "string"
                 }
             }
         },

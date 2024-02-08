@@ -29,9 +29,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventController.CreateEvent(ctx, &req)
 		})
 		r.GET("/api/v1/events", func(ctx *gin.Context) {
-			req := &st.GetEventListsRequest{
-
-			}
+			req := &st.GetEventListsRequest{}
 			eventController.GetEventLists(ctx, req)
 		})
 		r.GET("/api/v1/events/:id", func(ctx *gin.Context) {
@@ -39,6 +37,20 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 				EventId: ctx.Param("id"),
 			}
 			eventController.GetEventDataById(ctx, req)
+		})
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	err = c.Invoke(func(locationController *controllers.LocationController) {
+		r.GET("/api/v1/locations/:id", func(ctx *gin.Context) {
+			req := st.GetLocationByIdRequest{
+				LocationId: ctx.Param("id"),
+			}
+			locationController.GetLocationById(ctx, req)
 		})
 	})
 
