@@ -22,6 +22,7 @@ type User struct {
 	Address                  string    `gorm:"type:varchar(255);not null"`
 	District                 string    `gorm:"type:varchar(64);not null"`
 	Province                 string    `gorm:"type:varchar(64);not null"`
+	BannerImage              string    `gorm:"type:varchar(1024);not null"`
 }
 
 // TableName specifies the table name for the User model
