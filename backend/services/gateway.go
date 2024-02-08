@@ -15,6 +15,7 @@ type ServiceGateway struct {
 	TestService     ITestService
 	EventService    IEventService
 	LocationService ILocationService
+	UserService 	IUserService
 }
 
 
