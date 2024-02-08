@@ -23,7 +23,6 @@ export default function EventItem ({event}:{event:Event}){
         <div className='h-full flex flex-col justify-start w-full'>
             <div className='flex justify-between'>
                 <h2 className="text-2xl font-semibold">{event.name}</h2>
-                <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm'>Edit event</button>
             </div>
             
             <p className="text-gray-500">{`${event.startDate} - ${event.endDate}`}</p>

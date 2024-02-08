@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import EventItem from '@/components/mairoira/EventItem'
+import EventItem from '@/components/EventItem'
 
 export default function UserHomepage() {
     const mockdata = [
@@ -91,7 +91,7 @@ export default function UserHomepage() {
     
   return (
     <main className="bg-white text-black h-full">
-        <div className='pt-8 pl-10'>
+        <div className='lg:pt-8 pt-2 pl-10'>
             <h1 className='font-bold text-5xl mb-8'>Explore Events</h1>
             <div>
                 <input type="text" id="search-event" name="search-event" placeholder="Search" 
