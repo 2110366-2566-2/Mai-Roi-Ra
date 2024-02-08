@@ -9,6 +9,9 @@ func (c *Container) ControllerProvider() {
 	// if err := c.Container.Provide(controllers.NewController); err != nil {
 	// 	c.Error = err
 	// }
+	if err := c.Container.Provide(controllers.NewUserController); err != nil {
+		c.Error = err
+	}
 
 	if err := c.Container.Provide(controllers.NewTestController); err != nil {
 		c.Error = err

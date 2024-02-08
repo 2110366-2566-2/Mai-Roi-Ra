@@ -17,6 +17,8 @@ type ServiceGateway struct {
 	LocationService ILocationService
 }
 
+
+
 // NewService ...
 func NewService(sg ServiceGateway) *Service {
 	return &Service{
