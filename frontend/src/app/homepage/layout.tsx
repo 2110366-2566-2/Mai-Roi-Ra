@@ -27,7 +27,7 @@ export default async function RootLayout({
         {/* <ReduxProvider> */}
           <NextAuthProvider session={session}>
             <MenuBar />
-            <div className='pl-[20%]'>
+            <div className='lg:pl-[20%]'>
                 {children}
             </div>
           </NextAuthProvider>

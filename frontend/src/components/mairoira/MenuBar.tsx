@@ -13,7 +13,7 @@ export default function MenuBar() {
   console.log(pathname)
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-[20%] bg-white border-r-[1px] border-gray-300 flex flex-col justify-between">
+    <div className="fixed left-0 top-0 h-screen lg:w-[20%] w-[0%] bg-white border-r-[1px] border-gray-300 flex flex-col justify-between">
       <div className='flex flex-col pt-4 pl-4'>
         <div className="p-4">
           <Image className="w-[60px] h-[60px]"
