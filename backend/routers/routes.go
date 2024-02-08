@@ -63,5 +63,21 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		return nil
 	}
 
+	err = c.Invoke(func(userController *controllers.UserController) {
+		r.POST("/api/v1/users", func(ctx *gin.Context) {
+			var req st.CreateUserRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.CreateUser(ctx, &req)
+		})
+	})
+	
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
 	return r
 }

@@ -13,7 +13,7 @@ type User struct {
 	Email                    string    `gorm:"column:email;not null" json:"email"`
 	FirstName                string    `gorm:"column:first_name;not null" json:"first_name"`
 	LastName                 string    `gorm:"column:last_name;not null" json:"last_name"`
-	UserImage                string    `gorm:"column:user_image" json:"user_image"`
+	UserImage                *string    `gorm:"column:user_image" json:"user_image"`
 	CreatedAt                time.Time `gorm:"column:created_at;not null" json:"created_at"`
 }
 
