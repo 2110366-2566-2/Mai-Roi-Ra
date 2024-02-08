@@ -2,17 +2,15 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Response struct {
-	OrganizerID uuid.UUID `gorm:"type:uuid;not null" json:"organizer_id" binding:"required"`
-	PostID      uuid.UUID `gorm:"type:uuid;not null" json:"post_id" binding:"required"`
-	Detail      string    `gorm:"type:varchar(1000)" json:"detail"`
-	CreatedAt   time.Time `gorm:"type:timestamp without time zone;autoCreateTime" json:"created_at"`
+	OrganizerId string    `gorm:"column:organizer_id;not null" json:"organizer_id" binding:"required"`
+	PostId      string    `gorm:"column:post_id;not null" json:"post_id" binding:"required"`
+	Detail      string    `gorm:"column:detail" json:"detail"`
+	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 }
 
 func (Response) TableName() string {
-	return "Responses"
+	return "responses"
 }
