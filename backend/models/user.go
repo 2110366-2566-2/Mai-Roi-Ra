@@ -17,10 +17,10 @@ type User struct {
 	PaymentGatewayCustomerID string    `gorm:"column:payment_gateway_customer_id;not null" json:"payment_gateway_customer_id"`
 	BirthDate                time.Time `gorm:"column:birth_date" json:"birth_date"`
 	UserImage                *string   `gorm:"column:user_image" json:"user_image"`
-	Address                  string    `gorm:"column:address;not null"`
-	District                 string    `gorm:"column:district;not null"`
-	Province                 string    `gorm:"column:province;not null"`
-	BannerImage              string    `gorm:"column:banner_image;not null"`
+	Address                  string    `gorm:"column:address;not null" json:"address"`
+	District                 string    `gorm:"column:district;not null" json:"district"`
+	Province                 string    `gorm:"column:province;not null" json:"province"`
+	BannerImage              string    `gorm:"column:banner_image;not null" json:"banner_image"`
 	CreatedAt                time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 }
 
