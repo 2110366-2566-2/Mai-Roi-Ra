@@ -29,9 +29,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventController.CreateEvent(ctx, &req)
 		})
 		r.GET("/api/v1/events", func(ctx *gin.Context) {
-			req := &st.GetEventListsRequest{
-
-			}
+			req := &st.GetEventListsRequest{}
 			eventController.GetEventLists(ctx, req)
 		})
 		r.GET("/api/v1/events/:id", func(ctx *gin.Context) {
@@ -41,7 +39,19 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventController.GetEventDataById(ctx, req)
 		})
 	})
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
 
+	// User routes setup
+	err = c.Invoke(func(userController *controllers.UserController) {
+		r.GET("/api/v1/users", userController.GetAllUsers)
+		r.GET("/api/v1/users/:id", userController.GetUser)
+		r.POST("/api/v1/users", userController.CreateUser)
+		r.PUT("/api/v1/users/:id", userController.UpdateUser)
+		r.DELETE("/api/v1/users/:id", userController.DeleteUser)
+	})
 	if err != nil {
 		log.Println(err)
 		return nil

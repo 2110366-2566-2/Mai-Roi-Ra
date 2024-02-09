@@ -3,13 +3,11 @@ package models
 // we could use grom model I think it contain ID on it's own so we don't have to create uid or self but that just my research Idk if I'm wrong or not
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // User model struct
 type User struct {
-	gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
+	//gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
 	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
 	Username                 string    `gorm:"type:varchar(255);unique;not null" json:"username"`
 	PhoneNumber              string    `gorm:"type:char(10);unique;not null" json:"phone_number"`

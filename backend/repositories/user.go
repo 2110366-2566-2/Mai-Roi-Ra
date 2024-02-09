@@ -1,10 +1,7 @@
 package repository
 
 import (
-	"log"
-
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -14,16 +11,24 @@ type UserRepository struct {
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
-// oldone-func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
 func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{
 		DB: db,
 	}
 }
 
+// GetAllUsers retrieves all users from the database.
+func (repo *UserRepository) GetAllUsers() ([]models.User, error) {
+	var users []models.User
+	result := repo.DB.Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
+}
+
 // GetUserByID retrieves a user by their ID.
-func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.User, error) {
-	log.Println("[REPO: GetUserByID]: Called")
+func (repo *UserRepository) GetUserByID(userID string) (*models.User, error) {
 	var user models.User
 	result := repo.DB.Where("user_id = ?", userID).First(&user)
 	if result.Error != nil {
@@ -52,7 +57,6 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 
 // CreateUser adds a new user to the database.
 func (repo *UserRepository) CreateUser(user *models.User) error {
-	log.Println("[REPO: CreateUser]: Called")
 	result := repo.DB.Create(user)
 	if result.Error != nil {
 		return result.Error
@@ -61,8 +65,7 @@ func (repo *UserRepository) CreateUser(user *models.User) error {
 }
 
 // UpdateUser updates an existing user in the database.
-func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error {
-	log.Println("[REPO: UpdateUser]: Called")
+func (repo *UserRepository) UpdateUser(user *models.User) error {
 	result := repo.DB.Save(user)
 	if result.Error != nil {
 		return result.Error
@@ -71,8 +74,7 @@ func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error 
 }
 
 // DeleteUser deletes a user from the database.
-func (repo *UserRepository) DeleteUser(c *gin.Context, userID string) error {
-	log.Println("[REPO: DeleteUser]: Called")
+func (repo *UserRepository) DeleteUser(userID string) error {
 	result := repo.DB.Delete(&models.User{}, "user_id = ?", userID)
 	if result.Error != nil {
 		return result.Error

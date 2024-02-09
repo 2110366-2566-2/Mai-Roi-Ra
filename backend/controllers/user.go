@@ -57,7 +57,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully", "user_id": newUser.ID})
+	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully", "user_id": newUser.UserID})
 }
 
 func LoginUser(c *gin.Context) {
@@ -104,6 +104,55 @@ func LoginUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": token})
+}
+
+// GetAllUsers retrieves all users from the database
+func GetAllUsers(c *gin.Context) {
+	users, err := userRepo.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve users"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+// GetUser retrieves a single user by ID
+func GetUser(c *gin.Context) {
+	userID := c.Param("id")
+	user, err := userRepo.GetUserByID(userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+// UpdateUser updates a user's information.
+func UpdateUser(c *gin.Context) {
+	//userID := c.Param("id")
+	var updateData models.User
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Assuming updateData has the ID field populated with userID
+	if err := userRepo.UpdateUser(&updateData); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
+// DeleteUser removes a user from the database
+func DeleteUser(c *gin.Context) {
+	userID := c.Param("id")
+	if err := userRepo.DeleteUser(userID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
 
 // GenerateJWTToken generates a new JWT token for authenticated users
