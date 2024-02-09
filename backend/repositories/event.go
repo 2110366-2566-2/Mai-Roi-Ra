@@ -17,6 +17,7 @@ type IEventRepository interface {
 	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
+	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 }
 
 func NewEventRepository(
@@ -77,6 +78,90 @@ func (r *EventRepository) CreateEvent(req *st.CreateEventRequest) (*st.CreateEve
 	}
 	return &st.CreateEventResponse{
 		EventId: eventModel.EventId,
+	}, nil
+}
+
+func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
+	log.Println("[Repo: UpdateEvent]: Called")
+
+	// Retrieve existing event by ID
+	existingEvent, err := r.GetEventDataById(req.EventId)
+	if err != nil {
+		log.Println("[Repo: UpdateEvent] Error getting existing event:", err)
+		return nil, err
+	}
+
+	// Update fields based on the request
+	if req.StartDate != "" {
+		startDate, err := utils.StringToTime(req.StartDate)
+		if err != nil {
+			log.Println("[Repo: UpdateEvent] Error parsing StartDate to time.Time format:", err)
+			return nil, err
+		}
+		existingEvent.StartDate = startDate
+	}
+
+	if req.EndDate != "" {
+		endDate, err := utils.StringToTime(req.EndDate)
+		if err != nil {
+			log.Println("[Repo: UpdateEvent] Error parsing EndDate to time.Time format:", err)
+			return nil, err
+		}
+		existingEvent.EndDate = endDate
+	}
+	
+	existingEvent.Status = req.Status
+	existingEvent.ParticipantFee = req.ParticipantFee
+	existingEvent.Description = req.Description
+	existingEvent.EventName = req.EventName
+
+	if req.Deadline != "" {
+		deadline, err := utils.StringToTime(req.Deadline)
+		if err != nil {
+			log.Println("[Repo: UpdateEvent] Error parsing Deadline to time.Time format:", err)
+			return nil, err
+		}
+		existingEvent.Deadline = deadline
+	}
+
+	existingEvent.Activities = req.Activities
+	existingEvent.EventImage = req.EventImage
+
+	if req.EventImage != nil {
+		existingEvent.EventImage = req.EventImage
+	}
+
+	
+	// Update other fields as needed...
+
+	// Start a transaction
+	trans := r.db.Begin().Debug()
+
+	// Update the event in the database
+	if err := trans.Save(&existingEvent).Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err := trans.Commit().Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: UpdateEvent] Error committing transaction:", err)
+		return nil, err
+	}
+
+	return &st.UpdateEventResponse{
+		EventId:         existingEvent.EventId,
+		StartDate:       existingEvent.StartDate,
+		EndDate:         existingEvent.EndDate,
+		Status:          existingEvent.Status,
+		ParticipantFee:  existingEvent.ParticipantFee,
+		Description:     existingEvent.Description,
+		EventName:       existingEvent.EventName,
+		Deadline:        existingEvent.Deadline,
+		Activities:      existingEvent.Activities,
+		EventImage:      existingEvent.EventImage,
 	}, nil
 }
 

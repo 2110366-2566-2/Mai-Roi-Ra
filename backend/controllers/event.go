@@ -44,6 +44,18 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventReque
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (c *EventController) UpdateEvent(ctx *gin.Context, req *st.UpdateEventRequest) {
+	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: UpdateEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+
 // @Summary GetEventLists
 // @Description Get list of events
 // @Tags events

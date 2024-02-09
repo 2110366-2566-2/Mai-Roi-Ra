@@ -38,6 +38,16 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			eventController.GetEventDataById(ctx, req)
 		})
+		r.PUT("/api/v1/events/:id", func(ctx *gin.Context) {
+			var req st.UpdateEventRequest
+			if err := ctx.BindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			req.EventId = ctx.Param("id")
+			eventController.UpdateEvent(ctx, &req)
+		})
+
 	})
 
 	if err != nil {
@@ -85,7 +95,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			userController.CreateUser(ctx, &req)
 		})
 	})
-	
+
 	if err != nil {
 		log.Println(err)
 		return nil

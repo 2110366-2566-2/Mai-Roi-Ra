@@ -17,6 +17,7 @@ type IEventService interface {
 	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error)
 	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
+	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 }
 
 func NewEventService(
@@ -92,4 +93,16 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 		LocationName:   resLocation.LocationName,
 	}
 	return res, nil
+}
+
+func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
+	log.Println("[Service: UpdateEvent]: Called")
+	// Update the event using the repository
+	updatedEvent, err := s.RepositoryGateway.EventRepository.UpdateEvent(req)
+	if err != nil {
+		log.Println("[Service: UpdateEvent] Error updating event:", err)
+		return nil, err
+	}
+
+	return updatedEvent, nil
 }
