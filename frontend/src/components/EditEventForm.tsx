@@ -160,16 +160,16 @@ const EditEventForm = () => {
                 {/* Button */}
                 <div className="w-full flex flex-row flex-wrap justify-around mt-[25px] lg:mb-[0px] mb-[30px]">
                     <div className="">
-                        <button className="bg-red-500 lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
-                        text-[10px] rounded-full text-white"
+                        <button className="bg-[#D9D5D2] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
+                        text-[10px] rounded-ful"
                         onClick={() => router.push("/homepage/organizer")}>
                             Cancel
                         </button>
                     </div>
                     
                     <div className="">
-                        <button type="submit" className="bg-blue-400 lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] 
-                        lg:text-[17px] md:text-[13px] text-[10px] rounded-full text-white">
+                        <button type="submit" className="bg-[#F2D22E] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] 
+                        lg:text-[17px] md:text-[13px] text-[10px] rounded-full">
                             Done
                         </button>
                     </div>
