@@ -4,12 +4,7 @@ import (
 	"log"
 
 	container "github.com/2110366-2566-2/Mai-Roi-Ra/backend/container"
-	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
-	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/routers"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title           Mai-Roi-Ra Swagger API
@@ -36,22 +31,6 @@ func main() {
 
 	r := routers.SetupRouter(c.Container)
 
-	if err := db.InitPgDB(); err != nil {
-		log.Fatal("Error connecting to the database:", err)
-	}
-
-	//initialize everything and inject the UserRepository into the controller
-	controllers.InitializeUserController(repository.NewUserRepository(db.DB.Db))
-
-	r.GET("/api/v1/test", controllers.GetTest)
-	r.POST("/api/v1/events", controllers.CreateEvent)
-	r.PUT("/api/v1/events/:eventid", controllers.UpdateEvent)
-	r.DELETE("/api/v1/events/:eventid", controllers.DeleteEvent)
-
-	// Initialize swagger docs
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	r.Run(":8080")
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
