@@ -45,14 +45,13 @@ export default function MenuBar({onDevice} : Props) {
           </div>
       </div> : 
         (!onVisible) ?  
-        <div className="w-[50px] h-[50px] mt-[20px] ml-[20px]">
-          <Image className="cursor-pointer"
+        <div className="w-[50px] h-[50px] mt-[20px] ml-[20px] cursor-pointer"
+        onClick={()=>{setOnVisible(true)}}>
+          <Image 
             src="/img/menu.png"
             alt="Failed To Load Image"
             width={1000}
-            height={1000} 
-            onClick={()=>{setOnVisible(true)}}
-          />
+            height={1000}/>
         </div> : <MenuPopup onPath={1} onVisible={onVisible} onClose={()=>setOnVisible(false)}/>
     }
     </div>

@@ -22,7 +22,7 @@ const SuccessModal = ({topic,isVisible,onClose} : Props) => {
 
                 <div className="w-full flex flex-row flex-wrap justify-end cursor-pointer">
                     <Image className="w-[69px] h-[63px]"
-                    onClick={handlerClose}
+                        onClick={handlerClose}
                         src="/img/cancel.png"
                         alt="Failed To Load Image"
                         width={1000}
