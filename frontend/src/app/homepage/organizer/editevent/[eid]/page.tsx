@@ -1,26 +1,18 @@
 import styles from "@/styles/FontPage.module.css"
 import EditEventForm from "@/components/CreateEventForm";
 
-const CreateEvent = () => {
-    return (
-        <div className="w-[87%] h-screen border-r-[1px] border-gray-300">
-            
-            {/* Topic */}
-            <div className={`${styles.Roboto} w-full flex flex-row flex-wrap justify-between h-[20%] 
-            border-b-[1px] border-gray-300 py-[2%] pr-[3%] pl-[5%]`}>
-                
-                <div className="text-[85px] font-black h-fit w-fit mt-[20px]">
-                    Edit Event
-                </div>
-                
-                <div className="rounded-md w-fit bg-teal-200 h-fit p-[10px] shadow-gray-400 shadow-md">
-                    Organizer Mode
-                </div>
+interface Props {
+    params : {eid:string}
+}
 
-            </div>
+const EditEvent = ({params}: Props) => {
+    return (
+        <div className='lg:pt-8 pt-2 px-10 text-black'>
+            {/* Topic */}
+            <h1 className='font-bold lg:text-5xl text-3xl lg:mb-[50px] md:mb-7 mb-5'>Edit Event</h1>
 
             {/* Form */}
-            <div className="w-full h-[80%]">
+            <div className="">
                 <EditEventForm/>
             </div>
 
@@ -28,4 +20,7 @@ const CreateEvent = () => {
     )
 }
 
-export default CreateEvent;
+export default EditEvent;
+export async function generateStaticParams(){
+    return [{eid:"001"},{eid:"002"},{eid:"003"},{eid:"004"}]
+}

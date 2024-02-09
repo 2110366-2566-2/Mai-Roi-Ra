@@ -3,24 +3,12 @@ import CreateEventForm from "@/components/CreateEventForm";
 
 const CreateEvent = () => {
     return (
-        <div className="lg:w-[87%] w-screen lg:h-screen lg:border-r-[1px] border-gray-300 text-black">
-            
+        <div className='lg:pt-8 pt-2 px-10 text-black'>
             {/* Topic */}
-            <div className={`${styles.Roboto} w-full flex flex-row flex-wrap justify-between h-[20%] 
-            border-b-[1px] border-gray-300 py-[2%] pr-[5%] pl-[5%]`}>
-                
-                <div className="lg:text-[85px] md:text-[70px] sm:text-[60px]  text-[50px] font-black h-fit w-fit mt-[20px]">
-                    Create Event
-                </div>
-                
-                <div className="rounded-md w-fit bg-teal-200 h-fit p-[10px] shadow-gray-400 shadow-md">
-                    Organizer Mode
-                </div>
-
-            </div>
+            <h1 className='font-bold lg:text-5xl text-3xl lg:mb-[50px] md:mb-7 mb-5'>Create Event</h1>
 
             {/* Form */}
-            <div className="w-full lg:h-[80%] flex flex-row justify-center">
+            <div className="">
                 <CreateEventForm/>
             </div>
 

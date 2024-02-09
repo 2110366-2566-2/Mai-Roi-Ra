@@ -45,9 +45,9 @@ export default function MenuBar({onDevice} : Props) {
           </div>
       </div> : 
         (!onVisible) ?  
-        <div className="w-[50px] h-[50px] mt-[20px] ml-[20px] cursor-pointer"
+        <div className="md:w-[50px] md:h-[50px] h-[25px] w-[25px] md:mt-[20px] mt-[10px] ml-[20px] cursor-pointer"
         onClick={()=>{setOnVisible(true)}}>
-          <Image 
+          <Image className="w-fit h-fit"
             src="/img/menu.png"
             alt="Failed To Load Image"
             width={1000}
