@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import EventItem from '@/components/EventItem'
+import MenuPopup from '@/components/MenuPopup'
 
 export default function UserHomepage() {
     const mockdata = [
@@ -105,8 +106,6 @@ export default function UserHomepage() {
                     <EventItem key={index} event={event} />
                 ))}
         </div>
-
-
     </main>
   )
 }

@@ -6,6 +6,7 @@ import HomeIcon from '@mui/icons-material/HomeOutlined';
 import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import { useState } from 'react';
+import MenuPopup from './MenuPopup';
 
 interface Props {
   onDevice : String
@@ -13,6 +14,7 @@ interface Props {
 
 export default function MenuBar({onDevice} : Props) {
   const pathname = usePathname(); 
+  const [onVisible,setOnVisible] = useState(false);
   console.log(pathname)
 
   return (
@@ -42,14 +44,16 @@ export default function MenuBar({onDevice} : Props) {
             </button>
           </div>
       </div> : 
-
-      <div className="w-[50px] h-[50px] mt-[20px] ml-[20px]">
-        <Image className="cursor-pointer"
-          src="/img/menu.png"
-          alt="Failed To Load Image"
-          width={1000}
-          height={1000} />
-      </div>
+        (!onVisible) ?  
+        <div className="w-[50px] h-[50px] mt-[20px] ml-[20px]">
+          <Image className="cursor-pointer"
+            src="/img/menu.png"
+            alt="Failed To Load Image"
+            width={1000}
+            height={1000} 
+            onClick={()=>{setOnVisible(true)}}
+          />
+        </div> : <MenuPopup onPath={1} onVisible={onVisible} onClose={()=>setOnVisible(false)}/>
     }
     </div>
   );
