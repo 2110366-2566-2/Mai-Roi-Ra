@@ -12,9 +12,13 @@ type Service struct {
 // RepositoryGateway ...
 type ServiceGateway struct {
 	dig.In
-	TestService ITestService
-	EventService IEventService
+	TestService     ITestService
+	EventService    IEventService
+	LocationService ILocationService
+	UserService 	IUserService
 }
+
+
 
 // NewService ...
 func NewService(sg ServiceGateway) *Service {

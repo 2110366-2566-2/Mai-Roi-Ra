@@ -2,8 +2,11 @@ package repository
 
 import (
 	"log"
+	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -13,16 +16,24 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
+type IUserRepository interface {
+	GetUserByID(userID string) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
+	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse,error);
+}
+	
 // NewUserRepository creates a new instance of the UserRepository.
 // oldone-func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
-func NewUserRepository(db *gorm.DB) *UserRepository {
+func NewUserRepository(
+	DB *gorm.DB,
+) IUserRepository {
 	return &UserRepository{
-		DB: db,
+		DB: DB,
 	}
 }
 
 // GetUserByID retrieves a user by their ID.
-func (repo *UserRepository) GetUserByID(c *gin.Context, userID string) (*models.User, error) {
+func (repo *UserRepository) GetUserByID(userID string) (*models.User, error) {
 	log.Println("[REPO: GetUserByID]: Called")
 	var user models.User
 	result := repo.DB.Where("user_id = ?", userID).First(&user)
@@ -51,14 +62,44 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 }
 
 // CreateUser adds a new user to the database.
-func (repo *UserRepository) CreateUser(user *models.User) error {
-	log.Println("[REPO: CreateUser]: Called")
-	result := repo.DB.Create(user)
-	if result.Error != nil {
-		return result.Error
+func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*st.CreateUserResponse, error) {
+	log.Println("[Repo: CreateUser]: Called")
+	birthDate, err := utils.StringToTime(req.BirthDate)
+	if err != nil {
+		log.Println("[Repo: CreateUser] Error parsing BirthDate to time.Time format:", err)
+		return nil, err
 	}
-	return nil
+
+	userModel := models.User{
+		UserID:                   utils.GenerateUUID(),
+		PaymentGatewayCustomerID: utils.GenerateUUID(),
+		PhoneNumber:              req.PhoneNumber,
+		BirthDate:                birthDate,
+		Email:                    req.Email,
+		FirstName:                req.FirstName,
+		LastName:                 req.LastName,
+		UserImage:                req.UserImage,
+		CreatedAt:                time.Now(),
+	}
+
+	trans := r.DB.Begin().Debug()
+	if err := trans.Create(&userModel).Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateUser]: Insert data in Users table error:", err)
+		return nil, err
+	}
+
+	if err := trans.Commit().Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateUser]: Call ORM DB Commit error:", err)
+		return nil, err
+	}
+
+	return &st.CreateUserResponse{
+		UserId: userModel.UserID, // Assuming your User model has an ID field
+	}, nil
 }
+
 
 // UpdateUser updates an existing user in the database.
 func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error {
