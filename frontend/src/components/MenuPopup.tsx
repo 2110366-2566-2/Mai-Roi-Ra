@@ -21,8 +21,8 @@ const MenuPopup = ({onPath,onVisible,onClose} : Props) => {
 
     return (
         <div className="w-screen h-screen fixed inset-0 flex flex-row justify-center items-center 
-        bg-opacity-25 bg-black text-black">
-            <div className="fixed left-0 top-0 h-screen w-[300px] bg-white border-r-[1px] border-gray-300 flex flex-col justify-between">
+        bg-opacity-25 bg-black text-black z-10">
+            <div className="fixed left-0 top-0 h-screen w-[70%] bg-white border-r-[1px] border-gray-300 flex flex-col justify-between">
   
                 <div className='flex flex-col pt-4 pl-4'>
                     <div className="h-fit">
