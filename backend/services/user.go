@@ -13,7 +13,7 @@ type UserService struct {
 }
 
 type IUserService interface {
-	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse,error);
+	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -22,7 +22,7 @@ func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
 	}
 }
 
-func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserResponse,error) {
+func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserResponse, error) {
 	log.Println("[Service: CreateUser]: Called")
 	res, err := s.RepositoryGateway.UserRepository.CreateUser(req)
 	if err != nil {
