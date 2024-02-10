@@ -39,19 +39,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventController.GetEventDataById(ctx, req)
 		})
 	})
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
 
-	// User routes setup
-	err = c.Invoke(func(userController *controllers.UserController) {
-		r.GET("/api/v1/users", userController.GetAllUsers)
-		r.GET("/api/v1/users/:id", userController.GetUser)
-		r.POST("/api/v1/users", userController.CreateUser)
-		r.PUT("/api/v1/users/:id", userController.UpdateUser)
-		r.DELETE("/api/v1/users/:id", userController.DeleteUser)
-	})
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -88,16 +76,55 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	}
 
 	err = c.Invoke(func(userController *controllers.UserController) {
-		r.POST("/api/v1/users", func(ctx *gin.Context) {
-			var req st.CreateUserRequest
+		r.POST("/api/v1/login", func(ctx *gin.Context) {
+			var req st.LoginUserRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			userController.CreateUser(ctx, &req)
+			userController.LoginUser(ctx, &req)
+		})
+		r.POST("/api/v1/logout", func(ctx *gin.Context) {
+			//var req st.LoginUserRequest
+			//if err := ctx.ShouldBindJSON(&req); err != nil {
+			//	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			//	return
+			//}
+			//userController.LoginUser(ctx, &req)
+		})
+
+		r.GET("/api/v1/users", func(ctx *gin.Context) {
+			userController.GetAllUsers(ctx)
+		})
+		r.GET("/api/v1/users/:id", func(ctx *gin.Context) {
+			req := st.GetUserRequest{
+				ID: ctx.Param("id"),
+			}
+			userController.GetUser(ctx, &req)
+		})
+		r.POST("/api/v1/users", func(ctx *gin.Context) {
+			var req st.RegisterUserRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.RegisterUser(ctx, &req)
+		})
+		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
+			var req st.UpdateUserRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.UpdateUser(ctx, &req)
+		})
+		r.DELETE("/api/v1/users/:id", func(ctx *gin.Context) {
+			req := st.DeleteUserRequest{
+				ID: ctx.Param("id"),
+			}
+			userController.DeleteUser(ctx, &req)
 		})
 	})
-	
 	if err != nil {
 		log.Println(err)
 		return nil

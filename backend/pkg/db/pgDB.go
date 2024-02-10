@@ -11,13 +11,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type DbInstance struct {
-	Db *gorm.DB
-}
-
-var DB DbInstance
-
-func InitPgDB() *gorm.DB {
+func InitPgDB() (*gorm.DB) {
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
