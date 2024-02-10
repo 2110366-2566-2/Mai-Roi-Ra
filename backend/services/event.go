@@ -18,6 +18,7 @@ type IEventService interface {
 	GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error)
 	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
+	DeleteEventById(eventId string) (string, error)
 }
 
 func NewEventService(
@@ -105,4 +106,17 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	}
 
 	return updatedEvent, nil
+}
+
+func (s *EventService) DeleteEventById(eventId string) (string, error) {
+    log.Println("[Service: DeleteEvent]: Called")
+
+    // Delete the event using the repository
+    deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(eventId)
+    if err != nil {
+        log.Println("[Service: DeleteEvent] Error deleting event:", err)
+        return "", err
+    }
+
+    return deleteMessage, nil
 }

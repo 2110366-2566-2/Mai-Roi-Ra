@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
@@ -18,6 +19,7 @@ type IEventRepository interface {
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
+	DeleteEventById(eventId string) (string, error)
 }
 
 func NewEventRepository(
@@ -84,85 +86,76 @@ func (r *EventRepository) CreateEvent(req *st.CreateEventRequest) (*st.CreateEve
 func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
 	log.Println("[Repo: UpdateEvent]: Called")
 
-	// Retrieve existing event by ID
-	existingEvent, err := r.GetEventDataById(req.EventId)
+	startDate, err := utils.StringToTime(req.StartDate)
 	if err != nil {
-		log.Println("[Repo: UpdateEvent] Error getting existing event:", err)
+		log.Println("[Repo: Updatevent] Error parsing StartDate to time.Time format:", err)
+		return nil, err
+	}
+	endDate, err := utils.StringToTime(req.EndDate)
+	if err != nil {
+		log.Println("[Repo: UpdateEvent] Error parsing EndDate to time.Time format:", err)
+		return nil, err
+	}
+	deadline, err := utils.StringToTime(req.Deadline)
+	if err != nil {
+		log.Println("[Repo: UpdateEvent] Error parsing Deadline to time.Time format:", err)
 		return nil, err
 	}
 
-	// Update fields based on the request
-	if req.StartDate != "" {
-		startDate, err := utils.StringToTime(req.StartDate)
-		if err != nil {
-			log.Println("[Repo: UpdateEvent] Error parsing StartDate to time.Time format:", err)
-			return nil, err
-		}
-		existingEvent.StartDate = startDate
+	eventImage := req.EventImage
+	emptyString := ""
+	if eventImage == nil {
+		eventImage = &emptyString
 	}
 
-	if req.EndDate != "" {
-		endDate, err := utils.StringToTime(req.EndDate)
-		if err != nil {
-			log.Println("[Repo: UpdateEvent] Error parsing EndDate to time.Time format:", err)
-			return nil, err
-		}
-		existingEvent.EndDate = endDate
-	}
-	
-	existingEvent.Status = req.Status
-	existingEvent.ParticipantFee = req.ParticipantFee
-	existingEvent.Description = req.Description
-	existingEvent.EventName = req.EventName
-
-	if req.Deadline != "" {
-		deadline, err := utils.StringToTime(req.Deadline)
-		if err != nil {
-			log.Println("[Repo: UpdateEvent] Error parsing Deadline to time.Time format:", err)
-			return nil, err
-		}
-		existingEvent.Deadline = deadline
-	}
-
-	existingEvent.Activities = req.Activities
-	existingEvent.EventImage = req.EventImage
-
-	if req.EventImage != nil {
-		existingEvent.EventImage = req.EventImage
-	}
-
-	
-	// Update other fields as needed...
-
-	// Start a transaction
-	trans := r.db.Begin().Debug()
-
-	// Update the event in the database
-	if err := trans.Save(&existingEvent).Error; err != nil {
-		trans.Rollback()
-		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
-		return nil, err
-	}
-
-	// Commit the transaction
-	if err := trans.Commit().Error; err != nil {
-		trans.Rollback()
-		log.Println("[Repo: UpdateEvent] Error committing transaction:", err)
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+	Updates(map[string]interface{}{
+		"StartDate":      startDate,
+		"EndDate":        endDate,
+		"Status":         req.Status,
+		"ParticipantFee": req.ParticipantFee,
+		"Description":    req.Description,
+		"EventName":      req.EventName,
+		"Deadline":       deadline,
+		"Activities":     req.Activities,
+		"EventImage":     req.EventImage,
+	}).Error; err != nil {
+	log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+	return nil, err
+}
+	// Retrieve the updated event
+	updatedEvent, err := r.GetEventDataById(req.EventId)
+	if err != nil {
+		log.Println("[Repo: UpdateEvent] Error retrieving updated event:", err)
 		return nil, err
 	}
 
 	return &st.UpdateEventResponse{
-		EventId:         existingEvent.EventId,
-		StartDate:       existingEvent.StartDate,
-		EndDate:         existingEvent.EndDate,
-		Status:          existingEvent.Status,
-		ParticipantFee:  existingEvent.ParticipantFee,
-		Description:     existingEvent.Description,
-		EventName:       existingEvent.EventName,
-		Deadline:        existingEvent.Deadline,
-		Activities:      existingEvent.Activities,
-		EventImage:      existingEvent.EventImage,
+		EventId:         updatedEvent.EventId,
+		StartDate:       updatedEvent.StartDate,
+		EndDate:         updatedEvent.EndDate,
+		Status:          updatedEvent.Status,
+		ParticipantFee:  updatedEvent.ParticipantFee,
+		Description:     updatedEvent.Description,
+		EventName:       updatedEvent.EventName,
+		Deadline:        updatedEvent.Deadline,
+		Activities:      updatedEvent.Activities,
+		EventImage:      updatedEvent.EventImage,
 	}, nil
+}
+
+func (r *EventRepository) DeleteEventById(eventId string) (string, error) {
+	log.Println("[Repo: DeleteEventById]: Called")
+
+	// Delete the event from the database
+	if err := r.db.Where("event_id = ?", eventId).Delete(&models.Event{}).Error; err != nil {
+		log.Println("[Repo: DeleteEventById] Error deleting event from Events table:", err)
+		return "", err
+	}
+
+	// Return a success message
+	successMessage := fmt.Sprintf("Event with ID %s deleted successfully", eventId)
+	return successMessage, nil
 }
 
 func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error) {

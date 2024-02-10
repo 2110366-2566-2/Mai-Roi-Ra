@@ -55,6 +55,17 @@ func (c *EventController) UpdateEvent(ctx *gin.Context, req *st.UpdateEventReque
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (c *EventController) DeleteEventById(ctx *gin.Context, eventID string) {
+    deleteMessage, err := c.ServiceGateway.EventService.DeleteEventById(eventID)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    log.Println("[CTRL: DeleteEvent] Output:", deleteMessage)
+    ctx.JSON(http.StatusOK, gin.H{"message": deleteMessage})
+}
+
 
 // @Summary GetEventLists
 // @Description Get list of events
