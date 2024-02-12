@@ -1,115 +1,114 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS Admins (
-    AdminId CHAR(10) NOT NULL,
-    Password VARCHAR(64) NOT NULL,
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (AdminId),
-    CONSTRAINT check_AdminId_length CHECK(LENGTH(AdminId) = 10)
+    admin_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
+    password VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (admin_id)
 );
 
-CREATE TABLE IF NOT EXISTS Users (
-    UserId CHAR(10) NOT NULL,
-    PaymentGatewayCustomerId CHAR(10) NOT NULL,
-    PhoneNumber CHAR(10) NOT NULL,
-    BirthDate DATE,
-    Email VARCHAR(64) NOT NULL,
-    FirstName VARCHAR(64) NOT NULL,
-    LastName VARCHAR(64) NOT NULL,
-    UserImage VARCHAR(1024),
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (UserId),
-    CONSTRAINT check_UserId_length CHECK (LENGTH(UserId) = 10),
-    CONSTRAINT check_Phone_length CHECK (LENGTH(PhoneNumber) = 10)
+CREATE TABLE IF NOT EXISTS users (
+    user_id VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    phone_number CHAR(10) UNIQUE NOT NULL,
+    email VARCHAR(64) UNIQUE NOT NULL,
+    first_name VARCHAR(64) NOT NULL,
+    last_name VARCHAR(64) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    payment_gateway_customer_id CHAR(10) NOT NULL,
+    birth_date DATE NOT NULL,
+    user_image VARCHAR(1024) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    district VARCHAR(64) NOT NULL,
+    province VARCHAR(64) NOT NULL,
+    banner_image VARCHAR(1024) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id),
+    CONSTRAINT check_phone_length CHECK (LENGTH(phone_number) = 10)
 );
 
 CREATE TABLE IF NOT EXISTS Organizers (
-    OrganizerId CHAR(10) NOT NULL,
-    OfficeHours TIMESTAMP[] NOT NULL,
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    UserId CHAR(10) NOT NULL,
-    PRIMARY KEY (OrganizerId),
-    CONSTRAINT fk_user FOREIGN KEY (UserId)
-    REFERENCES Users(UserId)
-    ON DELETE CASCADE,
-    CONSTRAINT check_OrganizerId_length CHECK (LENGTH(OrganizerId) = 10)
+    organizer_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
+    office_hours TIMESTAMP[] NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (organizer_id)
 );
 
 CREATE TABLE IF NOT EXISTS Moderates (
-    UserId CHAR(10) NOT NULL,
-    OrganizerId CHAR(10) NOT NULL,
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY (UserId)
-    REFERENCES Users(UserId) ON DELETE CASCADE,
-    CONSTRAINT fk_organizer FOREIGN KEY (OrganizerId)
-    REFERENCES Organizers(OrganizerId) ON DELETE CASCADE
+    user_id VARCHAR(36) NOT NULL,
+    organizer_id VARCHAR(36) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY (user_id)
+    REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_organizer FOREIGN KEY (organizer_id)
+    REFERENCES organizers(organizer_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Locations (
-    LocationId CHAR(10) NOT NULL,
-    Country VARCHAR(64) NOT NULL,
-    City VARCHAR(64) NOT NULL,
-    District VARCHAR(64) NOT NULL,
-    LocationName VARCHAR(64) NOT NULL,
-    PRIMARY KEY (LocationId),
-    CONSTRAINT check_LocationId_length CHECK (LENGTH(LocationId) = 10)
+    location_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
+    country VARCHAR(64) NOT NULL,
+    city VARCHAR(64) NOT NULL,
+    district VARCHAR(64) NOT NULL,
+    location_name VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (location_id)
 );
 
 CREATE TABLE IF NOT EXISTS Events (
-    EventId CHAR(10) NOT NULL,
-    StartDate DATE NOT NULL,
-    EndDate DATE NOT NULL,
-    Status TEXT NOT NULL CHECK (Status IN ('Approved', 'Rejected', 'Waiting')),
-    Participantfee DOUBLE PRECISION NOT NULL,
-    Description VARCHAR(1000),
-    EventName VARCHAR(64) NOT NULL,
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    Deadline DATE NOT NULL,
-    Activities CHAR(10) NOT NULL,
-    EventImage VARCHAR(1024),
-    OrganizerId CHAR(10) NOT NULL,
-    AdminId CHAR(10) NOT NULL,
-    LocationId CHAR(10) NOT NULL,
-    PRIMARY KEY (EventId),
-    CONSTRAINT fk_organizer FOREIGN KEY (OrganizerId)
-    REFERENCES Organizers(OrganizerId) ON DELETE CASCADE,
-    CONSTRAINT fk_admin FOREIGN KEY (AdminId)
-    REFERENCES Admins(AdminId) ON DELETE CASCADE,
-    CONSTRAINT fk_location FOREIGN KEY (LocationId)
-    REFERENCES Locations(LocationId) ON DELETE CASCADE,
-    CONSTRAINT check_EventId_length CHECK (LENGTH(EventId) = 10)
+    event_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
+    organizer_id VARCHAR(36) NOT NULL,
+    admin_id VARCHAR(36) NOT NULL,
+    location_id VARCHAR(36) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('Approved', 'Rejected', 'Waiting')),
+    participant_fee DOUBLE PRECISION NOT NULL,
+    description VARCHAR(1000),
+    event_name VARCHAR(64) NOT NULL,
+    deadline DATE NOT NULL,
+    activities VARCHAR(36) NOT NULL,
+    event_image VARCHAR(1024),
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (event_id),
+    CONSTRAINT fk_organizer FOREIGN KEY (organizer_id)
+    REFERENCES organizers(organizer_id) ON DELETE CASCADE,
+    CONSTRAINT fk_admin FOREIGN KEY (admin_id)
+    REFERENCES admins(admin_id) ON DELETE CASCADE,
+    CONSTRAINT fk_location FOREIGN KEY (location_id)
+    REFERENCES locations(location_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Posts (
-    PostId CHAR(10) NOT NULL,
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PostImage VARCHAR(1024),
+    post_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
+    user_id VARCHAR(36) NOT NULL,
+    post_image VARCHAR(1024),
     caption VARCHAR(1000),
-    RatingScore INT NOT NULL,
-    UserId CHAR(10) NOT NULL,
-    PRIMARY KEY (PostId),
-    CONSTRAINT fk_user FOREIGN KEY (UserId)
-    REFERENCES Users(UserId) ON DELETE CASCADE,
-    CONSTRAINT check_PostId_length CHECK (LENGTH(PostId) = 10)
+    rating_score INT NOT NULL CHECK (rating_score BETWEEN 1 AND 5),
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (post_id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id)
+    REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Responses (
-    OrganizerId CHAR(10) NOT NULL,
-    PostId CHAR(10) NOT NULL,
-    Detail CHAR(1000),
-    CreatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    CONSTRAINT fk_organizer FOREIGN KEY (OrganizerId)
-    REFERENCES Organizers(OrganizerId) ON DELETE CASCADE,
-    CONSTRAINT fk_post FOREIGN KEY (PostId)
-    REFERENCES Posts(PostId) ON DELETE CASCADE
+    organizer_id VARCHAR(36) NOT NULL,
+    post_id VARCHAR(36) NOT NULL,
+    detail VARCHAR(1000),
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_organizer FOREIGN KEY (organizer_id)
+    REFERENCES organizers(organizer_id) ON DELETE CASCADE,
+    CONSTRAINT fk_post FOREIGN KEY (post_id)
+    REFERENCES posts(post_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Reviews (
-    UserId CHAR(10) NOT NULL,
-    EventId CHAR(10) NOT NULL,
-    PostId CHAR(10) NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY (UserId)
-    REFERENCES Users(UserId) ON DELETE CASCADE,
-    CONSTRAINT fk_post FOREIGN KEY (PostId)
-    REFERENCES Posts(PostId) ON DELETE CASCADE,
-    CONSTRAINT fk_event FOREIGN KEY (EventId)
-    REFERENCES Events(EventId) ON DELETE CASCADE
+    user_id VARCHAR(36) NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
+    post_id VARCHAR(36) NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id)
+    REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_post FOREIGN KEY (post_id)
+    REFERENCES posts(post_id) ON DELETE CASCADE,
+    CONSTRAINT fk_event FOREIGN KEY (event_id)
+    REFERENCES events(event_id) ON DELETE CASCADE
 );

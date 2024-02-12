@@ -1,34 +1,30 @@
 package models
 
+// we could use grom model I think it contain ID on it's own so we don't have to create uid or self but that just my research Idk if I'm wrong or not
 import (
 	"time"
 )
 
 // User model struct
 type User struct {
-	UserID                   string    `gorm:"type:char(10);not null;primaryKey" json:"user_id"`
-	PaymentGatewayCustomerID string    `gorm:"type:char(10);not null" json:"payment_gateway_customer_id"`
-	PhoneNumber              string    `gorm:"type:char(10);not null;check:phone_length" json:"phone_number"`
-	BirthDate                time.Time `gorm:"type:date" json:"birth_date"`
-	Email                    string    `gorm:"type:varchar(64);not null" json:"email"`
-	FirstName                string    `gorm:"type:varchar(64);not null" json:"first_name"`
-	LastName                 string    `gorm:"type:varchar(64);not null" json:"last_name"`
-	UserImage                string    `gorm:"type:varchar(1024)" json:"user_image"`
-	CreatedAt                time.Time `gorm:"type:timestamp without time zone;not null" json:"created_at"`
+	//gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
+	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
+	Username                 string    `gorm:"column:username;not null" json:"username"`
+	PhoneNumber              string    `gorm:"column:phone_number;not null;check:phone_length" json:"phone_number"`
+	Email                    string    `gorm:"column:email;not null" json:"email"`
+	FirstName                string    `gorm:"column:first_name;not null" json:"first_name"`
+	LastName                 string    `gorm:"column:last_name;not null" json:"last_name"`
+	Password                 string    `gorm:"column:password;not null" json:"-"` // Excluded from JSON responses
+	PaymentGatewayCustomerID string    `gorm:"column:payment_gateway_customer_id;not null" json:"payment_gateway_customer_id"`
+	BirthDate                time.Time `gorm:"column:birth_date" json:"birth_date"`
+	UserImage                *string   `gorm:"column:user_image" json:"user_image"`
+	Address                  string    `gorm:"column:address;not null" json:"address"`
+	District                 string    `gorm:"column:district;not null" json:"district"`
+	Province                 string    `gorm:"column:province;not null" json:"province"`
+	BannerImage              string    `gorm:"column:banner_image;not null" json:"banner_image"`
+	CreatedAt                time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 }
 
-// TableName specifies the table name for the User model
 func (User) TableName() string {
-	return "Users"
-}
-
-// CustomValidator struct to define custom validation rules
-type CustomValidator struct{}
-
-// ValidatePhoneLength is a custom validator function for phone length
-func (CustomValidator) ValidatePhoneLength(field interface{}) bool {
-	if phone, ok := field.(string); ok {
-		return len(phone) == 10
-	}
-	return false
+	return "users"
 }

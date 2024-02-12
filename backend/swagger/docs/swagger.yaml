@@ -1,6 +1,123 @@
 basePath: /api/v1
 definitions:
-  controllers.TestResponse:
+  structure.CreateEventRequest:
+    properties:
+      activities:
+        type: string
+      admin_id:
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_id:
+        type: string
+      organizer_id:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+    required:
+    - activities
+    - admin_id
+    - deadline
+    - description
+    - end_date
+    - event_name
+    - location_id
+    - organizer_id
+    - participant_fee
+    - start_date
+    - status
+    type: object
+  structure.CreateEventResponse:
+    properties:
+      event_id:
+        type: string
+    type: object
+  structure.GetEventDataByIdResponse:
+    properties:
+      activities:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_name:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+    required:
+    - activities
+    - deadline
+    - description
+    - end_date
+    - event_name
+    - participant_fee
+    - start_date
+    - status
+    type: object
+  structure.GetEventList:
+    properties:
+      city:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      end_date:
+        type: string
+      event_name:
+        type: string
+      start_date:
+        type: string
+      status:
+        type: string
+    type: object
+  structure.GetEventListsResponse:
+    properties:
+      event_lists:
+        items:
+          $ref: '#/definitions/structure.GetEventList'
+        type: array
+    type: object
+  structure.GetLocationByIdResponse:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      district:
+        type: string
+      location_name:
+        type: string
+    type: object
+  structure.TestResponse:
     properties:
       message:
         type: string
@@ -22,6 +139,133 @@ info:
   title: Mai-Roi-Ra Swagger API
   version: "1.0"
 paths:
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Get list of events
+      parameters:
+      - description: Filter query
+        in: query
+        name: filter
+        type: string
+      - description: Sort order
+        in: query
+        name: sort
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetEventListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetEventLists
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Create a new event with the provided details.
+      parameters:
+      - description: Create Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create new event
+      tags:
+      - events
+  /events/{event_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a test message
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetEventDataByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetEventDataById
+      tags:
+      - events
+  /locations/{location_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get location by id
+      parameters:
+      - description: Location ID
+        in: path
+        name: location_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetLocationByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetLocationById
+      tags:
+      - locations
   /test:
     get:
       consumes:
@@ -33,7 +277,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.TestResponse'
+            $ref: '#/definitions/structure.TestResponse'
       summary: GetTest
       tags:
       - Test
