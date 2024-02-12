@@ -41,7 +41,7 @@ type DeleteEventRequest struct {
 }
 
 type DeleteEventResponse struct {
-	EventId        string    `json:"event_id"`
+	Message string 
 }
 
 type GetEventList struct {

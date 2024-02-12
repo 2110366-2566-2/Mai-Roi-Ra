@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
@@ -100,6 +101,15 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 		log.Println("[Repo: UpdateEvent] Error parsing Deadline to time.Time format:", err)
 		return nil, err
 	}
+	
+	if startDate.After(endDate) {
+        log.Println("[Service: CreateEvent] Start date must be before end date.")
+        return nil, errors.New("start date must be before end date")
+    }
+    if deadline.Before(startDate) || deadline.After(endDate) {
+        log.Println("[Service: CreateEvent] Deadline must be between start date and end date.")
+        return nil, errors.New("deadline must be between start date and end date")
+    }
 
 	eventImage := req.EventImage
 	emptyString := ""
@@ -145,7 +155,7 @@ func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.Delet
 
 	// Return a success message
 	return &st.DeleteEventResponse{
-		EventId: req.EventId,
+		Message: "success",
 	}, nil
 }
 
