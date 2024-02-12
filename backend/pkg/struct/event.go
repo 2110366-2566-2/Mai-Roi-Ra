@@ -2,8 +2,6 @@ package structure
 
 type CreateEventRequest struct {
 	OrganizerId    string  `json:"organizer_id" binding:"required"`
-	AdminId        string  `json:"admin_id" binding:"required"`
-	LocationId     string  `json:"location_id" binding:"required"`
 	StartDate      string  `json:"start_date" binding:"required"`
 	EndDate        string  `json:"end_date" binding:"required"`
 	Status         string  `json:"status" binding:"required"`
@@ -12,7 +10,8 @@ type CreateEventRequest struct {
 	EventName      string  `json:"event_name" binding:"required"`
 	Deadline       string  `json:"deadline" binding:"required"`
 	Activities     string  `json:"activities" binding:"required"`
-	EventImage     *string `json:"event_image"`
+	EventImage     string  `json:"event_image" binding:"required"`
+	LocationName   string  `json:"location_name" binding:"required"`
 }
 
 type CreateEventResponse struct {
@@ -85,7 +84,7 @@ type GetEventDataByIdResponse struct {
 	EventName      string  `json:"event_name"`
 	Deadline       string  `json:"deadline"`
 	Activities     string  `json:"activities"`
-	EventImage     string `json:"event_image"`
+	EventImage     string  `json:"event_image"`
 	Country        string  `json:"country"`
 	City           string  `json:"city"`
 	District       string  `json:"district"`

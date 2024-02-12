@@ -441,12 +441,12 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "activities",
-                "admin_id",
                 "deadline",
                 "description",
                 "end_date",
+                "event_image",
                 "event_name",
-                "location_id",
+                "location_name",
                 "organizer_id",
                 "participant_fee",
                 "start_date",
@@ -454,9 +454,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "activities": {
-                    "type": "string"
-                },
-                "admin_id": {
                     "type": "string"
                 },
                 "deadline": {
@@ -474,7 +471,7 @@ const docTemplate = `{
                 "event_name": {
                     "type": "string"
                 },
-                "location_id": {
+                "location_name": {
                     "type": "string"
                 },
                 "organizer_id": {

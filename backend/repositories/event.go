@@ -6,7 +6,6 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +14,7 @@ type EventRepository struct {
 }
 
 type IEventRepository interface {
-	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
+	CreateEvent(req *models.Event) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
@@ -30,45 +29,10 @@ func NewEventRepository(
 	}
 }
 
-func (r *EventRepository) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventResponse, error) {
+func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventResponse, error) {
 	log.Println("[Repo: CreateEvent]: Called")
-	startDate, err := utils.StringToTime(req.StartDate)
-	if err != nil {
-		log.Println("[Repo: CreateEvent] Error parsing StartDate to time.Time format:", err)
-		return nil, err
-	}
-	endDate, err := utils.StringToTime(req.EndDate)
-	if err != nil {
-		log.Println("[Repo: CreateEvent] Error parsing EndDate to time.Time format:", err)
-		return nil, err
-	}
-	deadline, err := utils.StringToTime(req.Deadline)
-	if err != nil {
-		log.Println("[Repo: CreateEvent] Error parsing Deadline to time.Time format:", err)
-		return nil, err
-	}
-	eventImage := req.EventImage
-	emptyString := ""
-	if eventImage == nil {
-		eventImage = &emptyString
-	}
-	eventModel := models.Event{
-		EventId:        utils.GenerateUUID(),
-		OrganizerId:    req.OrganizerId,
-		AdminId:        req.AdminId,
-		LocationId:     req.LocationId,
-		StartDate:      startDate,
-		EndDate:        endDate,
-		Status:         req.Status,
-		ParticipantFee: req.ParticipantFee,
-		Description:    req.Description,
-		EventName:      req.EventName,
-		Deadline:       deadline,
-		Activities:     req.Activities,
-		EventImage:     eventImage,
-	}
 	trans := r.db.Begin().Debug()
-	if err := trans.Create(&eventModel).Error; err != nil {
+	if err := trans.Create(&req).Error; err != nil {
 		trans.Rollback()
 		log.Println("[Repo: CreateEvent]: Insert data in Events table error:", err)
 		return nil, err
@@ -79,7 +43,7 @@ func (r *EventRepository) CreateEvent(req *st.CreateEventRequest) (*st.CreateEve
 		return nil, err
 	}
 	return &st.CreateEventResponse{
-		EventId: eventModel.EventId,
+		EventId: req.EventId,
 	}, nil
 }
 
@@ -179,7 +143,7 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	query = query.Offset(req.Offset)
 
 	if req.Limit > 0 {
-		query = query.Limit(req.Limit)	
+		query = query.Limit(req.Limit)
 	}
 	if err := query.Find(&eventLists).Error; err != nil {
 		log.Println("[Repo: GetEventLists]: cannot query the events:", err)
