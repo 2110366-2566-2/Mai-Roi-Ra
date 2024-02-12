@@ -277,6 +277,34 @@ paths:
       tags:
       - events
   /events/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an event with the specified ID.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Delete event by ID
+      tags:
+      - events
     get:
       consumes:
       - application/json
@@ -303,6 +331,40 @@ paths:
           schema:
             type: object
       summary: GetEventDataById
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update an existing event with the provided details.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Update Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.UpdateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing event
       tags:
       - events
   /locations/{location_id}:

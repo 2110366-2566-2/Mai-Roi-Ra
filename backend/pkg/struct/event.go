@@ -14,10 +14,12 @@ type CreateEventRequest struct {
 	LocationName   string  `json:"location_name" binding:"required"`
 }
 
+type CreateEventResponse struct {
+	EventId string `json:"event_id"`
+}
+
 type UpdateEventRequest struct {
-	OrganizerId    string  `json:"organizer_id" binding:"required"`
-	AdminId        string  `json:"admin_id" binding:"required"`
-	LocationId     string  `json:"location_id" binding:"required"`
+	EventId        string  `json:"event_id"`
 	StartDate      string  `json:"start_date" binding:"required"`
 	EndDate        string  `json:"end_date" binding:"required"`
 	Status         string  `json:"status" binding:"required"`
@@ -29,8 +31,16 @@ type UpdateEventRequest struct {
 	EventImage     *string `json:"event_image"`
 }
 
-type CreateEventResponse struct {
-	EventId string `json:"event_id"`
+type UpdateEventResponse struct {
+	EventId        string    `json:"event_id"`
+}
+
+type DeleteEventRequest struct {
+	EventId        string    `json:"event_id"`
+}
+
+type DeleteEventResponse struct {
+	Message string 
 }
 
 type GetEventList struct {
