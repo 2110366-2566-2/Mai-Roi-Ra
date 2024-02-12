@@ -61,11 +61,11 @@ export default async function EventDetailPage({ params }: Props) {
                             <div className="w-full border rounded-lg flex flex-col h-auto mt-4">
                                 <div className="w-full h-auto border flex flex-col p-4">
                                     <span className="w-full font-semibold flex items-center mb-4"><LocationIcon className="mr-2"/>Location</span>
-                                    <label>{event.location}</label>
+                                    <label>{event.location_name + " " + event.district + " " + event.city + " " + event.country}</label>
                                 </div>
                                 <div className="w-full h-auto border flex flex-col p-4">
                                     <span className="w-full font-semibold flex items-center mb-4"><CalendarIcon className="mr-2"/>Date</span>
-                                    <label>13 - 15 Apr 2024</label>
+                                    <label>{event.start_date + " - " + event.end_date}</label>
                                 </div>
                                 <div className="w-full h-[50px] border flex items-center justify-between p-4">
                                     <span className="font-semibold flex items-center"><AddGuestIcon className="mr-2"/>Guest</span>
@@ -80,7 +80,7 @@ export default async function EventDetailPage({ params }: Props) {
                         <div>
                             <div className="flex items-center justify-between my-4">
                                 <label className="px-1">Total fee {1} person</label>
-                                <label className="px-1">{300}$</label>
+                                <label className="px-1">{event.participant_fee} $</label>
                             </div>
                         </div>
                         <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4">
