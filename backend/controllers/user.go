@@ -140,3 +140,25 @@ func (c *UserController) CreateUser(ctx *gin.Context, req *st.CreateUserRequest)
 	log.Println("[CTRL: CreateUser] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary UpdateUserInformation
+// @Description Update User information with the desired input
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body structure.UpdateUserInformationRequest true "Create Event Request"
+// @Success 200 {object} models.User
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/{user_id} [put]
+func (c *UserController) UpdateUserInformation(ctx *gin.Context, req *st.UpdateUserInformationRequest) {
+	log.Println("[CTRL: UpdateUserInformation] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.UpdateUserInformation(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: UpdateUserInformation] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
