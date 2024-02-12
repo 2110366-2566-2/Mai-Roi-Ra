@@ -40,25 +40,31 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Filter query",
+                        "description": "For My events",
+                        "name": "organizer_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status query. i.e. Approved",
                         "name": "filter",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Sort order",
+                        "description": "Sort order. i.e. start_date ASC",
                         "name": "sort",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page",
+                        "description": "Items per page i.e. 10",
                         "name": "limit",
                         "in": "query"
                     }
@@ -332,9 +338,105 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/{user_id}": {
+            "put": {
+                "description": "Update User information with the desired input",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "UpdateUserInformation",
+                "parameters": [
+                    {
+                        "description": "Create Event Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateUserInformationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "banner_image": {
+                    "type": "string"
+                },
+                "birth_date": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "payment_gateway_customer_id": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_image": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateEventRequest": {
             "type": "object",
             "required": [
@@ -399,18 +501,11 @@ const docTemplate = `{
         },
         "structure.GetEventDataByIdResponse": {
             "type": "object",
-            "required": [
-                "activities",
-                "deadline",
-                "description",
-                "end_date",
-                "event_name",
-                "participant_fee",
-                "start_date",
-                "status"
-            ],
             "properties": {
                 "activities": {
+                    "type": "string"
+                },
+                "admin_id": {
                     "type": "string"
                 },
                 "city": {
@@ -431,13 +526,22 @@ const docTemplate = `{
                 "end_date": {
                     "type": "string"
                 },
+                "event_id": {
+                    "type": "string"
+                },
                 "event_image": {
                     "type": "string"
                 },
                 "event_name": {
                     "type": "string"
                 },
+                "location_id": {
+                    "type": "string"
+                },
                 "location_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
                     "type": "string"
                 },
                 "participant_fee": {
@@ -464,6 +568,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "end_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_image": {
                     "type": "string"
                 },
                 "event_name": {
@@ -513,55 +623,44 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.UpdateEventRequest": {
+        "structure.UpdateUserInformationRequest": {
             "type": "object",
             "required": [
-                "activities",
-                "deadline",
-                "description",
-                "end_date",
-                "event_name",
-                "participant_fee",
-                "start_date",
-                "status"
+                "address",
+                "birth_date",
+                "district",
+                "first_name",
+                "last_name",
+                "phone_number",
+                "province",
+                "user_id"
             ],
             "properties": {
-                "activities": {
+                "address": {
                     "type": "string"
                 },
-                "deadline": {
+                "birth_date": {
                     "type": "string"
                 },
-                "description": {
+                "district": {
                     "type": "string"
                 },
-                "end_date": {
+                "first_name": {
                     "type": "string"
                 },
-                "event_image": {
+                "last_name": {
                     "type": "string"
                 },
-                "event_name": {
+                "phone_number": {
                     "type": "string"
                 },
-                "participant_fee": {
-                    "type": "number"
-                },
-                "start_date": {
-                    "type": "string"
-                },
-                "status": {
+                "province": {
                     "type": "string"
                 },
                 "user_id": {
                     "type": "string"
-                }
-            }
-        },
-        "structure.UpdateEventResponse": {
-            "type": "object",
-            "properties": {
-                "user_id": {
+                },
+                "user_image": {
                     "type": "string"
                 }
             }

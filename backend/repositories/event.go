@@ -152,8 +152,26 @@ func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.Delet
 func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error) {
 	log.Println("[Repo: GetEventLists] Called")
 	var eventLists []*models.Event
-	// will declare filter later in sprint 2
-	if err := r.db.Find(&eventLists).Error; err != nil {
+	query := r.db
+
+	if req.OrganizerId != "" {
+		query = query.Where(`organizer_id=?`, req.OrganizerId)
+	}
+	// status
+	if req.Filter != "" {
+		query = query.Where(`status=?`, req.Filter)
+	}
+
+	if req.Sort != "" {
+		query = query.Order(req.Sort)
+	}
+
+	query = query.Offset(req.Offset)
+
+	if req.Limit > 0 {
+		query = query.Limit(req.Limit)	
+	}
+	if err := query.Find(&eventLists).Error; err != nil {
 		log.Println("[Repo: GetEventLists]: cannot query the events:", err)
 		return nil, err
 	}

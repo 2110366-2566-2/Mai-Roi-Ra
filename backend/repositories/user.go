@@ -19,9 +19,10 @@ type UserRepository struct {
 type IUserRepository interface {
 	GetUserByID(userID string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
-	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse,error);
+	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse, error)
+	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 }
-	
+
 // NewUserRepository creates a new instance of the UserRepository.
 // oldone-func NewUserRepository(c *gin.Context, db *gorm.DB) *UserRepository {
 func NewUserRepository(
@@ -100,7 +101,6 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRe
 	}, nil
 }
 
-
 // UpdateUser updates an existing user in the database.
 func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error {
 	log.Println("[REPO: UpdateUser]: Called")
@@ -119,4 +119,61 @@ func (repo *UserRepository) DeleteUser(c *gin.Context, userID string) error {
 		return result.Error
 	}
 	return nil
+}
+
+// UpdateUserInformation update information for user
+func (r *UserRepository) UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error) {
+	log.Println("[Repo: UpdateUserInformation] Called")
+
+	// find the user by user_id
+	var modelUser models.User
+	if err := r.DB.Where(`user_id=?`, req.UserId).Find(&modelUser).Error; err != nil {
+		log.Print("[Repo: UpdateUserInformation] user_id not found")
+		return nil, err
+	}
+
+	birthDate, err := utils.StringToTime(req.BirthDate)
+	if err != nil {
+		log.Println("[Repo: UpdateUserInformation] Error parsing BirthDate to time.Time format:", err)
+		return nil, err
+	}
+
+	// updating the fields
+	modelUser.BirthDate = birthDate
+
+	if req.FirstName != "" {
+		modelUser.FirstName = req.FirstName
+	}
+
+	if req.LastName != "" {
+		modelUser.LastName = req.LastName
+	}
+
+	if req.Address != "" {
+		modelUser.Address = req.Address
+	}
+
+	if req.District != "" {
+		modelUser.District = req.District
+	}
+
+	if req.Province != "" {
+		modelUser.Province = req.Province
+	}
+
+	if req.PhoneNumber != "" {
+		modelUser.PhoneNumber = req.PhoneNumber
+	}
+
+	if req.UserImage != nil {
+		modelUser.UserImage = req.UserImage
+	}
+
+	// Save the updated version
+	if err := r.DB.Save(&modelUser).Error; err != nil {
+		log.Println("[Repo: UpdateUserInformation] Error updating in the database:", err)
+		return nil, err
+	}
+
+	return &modelUser, nil
 }
