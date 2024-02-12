@@ -16,6 +16,7 @@ type UserService struct {
 type IUserService interface {
 	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
+	GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.User, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -36,6 +37,15 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 func (s *UserService) UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error) {
 	log.Println("[Service: UpdateUserInformation]: Called")
 	res, err := s.RepositoryGateway.UserRepository.UpdateUserInformation(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, err
+}
+
+func (s *UserService) GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.User, error) {
+	log.Println("[Service: GetUserByUserId]: Called")
+	res, err := s.RepositoryGateway.UserRepository.GetUserByID(req)
 	if err != nil {
 		return nil, err
 	}

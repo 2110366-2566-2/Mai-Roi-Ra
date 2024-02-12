@@ -25,3 +25,7 @@ type UpdateUserInformationRequest struct {
 	BirthDate   string  `json:"birth_date" binding:"required"`
 	UserImage   *string `json:"user_image"`
 }
+
+type GetUserByUserIdRequest struct {
+	UserId string `json:"user_id" binding:"required"`
+}

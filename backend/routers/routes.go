@@ -103,6 +103,14 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.CreateUser(ctx, &req)
 		})
+
+		r.GET("/api/v1/users/:id", func(ctx *gin.Context) {
+			req := st.GetUserByUserIdRequest{
+				UserId: ctx.Param("id"),
+			}
+			userController.GetUserByUserId(ctx, &req)
+		})
+
 		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
 			var req st.UpdateUserInformationRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
