@@ -27,7 +27,7 @@ export default async function UserHomepage() {
         <div className="mt-8 px-10">
           {
             datas.map((eventItem:any) => (
-              <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
+              <EventItem key={eventItem.event_id} id={eventItem.event_name} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
               description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image}/>
             ))
           }
