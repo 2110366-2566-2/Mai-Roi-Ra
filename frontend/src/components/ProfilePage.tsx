@@ -3,9 +3,6 @@ import React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import { FaPhone } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
-import { PiBalloonBold } from "react-icons/pi";
-import { SlLocationPin } from "react-icons/sl";
 
 export default function ProfilePage() {
   const [username, setUsername] = useState("wish-eq");
@@ -62,17 +59,17 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <MdEmail className="text-gray-500 text-sm mr-1" />
+                    <FaPhone className="text-gray-500 text-sm mr-1" />
                     <div className="text-sm text-gray-500">{email}</div>
                   </div>
                 )}
                 <div className="flex items-center">
-                  <PiBalloonBold className="text-gray-500 text-sm mr-1" />
+                  <FaPhone className="text-gray-500 text-sm mr-1" />
                   <div className="text-sm text-gray-500">Born {birthDate}</div>
                 </div>
 
                 <div className="flex items-center">
-                  <SlLocationPin className="text-gray-500 text-sm mr-1" />
+                  <FaPhone className="text-gray-500 text-sm mr-1" />
                   <div className="text-sm text-gray-500">{province}</div>
                 </div>
               </div>
