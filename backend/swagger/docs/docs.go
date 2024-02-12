@@ -312,18 +312,11 @@ const docTemplate = `{
         },
         "structure.GetEventDataByIdResponse": {
             "type": "object",
-            "required": [
-                "activities",
-                "deadline",
-                "description",
-                "end_date",
-                "event_name",
-                "participant_fee",
-                "start_date",
-                "status"
-            ],
             "properties": {
                 "activities": {
+                    "type": "string"
+                },
+                "admin_id": {
                     "type": "string"
                 },
                 "city": {
@@ -344,13 +337,22 @@ const docTemplate = `{
                 "end_date": {
                     "type": "string"
                 },
+                "event_id": {
+                    "type": "string"
+                },
                 "event_image": {
                     "type": "string"
                 },
                 "event_name": {
                     "type": "string"
                 },
+                "location_id": {
+                    "type": "string"
+                },
                 "location_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
                     "type": "string"
                 },
                 "participant_fee": {
@@ -377,6 +379,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "end_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_image": {
                     "type": "string"
                 },
                 "event_name": {
