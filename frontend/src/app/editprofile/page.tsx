@@ -1,6 +1,6 @@
 import EditProfileForm from "@/components/EditProfileForm";
 
-export default function Register() {
+export default function EditProfile() {
   return (
     <div>
       <EditProfileForm></EditProfileForm>
