@@ -48,6 +48,8 @@ definitions:
     properties:
       activities:
         type: string
+      admin_id:
+        type: string
       city:
         type: string
       country:
@@ -60,11 +62,17 @@ definitions:
         type: string
       end_date:
         type: string
+      event_id:
+        type: string
       event_image:
         type: string
       event_name:
         type: string
+      location_id:
+        type: string
       location_name:
+        type: string
+      organizer_id:
         type: string
       participant_fee:
         type: number
@@ -72,15 +80,6 @@ definitions:
         type: string
       status:
         type: string
-    required:
-    - activities
-    - deadline
-    - description
-    - end_date
-    - event_name
-    - participant_fee
-    - start_date
-    - status
     type: object
   structure.GetEventList:
     properties:
@@ -91,6 +90,10 @@ definitions:
       district:
         type: string
       end_date:
+        type: string
+      event_id:
+        type: string
+      event_image:
         type: string
       event_name:
         type: string
