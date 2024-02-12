@@ -2,6 +2,7 @@
 import { divide } from "cypress/types/lodash";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import styles from "@/styles/FontPage.module.css";
 
 interface RegisterAccountFormProps {
   name: string;
@@ -9,6 +10,9 @@ interface RegisterAccountFormProps {
   email: string;
   password: string;
   confirmPassword: string;
+  role: string;
+
+  setRole: React.Dispatch<React.SetStateAction<string>>;
 
   useEmail: boolean;
   toggleInputType: () => void;
@@ -44,6 +48,9 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
   email,
   password,
   confirmPassword,
+  role,
+
+  setRole,
 
   useEmail,
   toggleInputType,
@@ -71,7 +78,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
   handleFirstSubmit,
 }) => {
   return (
-    <div className="w-full">
+    <div className={`w-full`}>
       <form className="space-y-6" onSubmit={handleFirstSubmit}>
         <div className="relative">
           <input
@@ -242,6 +249,34 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             )}
           </button>
         </div>
+        <div className="flex flex-col">
+          <div className={`text-m mb-2 text-gray-500`}>Create as a...</div>
+          <div className="pl-8 mt-1">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="role"
+                value="User"
+                checked={role === "User"}
+                onChange={() => setRole("User")}
+                className="form-radio h-6 w-6"
+              />
+              <span className="text-base text-gray-500 ml-2">User</span>
+              <label className="ml-6 inline-flex items-center">
+                <input
+                  type="radio"
+                  name="role"
+                  value="Organizer"
+                  checked={role === "Organizer"}
+                  onChange={() => setRole("Organizer")}
+                  className="form-checkbox h-6 w-6"
+                  // style={{ accentColor: "#F2D22E" }}
+                />
+                <span className="text-base text-gray-500 ml-2">Organizer</span>
+              </label>
+            </label>
+          </div>
+        </div>
 
         <div className="flex flex-col !mt-2">
           <div style={{ color: "#F16E1E" }}>
@@ -253,7 +288,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             {allInputsFilled ? "" : "All fields must be filled correctly !"}
           </div>
         </div>
-        <div className="">
+        <div className="!mt-1 lg:!mt-2 xl:!mt-4">
           <button
             type="submit"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
