@@ -57,6 +57,22 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			eventController.GetEventDataById(ctx, req)
 		})
+		r.PUT("/api/v1/events/:id", func(ctx *gin.Context) {
+			var req st.UpdateEventRequest
+			if err := ctx.BindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			req.EventId = ctx.Param("id")
+			eventController.UpdateEvent(ctx, &req)
+		})
+		r.DELETE("/api/v1/events/:id", func(ctx *gin.Context) {
+			req := st.DeleteEventRequest{
+				EventId: ctx.Param("id"),
+			}
+			eventController.DeleteEventById(ctx,&req)
+		})
+
 	})
 
 	if err != nil {
