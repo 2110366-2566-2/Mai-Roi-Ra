@@ -48,3 +48,5 @@ type DeleteUserRequest struct {
 
 type DeleteUserResponse struct {
 }
+
+// Hello world
