@@ -2,12 +2,13 @@ package services
 
 import (
 	"errors"
+	"regexp"
+	"time"
+
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"golang.org/x/crypto/bcrypt"
-	"regexp"
-	"time"
 )
 
 type UserService struct {
@@ -71,7 +72,7 @@ func (s *UserService) RegisterUser(req *st.RegisterUserRequest) (*st.RegisterUse
 		Password:                 req.Password,
 		PaymentGatewayCustomerID: "",
 		BirthDate:                time.Time{},
-		UserImage:                "",
+		UserImage:                nil,
 		Address:                  "",
 		District:                 "",
 		Province:                 "",

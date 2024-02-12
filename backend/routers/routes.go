@@ -144,7 +144,6 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			userController.DeleteUser(ctx, &req)
 		})
 	})
-	})
 
 	if err != nil {
 		log.Println(err)

@@ -1,8 +1,10 @@
 import Image from 'next/image'
 import EventItem from '@/components/EventItem'
 import MenuPopup from '@/components/MenuPopup'
+import getEvents from '@/libs/getEvents';
 
-export default function UserHomepage() {
+export default async function UserHomepage() {
+    const events = await getEvents();
     const mockdata = [
         {
             id:'1',
@@ -116,9 +118,15 @@ export default function UserHomepage() {
             </div>
         </div>
         <div className="mt-8 px-10">
-                {mockdata.map((event, index) => (
-                    <EventItem key={index} event={event} />
-                ))}
+                {
+                events.event_lists.map((eventItem:Object)=>{
+                    <EventItem key={eventItem.imgSrc} id={eventItem.imgSrc} name={eventItem.name} startDate={eventItem.start_date} endDate={eventItem.end_date}
+                    description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.status}/>
+                  })
+                }
+                {/* {mockdata.map((event, index) => (
+
+                ))} */}
         </div>
     </main>
   )
