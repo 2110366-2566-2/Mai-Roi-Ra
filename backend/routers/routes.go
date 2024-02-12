@@ -3,6 +3,7 @@ package routers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
@@ -29,7 +30,25 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventController.CreateEvent(ctx, &req)
 		})
 		r.GET("/api/v1/events", func(ctx *gin.Context) {
-			req := &st.GetEventListsRequest{}
+			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
+				return
+			}
+
+			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
+				return
+			}
+			req := &st.GetEventListsRequest{
+				OrganizerId: ctx.Query("organizer_id"),
+				Filter:      ctx.Query("filter"),
+				Sort:        ctx.Query("sort"),
+				Offset:      offset,
+				Limit:       limit,
+			}
+
 			eventController.GetEventLists(ctx, req)
 		})
 		r.GET("/api/v1/events/:id", func(ctx *gin.Context) {
@@ -125,6 +144,8 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			userController.DeleteUser(ctx, &req)
 		})
 	})
+	})
+
 	if err != nil {
 		log.Println(err)
 		return nil

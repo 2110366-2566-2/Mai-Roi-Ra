@@ -50,10 +50,11 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventReque
 // @Tags events
 // @Accept json
 // @Produce json
-// @Param filter query string false "Filter query"
-// @Param sort query string false "Sort order"
-// @Param page query int false "Page number"
-// @Param limit query int false "Items per page"
+// @Param organizer_id query string false "For My events"
+// @Param filter query string false "Status query. i.e. Approved"
+// @Param sort query string false "Sort order. i.e. start_date ASC"
+// @Param offset query int false "offset i.e. 0"
+// @Param limit query int false "Items per page i.e. 10"
 // @Success 200 {object} structure.GetEventListsResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"

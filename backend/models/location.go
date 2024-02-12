@@ -11,6 +11,7 @@ type Location struct {
 	District     string    `gorm:"column:district;not null" json:"district" binding:"required"`
 	LocationName string    `gorm:"column:location_name;not null" json:"location_name" binding:"required"`
 	CreatedAt    time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
 
 func (Location) TableName() string {
