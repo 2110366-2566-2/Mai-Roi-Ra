@@ -29,3 +29,5 @@ type UpdateUserInformationRequest struct {
 type GetUserByUserIdRequest struct {
 	UserId string `json:"user_id" binding:"required"`
 }
+
+// Hello world
