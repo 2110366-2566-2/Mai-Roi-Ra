@@ -3,7 +3,6 @@ import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
-import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 
 interface Props {
     Name:string,
@@ -17,7 +16,7 @@ interface Props {
     ImgSrc:string
 }
 
-const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
+const EditEventForm = ({Name,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState(Name);
@@ -28,6 +27,10 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
     const [province,setProvince] = useState(Province);
     const [description,setDescription] = useState(Description);
     const [imageSrc,setImageSrc] = useState(ImgSrc);
+
+    console.log("dqdqwqdw" + name);
+    console.log(dateRange);
+    console.log(price);
 
     const handleSubmit = async () => {
         // try {
@@ -188,4 +191,4 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
     )
 }
 
-export default CreateEventForm;
+export default EditEventForm;
