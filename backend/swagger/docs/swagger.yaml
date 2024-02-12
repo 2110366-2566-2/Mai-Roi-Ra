@@ -37,8 +37,6 @@ definitions:
     properties:
       activities:
         type: string
-      admin_id:
-        type: string
       deadline:
         type: string
       description:
@@ -49,7 +47,7 @@ definitions:
         type: string
       event_name:
         type: string
-      location_id:
+      location_name:
         type: string
       organizer_id:
         type: string
@@ -61,12 +59,12 @@ definitions:
         type: string
     required:
     - activities
-    - admin_id
     - deadline
     - description
     - end_date
+    - event_image
     - event_name
-    - location_id
+    - location_name
     - organizer_id
     - participant_fee
     - start_date

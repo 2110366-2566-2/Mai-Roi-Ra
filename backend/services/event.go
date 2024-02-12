@@ -1,8 +1,10 @@
 package services
 
 import (
+	"errors"
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
@@ -29,7 +31,56 @@ func NewEventService(
 
 func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventResponse, error) {
 	log.Println("[Service: CreateEvent]: Called")
-	res, err := s.RepositoryGateway.EventRepository.CreateEvent(req)
+	resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationByName(req.LocationName)
+	if err != nil {
+		return nil, err
+	}
+	resAdmin, err := s.RepositoryGateway.AdminRepository.GetRandomAdmin()
+	if err != nil {
+		return nil, err
+	}
+	startDate, err := utils.StringToTime(req.StartDate)
+	if err != nil {
+		log.Println("[Service: CreateEvent] Error parsing StartDate to time.Time format:", err)
+		return nil, err
+	}
+	endDate, err := utils.StringToTime(req.EndDate)
+	if err != nil {
+		log.Println("[Service: CreateEvent] Error parsing EndDate to time.Time format:", err)
+		return nil, err
+	}
+	deadline, err := utils.StringToTime(req.Deadline)
+	if err != nil {
+		log.Println("[Service: CreateEvent] Error parsing Deadline to time.Time format:", err)
+		return nil, err
+	}
+
+	if startDate.After(endDate) {
+		log.Println("[Service: CreateEvent] Start date must be before end date.")
+		return nil, errors.New("start date must be before end date")
+	}
+	if deadline.Before(startDate) || deadline.After(endDate) {
+		log.Println("[Service: CreateEvent] Deadline must be between start date and end date.")
+		return nil, errors.New("deadline must be between start date and end date")
+	}
+	eventImage := req.EventImage
+	eventModel := models.Event{
+		EventId:        utils.GenerateUUID(),
+		OrganizerId:    req.OrganizerId,
+		AdminId:        resAdmin.AdminId,
+		LocationId:     resLocation.LocationId,
+		StartDate:      startDate,
+		EndDate:        endDate,
+		Status:         req.Status,
+		ParticipantFee: req.ParticipantFee,
+		Description:    req.Description,
+		EventName:      req.EventName,
+		Deadline:       deadline,
+		Activities:     req.Activities,
+		EventImage:     &eventImage,
+	}
+
+	res, err := s.RepositoryGateway.EventRepository.CreateEvent(&eventModel)
 	if err != nil {
 		return nil, err
 	}
