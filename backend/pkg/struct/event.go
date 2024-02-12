@@ -45,6 +45,11 @@ type GetEventList struct {
 }
 
 type GetEventListsRequest struct {
+	OrganizerId string `json:"organizer_id"`
+	Filter      string `json:"filter"`
+	Sort        string `json:"sort"`
+	Offset      int    `json:"offset"`
+	Limit       int    `json:"limit"`
 }
 
 type GetEventListsResponse struct {
