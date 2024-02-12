@@ -15,6 +15,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<string>("");
 
   // USER INPUTS (second page)
   const [firstName, setFirstName] = useState("");
@@ -181,8 +182,8 @@ export default function RegisterForm() {
       setPasswordAreMatched(true);
     }
     if (
-      (useEmail && name && email && password && confirmPassword) ||
-      (!useEmail && name && phoneNumber && password && confirmPassword)
+      (useEmail && name && email && password && confirmPassword && role) ||
+      (!useEmail && name && phoneNumber && password && confirmPassword && role)
     ) {
       console.log("All fields are filled. Form submitted.");
       setFillInfo(true);
@@ -260,6 +261,8 @@ export default function RegisterForm() {
             email={email}
             password={password}
             confirmPassword={confirmPassword}
+            role={role}
+            setRole={setRole}
             useEmail={useEmail}
             toggleInputType={toggleInputType}
             isValidEmail={isValidEmail}
