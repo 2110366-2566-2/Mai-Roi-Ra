@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
 	"github.com/gin-gonic/gin"
-	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 )
 
 type TestController struct {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"gorm.io/gorm"
 )
 
@@ -52,7 +53,7 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 
 	startDate, err := utils.StringToTime(req.StartDate)
 	if err != nil {
-		log.Println("[Repo: Updatevent] Error parsing StartDate to time.Time format:", err)
+		log.Println("[Repo: UpdateEvent] Error parsing StartDate to time.Time format:", err)
 		return nil, err
 	}
 	endDate, err := utils.StringToTime(req.EndDate)
@@ -65,15 +66,15 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 		log.Println("[Repo: UpdateEvent] Error parsing Deadline to time.Time format:", err)
 		return nil, err
 	}
-	
+
 	if startDate.After(endDate) {
-        log.Println("[Service: CreateEvent] Start date must be before end date.")
-        return nil, errors.New("start date must be before end date")
-    }
-    if deadline.Before(startDate) || deadline.After(endDate) {
-        log.Println("[Service: CreateEvent] Deadline must be between start date and end date.")
-        return nil, errors.New("deadline must be between start date and end date")
-    }
+		log.Println("[Repo: UpdateEvent] Start date must be before end date.")
+		return nil, errors.New("start date must be before end date")
+	}
+	if deadline.Before(startDate) || deadline.After(endDate) {
+		log.Println("[Repo: UpdateEvent] Deadline must be between start date and end date.")
+		return nil, errors.New("deadline must be between start date and end date")
+	}
 
 	eventImage := req.EventImage
 	emptyString := ""
@@ -82,20 +83,20 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 	}
 
 	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
-	Updates(map[string]interface{}{
-		"StartDate":      startDate,
-		"EndDate":        endDate,
-		"Status":         req.Status,
-		"ParticipantFee": req.ParticipantFee,
-		"Description":    req.Description,
-		"EventName":      req.EventName,
-		"Deadline":       deadline,
-		"Activities":     req.Activities,
-		"EventImage":     req.EventImage,
-	}).Error; err != nil {
-	log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
-	return nil, err
-}
+		Updates(map[string]interface{}{
+			"StartDate":      startDate,
+			"EndDate":        endDate,
+			"Status":         req.Status,
+			"ParticipantFee": req.ParticipantFee,
+			"Description":    req.Description,
+			"EventName":      req.EventName,
+			"Deadline":       deadline,
+			"Activities":     req.Activities,
+			"EventImage":     req.EventImage,
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
 	// Retrieve the updated event
 	updatedEvent, err := r.GetEventDataById(req.EventId)
 	if err != nil {
@@ -104,7 +105,7 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 	}
 
 	return &st.UpdateEventResponse{
-		EventId:         updatedEvent.EventId,
+		EventId: updatedEvent.EventId,
 	}, nil
 }
 
