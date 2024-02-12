@@ -1,5 +1,38 @@
 basePath: /api/v1
 definitions:
+  models.User:
+    properties:
+      address:
+        type: string
+      banner_image:
+        type: string
+      birth_date:
+        type: string
+      created_at:
+        type: string
+      district:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      payment_gateway_customer_id:
+        type: string
+      phone_number:
+        type: string
+      province:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      user_image:
+        type: string
+      username:
+        type: string
+    type: object
   structure.CreateEventRequest:
     properties:
       activities:
@@ -121,6 +154,36 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  structure.UpdateUserInformationRequest:
+    properties:
+      address:
+        type: string
+      birth_date:
+        type: string
+      district:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone_number:
+        type: string
+      province:
+        type: string
+      user_id:
+        type: string
+      user_image:
+        type: string
+    required:
+    - address
+    - birth_date
+    - district
+    - first_name
+    - last_name
+    - phone_number
+    - province
+    - user_id
     type: object
 externalDocs:
   description: OpenAPI
@@ -285,6 +348,36 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /users/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: Update User information with the desired input
+      parameters:
+      - description: Create Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateUserInformationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: UpdateUserInformation
+      tags:
+      - user
 securityDefinitions:
   BasicAuth:
     type: basic
