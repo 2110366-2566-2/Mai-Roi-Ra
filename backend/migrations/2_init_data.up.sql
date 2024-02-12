@@ -1,56 +1,60 @@
 DO $$ 
 BEGIN
     -- Insert data into Admins table
-    INSERT INTO admins (admin_id, password, created_at)
+    INSERT INTO admins (admin_id, password, created_at, updated_at)
     VALUES 
-    ('adminid001', 'password123', CURRENT_TIMESTAMP),
-    ('adminid002', 'password234', CURRENT_TIMESTAMP),
-    ('adminid003', 'password345', CURRENT_TIMESTAMP);
+    ('550e8400-e29b-41d4-a716-446655440000', 'password123', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440001', 'password234', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day'),
+    ('550e8400-e29b-41d4-a716-446655440002', 'password345', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440003', 'password456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 days'),
+    ('550e8400-e29b-41d4-a716-446655440004', 'password567', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Users table
-    INSERT INTO users (user_id, payment_gateway_customer_id, phone_number, birth_date, email, first_name, last_name, user_image, created_at)
+    INSERT INTO users (user_id, username, phone_number, email, first_name, last_name, password, payment_gateway_customer_id, birth_date, user_image, address, district, province, banner_image, created_at, updated_at)
     VALUES 
-    ('userid0001', 'paymentid1', '1234567890', '1990-01-01', 'user1@example.com', 'Terrance', 'Jeffords', 'user1.jpg', CURRENT_TIMESTAMP),
-    ('userid0002', 'paymentid2', '1234567891', '1992-01-01', 'user2@example.com', 'Jake', 'Peralta', 'user2.jpg', CURRENT_TIMESTAMP),
-    ('userid0003', 'paymentid3', '1234567892', '1994-01-01', 'user3@example.com', 'Charles', 'Boyle', 'user3.jpg', CURRENT_TIMESTAMP);
+    ('550e8400-e29b-41d4-a716-446655440100', 'TerranceJ', '1234567890', 'user1@example.com', 'Terrance', 'Jeffords', 'password1', 'paymentid1', '1990-01-01', 'https://example.com/user1.jpg', '123 Main St', 'Downtown', 'New York', 'https://example.com/banner1.jpg', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440101', 'JakeP', '1234567891', 'user2@example.com', 'Jake', 'Peralta', 'password2', 'paymentid2', '1992-01-01', 'https://example.com/user2.jpg', '456 Side St', 'Midtown', 'New York', 'https://example.com/banner2.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day'),
+    ('550e8400-e29b-41d4-a716-446655440102', 'CharlesB', '1234567892', 'user3@example.com', 'Charles', 'Boyle', 'password3', 'paymentid3', '1994-01-01', 'https://example.com/user3.jpg', '789 Circle Ave', 'Uptown', 'New York', 'https://example.com/banner3.jpg', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440103', 'RosaD', '1234567893', 'user4@example.com', 'Rosa', 'Diaz', 'password4', 'paymentid4', '1996-01-01', 'https://example.com/user4.jpg', '1010 Square Rd', 'East Village', 'New York', 'https://example.com/banner4.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 days'),
+    ('550e8400-e29b-41d4-a716-446655440104', 'AmyS', '1234567894', 'user5@example.com', 'Amy', 'Santiago', 'password5', 'paymentid5', '1998-01-01', 'https://example.com/user5.jpg', '1313 Hex St', 'West End', 'New York', 'https://example.com/banner5.jpg', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Organizers table
-    INSERT INTO organizers (organizer_id, office_hours, created_at)
+    INSERT INTO organizers (organizer_id, user_id, office_hours, created_at, updated_at)
     VALUES 
-    ('organizer1', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP], CURRENT_TIMESTAMP),
-    ('organizer2', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP], CURRENT_TIMESTAMP);
+    ('550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440100', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 hour'], CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440201', '550e8400-e29b-41d4-a716-446655440101', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 hours'], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day');
 
     -- Insert data into Moderates table
-    INSERT INTO moderates (user_id, organizer_id, created_at)
+    INSERT INTO moderates (user_id, organizer_id, created_at, updated_at)
     VALUES 
-    ('userid0001', 'organizer1', CURRENT_TIMESTAMP);
+    ('550e8400-e29b-41d4-a716-446655440100', '550e8400-e29b-41d4-a716-446655440200', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440101', '550e8400-e29b-41d4-a716-446655440201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day');
 
     -- Insert data into Locations table
-    INSERT INTO locations (location_id, country, city, district, location_name)
+    INSERT INTO locations (location_id, country, city, district, location_name, created_at, updated_at)
     VALUES 
-    ('location01', 'Country1', 'City1', 'District1', 'LocationName1'),
-    ('location02', 'Country2', 'City2', 'District2', 'LocationName2'),
-    ('location03', 'Country3', 'City3', 'District3', 'LocationName3');
+    ('550e8400-e29b-41d4-a716-446655440300', 'Country1', 'City1', 'District1', 'LocationName1', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440301', 'Country2', 'City2', 'District2', 'LocationName2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 days');
 
     -- Insert data into Events table
-    INSERT INTO events (event_id, start_date, end_date, status, participant_fee, description, event_name, created_at, deadline, activities, event_image, organizer_id, admin_id, location_id)
+    INSERT INTO events (event_id, organizer_id, admin_id, location_id, start_date, end_date, status, participant_fee, description, event_name, deadline, activities, event_image, created_at, updated_at)
     VALUES 
-    ('eventid001', '2024-03-01', '2024-03-05', 'Approved', 50.0, 'Event description 1', 'Event 1', CURRENT_TIMESTAMP, '2024-02-15', 'Activity1', 'event1.jpg', 'organizer1', 'adminid001', 'location01');
+    ('550e8400-e29b-41d4-a716-446655440400', '550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440000', '550e8400-e29b-41d4-a716-446655440300', '2024-03-01', '2024-03-05', 'Approved', 50.0, 'Event description 1', 'Event 1', '2024-02-15', 'Activity1', 'https://example.com/event1.jpg', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Posts table
-    INSERT INTO posts (post_id, created_at, post_image, caption, rating_score, user_id)
+    INSERT INTO posts (post_id, user_id, post_image, caption, rating_score, created_at, updated_at)
     VALUES 
-    ('postid0001', CURRENT_TIMESTAMP, 'post1.jpg', 'Caption for post 1', 4, 'userid0001');
+    ('550e8400-e29b-41d4-a716-446655440500', '550e8400-e29b-41d4-a716-446655440100', 'https://example.com/post1.jpg', 'Caption for post 1', 4, CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Responses table
-    INSERT INTO responses (organizer_id, post_id, detail, created_at)
+    INSERT INTO responses (organizer_id, post_id, detail, created_at, updated_at)
     VALUES 
-    ('organizer1', 'postid0001', 'Response to post 1', CURRENT_TIMESTAMP);
+    ('550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440500', 'Response to post 1', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Reviews table
     INSERT INTO reviews (user_id, event_id, post_id)
     VALUES 
-    ('userid0001', 'eventid001', 'postid0001');
+    ('550e8400-e29b-41d4-a716-446655440100', '550e8400-e29b-41d4-a716-446655440400', '550e8400-e29b-41d4-a716-446655440500');
 
 EXCEPTION
     WHEN OTHERS THEN
