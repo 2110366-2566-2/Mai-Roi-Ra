@@ -52,12 +52,18 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 		if err != nil {
 			return nil, err
 		}
+		eventImage := ""
+		if v.EventImage != nil {
+			eventImage = *v.EventImage
+		}
 		res := st.GetEventList{
+			EventId:     v.EventId,
 			EventName:   v.EventName,
 			StartDate:   utils.GetDate(v.StartDate),
 			EndDate:     utils.GetDate(v.EndDate),
 			Description: v.Description,
 			Status:      v.Status,
+			EventImage:  eventImage,
 			City:        resLocation.City,
 			District:    resLocation.District,
 		}
@@ -76,7 +82,15 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if err != nil {
 		return nil, err
 	}
+	eventImage := ""
+	if resEvent.EventImage != nil {
+		eventImage = *resEvent.EventImage
+	}
 	res := &st.GetEventDataByIdResponse{
+		EventId:        resEvent.EventId,
+		OrganizerId:    resEvent.OrganizerId,
+		AdminId:        resEvent.AdminId,
+		LocationId:     resLocation.LocationId,
 		StartDate:      utils.GetDate(resEvent.StartDate),
 		EndDate:        utils.GetDate(resEvent.EndDate),
 		Status:         resEvent.Status,
@@ -85,7 +99,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 		EventName:      resEvent.EventName,
 		Deadline:       utils.GetDate(resEvent.Deadline),
 		Activities:     resEvent.Activities,
-		EventImage:     resEvent.EventImage,
+		EventImage:     eventImage,
 		Country:        resLocation.Country,
 		City:           resLocation.City,
 		District:       resLocation.District,
