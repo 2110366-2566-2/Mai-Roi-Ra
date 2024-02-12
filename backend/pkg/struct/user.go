@@ -1,31 +1,50 @@
 package structure
 
-type CreateUserRequest struct {
-	Username    string  `json:"username" binding:"required"`
-	PhoneNumber string  `json:"phone_number" binding:"required"`
-	BirthDate   string  `json:"birth_date" binding:"required"`
-	Email       string  `json:"email" binding:"required"`
-	FirstName   string  `json:"first_name" binding:"required"`
-	LastName    string  `json:"last_name" binding:"required"`
-	UserImage   *string `json:"user_image"`
+import "github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+
+type RegisterUserRequest struct {
+	PhoneNumber string `gorm:"type:char(10);unique;not null" json:"phone_number"`
+	Email       string `gorm:"type:varchar(64);unique;not null" json:"email"`
+	Password    string `gorm:"type:varchar(255);not null" json:"-"` // Excluded from JSON responses
+
 }
 
-type CreateUserResponse struct {
-	UserId string `json:"user_id"`
+type RegisterUserResponse struct {
+	UserID string `json:"user_id"`
 }
 
-type UpdateUserInformationRequest struct {
-	UserId      string  `json:"user_id" binding:"required"`
-	FirstName   string  `json:"first_name" binding:"required"`
-	LastName    string  `json:"last_name" binding:"required"`
-	Address     string  `json:"address" binding:"required"`
-	District    string  `json:"district" binding:"required"`
-	Province    string  `json:"province" binding:"required"`
-	PhoneNumber string  `json:"phone_number" binding:"required"`
-	BirthDate   string  `json:"birth_date" binding:"required"`
-	UserImage   *string `json:"user_image"`
+type LoginUserRequest struct {
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	Password    string `json:"password"`
 }
 
-type GetUserByUserIdRequest struct {
-	UserId string `json:"user_id" binding:"required"`
+type LoginUserResponse struct {
+	Token string `json:"token"`
+}
+
+type GetAllUsersResponse struct {
+	Users []models.User `json:"users"` //FIXME should not use struct from models
+}
+
+type GetUserRequest struct {
+	ID string `from:"id"`
+}
+
+type GetUserResponse struct {
+	User models.User `json:"user"`
+}
+
+type UpdateUserRequest struct {
+	models.User
+}
+
+type UpdateUserResponse struct {
+}
+
+type DeleteUserRequest struct {
+	ID string `from:"id"`
+}
+
+type DeleteUserResponse struct {
 }

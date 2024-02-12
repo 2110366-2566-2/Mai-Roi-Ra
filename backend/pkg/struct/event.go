@@ -2,24 +2,8 @@ package structure
 
 type CreateEventRequest struct {
 	OrganizerId    string  `json:"organizer_id" binding:"required"`
-	StartDate      string  `json:"start_date" binding:"required"`
-	EndDate        string  `json:"end_date" binding:"required"`
-	Status         string  `json:"status" binding:"required"`
-	ParticipantFee float64 `json:"participant_fee" binding:"required"`
-	Description    string  `json:"description" binding:"required"`
-	EventName      string  `json:"event_name" binding:"required"`
-	Deadline       string  `json:"deadline" binding:"required"`
-	Activities     string  `json:"activities" binding:"required"`
-	EventImage     string  `json:"event_image" binding:"required"`
-	LocationName   string  `json:"location_name" binding:"required"`
-}
-
-type CreateEventResponse struct {
-	EventId string `json:"event_id"`
-}
-
-type UpdateEventRequest struct {
-	EventId        string  `json:"event_id"`
+	AdminId        string  `json:"admin_id" binding:"required"`
+	LocationId     string  `json:"location_id" binding:"required"`
 	StartDate      string  `json:"start_date" binding:"required"`
 	EndDate        string  `json:"end_date" binding:"required"`
 	Status         string  `json:"status" binding:"required"`
@@ -31,16 +15,23 @@ type UpdateEventRequest struct {
 	EventImage     *string `json:"event_image"`
 }
 
-type UpdateEventResponse struct {
-	EventId        string    `json:"event_id"`
+type UpdateEventRequest struct {
+	OrganizerId    string  `json:"organizer_id" binding:"required"`
+	AdminId        string  `json:"admin_id" binding:"required"`
+	LocationId     string  `json:"location_id" binding:"required"`
+	StartDate      string  `json:"start_date" binding:"required"`
+	EndDate        string  `json:"end_date" binding:"required"`
+	Status         string  `json:"status" binding:"required"`
+	ParticipantFee float64 `json:"participant_fee" binding:"required"`
+	Description    string  `json:"description" binding:"required"`
+	EventName      string  `json:"event_name" binding:"required"`
+	Deadline       string  `json:"deadline" binding:"required"`
+	Activities     string  `json:"activities" binding:"required"`
+	EventImage     *string `json:"event_image"`
 }
 
-type DeleteEventRequest struct {
-	EventId        string    `json:"event_id"`
-}
-
-type DeleteEventResponse struct {
-	Message string 
+type CreateEventResponse struct {
+	EventId string `json:"event_id"`
 }
 
 type GetEventList struct {
