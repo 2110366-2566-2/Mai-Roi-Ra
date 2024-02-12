@@ -25,7 +25,7 @@ const EditEvent = async ({params}: Props) => {
 
             {/* Form */}
             <div className="">
-                <EditEventForm Name={event.event_name} StartDate={event.start_date} EndDate={event.end_date}
+                <EditEventForm Name={event.event_id} StartDate={event.start_date} EndDate={event.end_date}
                     Price={event.participant_fee} Location={event.location_name} District={event.district}
                     Province={event.country} Description={event.description} ImgSrc={event.event_image}/>
             </div> 
