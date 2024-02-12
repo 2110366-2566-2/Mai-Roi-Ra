@@ -13,7 +13,6 @@ require (
 	github.com/swaggo/swag v1.16.3
 	go.mongodb.org/mongo-driver v1.13.1
 	go.uber.org/dig v1.17.1
-	golang.org/x/crypto v0.18.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.6
 )
@@ -59,6 +58,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	golang.org/x/arch v0.7.0 // indirect
+	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect

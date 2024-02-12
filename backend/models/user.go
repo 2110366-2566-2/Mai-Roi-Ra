@@ -7,6 +7,7 @@ import (
 
 // User model struct
 type User struct {
+	//gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
 	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
 	Username                 string    `gorm:"column:username;not null" json:"username"`
 	PhoneNumber              string    `gorm:"column:phone_number;not null;check:phone_length" json:"phone_number"`

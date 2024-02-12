@@ -15,6 +15,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<string>("");
 
   // USER INPUTS (second page)
   const [firstName, setFirstName] = useState("");
@@ -181,8 +182,8 @@ export default function RegisterForm() {
       setPasswordAreMatched(true);
     }
     if (
-      (useEmail && name && email && password && confirmPassword) ||
-      (!useEmail && name && phoneNumber && password && confirmPassword)
+      (useEmail && name && email && password && confirmPassword && role) ||
+      (!useEmail && name && phoneNumber && password && confirmPassword && role)
     ) {
       console.log("All fields are filled. Form submitted.");
       setFillInfo(true);
@@ -194,26 +195,26 @@ export default function RegisterForm() {
   };
 
   ///////////////////////////////////////
+  const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
 
   const handleInfoSubmit = (event: FormEvent) => {
     event.preventDefault();
+
     if (firstName && lastName && address && district && province) {
-      console.log("All info fields are filled. Form submitted.");
+      console.log("All info fields are filled. Form submitted. Modal is up.");
+      setSuccessModal(true);
       setAllInfoInputsFilled(true);
-      router.push("/auth/signin");
+      setTimeout(() => {
+        router.push("/auth/signin");
+        setSuccessModal(false);
+      }, 4000);
     } else {
       console.log("Please fill in all info fields.");
       setAllInfoInputsFilled(false);
     }
   };
   ///////////////////////////////////////
-
-  // const [modal, setModal] = useState(false);
-
-  // const toggleModal = () => {
-  //   setModal(!modal);
-  // };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white p-8">
@@ -260,6 +261,8 @@ export default function RegisterForm() {
             email={email}
             password={password}
             confirmPassword={confirmPassword}
+            role={role}
+            setRole={setRole}
             useEmail={useEmail}
             toggleInputType={toggleInputType}
             isValidEmail={isValidEmail}
@@ -282,20 +285,14 @@ export default function RegisterForm() {
           ></RegisterAccountForm>
         )}
       </div>
-      {/* {modal && (
+      {successModal && (
         <div className="fixed inset-0 z-50">
-          <div
-            className="fixed inset-0 bg-gray-800 bg-opacity-75"
-            onClick={toggleModal}
-          ></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-7 rounded-lg max-w-lg w-full min-h-[500px] z-50">
-            <p className="text-xl font-semibold">Setting</p>
-            <button className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded mt-4">
-              Close
-            </button>
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
+          <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-7 rounded-lg max-w-lg w-2/5 h-auto z-50">
+            <div className="text-gray-600">Successfully create account!</div>
           </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 }

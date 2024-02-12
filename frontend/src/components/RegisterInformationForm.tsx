@@ -68,7 +68,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
               name="firstname"
               value={firstName}
               onChange={handleFirstNameChange}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="First name"
             />
             {firstName.length != 0 && (
@@ -84,7 +84,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
               name="lastname"
               value={lastName}
               onChange={handleLastNameChange}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Last name"
             />
             {lastName.length != 0 && (
@@ -101,7 +101,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             name="address"
             value={address}
             onChange={handleAddressChange}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
             placeholder="Address"
           />
           {address.length != 0 && (
@@ -118,12 +118,12 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
               name="district"
               value={district}
               onChange={handleDistrictChange}
-              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none"
+              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
               placeholder="District"
             />
             {district.length != 0 && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                Distirct
+                District
               </div>
             )}
           </div>
@@ -134,7 +134,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
               name="province"
               value={province}
               onChange={handleProvinceChange}
-              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none"
+              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Province"
             />
             {province.length != 0 && (
@@ -152,7 +152,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
               id="phone"
               name="phone"
               value={phoneNumber}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Phone number"
               readOnly
             />
@@ -162,7 +162,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
               id="email"
               name="email"
               value={email}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700"
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Phone number"
               readOnly
             />
@@ -173,17 +173,22 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             </div>
           )}
           {email.length != 0 && useEmail && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400 ">
               Email
             </div>
           )}
         </div>
-        <div>
+        {!allInfoInputsFilled && (
+          <div className="" style={{ color: "#F16E1E" }}>
+            All fields must be filled correctly !
+          </div>
+        )}
+        {/* <div>
           <div style={{ color: "#F16E1E" }}>
             {allInfoInputsFilled ? "" : "All fields must be filled correctly !"}
           </div>
-        </div>
-        <div className="pt-8">
+        </div> */}
+        <div className="">
           <button
             type="submit"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"

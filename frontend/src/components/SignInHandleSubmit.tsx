@@ -1,6 +1,12 @@
 import { signIn } from "next-auth/react";
 import { FormEvent } from "react";
 
+const isValidEmail = (email: string):boolean => {
+    const emailRegex =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email.toLowerCase());
+};
+
 const SignInHandleSubmit = async (e: FormEvent, setUser: Function, setPassword: Function, 
 setError: Function, setErrorUser: Function, setErrorPassword: Function, user: string, password: string,error: boolean, router: any) => {
   // Set Default
@@ -10,7 +16,7 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
     setErrorPassword(0);
 
   // Check User That Gmail Or Phone Number Format?
-  if (user.length < 10 || user.slice(-10) !== "@gmail.com" || (user.length === 10 && user[0] === '0' && !isNaN(Number(user)))) {
+  if (!(isValidEmail(user) || (user.length === 10 && user[0] === '0'))) {
      setErrorUser(2);
      setError(true);
      setPassword("");
@@ -39,22 +45,22 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
   }
 
   // Check Authorization For Username And Password
-  else {
-    try {
-      const result = await signIn("credentials",{
-        username : user,
-        password : password,
-        redirect: true,
-        callbackUrl: "/", 
-      });
+  // else {
+  //   try {
+  //     const result = await signIn("credentials",{
+  //       username : user,
+  //       password : password,
+  //       redirect: true,
+  //       callbackUrl: "/", 
+  //     });
 
-      window.location.href = result?.callbackUrl;
-    } catch (error) {
-      setError(true);
-      setPassword("");
-      setErrorPassword(2);
-      console.error("Sign in failed,error");
-    }
+  //     window.location.href = result?.callbackUrl;
+  //   } catch (error) {
+  //     setError(true);
+  //     setPassword("");
+  //     setErrorPassword(2);
+  //     console.error("Sign in failed,error");
+  //   }
     
     // Your authentication logic here
     // For example, you can use the signIn function from next-auth/react
@@ -78,7 +84,7 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
     // } catch (error) {
     //   setError("Sign in failed. Account isn't existed.");
     // }
-  }
+  // }
 };
 
 export default SignInHandleSubmit;
