@@ -40,25 +40,31 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Filter query",
+                        "description": "For My events",
+                        "name": "organizer_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status query. i.e. Approved",
                         "name": "filter",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Sort order",
+                        "description": "Sort order. i.e. start_date ASC",
                         "name": "sort",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page",
+                        "description": "Items per page i.e. 10",
                         "name": "limit",
                         "in": "query"
                     }

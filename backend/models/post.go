@@ -11,6 +11,7 @@ type Post struct {
 	Caption     *string   `gorm:"column:caption" json:"caption"`
 	RatingScore int       `gorm:"column:rating_score;check:rating_range" json:"rating_score" binding:"gte=1,lte=5"`
 	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
 
 func (Post) TableName() string {
