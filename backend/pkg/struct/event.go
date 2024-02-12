@@ -20,7 +20,7 @@ type CreateEventResponse struct {
 }
 
 type UpdateEventRequest struct {
-	EventId        string  `json:"user_id"`
+	EventId        string  `json:"event_id"`
 	StartDate      string  `json:"start_date" binding:"required"`
 	EndDate        string  `json:"end_date" binding:"required"`
 	Status         string  `json:"status" binding:"required"`
@@ -33,15 +33,15 @@ type UpdateEventRequest struct {
 }
 
 type UpdateEventResponse struct {
-	EventId        string    `json:"user_id"`
+	EventId        string    `json:"event_id"`
 }
 
 type DeleteEventRequest struct {
-	EventId        string    `json:"user_id"`
+	EventId        string    `json:"event_id"`
 }
 
 type DeleteEventResponse struct {
-	EventId        string    `json:"user_id"`
+	EventId        string    `json:"event_id"`
 }
 
 type GetEventList struct {

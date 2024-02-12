@@ -51,7 +51,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventReque
 // @Accept json
 // @Produce json
 // @Param event_id path string true "Event ID" example:"event123"
-// @Param request body structure.UpdateEventRequest true "Update Event Request" example:{"start_date": "2024-01-15", "end_date": "2024-01-20", "status": "planned", "participant_fee": 50.0, "description": "Updated event description", "event_name": "Updated Event Name", "deadline": "2023-12-31", "activities": "Updated activities", "event_image": "http://example.com/updated_image.jpg"}
+// @Param request body structure.UpdateEventRequest true "Update Event Request" 
 // @Success 200 {object} structure.UpdateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
