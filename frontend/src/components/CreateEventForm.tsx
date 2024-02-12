@@ -3,31 +3,32 @@ import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SuccessModal from "./SuccessModal";
-import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 
 const CreateEventForm = () => {
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
-    const [eventName,setEventName] = useState("");
+    const [name,setName] = useState("");
     const [dateRange,setDateRange] = useState("");
     const [price, setPrice] = useState(null);
-    const [locationName,setLocationName] = useState("");
+    const [location,setLocation] = useState("");
     const [district,setDistrict] = useState("");
     const [province,setProvince] = useState("");
-    const [eventDescription,setEventDescription] = useState("");
+    const [description,setDescription] = useState("");
+    const [imageSrc,setImageSrc] = useState("");
 
-    const handleSubmit = () => {
-        setShowModal(true);
-    }
-
-    const uploadImage = () => {
-
+    const handleSubmit = async () => {
+        try {
+            setShowModal(true);
+            await HandleCreateEvent(name, dateRange, price?price:0 , location, district, province, description, imageSrc);
+        } catch (err) {
+            console.log("Create Failed. Please check the constraint", err);
+        }
     }
 
     return (
         <div className={`${styles.Roboto} w-full text-black`}>
             <form onSubmit={handleSubmit} action="" className="w-full h-full">
-                
                 {/* Form */}
                 <div className="lg:flex lg:flex-row lg:flex-wrap lg:justify-between w-full">
 
@@ -37,9 +38,9 @@ const CreateEventForm = () => {
                             <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-[48%] lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                             rounded-md"
                             type="text" placeholder="Event Name" 
-                            value={eventName} onChange={(e) => setEventName(e.target.value)}/>
+                            value={name} onChange={(e) => setName(e.target.value)} maxLength={25}/>
 
-                            {eventName.length != 0 && (
+                            {name.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                     Event Name
                                 </div>
@@ -67,7 +68,7 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="number" placeholder="Price" min={0} step={10}
-                                value={price} onChange={(e) => setPrice(e.target.value)}/>
+                                value={price} onChange={(e) => setPrice(e.target.value)} required/>
                                 {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
                                     <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
                                 </span> */}
@@ -84,9 +85,9 @@ const CreateEventForm = () => {
                             <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-[48%] lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                             rounded-md"
                             type="text" placeholder="Location Name" 
-                            value={locationName} onChange={(e) => setLocationName(e.target.value)}/>
+                            value={location} onChange={(e) => setLocation(e.target.value)} maxLength={50}/>
 
-                            {locationName.length != 0 && (
+                            {location.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                     Location Name
                                 </div>
@@ -98,7 +99,7 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="text" placeholder="District"
-                                value={district} onChange={(e) => setDistrict(e.target.value)}/>
+                                value={district} onChange={(e) => setDistrict(e.target.value)} maxLength={20}/>
                                 {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
                                     <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
                                 </span> */}
@@ -114,7 +115,7 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="text" placeholder="Province"
-                                value={province} onChange={(e) => setProvince(e.target.value)}/>
+                                value={province} onChange={(e) => setProvince(e.target.value)} maxLength={20}/>
                                 {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
                                     <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
                                 </span> */}
@@ -132,13 +133,8 @@ const CreateEventForm = () => {
 
                     {/* Right Form */}
                     <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px] border-gray-300 rounded-md flex justify-center items-center">
-                        <div className="text-center text-gray-400 hover:text-black  cursor-pointer"
-                            onClick={uploadImage}>
-                            <PhotoSizeSelectActualIcon className=""/>
-                            <div className="">
-                                Add Picture
-                            </div>
-                        </div>
+                        <textarea className="text-gray-400 hover:text-black w-full h-full indent-4 pt-[10px]"
+                        placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
                     </div>
 
                 </div>
@@ -148,9 +144,9 @@ const CreateEventForm = () => {
                              lg:text-[17px] md:text-[15px] text-[13px]
                             rounded-md"
                             placeholder="Event Description"
-                            value={eventDescription} onChange={(e)=>setEventDescription(e.target.value)}/>
+                            value={description} onChange={(e)=>setDescription(e.target.value)}/>
 
-                            {eventDescription.length != 0 && (
+                            {description.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                     Event Description
                                 </div>

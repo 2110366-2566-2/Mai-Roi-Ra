@@ -1,132 +1,46 @@
-import Image from 'next/image'
-import EventItem from '@/components/EventItem'
-import MenuPopup from '@/components/MenuPopup'
+import Image from 'next/image';
+import EventItem from '@/components/EventItem';
+import Link from 'next/link';
 import getEvents from '@/libs/getEvents';
 
 export default async function UserHomepage() {
-    const events = await getEvents();
-    const mockdata = [
-        {
-            id:'1',
-            name:'Event Name',
-            startDate:'21 Jan 2024',
-            endDate:'23 Jan 2024',
-            description:'ยืนรอรถเมล์ต้องควบคู่กับการซื้อหมูปิ้งข้างทาง พร้อมกลิ่นปะยางจากร้านมอไซต์ข้างๆชวนให้เกิดอารมณ์สุนทรีย์ พร้อมพลีกายเพื่อชาติบ้านเมือง',
-            imgSrc:'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-        },
-        { 
-            id:'2',
-            name: 'Birthday Party',
-            startDate: '15 Feb 2024',
-            endDate: '16 Feb 2024',
-            description: 'Celebrate John\'s birthday with friends and family at the park.',
-            imgSrc:'https://images.unsplash.com/photo-1560173045-beaf11c65dce?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'3',
-            name: 'Team Building Workshop',
-            startDate: '10 Mar 2024',
-            endDate: '12 Mar 2024',
-            description: 'Join us for a team building workshop focused on communication and collaboration skills.',
-            imgSrc:'https://images.unsplash.com/photo-1469289759076-d1484757abc3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'4',
-            name: 'Conference Presentation',
-            startDate: '25 Apr 2024',
-            endDate: '27 Apr 2024',
-            description: 'Presenting our latest research findings at the annual conference. Exciting discussions await!',
-            imgSrc:'https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'5',
-            name: 'Product Launch Event',
-            startDate: '5 May 2024',
-            endDate: '6 May 2024',
-            description: 'Join us for the launch of our new product line. Free samples and special discounts available!',
-            imgSrc:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'6',
-            name: 'Family Reunion',
-            startDate: '20 Jun 2024',
-            endDate: '22 Jun 2024',
-            description: 'Gather with relatives from near and far for a weekend of fun, food, and memories.',
-            imgSrc:'https://images.unsplash.com/photo-1647833202056-e6e67293ba81?q=80&w=2806&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'7',
-            name:'Event Name',
-            startDate:'21 Jan 2024',
-            endDate:'23 Jan 2024',
-            description:'ยืนรอรถเมล์ต้องควบคู่กับการซื้อหมูปิ้งข้างทาง พร้อมกลิ่นปะยางจากร้านมอไซต์ข้างๆ ชวนให้เกิดอารมณ์สุนทรีย์ พร้อมพลีกายเพื่อชาติบ้านเมือง',
-            imgSrc:'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-        },
-        {
-            id:'8',
-            name: 'Birthday Party',
-            startDate: '15 Feb 2024',
-            endDate: '16 Feb 2024',
-            description: 'Celebrate John\'s birthday with friends and family at the park.',
-            imgSrc:'https://images.unsplash.com/photo-1560173045-beaf11c65dce?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'9',
-            name: 'Team Building Workshop',
-            startDate: '10 Mar 2024',
-            endDate: '12 Mar 2024',
-            description: 'Join us for a team building workshop focused on communication and collaboration skills.',
-            imgSrc:'https://images.unsplash.com/photo-1469289759076-d1484757abc3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'10',
-            name: 'Conference Presentation',
-            startDate: '25 Apr 2024',
-            endDate: '27 Apr 2024',
-            description: 'Presenting our latest research findings at the annual conference. Exciting discussions await!',
-            imgSrc:'https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'11',
-            name: 'Product Launch Event',
-            startDate: '5 May 2024',
-            endDate: '6 May 2024',
-            description: 'Join us for the launch of our new product line. Free samples and special discounts available!',
-            imgSrc:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          },
-          {
-            id:'12',
-            name: 'Family Reunion',
-            startDate: '20 Jun 2024',
-            endDate: '22 Jun 2024',
-            description: 'Gather with relatives from near and far for a weekend of fun, food, and memories.',
-            imgSrc:'https://images.unsplash.com/photo-1647833202056-e6e67293ba81?q=80&w=2806&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          }
-    ]
-    
+  console.log("dqdqqdq");
+  const events = await getEvents();
+  const datas = events.event_lists;
+  console.log("successfully");
+  console.log(events);
+  
   return (
     <main className="bg-white text-black h-full">
         <div className='lg:pt-8 pt-2 pl-10'>
-            <h1 className='font-bold text-5xl mb-8'>Explore Events</h1>
-            <div>
+            <h1 className='font-bold lg:text-5xl text-3xl lg:mb-8 md:mb-7 mb-5'>Explore Event</h1>
+            <div className="flex flex-row justify-start w-full">
                 <input type="text" id="search-event" name="search-event" placeholder="Search" 
-                    className='border border-slate-400 rounded-xl h-[30px] w-[700px] mr-[20px] pl-2'
+                    className='border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[70%] md:w-[70%] w-[55%] mr-[20px] pl-2'
                 />
-                <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] hover:scale-105 duration-300'>
-                  Filter
+                <button className='border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[80px] md:w-[80px] w-[65px] hover:scale-105 duration-300
+                lg:ml-[20px] md:ml-[15px] sm:ml-[10px] ml-[10px]'>
+                    Filter
                 </button>
             </div>
         </div>
         <div className="mt-8 px-10">
-                {
-                events.event_lists.map((eventItem:Object)=>{
-                    <EventItem key={eventItem.imgSrc} id={eventItem.imgSrc} name={eventItem.name} startDate={eventItem.start_date} endDate={eventItem.end_date}
-                    description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.status}/>
-                  })
-                }
-                {/* {mockdata.map((event, index) => (
-
-                ))} */}
+          {
+            datas.map((eventItem:any) => (
+              <EventItem key={eventItem.event_id} id={eventItem.event_name} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
+              description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image}/>
+            ))
+          }
+           {/* <div className="text-[200px] text-center"> {datas[0].event_name} </div>
+          {
+            datas.map((eventItem:any)=>{
+              <div className="text-center text-[600px]">
+                {eventItem.event_name}
+              </div>
+              // <EventItem key={eventItem.event_id} id={eventItem.event_name} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
+              // description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image}/>
+            })
+          } */}
         </div>
     </main>
   )

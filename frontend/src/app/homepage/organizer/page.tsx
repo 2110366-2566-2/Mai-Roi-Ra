@@ -2,26 +2,12 @@ import Image from 'next/image';
 import EventItem from '@/components/EventItem';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Link from 'next/link';
+import getMyEvents from '@/libs/getMyEvents';
 
-export default function UserHomepage() {
-    const mockdata = [
-        {   
-            id:'1',
-            name:'Event Name',
-            startDate:'21 Jan 2024',
-            endDate:'23 Jan 2024',
-            description:'ยืนรอรถเมล์ต้องควบคู่กับการซื้อหมูปิ้งข้างทาง พร้อมกลิ่นปะยางจากร้านมอไซต์ข้างๆชวนให้เกิดอารมณ์สุนทรีย์ พร้อมพลีกายเพื่อชาติบ้านเมือง',
-            imgSrc:'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-        },
-          {
-            id:'2',
-            name: 'Birthday Party',
-            startDate: '15 Feb 2024',
-            endDate: '16 Feb 2024',
-            description: 'Celebrate John\'s birthday with friends and family at the park.',
-            imgSrc:'https://images.unsplash.com/photo-1560173045-beaf11c65dce?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          }
-    ]
+export default async function UserHomepage() {
+    const events = await getMyEvents('550e8400-e29b-41d4-a716-446655440200');
+    console.log(events);
+    const datas = events.event_lists;
     
   return (
     <main className="bg-white text-black h-full">
@@ -38,9 +24,12 @@ export default function UserHomepage() {
             </div>
         </div>
         <div className="mt-8 px-10">
-                {mockdata.map((event, index) => (
-                    <EventItem key={index} event={event} />
-                ))}
+            {
+                datas.map((eventItem:any) => (
+                <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
+                description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image}/>
+                ))
+            }
         </div>
         <div className="flex flex-row justify-center w-full mt-[30px] mb-[50px]">
             <Link href="/homepage/organizer/createvent">

@@ -1,12 +1,16 @@
 import styles from "@/styles/FontPage.module.css"
 import EditEventForm from "@/components/CreateEventForm";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import getEvent from "@/libs/getEvent";
 
 interface Props {
-    params : {eid:string}
+    params : {id:string}
 }
 
-const EditEvent = ({params}: Props) => {
+const EditEvent = async ({params}: Props) => {
+    const event = await getEvent(params.id);
+    const datas = event.eventlists;
+
     return (
         <div className='lg:pt-8 pt-2 px-10 text-black'>
             {/* Topic */}
@@ -19,11 +23,10 @@ const EditEvent = ({params}: Props) => {
                 </button>
             </div>
 
-
             {/* Form */}
             <div className="">
-                <EditEventForm/>
-            </div>
+                <EditEventForm Name={datas.event_name}/>
+            </div> 
 
         </div>
     )
