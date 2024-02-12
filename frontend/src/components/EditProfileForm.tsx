@@ -5,15 +5,14 @@ import styles from "@/styles/FontPage.module.css";
 
 export default function EditProfileForm() {
   // USER FIELDS
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [district, setDistrict] = useState("");
-  const [province, setProvince] = useState("");
+  const [firstName, setFirstName] = useState("Wish");
+  const [lastName, setLastName] = useState("Marukapitak");
+  const [address, setAddress] = useState("315/150 Chamchuri Square");
+  const [district, setDistrict] = useState("Payathai");
+  const [province, setProvince] = useState("Bangkok");
   const [phoneNumber, setPhoneNumber] = useState("0968800127");
   const [email, setEmail] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [birthDate, setBirthDate] = useState("1 Nov 2003");
   const [profilePicture, setProfilePicture] = useState("");
   const [backgroundPicture, setBackgroundPicture] = useState("");
 
@@ -43,6 +42,13 @@ export default function EditProfileForm() {
   const handleProvinceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newProvince = event.target.value;
     setProvince(newProvince);
+  };
+
+  const handleBirthDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newBirthDate = event.target.value;
+    setBirthDate(newBirthDate);
   };
 
   return (
@@ -165,58 +171,25 @@ export default function EditProfileForm() {
                 </div>
               )}
             </div>
-            <div className="flex">
-              <div className="relative w-full mr-2">
-                <input
-                  type="text"
-                  id="month"
-                  name="month"
-                  //   value={firstName}
-                  //   onChange={handleFirstNameChange}
-                  className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-                  placeholder="Month"
-                />
-                {/* {firstName.length != 0 && (
-                  <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                    Month
-                  </div>
-                )} */}
-              </div>
-              <div className="relative w-full ml-2">
-                <input
-                  type="text"
-                  id="date"
-                  name="date"
-                  //   value={lastName}
-                  //   onChange={handleLastNameChange}
-                  className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-                  placeholder="Date"
-                />
-                {/* {lastName.length != 0 && (
-                  <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                    Date
-                  </div>
-                )} */}
-              </div>
-              <div className="relative w-full ml-4">
-                <input
-                  type="text"
-                  id="year"
-                  name="year"
-                  //   value={lastName}
-                  //   onChange={handleLastNameChange}
-                  className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-                  placeholder="Year"
-                />
-                {/* {lastName.length != 0 && (
-                  <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                    Date
-                  </div>
-                )} */}
-              </div>
-            </div>
 
             <div className="relative">
+              <input
+                type="text"
+                id="birthdate"
+                name="birthdate"
+                value={birthDate}
+                onChange={handleBirthDateChange}
+                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="Birth Date"
+              />
+              {birthDate.length != 0 && (
+                <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                  Birth Date
+                </div>
+              )}
+            </div>
+
+            {/* <div className="relative">
               <input
                 type="text"
                 id="paymentmethod"
@@ -226,7 +199,7 @@ export default function EditProfileForm() {
                 placeholder="Payment method"
                 readOnly
               />
-            </div>
+            </div> */}
 
             <div className="pt-8">
               <button
