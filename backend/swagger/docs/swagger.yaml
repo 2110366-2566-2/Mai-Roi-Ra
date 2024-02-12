@@ -122,6 +122,43 @@ definitions:
       message:
         type: string
     type: object
+  structure.UpdateEventRequest:
+    properties:
+      activities:
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    required:
+    - activities
+    - deadline
+    - description
+    - end_date
+    - event_name
+    - participant_fee
+    - start_date
+    - status
+    type: object
+  structure.UpdateEventResponse:
+    properties:
+      user_id:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -209,6 +246,34 @@ paths:
       tags:
       - events
   /events/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an event with the specified ID.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Delete event by ID
+      tags:
+      - events
     get:
       consumes:
       - application/json
@@ -235,6 +300,40 @@ paths:
           schema:
             type: object
       summary: GetEventDataById
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update an existing event with the provided details.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Update Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.UpdateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing event
       tags:
       - events
   /locations/{location_id}:

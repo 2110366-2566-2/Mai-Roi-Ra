@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
@@ -19,7 +18,7 @@ type IEventRepository interface {
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
-	DeleteEventById(eventId string) (string, error)
+	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 }
 
 func NewEventRepository(
@@ -132,30 +131,22 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 
 	return &st.UpdateEventResponse{
 		EventId:         updatedEvent.EventId,
-		StartDate:       updatedEvent.StartDate,
-		EndDate:         updatedEvent.EndDate,
-		Status:          updatedEvent.Status,
-		ParticipantFee:  updatedEvent.ParticipantFee,
-		Description:     updatedEvent.Description,
-		EventName:       updatedEvent.EventName,
-		Deadline:        updatedEvent.Deadline,
-		Activities:      updatedEvent.Activities,
-		EventImage:      updatedEvent.EventImage,
 	}, nil
 }
 
-func (r *EventRepository) DeleteEventById(eventId string) (string, error) {
+func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Repo: DeleteEventById]: Called")
 
 	// Delete the event from the database
-	if err := r.db.Where("event_id = ?", eventId).Delete(&models.Event{}).Error; err != nil {
+	if err := r.db.Where("event_id = ?", req.EventId).Delete(&models.Event{}).Error; err != nil {
 		log.Println("[Repo: DeleteEventById] Error deleting event from Events table:", err)
-		return "", err
+		return nil, err
 	}
 
 	// Return a success message
-	successMessage := fmt.Sprintf("Event with ID %s deleted successfully", eventId)
-	return successMessage, nil
+	return &st.DeleteEventResponse{
+		EventId: req.EventId,
+	}, nil
 }
 
 func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error) {

@@ -48,8 +48,10 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventController.UpdateEvent(ctx, &req)
 		})
 		r.DELETE("/api/v1/events/:id", func(ctx *gin.Context) {
-			EventId := ctx.Param("id")
-			eventController.DeleteEventById(ctx,EventId)
+			req := st.DeleteEventRequest{
+				EventId: ctx.Param("id"),
+			}
+			eventController.DeleteEventById(ctx,&req)
 		})
 
 	})

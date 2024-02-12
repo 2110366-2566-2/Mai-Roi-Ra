@@ -44,6 +44,18 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventReque
 	ctx.JSON(http.StatusOK, res)
 }
 
+// UpdateEvent updates an existing event.
+// @Summary Update existing event
+// @Description Update an existing event with the provided details.
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param event_id path string true "Event ID" example:"event123"
+// @Param request body structure.UpdateEventRequest true "Update Event Request" example:{"start_date": "2024-01-15", "end_date": "2024-01-20", "status": "planned", "participant_fee": 50.0, "description": "Updated event description", "event_name": "Updated Event Name", "deadline": "2023-12-31", "activities": "Updated activities", "event_image": "http://example.com/updated_image.jpg"}
+// @Success 200 {object} structure.UpdateEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/{event_id} [put]
 func (c *EventController) UpdateEvent(ctx *gin.Context, req *st.UpdateEventRequest) {
 	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
 	if err != nil {
@@ -54,18 +66,27 @@ func (c *EventController) UpdateEvent(ctx *gin.Context, req *st.UpdateEventReque
 	log.Println("[CTRL: UpdateEvent] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+// DeleteEventById deletes an event by its ID.
+// @Summary Delete event by ID
+// @Description Delete an event with the specified ID.
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param event_id path string true "Event ID" example:"event123"
+// @Success 200 {object} object "OK"
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/{event_id} [delete]
+func (c *EventController) DeleteEventById(ctx *gin.Context, req *st.DeleteEventRequest) {
+	deleteMessage, err := c.ServiceGateway.EventService.DeleteEventById(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-func (c *EventController) DeleteEventById(ctx *gin.Context, eventID string) {
-    deleteMessage, err := c.ServiceGateway.EventService.DeleteEventById(eventID)
-    if err != nil {
-        ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-
-    log.Println("[CTRL: DeleteEvent] Output:", deleteMessage)
-    ctx.JSON(http.StatusOK, gin.H{"message": deleteMessage})
+	log.Println("[CTRL: DeleteEvent] Output:", deleteMessage)
+	ctx.JSON(http.StatusOK, gin.H{"message": deleteMessage})
 }
-
 
 // @Summary GetEventLists
 // @Description Get list of events
