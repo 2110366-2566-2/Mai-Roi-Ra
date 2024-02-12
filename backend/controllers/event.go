@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -28,7 +27,7 @@ func NewEventController(
 // @Tags events
 // @Accept json
 // @Produce json
-// @Param request body structure.CreateEventRequest true "Create Event Request" example:{"organizer_id": "org123", "admin_id": "admin456", "location_id": "loc789", "start_date": "2024-01-15", "end_date": "2024-01-20", "status": "planned", "participant_fee": 50.0, "description": "Annual tech conference focusing on the future of technology.", "event_name": "TechFuture 2024", "deadline": "2023-12-31", "activities": "Keynotes, Workshops, Panels", "event_image": "http://example.com/image.jpg"}
+// @Param request body structure.CreateEventRequest true "Create Event Request"
 // @Success 200 {object} structure.CreateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
@@ -43,6 +42,50 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventReque
 	}
 	log.Println("[CTRL: CreateEvent] Output:", res)
 	ctx.JSON(http.StatusOK, res)
+}
+
+// UpdateEvent updates an existing event.
+// @Summary Update existing event
+// @Description Update an existing event with the provided details.
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param event_id path string true "Event ID" example:"event123"
+// @Param request body structure.UpdateEventRequest true "Update Event Request" 
+// @Success 200 {object} structure.UpdateEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/{event_id} [put]
+func (c *EventController) UpdateEvent(ctx *gin.Context, req *st.UpdateEventRequest) {
+	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: UpdateEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+// DeleteEventById deletes an event by its ID.
+// @Summary Delete event by ID
+// @Description Delete an event with the specified ID.
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param event_id path string true "Event ID" example:"event123"
+// @Success 200 {object} object "OK"
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/{event_id} [delete]
+func (c *EventController) DeleteEventById(ctx *gin.Context, req *st.DeleteEventRequest) {
+	deleteMessage, err := c.ServiceGateway.EventService.DeleteEventById(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: DeleteEvent] Output:", deleteMessage)
+	ctx.JSON(http.StatusOK, gin.H{"message": deleteMessage})
 }
 
 // @Summary GetEventLists
@@ -89,32 +132,4 @@ func (c *EventController) GetEventDataById(ctx *gin.Context, req st.GetEventData
 	}
 	log.Println("[CTRL: GetEventDataById] Output:", res)
 	ctx.JSON(http.StatusOK, res)
-}
-
-func UpdateEvent(c *gin.Context) {
-	// Get the eventid parameter from the URL
-	eventID := c.Param("eventid")
-
-	// Parse the JSON request body into an Event struct
-	var updatedEvent st.UpdateEventRequest
-	if err := c.ShouldBindJSON(&updatedEvent); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Return a successful response
-	c.JSON(http.StatusOK, gin.H{
-		"message": fmt.Sprintf("Updated event with ID: %s", eventID),
-		"event":   updatedEvent,
-	})
-}
-
-func DeleteEvent(c *gin.Context) {
-	// Get the eventid parameter from the URL
-	eventID := c.Param("eventid")
-
-	// Return a successful response
-	c.JSON(http.StatusOK, gin.H{
-		"message": fmt.Sprintf("Deleted event with ID: %s", eventID),
-	})
 }
