@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"log"
+	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
@@ -174,7 +175,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		District: req.District,
 		LocationName: req.LocationName,
 		CreatedAt: resLocation.CreatedAt,
-		UpdatedAt: resLocation.UpdatedAt,
+		UpdatedAt: time.Now(),
 	}
 
 	err = s.RepositoryGateway.LocationRepository.UpdateLocation(locationModel)

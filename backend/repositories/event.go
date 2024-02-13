@@ -1,12 +1,12 @@
 package repository
 
 import (
-	
 	"log"
+	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
-	
+
 	"gorm.io/gorm"
 )
 
@@ -62,6 +62,7 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
             "Deadline":       req.Deadline,
             "Activities":     req.Activities,
             "EventImage":     req.EventImage,
+			"UpdatedAt": 	  time.Now(),
         }).Error; err != nil {
         log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
         return nil, err
