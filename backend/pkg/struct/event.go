@@ -8,7 +8,6 @@ type CreateEventRequest struct {
 	ParticipantFee float64 `json:"participant_fee" binding:"required"`
 	Description    string  `json:"description" binding:"required"`
 	EventName      string  `json:"event_name" binding:"required"`
-	Deadline       string  `json:"deadline" binding:"required"`
 	Activities     string  `json:"activities" binding:"required"`
 	EventImage     string  `json:"event_image" binding:"required"`
 	LocationName   string  `json:"location_name" binding:"required"`
@@ -26,21 +25,20 @@ type UpdateEventRequest struct {
 	ParticipantFee float64 `json:"participant_fee" binding:"required"`
 	Description    string  `json:"description" binding:"required"`
 	EventName      string  `json:"event_name" binding:"required"`
-	Deadline       string  `json:"deadline" binding:"required"`
 	Activities     string  `json:"activities" binding:"required"`
 	EventImage     *string `json:"event_image"`
 }
 
 type UpdateEventResponse struct {
-	EventId        string    `json:"event_id"`
+	EventId string `json:"event_id"`
 }
 
 type DeleteEventRequest struct {
-	EventId        string    `json:"event_id"`
+	EventId string `json:"event_id"`
 }
 
 type DeleteEventResponse struct {
-	Message string 
+	Message string
 }
 
 type GetEventList struct {

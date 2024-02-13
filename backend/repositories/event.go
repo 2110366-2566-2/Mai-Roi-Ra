@@ -50,7 +50,6 @@ func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventRespons
 
 func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
 	log.Println("[Repo: UpdateEvent]: Called")
-
 	startDate, err := utils.StringToTime(req.StartDate)
 	if err != nil {
 		log.Println("[Repo: Updatevent] Error parsing StartDate to time.Time format:", err)
@@ -61,19 +60,10 @@ func (r *EventRepository) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEve
 		log.Println("[Repo: UpdateEvent] Error parsing EndDate to time.Time format:", err)
 		return nil, err
 	}
-	deadline, err := utils.StringToTime(req.Deadline)
-	if err != nil {
-		log.Println("[Repo: UpdateEvent] Error parsing Deadline to time.Time format:", err)
-		return nil, err
-	}
-
+	deadline := startDate.AddDate(0, 0, -3)
 	if startDate.After(endDate) {
 		log.Println("[Service: CreateEvent] Start date must be before end date.")
 		return nil, errors.New("start date must be before end date")
-	}
-	if deadline.Before(startDate) || deadline.After(endDate) {
-		log.Println("[Service: CreateEvent] Deadline must be between start date and end date.")
-		return nil, errors.New("deadline must be between start date and end date")
 	}
 
 	eventImage := req.EventImage
