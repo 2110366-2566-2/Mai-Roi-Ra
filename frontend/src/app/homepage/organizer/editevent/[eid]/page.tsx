@@ -4,13 +4,14 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import getEvent from "@/libs/getEvent";
 
 interface Props {
-    params : {id:string}
+    params : {eid:string}
 }
 
-const EditEvent = async ({params}: Props) => {
-    const event = await getEvent(params.id);
+export default async function EditEvent({params}: Props) {
+    console.log(params.eid);
+    const event = await getEvent(params.eid);
 
-    console.log(params.id);
+
     console.log(event);
     return (
         <div className='lg:pt-8 pt-2 px-10 text-black'>
@@ -33,9 +34,4 @@ const EditEvent = async ({params}: Props) => {
 
         </div>
     )
-}
-
-export default EditEvent;
-export async function generateStaticParams(){
-    return [{eid:"001"},{eid:"002"},{eid:"003"},{eid:"004"}]
 }

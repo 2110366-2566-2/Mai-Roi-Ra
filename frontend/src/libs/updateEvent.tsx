@@ -1,6 +1,7 @@
 import { apiBackUrl } from "../constants";
 
-export default async function createEvent(
+export default async function updateEvent(
+    id:string,
     organizer_id: string,
     name: string,
     activity: string,
@@ -12,7 +13,7 @@ export default async function createEvent(
     end_date: string
 ) {
     try {
-        console.log(organizer_id, name, activity, location_name, description, imageSrc, start_date, end_date);
+        console.log(id, organizer_id, name, activity, location_name, description, imageSrc, start_date, end_date);
         const jsonBody = JSON.stringify({
             "activities": activity,
             "description": description,
@@ -26,23 +27,21 @@ export default async function createEvent(
             "status": "Waiting"
         })
 
-        const response = await fetch(`${apiBackUrl}/events`, {
-            method: "POST",
+        const response = await fetch(`${apiBackUrl}/campgrounds/${id}`, {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${token}`
             },
             body: jsonBody,
         });
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(
-                `Failed to create event: ${response.status} - ${errorData.message || "Unknown error"}`
+                `Failed to update event: ${response.status} - ${errorData.message || "Unknown error"}`
             );
-        } console.log("Success To Create Event");
+        }
         return await response.json();
-
     } catch (error) {
-        throw new Error(`Error creating event: ${error}`);
+        throw new Error(`Error updating event: ${error}`);
     }
 }

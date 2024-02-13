@@ -12,7 +12,8 @@ const CreateEventForm = () => {
     const [name,setName] = useState("");
     const [activity, setActivity] = useState("");
     const [dateRange,setDateRange] = useState("");
-    const [price, setPrice] = useState(null);
+    const [price, setPrice] = useState(0);
+    const [error,setError] = useState("");
     const [location,setLocation] = useState("");
     const [district,setDistrict] = useState("");
     const [province,setProvince] = useState("");
@@ -21,16 +22,46 @@ const CreateEventForm = () => {
 
     const handleSubmit = async () => {
         try {
-            setShowModal(true);
-            await HandleCreateEvent(name, dateRange, price?price:0 , location, district, province, description, imageSrc);
+            if (name == "") {
+                setError("Event Name Required ! ");
+                return;
+            } if (activity == ""){
+                setError("Activity Required")
+            } if (dateRange == "") {
+                setError("Date Range Required");
+                return
+            } if (imageSrc == "") {
+                setError("Image Source Required");
+                return;
+            } if (price == 0) {
+                setError("Price Required");
+                return;
+            } if (location == ""){
+                setError("Location Required");
+                return;
+            } if (district == ""){
+                setError("District Required");
+                return;
+            } if (province == "" ){
+                setError("Province Required");
+                return;
+            } if (imageSrc == "") {
+                setError("Image Source Required");
+                return;
+            } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
+                setError("Invalid Picture URI");
+                return;
+            } 
+            await HandleCreateEvent(name, activity, dateRange, price, location, district, province, description, imageSrc);
         } catch (err) {
-            console.log("Create Failed. Please check the constraint", err);
+            setError("Create Failed. Please check the constraint");
+            console.log(err)
         }
     }
 
     return (
         <div className={`${styles.Roboto} w-full text-black`}>
-            <form onSubmit={handleSubmit} action="" className="w-full h-full">
+            <form action={handleSubmit} className="w-full h-full">
                 {/* Form */}
                 <div className="lg:flex lg:flex-row lg:flex-wrap lg:justify-between w-full">
 
@@ -89,12 +120,12 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="number" placeholder="Price" min={0} step={10}
-                                value={price} onChange={(e) => setPrice(e.target.value)} required/>
+                                value={price} onChange={(e) => setPrice(e.target.value)}/>
                                 {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
                                     <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
                                 </span> */}
 
-                                {price && (
+                                {price != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                         Price
                                     </div>
@@ -174,8 +205,15 @@ const CreateEventForm = () => {
                             )}
                 </div> 
 
+                {
+                    error != "" ? 
+                    <div className="w-full text-red-600 text-center text-[25px] mt-[10px]">
+                        {error}
+                    </div>: null
+                }
+
                 {/* Button */}
-                <div className="w-full flex flex-row flex-wrap justify-around mt-[25px] lg:mb-[0px] mb-[30px]">
+                <div className={`w-full flex flex-row flex-wrap justify-around mt-[25px] ${error? "lg:mb-[30px]" : ""} lg:mb-[0px] mb-[30px]`}>
                     <div className="">
                         <button className="bg-[#D9D5D2] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
                         text-[10px] rounded-full"
