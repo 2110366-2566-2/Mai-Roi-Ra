@@ -1,8 +1,10 @@
 package services
 
 import (
+	"errors"
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
@@ -17,6 +19,8 @@ type IEventService interface {
 	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error)
 	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
+	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
+	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 }
 
 func NewEventService(
@@ -29,7 +33,49 @@ func NewEventService(
 
 func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventResponse, error) {
 	log.Println("[Service: CreateEvent]: Called")
-	res, err := s.RepositoryGateway.EventRepository.CreateEvent(req)
+	resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationByName(req.LocationName, req.District, req.City)
+	if err != nil {
+		return nil, err
+	}
+	resAdmin, err := s.RepositoryGateway.AdminRepository.GetRandomAdmin()
+	if err != nil {
+		return nil, err
+	}
+	startDate, err := utils.StringToTime(req.StartDate)
+	if err != nil {
+		log.Println("[Service: CreateEvent] Error parsing StartDate to time.Time format:", err)
+		return nil, err
+	}
+	endDate, err := utils.StringToTime(req.EndDate)
+	if err != nil {
+		log.Println("[Service: CreateEvent] Error parsing EndDate to time.Time format:", err)
+		return nil, err
+	}
+	deadline := startDate.AddDate(0, 0, -3)
+
+	if startDate.After(endDate) {
+		log.Println("[Service: CreateEvent] Start date must be before end date.")
+		return nil, errors.New("start date must be before end date")
+	}
+
+	eventImage := req.EventImage
+	eventModel := models.Event{
+		EventId:        utils.GenerateUUID(),
+		OrganizerId:    req.OrganizerId,
+		AdminId:        resAdmin.AdminId,
+		LocationId:     resLocation.LocationId,
+		StartDate:      startDate,
+		EndDate:        endDate,
+		Status:         req.Status,
+		ParticipantFee: req.ParticipantFee,
+		Description:    req.Description,
+		EventName:      req.EventName,
+		Deadline:       deadline,
+		Activities:     req.Activities,
+		EventImage:     &eventImage,
+	}
+
+	res, err := s.RepositoryGateway.EventRepository.CreateEvent(&eventModel)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +90,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 	}
 	log.Println("[Service: GetEventLists]: resEvents:", resEvents)
 	resLists := &st.GetEventListsResponse{
-		EventLists: make([]st.GetEventList, 0), // Initialize the slice if necessary
+		EventLists: make([]st.GetEventList, 0),
 	}
 	for _, v := range resEvents {
 		locationId := v.LocationId
@@ -91,13 +137,13 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 		OrganizerId:    resEvent.OrganizerId,
 		AdminId:        resEvent.AdminId,
 		LocationId:     resLocation.LocationId,
-		StartDate:      utils.GetDate(resEvent.StartDate),
-		EndDate:        utils.GetDate(resEvent.EndDate),
+		StartDate:      utils.GetDateCalendarFormat(resEvent.StartDate),
+		EndDate:        utils.GetDateCalendarFormat(resEvent.EndDate),
 		Status:         resEvent.Status,
 		ParticipantFee: resEvent.ParticipantFee,
 		Description:    resEvent.Description,
 		EventName:      resEvent.EventName,
-		Deadline:       utils.GetDate(resEvent.Deadline),
+		Deadline:       utils.GetDateCalendarFormat(resEvent.Deadline),
 		Activities:     resEvent.Activities,
 		EventImage:     eventImage,
 		Country:        resLocation.Country,
@@ -106,4 +152,29 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 		LocationName:   resLocation.LocationName,
 	}
 	return res, nil
+}
+
+func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
+	log.Println("[Service: UpdateEvent]: Called")
+	// Update the event using the repository
+	updatedEvent, err := s.RepositoryGateway.EventRepository.UpdateEvent(req)
+	if err != nil {
+		log.Println("[Service: UpdateEvent] Error updating event:", err)
+		return nil, err
+	}
+
+	return updatedEvent, nil
+}
+
+func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
+	log.Println("[Service: DeleteEvent]: Called")
+
+	// Delete the event using the repository
+	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
+	if err != nil {
+		log.Println("[Service: DeleteEvent] Error deleting event:", err)
+		return nil, err
+	}
+
+	return deleteMessage, nil
 }

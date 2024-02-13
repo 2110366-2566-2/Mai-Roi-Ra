@@ -1,14 +1,49 @@
 basePath: /api/v1
 definitions:
+  models.User:
+    properties:
+      address:
+        type: string
+      banner_image:
+        type: string
+      birth_date:
+        type: string
+      created_at:
+        type: string
+      district:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      payment_gateway_customer_id:
+        type: string
+      phone_number:
+        type: string
+      province:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        description: gorm.Model                         // This includes fields ID,
+          CreatedAt, UpdatedAt, DeletedAt
+        type: string
+      user_image:
+        type: string
+      username:
+        type: string
+    type: object
   structure.CreateEventRequest:
     properties:
       activities:
         type: string
-      admin_id:
-        type: string
-      deadline:
+      city:
         type: string
       description:
+        type: string
+      district:
         type: string
       end_date:
         type: string
@@ -16,7 +51,7 @@ definitions:
         type: string
       event_name:
         type: string
-      location_id:
+      location_name:
         type: string
       organizer_id:
         type: string
@@ -28,12 +63,13 @@ definitions:
         type: string
     required:
     - activities
-    - admin_id
-    - deadline
+    - city
     - description
+    - district
     - end_date
+    - event_image
     - event_name
-    - location_id
+    - location_name
     - organizer_id
     - participant_fee
     - start_date
@@ -124,6 +160,70 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  structure.UpdateEventRequest:
+    properties:
+      activities:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: string
+      event_id:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+    required:
+    - activities
+    - description
+    - end_date
+    - event_name
+    - participant_fee
+    - start_date
+    - status
+    type: object
+  structure.UpdateEventResponse:
+    properties:
+      event_id:
+        type: string
+    type: object
+  structure.UpdateUserInformationRequest:
+    properties:
+      address:
+        type: string
+      birth_date:
+        type: string
+      district:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone_number:
+        type: string
+      province:
+        type: string
+      user_id:
+        type: string
+      user_image:
+        type: string
+    required:
+    - address
+    - birth_date
+    - district
+    - first_name
+    - last_name
+    - phone_number
+    - province
+    - user_id
     type: object
 externalDocs:
   description: OpenAPI
@@ -216,6 +316,34 @@ paths:
       tags:
       - events
   /events/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an event with the specified ID.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Delete event by ID
+      tags:
+      - events
     get:
       consumes:
       - application/json
@@ -242,6 +370,40 @@ paths:
           schema:
             type: object
       summary: GetEventDataById
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update an existing event with the provided details.
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Update Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.UpdateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing event
       tags:
       - events
   /locations/{location_id}:
@@ -288,6 +450,64 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /users/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get User from given field (user_id)
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetUserByUserId
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update User information with the desired input
+      parameters:
+      - description: Create Event Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateUserInformationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: UpdateUserInformation
+      tags:
+      - user
 securityDefinitions:
   BasicAuth:
     type: basic
