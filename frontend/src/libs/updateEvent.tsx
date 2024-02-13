@@ -2,7 +2,6 @@ import { apiBackUrl } from "../constants";
 
 export default async function updateEvent(
     id: string,
-    organizer_id: string,
     name: string,
     activity: string,
     location_name: string,
@@ -16,7 +15,7 @@ export default async function updateEvent(
 ) {
 
     try {
-        console.log(id, organizer_id, name, activity, location_name, district , province, description, imageSrc, start_date, end_date);
+        console.log(id,  name, activity, location_name, district , province, description, imageSrc, start_date, end_date);
         const jsonBody = JSON.stringify({
             "activities": activity,
             "description": description,
@@ -26,12 +25,12 @@ export default async function updateEvent(
             "location_name": location_name,
             "district": district,
             "city": province,
-            "organizer_id": organizer_id,
             "participant_fee": Number(price),
             "start_date": start_date,
             "status": "Waiting"
         })
 
+        console.log(jsonBody);
         const response = await fetch(`${apiBackUrl}/events/${id}`, {
             method: "PUT",
             headers: {

@@ -8,7 +8,7 @@ export async function HandleCreateEvent(name:string,activity:string, dateRange:s
     province:string, description:string, imageSrc:string){
 
     try {
-        const res = await createEvent("550e8400-e29b-41d4-a716-446655440200",name,activity,location,district,province,price,description,imageSrc,dateRange.substring(0,10),dateRange.substring(11,21))
+        const res = await createEvent("550e8400-e29b-41d4-a716-446655440200",name,activity,location,district,province,price,description,imageSrc,dateRange.substring(0,10),dateRange.substring(13,23))
         console.log(res)
         console.log("Create Event successful")
     } catch (err) {
