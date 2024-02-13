@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import updateProfile from "@/libs/updateProfile";
 
@@ -25,11 +25,14 @@ export default async function UpdateProfileAction(
       province,
       birthDate
     );
-    console.log(res);
     console.log("Update Booking successful (in Action)");
+    console.log(res);
   } catch (err) {
     console.log("Error during action: ", err);
   }
-  revalidateTag(`users/${user_id}`);
-  revalidateTag(`users`);
+  revalidateTag(`profile/${user_id}`);
+  revalidateTag(`profile`);
+  revalidatePath("/profile");
+
+  redirect("/profile");
 }

@@ -8,16 +8,19 @@ import { PiBalloonBold } from "react-icons/pi";
 import { SlLocationPin } from "react-icons/sl";
 import getProfile from "@/libs/getProfile";
 import EditProfileButton from "@/components/EditProfileButton";
+import { revalidateTag } from "next/cache";
+import ProfileUserInformation from "@/components/ProfileUserInformation";
 
 export default async function Profile() {
   const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
+  revalidateTag("profile");
 
   return (
     <div className="bg-white text-black h-full">
       <div className="lg:mr-24 border-r bg-white">
         <div className="bg-blue-500 w-full h-[200px] relative">
           <Image
-            src="/img/background_picture.jpeg"
+            src="/img/navy_background_picture.png"
             alt="Background Image"
             layout="fill"
             objectFit="cover"
@@ -38,43 +41,17 @@ export default async function Profile() {
             </div>
           </div>
           <div className="flex">
-            <div className="w-full">
-              <div className="flex mt-14">
-                <div className="text-xl ml-8">{profile.first_name}</div>
-                <div className="text-xl ml-2">{profile.last_name}</div>
-              </div>
-              <div className="ml-10">
-                <div className="text-sm text-gray-500">@{profile.username}</div>
-              </div>
-              <div className="mt-2 ml-16 space-y-2">
-                {1 ? (
-                  <div className="flex items-center">
-                    <FaPhone className="text-gray-500 text-sm mr-1" />
-                    <div className="text-sm text-gray-500">
-                      {profile.phone_number}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <MdEmail className="text-gray-500 text-sm mr-1" />
-                    <div className="text-sm text-gray-500">{profile.email}</div>
-                  </div>
-                )}
-                <div className="flex items-center">
-                  <PiBalloonBold className="text-gray-500 text-sm mr-1" />
-                  <div className="text-sm text-gray-500">
-                    Born {profile.birth_date}
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <SlLocationPin className="text-gray-500 text-sm mr-1" />
-                  <div className="text-sm text-gray-500">
-                    {profile.province}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ProfileUserInformation
+              firstNameProp={profile.first_name}
+              lastNameProp={profile.last_name}
+              addressProp={profile.address}
+              districtProp={profile.district}
+              provinceProp={profile.province}
+              phoneNumberProp={profile.phone_number}
+              emailProp={profile.email}
+              birthDateProp={profile.birth_date}
+              usernameProp={profile.username}
+            ></ProfileUserInformation>
             <EditProfileButton></EditProfileButton>
           </div>
         </div>
