@@ -84,11 +84,12 @@ const CreateEventForm = () => {
                             </div>
 
                             <div className="w-[48%] relative">
-                                <FormControl className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}>
-                                    <InputLabel className="text-gray-100">Activity</InputLabel>
-                                    <Select value={activity}
-                                        label="Activity" onChange={(e) => setActivity(e.target.value)} >
-                                        <MenuItem value="Entertainment">Entertainment</MenuItem>
+                                <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px]">
+                                    <InputLabel>Activity</InputLabel>
+                                    <Select value={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
+                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
+                                            label="Activity" onChange={(e) => setActivity(e.target.value)} >
+                                        <MenuItem value="Entertainmeny">Entertainent</MenuItem>
                                         <MenuItem value="Exercise">Exercise</MenuItem>
                                         <MenuItem value="Volunteer">Volunteen</MenuItem>
                                         <MenuItem value="Meditation">Meditation</MenuItem>

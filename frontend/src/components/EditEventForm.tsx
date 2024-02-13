@@ -100,12 +100,12 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                 </div>
 
                                 <div className="w-[48%] relative">
-                                    <FormControl className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
-                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}>
+                                    <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px]">
                                         <InputLabel>Activity</InputLabel>
-                                        <Select value={activity}
+                                        <Select value={activity} defaultValue={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
+                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
                                             label="Activity" onChange={(e) => setActivity(e.target.value)} >
-                                            <MenuItem value="Entertainmeny">Entertainent</MenuItem>
+                                            <MenuItem value="Entertainment">Entertaiment</MenuItem>
                                             <MenuItem value="Exercise">Exercise</MenuItem>
                                             <MenuItem value="Volunteer">Volunteen</MenuItem>
                                             <MenuItem value="Meditation">Meditation</MenuItem>
@@ -200,9 +200,15 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                     </div>
 
                     {/* Right Form */}
-                    <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px] border-gray-300 rounded-md flex justify-center items-center">
-                        <textarea className="text-gray-400 hover:text-black w-full h-full indent-4 pt-[10px]"
+                    <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
+                     border-gray-300 rounded-md flex justify-center items-center relative">
+                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px]"
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
+                         {imageSrc.length != 0 && (
+                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
+                                    Event Description
+                                </div>
+                            )}
                     </div>
 
                 </div>

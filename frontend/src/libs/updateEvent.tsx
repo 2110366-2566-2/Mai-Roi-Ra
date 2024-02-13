@@ -27,7 +27,7 @@ export default async function updateEvent(
             "district": district,
             "city": province,
             "organizer_id": organizer_id,
-            "participant_fee": price,
+            "participant_fee": Number(price),
             "start_date": start_date,
             "status": "Waiting"
         })
