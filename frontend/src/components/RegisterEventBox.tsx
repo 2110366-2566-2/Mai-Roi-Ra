@@ -25,7 +25,7 @@ export default function RegisterEventBox({event}:{event : Event}) {
     }
 
     return(
-        <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full lg:w-[400px] h-auto shadow-xl">
+        <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
                         <div>
                             <span className="text-2xl font-semibold">{event.participant_fee} $</span>
                             <div className="w-full border rounded-lg flex flex-col h-auto mt-4">

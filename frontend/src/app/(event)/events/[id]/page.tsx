@@ -14,12 +14,12 @@ export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
 
     return (
-        <main className="container mx-16 px-4 py-0 lg:py-4 h-screen text-black">
+        <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
             <Link className="absolute top-[38px] left-8 flex items-center justify-center hover:scale-[1.2] duration-300" href={"/homepage"}><ArrowBackIosNewIcon className="text-[#1DA1F2]"/></Link>
             <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>
-            <div className="flex flex-wrap items-start flex-row w-full justify-center gap-20">
-                <div className="h-full flex flex-col">
-                    <div className="w-full lg:w-[750px] xl:w-full h-[400px] overflow-hidden">
+            <div className="flex flex-wrap items-start flex-col w-auto w-full lg:flex-row">
+                <div className="h-full flex flex-col w-auto max-w-[750px] lg:mr-20">
+                    <div className="w-full lg:w-[750px] xl:w-full h-auto overflow-hidden">
                             <Image
                                 src="https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                                 width={800} 
@@ -51,7 +51,7 @@ export default async function EventDetailPage({ params }: Props) {
                         </div>
                     </div>
                 </div>
-                <div className="mt-8 lg:mt-0">
+                <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center">
                     <RegisterEventBox event={event}/>
                 </div>
             </div>
