@@ -5,6 +5,7 @@ import { useState } from "react";
 import SuccessModal from "./SuccessModal";
 
 interface Props {
+    Id:string
     Name:string,
     StartDate:string,
     EndDate:string,
@@ -16,7 +17,7 @@ interface Props {
     ImgSrc:string
 }
 
-const EditEventForm = ({Name,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
+const EditEventForm = ({Id,Name,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState(Name);

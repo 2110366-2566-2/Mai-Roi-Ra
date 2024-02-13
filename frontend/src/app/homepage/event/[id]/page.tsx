@@ -17,7 +17,7 @@ export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
 
     return (
-        <main className="container mx-16 px-4 py-0 lg:py-4 h-screen">
+        <main className="container mx-16 px-4 py-0 lg:py-4 h-screen text-black">
             <button className="absolute top-[38px] left-8 flex items-center justify-center"><ArrowBackIosNewIcon className="text-[#1DA1F2]"/></button>
             <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>
             <div className="flex flex-wrap items-start flex-row w-full justify-center gap-20">
