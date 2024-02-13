@@ -177,6 +177,99 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "Update an existing event with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Update existing event",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Event Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an event with the specified ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Delete event by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
             }
         },
         "/locations/{location_id}": {
@@ -245,19 +338,158 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "description": "Get User from given field (user_id)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "GetUserByUserId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update User information with the desired input",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "UpdateUserInformation",
+                "parameters": [
+                    {
+                        "description": "Create Event Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateUserInformationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "banner_image": {
+                    "type": "string"
+                },
+                "birth_date": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "payment_gateway_customer_id": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt",
+                    "type": "string"
+                },
+                "user_image": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateEventRequest": {
             "type": "object",
             "required": [
                 "activities",
-                "admin_id",
                 "deadline",
                 "description",
                 "end_date",
+                "event_image",
                 "event_name",
-                "location_id",
+                "location_name",
                 "organizer_id",
                 "participant_fee",
                 "start_date",
@@ -265,9 +497,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "activities": {
-                    "type": "string"
-                },
-                "admin_id": {
                     "type": "string"
                 },
                 "deadline": {
@@ -285,7 +514,7 @@ const docTemplate = `{
                 "event_name": {
                     "type": "string"
                 },
-                "location_id": {
+                "location_name": {
                     "type": "string"
                 },
                 "organizer_id": {
@@ -430,6 +659,101 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UpdateEventRequest": {
+            "type": "object",
+            "required": [
+                "activities",
+                "deadline",
+                "description",
+                "end_date",
+                "event_name",
+                "participant_fee",
+                "start_date",
+                "status"
+            ],
+            "properties": {
+                "activities": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_image": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "participant_fee": {
+                    "type": "number"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UpdateEventResponse": {
+            "type": "object",
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UpdateUserInformationRequest": {
+            "type": "object",
+            "required": [
+                "address",
+                "birth_date",
+                "district",
+                "first_name",
+                "last_name",
+                "phone_number",
+                "province",
+                "user_id"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "birth_date": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_image": {
                     "type": "string"
                 }
             }
