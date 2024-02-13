@@ -55,7 +55,7 @@ func (r *LocationRepository) UpdateLocation(req models.Location) (error) {
             "CreatedAt":    	req.CreatedAt,
             "UpdatedAt":      	time.Now(),
         }).Error; err != nil {
-        log.Println("[Repo: UpdateEvent] Error updating event in Locations table:", err)
+        log.Println("[Repo: UpdateLocation] Error updating location in Locations table:", err)
         return err
     }
 
