@@ -5,6 +5,8 @@ export default async function createEvent(
     name: string,
     activity: string,
     location_name: string,
+    district: string,
+    province: string,
     price:number,
     description: string,
     imageSrc: string,
@@ -12,14 +14,17 @@ export default async function createEvent(
     end_date: string
 ) {
     try {
-        console.log(organizer_id, name, activity, location_name, description, imageSrc, start_date, end_date);
+        console.log(organizer_id, name, activity, location_name, district, province, description, imageSrc, start_date, end_date);
         const jsonBody = JSON.stringify({
             "activities": activity,
+            "city": province,
             "description": description,
             "end_date": end_date,
             "event_image": imageSrc,
             "event_name": name,
             "location_name": location_name,
+            "district": district,
+            "province": province,
             "organizer_id": organizer_id,
             "participant_fee": price,
             "start_date": start_date,

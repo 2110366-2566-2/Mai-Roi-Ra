@@ -4,7 +4,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
-import HandlerUpdateEvent from "./"
+import { HandleUpdateEvent }  from "./organizer/HandleUpdateEvent"
 
 interface Props {
     Id:string
@@ -66,7 +66,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                 setError("Invalid Picture URI");
                 return;
             } 
-            await HandleUpdateEvent(name, activity, dateRange, price, location, district, province, description, imageSrc);
+            await HandleUpdateEvent(Id,name, activity, dateRange, price, location, district, province, description, imageSrc);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -76,7 +76,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
 
     return (
         <div className={`${styles.Roboto} w-full text-black`}>
-            <form onSubmit={handleSubmit} action="" className="w-full h-full">
+            <form action={handleSubmit} className="w-full h-full">
                 {/* Form */}
                 <div className="lg:flex lg:flex-row lg:flex-wrap lg:justify-between w-full">
 
@@ -100,7 +100,8 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                 </div>
 
                                 <div className="w-[48%] relative">
-                                    <FormControl className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}>
+                                    <FormControl className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
+                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}>
                                         <InputLabel>Activity</InputLabel>
                                         <Select value={activity}
                                             label="Activity" onChange={(e) => setActivity(e.target.value)} >
@@ -220,8 +221,15 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                             )}
                 </div> 
 
+                {
+                    error != "" ? 
+                    <div className="w-full text-red-600 text-center text-[25px] mt-[10px]">
+                        {error}
+                    </div>: null
+                }
+
                 {/* Button */}
-                <div className="w-full flex flex-row flex-wrap justify-around mt-[25px] lg:mb-[0px] mb-[30px]">
+                <div className={`w-full flex flex-row flex-wrap justify-around mt-[25px] ${error? "lg:mb-[30px]" : ""} lg:mb-[0px] mb-[30px]`}>
                     <div className="">
                         <button className="bg-[#D9D5D2] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
                         text-[10px] rounded-full"
