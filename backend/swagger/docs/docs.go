@@ -671,9 +671,12 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "activities",
+                "city",
                 "description",
+                "district",
                 "end_date",
                 "event_name",
+                "location_name",
                 "participant_fee",
                 "start_date",
                 "status"
@@ -682,7 +685,13 @@ const docTemplate = `{
                 "activities": {
                     "type": "string"
                 },
+                "city": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "district": {
                     "type": "string"
                 },
                 "end_date": {
@@ -695,6 +704,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "event_name": {
+                    "type": "string"
+                },
+                "location_name": {
                     "type": "string"
                 },
                 "participant_fee": {
