@@ -39,7 +39,7 @@ export default function MenuBar({onDevice} : Props) {
             </div>
           </div>
           <div className="p-4 flex justify-center">
-            <button className="text-white rounded-full hover:bg-blue-600 bg-[#1EA1F1] h-[40px] w-[150px]">
+            <button className="text-white rounded-full hover:bg-blue-600 bg-[#1EA1F1] h-[40px] max-h-[150px] w-[70%]">
               Logout
             </button>
           </div>
