@@ -162,3 +162,24 @@ func (c *UserController) UpdateUserInformation(ctx *gin.Context, req *st.UpdateU
 	log.Println("[CTRL: UpdateUserInformation] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary GetUserByUserId
+// @Description Get User from given field (user_id)
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id path string true "User ID"
+// @Success 200 {object} models.User
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/{user_id} [get]
+func (c *UserController) GetUserByUserId(ctx *gin.Context, req *st.GetUserByUserIdRequest) {
+	log.Println("[CTRL: GetUser] Input:", req)
+	res, err := c.ServiceGateway.UserService.GetUserByUserId(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetUser] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
