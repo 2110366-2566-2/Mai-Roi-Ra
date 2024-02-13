@@ -17,6 +17,7 @@ type ILocationRepository interface {
 	GetLocationById(string) (*models.Location, error)
 	GetLocationByName(locationName string, district string, city string) (*models.Location, error)
 	CreateLocation(req models.Location) (*string, error)
+	UpdateLocation(req models.Location) (error)
 }
 
 func NewLocationRepository(
@@ -41,6 +42,24 @@ func (r *LocationRepository) CreateLocation(req models.Location) (*string, error
 		return nil, err
 	}
 	return &req.LocationId, nil
+}
+
+func (r *LocationRepository) UpdateLocation(req models.Location) (error) {
+	log.Println("[Repo: UpdateLocation]: Called")
+    if err := r.db.Model(&models.Location{}).Where("location_id = ?", req.LocationId).
+        Updates(map[string]interface{}{
+            "Country":      	req.Country,
+            "City":        		req.City,
+            "District":         req.District,
+            "LocationName": 	req.LocationName,
+            "CreatedAt":    	req.CreatedAt,
+            "UpdatedAt":      	req.UpdatedAt,
+        }).Error; err != nil {
+        log.Println("[Repo: UpdateEvent] Error updating event in Locations table:", err)
+        return err
+    }
+
+    return nil
 }
 
 func (r *LocationRepository) GetLocationById(locationId string) (*models.Location, error) {
