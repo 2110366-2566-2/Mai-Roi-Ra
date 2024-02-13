@@ -21,7 +21,7 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
   return (
     <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-5 w-full hover:scale-[1.02] duration-300"
     onClick={(e) => {
-      router.push(`/homepage/event/${id}`);
+      router.push(`/events/${id}`);
       e.stopPropagation();
       e.preventDefault();
       }}>

@@ -4,8 +4,6 @@ import '../globals.css'
 // import ReduxProvider from '@/redux/ReduxProvider'
 import MenuBar from '@/components/MenuBar'
 
-const inter = Inter({ subsets: ['latin'] })
-
 export const metadata: Metadata = {
   title: 'Mai-Roi-Ra',
   description: 'Powered by Pubpab',
