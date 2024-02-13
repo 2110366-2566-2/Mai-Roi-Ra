@@ -3,12 +3,11 @@ import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
-import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const CreateEventForm = () => {
     const router = useRouter();
-    const [showModal,setShowModal] = useState(true);
+    const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState("");
     const [activity, setActivity] = useState("");
     const [dateRange,setDateRange] = useState("");
@@ -51,7 +50,7 @@ const CreateEventForm = () => {
             } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
                 setError("Invalid Picture URI");
                 return;
-            } await HandleCreateEvent(name, activity, dateRange, price? price : 0, location, district, province, description, imageSrc);
+            } setShowModal(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -89,7 +88,7 @@ const CreateEventForm = () => {
                                     <Select value={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
                                     lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
                                         onChange={(e) => setActivity(e.target.value)} >
-                                        <MenuItem value="Entertainmeny">Entertainent</MenuItem>
+                                        <MenuItem value="Entertainment">Entertainment</MenuItem>
                                         <MenuItem value="Exercise">Exercise</MenuItem>
                                         <MenuItem value="Volunteer">Volunteen</MenuItem>
                                         <MenuItem value="Meditation">Meditation</MenuItem>
@@ -235,7 +234,9 @@ const CreateEventForm = () => {
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Evented Created" isVisible={showModal} onClose={()=>setShowModal(false)}/>
+                <SuccessModal id={""} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
+                district={district} province={province} description={description} imageSrc={imageSrc}
+                topic="Evented Created" isVisible={showModal}/>
             </form>
         </div>
     )

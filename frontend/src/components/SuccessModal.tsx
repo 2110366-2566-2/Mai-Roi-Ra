@@ -3,18 +3,34 @@ import styles from "@/styles/FontPage.module.css"
 import Image from "next/image"
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { Icon } from "@mui/material";
+import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
+import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
 
 interface Props {
-    topic:String
+    id:string
+    name:string
+    activity:string
+    dateRange:string
+    price:number
+    location:string
+    district:string
+    province:string
+    description:string
+    imageSrc:string
+    topic:string
     isVisible:boolean
-    onClose:Function
 }
 
-const SuccessModal = ({topic,isVisible,onClose} : Props) => {
+const SuccessModal = ({id,name,activity,dateRange,price,location,district,province,description,
+    imageSrc,topic,isVisible} : Props) => {
     if (!isVisible) return null;
     
-    const handlerClose = () => {
-        onClose();
+    const handlerClose = async () => {
+        if (topic == "Evented Created"){
+            await HandleCreateEvent(name, activity, dateRange, price? price : 0, location, district, province, description, imageSrc);
+        } else {
+            await HandleUpdateEvent(id,name, activity, dateRange, price, location, district, province, description, imageSrc);
+        }
     }
 
     return (

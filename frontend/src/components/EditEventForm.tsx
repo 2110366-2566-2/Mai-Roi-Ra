@@ -4,7 +4,6 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
-import { HandleUpdateEvent }  from "./organizer/HandleUpdateEvent"
 
 interface Props {
     Id:string
@@ -65,8 +64,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
             } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
                 setError("Invalid Picture URI");
                 return;
-            } 
-            await HandleUpdateEvent(Id,name, activity, dateRange, price, location, district, province, description, imageSrc);
+            } setShowModal(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -251,7 +249,9 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Evented Created" isVisible={showModal} onClose={()=>setShowModal(false)}/>
+                <SuccessModal id={Id} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
+                district={district} province={province} description={description} imageSrc={imageSrc}
+                topic="Save Changes" isVisible={showModal}/>
             </form>
         </div>
     )
