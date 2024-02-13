@@ -36,9 +36,9 @@ const SuccessModal = ({id,name,activity,dateRange,price,location,district,provin
     return (
         <div className="w-screen h-screen fixed inset-0 flex flex-row justify-center items-center 
         bg-opacity-25 bg-black">
-            <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[20px] px-[15px] z-20">
-                <div className="text-end">
-                    <CancelOutlinedIcon className="icon-large cursor-pointer" onClick={handlerClose}/>
+            <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[15px] px-[15px] z-20">
+                <div className="relative top-[-5px] right-[-5px] text-end">
+                    <CancelOutlinedIcon className="text-3xl icon-large cursor-pointer" onClick={handlerClose}/>
                 </div>
 
 
