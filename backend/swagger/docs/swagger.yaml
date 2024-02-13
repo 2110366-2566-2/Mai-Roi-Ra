@@ -39,9 +39,11 @@ definitions:
     properties:
       activities:
         type: string
-      deadline:
+      city:
         type: string
       description:
+        type: string
+      district:
         type: string
       end_date:
         type: string
@@ -61,8 +63,9 @@ definitions:
         type: string
     required:
     - activities
-    - deadline
+    - city
     - description
+    - district
     - end_date
     - event_image
     - event_name
@@ -162,8 +165,6 @@ definitions:
     properties:
       activities:
         type: string
-      deadline:
-        type: string
       description:
         type: string
       end_date:
@@ -182,7 +183,6 @@ definitions:
         type: string
     required:
     - activities
-    - deadline
     - description
     - end_date
     - event_name
