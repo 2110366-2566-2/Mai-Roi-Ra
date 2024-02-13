@@ -36,8 +36,8 @@ export default function HomePage() {
             </div>
 
             {/* InFormation On Right Side */}
-            <div className={"flex flex-col px-[8%] py-[10%] w-[100%] " + `${isPhoneScreen ? 'h-[40%] items-center justify-start' : 'h-screen'}`}>
-                <div className={`w-[60px] h-[60px] flex ${isPhoneScreen ? 'justify-center' : 'items-end'}`}>
+            <div className={"flex flex-col px-[8%] py-[10%] w-[100%] " + `${isPhoneScreen ? 'h-[40%] items-center justify-start !p-8' : 'h-screen !py-[15%]'}`}>
+                <div className={`w-[60px] h-[60px] flex ${isPhoneScreen ? 'justify-center' : 'items-end mb-4'}`}>
                     <Image className="w-[60px] h-[60px]"
                     src="/img/icon_sunlight.png"
                     alt="Failed To Load Image"
@@ -45,24 +45,22 @@ export default function HomePage() {
                     height={1000}/>
                 </div>
                 
-                <div className={`text-4xl font-black w-full ${isPhoneScreen ? 'text-center' : ''}`}>
+                <div className={`font-black w-full ${isPhoneScreen ? 'text-center mb-2 text-4xl ' : 'text-8xl mb-4'}`}>
                     Happening now
                 </div>
             
-                <div className={`text-base font-black w-full ${isPhoneScreen ? 'text-center' : ''}`}>
+                <div className={`font-black w-full ${isPhoneScreen ? 'text-base text-center mb-4' : 'text-5xl mb-10'}`}>
                     Join MAI-ROI-RA today
                 </div>
 
 
-                    <Link className="bg-sky-500 font-black
-                    py-[15px] font=black rounded-full 
-                    px-[65px] hover:bg-sky-400" 
-                    href="/auth/register">
-                        Sign up with phone or email
-                    </Link>
+                <Link className={`bg-sky-500 font-black py-[15px] rounded-full px-[65px] hover:bg-sky-400 text-[12px] text-center ${isPhoneScreen ? 'text-center mb-4' : 'w-fit text-xl mb-4'}`} 
+                href="/auth/register">
+                    Sign up with phone or email
+                </Link>
                 
                 <div className={`w-full ${isPhoneScreen ? 'flex justify-center' : ''}`}>
-                    <span>
+                    <span className="ml-2">
                         Already have an acoount?
                     </span>
                     <span className="ml-[3px]">
