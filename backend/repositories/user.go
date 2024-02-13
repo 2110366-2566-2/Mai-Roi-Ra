@@ -142,10 +142,6 @@ func (r *UserRepository) UpdateUserInformation(req *st.UpdateUserInformationRequ
 		modelUser.Province = req.Province
 	}
 
-	if req.PhoneNumber != "" {
-		modelUser.PhoneNumber = req.PhoneNumber
-	}
-
 	if req.UserImage != nil {
 		modelUser.UserImage = *req.UserImage
 	}

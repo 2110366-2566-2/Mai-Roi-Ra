@@ -977,7 +977,6 @@
                 "district",
                 "first_name",
                 "last_name",
-                "phone_number",
                 "province",
                 "user_id"
             ],
@@ -995,9 +994,6 @@
                     "type": "string"
                 },
                 "last_name": {
-                    "type": "string"
-                },
-                "phone_number": {
                     "type": "string"
                 },
                 "province": {

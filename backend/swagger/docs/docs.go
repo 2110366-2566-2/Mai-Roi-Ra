@@ -983,7 +983,6 @@ const docTemplate = `{
                 "district",
                 "first_name",
                 "last_name",
-                "phone_number",
                 "province",
                 "user_id"
             ],
@@ -1001,9 +1000,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_name": {
-                    "type": "string"
-                },
-                "phone_number": {
                     "type": "string"
                 },
                 "province": {

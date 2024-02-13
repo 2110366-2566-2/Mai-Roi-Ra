@@ -269,8 +269,6 @@ definitions:
         type: string
       last_name:
         type: string
-      phone_number:
-        type: string
       province:
         type: string
       user_id:
@@ -283,7 +281,6 @@ definitions:
     - district
     - first_name
     - last_name
-    - phone_number
     - province
     - user_id
     type: object
