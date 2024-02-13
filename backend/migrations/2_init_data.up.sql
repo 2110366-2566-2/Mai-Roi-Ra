@@ -19,10 +19,10 @@ BEGIN
     ('550e8400-e29b-41d4-a716-446655440104', 'AmyS', '1234567894', 'user5@example.com', 'Amy', 'Santiago', 'password5', 'paymentid5', '1998-01-01', 'https://example.com/user5.jpg', '1313 Hex St', 'West End', 'New York', 'https://example.com/banner5.jpg', '', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Organizers table
-    INSERT INTO organizers (organizer_id, user_id, office_hours, created_at, updated_at)
+    INSERT INTO organizers (organizer_id, user_id, start_office_hours, end_office_hours, created_at, updated_at)
     VALUES 
-    ('550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440100', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 hour'], CURRENT_TIMESTAMP, NULL),
-    ('550e8400-e29b-41d4-a716-446655440201', '550e8400-e29b-41d4-a716-446655440101', ARRAY[CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 hours'], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day');
+    ('550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440100', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 hour', CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440201', '550e8400-e29b-41d4-a716-446655440101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 hours', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day');
 
     -- Insert data into Locations table
     INSERT INTO locations (location_id, country, city, district, location_name, created_at, updated_at)

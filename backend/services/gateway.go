@@ -15,10 +15,8 @@ type ServiceGateway struct {
 	TestService     ITestService
 	EventService    IEventService
 	LocationService ILocationService
-	UserService 	IUserService
+	UserService     IUserService
 }
-
-
 
 // NewService ...
 func NewService(sg ServiceGateway) *Service {
