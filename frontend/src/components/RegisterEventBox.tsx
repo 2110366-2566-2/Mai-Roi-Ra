@@ -6,7 +6,14 @@ import CalendarIcon from '@mui/icons-material/CalendarMonth';
 import AddGuestIcon from '@mui/icons-material/GroupAdd';
 import { useState } from 'react';
 
-export default function RegisterEventBox({event}:{event : Object}) {
+interface Event {
+    participant_fee: number;
+    location_name: string;
+    start_date: string;
+    end_date: string;
+}
+
+export default function RegisterEventBox({event}:{event : Event}) {
     const [numberOfGuest, setNumberOfGuest] = useState(1);
 
     const handleMinusGuestButton = () => {
