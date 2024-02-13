@@ -21,14 +21,17 @@ definitions:
       payment_gateway_customer_id:
         type: string
       phone_number:
+        description: Replace "phone_length_constraint" with actual SQL check expression
+          if needed
         type: string
       province:
         type: string
       updated_at:
         type: string
       user_id:
-        description: gorm.Model                         // This includes fields ID,
-          CreatedAt, UpdatedAt, DeletedAt
+        description: |-
+          gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
+          UserImage                *string   `gorm:"column:user_image" json:"user_image"`
         type: string
       user_image:
         type: string
@@ -79,6 +82,47 @@ definitions:
     properties:
       event_id:
         type: string
+    type: object
+  structure.CreateUserRequest:
+    properties:
+      address:
+        type: string
+      district:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      province:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - address
+    - district
+    - first_name
+    - last_name
+    - password
+    - province
+    - role
+    - username
+    type: object
+  structure.CreateUserResponse:
+    properties:
+      organizer_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - user_id
     type: object
   structure.GetEventDataByIdResponse:
     properties:
@@ -156,6 +200,15 @@ definitions:
       location_name:
         type: string
     type: object
+  structure.LoginUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+    type: object
   structure.TestResponse:
     properties:
       message:
@@ -216,8 +269,6 @@ definitions:
         type: string
       last_name:
         type: string
-      phone_number:
-        type: string
       province:
         type: string
       user_id:
@@ -230,7 +281,6 @@ definitions:
     - district
     - first_name
     - last_name
-    - phone_number
     - province
     - user_id
     type: object
@@ -444,6 +494,64 @@ paths:
       summary: GetLocationById
       tags:
       - locations
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user by their email, phone number, and password.
+      parameters:
+      - description: Log in a user
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the login token.
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Returns an error if login fails.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Log in a user
+      tags:
+      - user
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Logs out a user by invalidating the session token associated with
+        the uid.
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Confirms the user has been logged out.
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Returns an error if logout fails.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Log out a user
+      tags:
+      - user
   /test:
     get:
       consumes:
@@ -459,6 +567,36 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided details.
+      parameters:
+      - description: Create User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create new user
+      tags:
+      - users
   /users/{user_id}:
     get:
       consumes:
@@ -515,6 +653,34 @@ paths:
           schema:
             type: object
       summary: UpdateUserInformation
+      tags:
+      - user
+  /validate-token:
+    get:
+      consumes:
+      - application/json
+      description: Validates a user's authentication token and returns the associated
+        user details if valid.
+      parameters:
+      - description: Authentication Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns user details on successful token validation.
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Returns an error if the token is invalid or expired.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Validate user token
       tags:
       - user
 securityDefinitions:

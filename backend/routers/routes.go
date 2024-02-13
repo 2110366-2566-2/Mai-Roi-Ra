@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
+
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/gin-gonic/gin"
@@ -15,6 +17,7 @@ import (
 
 func SetupRouter(c *dig.Container) *gin.Engine {
 	r := gin.Default()
+	auth := r.Group("", middleware.Authentication(c)) //use auth instead of r if that api want authentication
 
 	// Swagger setup
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -134,6 +137,24 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 				return
 			}
 			userController.UpdateUserInformation(ctx, &req)
+		})
+	})
+
+	// login/logout is here
+	err = c.Invoke(func(userController *controllers.UserController) {
+		r.POST("/api/v1/login", func(ctx *gin.Context) {
+			var req st.LoginUserRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.LoginUser(ctx, &req)
+		})
+		auth.POST("/api/v1/logout", func(ctx *gin.Context) {
+			var req st.LogoutUserRequest
+			req.UserID = ctx.GetString(middleware.KeyUserID)
+
+			userController.LogoutUser(ctx, &req)
 		})
 	})
 

@@ -310,6 +310,92 @@
                 }
             }
         },
+        "/login": {
+            "post": {
+                "description": "Logs in a user by their email, phone number, and password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Log in a user",
+                "parameters": [
+                    {
+                        "description": "Log in a user",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.LoginUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the login token.",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error if login fails.",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Logs out a user by invalidating the session token associated with the uid.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Log out a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Confirms the user has been logged out.",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error if logout fails.",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -328,6 +414,52 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.TestResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "description": "Create a new user with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create new user",
+                "parameters": [
+                    {
+                        "description": "Create User Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
@@ -420,6 +552,47 @@
                     }
                 }
             }
+        },
+        "/validate-token": {
+            "get": {
+                "description": "Validates a user's authentication token and returns the associated user details if valid.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Validate user token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns user details on successful token validation.",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error if the token is invalid or expired.",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -454,6 +627,7 @@
                     "type": "string"
                 },
                 "phone_number": {
+                    "description": "Replace \"phone_length_constraint\" with actual SQL check expression if needed",
                     "type": "string"
                 },
                 "province": {
@@ -463,7 +637,7 @@
                     "type": "string"
                 },
                 "user_id": {
-                    "description": "gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt",
+                    "description": "gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt\nUserImage                *string   `gorm:\"column:user_image\" json:\"user_image\"`",
                     "type": "string"
                 },
                 "user_image": {
@@ -533,6 +707,65 @@
             "type": "object",
             "properties": {
                 "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "address",
+                "district",
+                "first_name",
+                "last_name",
+                "password",
+                "province",
+                "role",
+                "username"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateUserResponse": {
+            "type": "object",
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "organizer_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -653,6 +886,20 @@
                 }
             }
         },
+        "structure.LoginUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.TestResponse": {
             "type": "object",
             "properties": {
@@ -730,7 +977,6 @@
                 "district",
                 "first_name",
                 "last_name",
-                "phone_number",
                 "province",
                 "user_id"
             ],
@@ -748,9 +994,6 @@
                     "type": "string"
                 },
                 "last_name": {
-                    "type": "string"
-                },
-                "phone_number": {
                     "type": "string"
                 },
                 "province": {

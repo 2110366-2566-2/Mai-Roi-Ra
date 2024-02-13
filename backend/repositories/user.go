@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -18,9 +19,12 @@ type UserRepository struct {
 
 type IUserRepository interface {
 	GetUserByEmail(email string) (*models.User, error)
-	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse, error)
+	GetUserByPhoneNumber(phoneNumber string) (*models.User, error)
+	CreateUser(*st.CreateUserRequest) (*string, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
+	GetUserByToken(token string) (*models.User, error)
 	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
+	UpdateUserToken(userID string, token string) error
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -52,26 +56,26 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 }
 
 // CreateUser adds a new user to the database.
-func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*st.CreateUserResponse, error) {
+func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
-	birthDate, err := utils.StringToTime(req.BirthDate)
-	if err != nil {
-		log.Println("[Repo: CreateUser] Error parsing BirthDate to time.Time format:", err)
-		return nil, err
-	}
 
 	userModel := models.User{
-		UserID:                   utils.GenerateUUID(),
-		PaymentGatewayCustomerID: utils.GenerateUUID(),
+		UserID:                   utils.GenerateUUID(), // Assuming you want to generate a UUID for the user.
+		Username:                 req.Username,
 		PhoneNumber:              req.PhoneNumber,
-		BirthDate:                birthDate,
 		Email:                    req.Email,
 		FirstName:                req.FirstName,
 		LastName:                 req.LastName,
-		UserImage:                req.UserImage,
-		CreatedAt:                time.Now(),
+		Password:                 req.Password, // Password:  hashedPassword = Store the hashed password
+		PaymentGatewayCustomerID: "",
+		UserImage:                "",
+		Address:                  req.Address,
+		District:                 req.District,
+		Province:                 req.Province,
+		BannerImage:              "",
+		CreatedAt:                time.Time{},
+		//BirthDate:                time.Time{},
 	}
-
 	trans := r.DB.Begin().Debug()
 	if err := trans.Create(&userModel).Error; err != nil {
 		trans.Rollback()
@@ -81,23 +85,11 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRe
 
 	if err := trans.Commit().Error; err != nil {
 		trans.Rollback()
-		log.Println("[Repo: CreateUser]: Call ORM DB Commit error:", err)
+		log.Println("[Repo: CreateUser]: Call orm DB Commit error:", err)
 		return nil, err
 	}
 
-	return &st.CreateUserResponse{
-		UserId: userModel.UserID, // Assuming your User model has an ID field
-	}, nil
-}
-
-// UpdateUser updates an existing user in the database.
-func (repo *UserRepository) UpdateUser(c *gin.Context, user *models.User) error {
-	log.Println("[REPO: UpdateUser]: Called")
-	result := repo.DB.Save(user)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+	return &userModel.UserID, nil
 }
 
 // DeleteUser deletes a user from the database.
@@ -150,12 +142,8 @@ func (r *UserRepository) UpdateUserInformation(req *st.UpdateUserInformationRequ
 		modelUser.Province = req.Province
 	}
 
-	if req.PhoneNumber != "" {
-		modelUser.PhoneNumber = req.PhoneNumber
-	}
-
 	if req.UserImage != nil {
-		modelUser.UserImage = req.UserImage
+		modelUser.UserImage = *req.UserImage
 	}
 
 	// Save the updated version
@@ -175,4 +163,26 @@ func (r *UserRepository) GetUserByID(req *st.GetUserByUserIdRequest) (*models.Us
 		return nil, err
 	}
 	return &user, nil
+}
+
+// GetUserByToken retrieves a user by their token.
+func (repo *UserRepository) GetUserByToken(token string) (*models.User, error) {
+	var user models.User
+	if err := repo.DB.Where("token = ?", token).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+	return &user, nil
+}
+
+// UpdateUserToken updates a token to existing user in the database.
+func (repo *UserRepository) UpdateUserToken(userID string, token string) error {
+	err := repo.DB.Model(&models.User{}).Where("user_id = ?", userID).Update("token", token).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
