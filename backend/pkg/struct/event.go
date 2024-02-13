@@ -28,7 +28,10 @@ type UpdateEventRequest struct {
 	Description    string  `json:"description" binding:"required"`
 	EventName      string  `json:"event_name" binding:"required"`
 	Activities     string  `json:"activities" binding:"required"`
-	EventImage     *string `json:"event_image"`
+	EventImage     string `json:"event_image"`
+	LocationName   string  `json:"location_name" binding:"required"`
+	District       string  `json:"district" binding:"required"`
+	City           string  `json:"city" binding:"required"`
 }
 
 type UpdateEventResponse struct {
