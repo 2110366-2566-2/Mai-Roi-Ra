@@ -8,14 +8,12 @@ export default async function createEvent(
     description: string,
     imageSrc: string,
     start_date: string,
-    end_date: string,
-    deadline: string
+    end_date: string
 ) {
     try {
-        console.log(organizer_id, name, location_name, description, imageSrc, start_date, end_date, deadline)
+        console.log(organizer_id, name, location_name, description, imageSrc, start_date, end_date)
         const jsonBody = JSON.stringify({
-            "activities":"events activities",
-            "deadline": deadline,
+            "activities":"Exercise",
             "description": description,
             "end_date": end_date,
             "event_image": imageSrc,

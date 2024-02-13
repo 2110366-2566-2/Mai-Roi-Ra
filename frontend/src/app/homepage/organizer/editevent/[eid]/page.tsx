@@ -10,6 +10,7 @@ interface Props {
 const EditEvent = async ({params}: Props) => {
     const event = await getEvent(params.id);
 
+    console.log(params.id);
     console.log(event);
     return (
         <div className='lg:pt-8 pt-2 px-10 text-black'>
@@ -25,7 +26,7 @@ const EditEvent = async ({params}: Props) => {
 
             {/* Form */}
             <div className="">
-                <EditEventForm Id={event.event_id} Name={event.event_name} StartDate={event.start_date} EndDate={event.end_date}
+                <EditEventForm Id={event.event_id} Name={event.event_name}  Activity={event.activities} StartDate={event.start_date} EndDate={event.end_date}
                     Price={event.participant_fee} Location={event.location_name} District={event.district}
                     Province={event.country} Description={event.description} ImgSrc={event.event_image}/>
             </div> 

@@ -1,14 +1,16 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const CreateEventForm = () => {
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState("");
+    const [activity, setActivity] = useState("");
     const [dateRange,setDateRange] = useState("");
     const [price, setPrice] = useState(null);
     const [location,setLocation] = useState("");
@@ -34,17 +36,36 @@ const CreateEventForm = () => {
 
                     {/* Left Form */}
                     <div className="lg:w-[48%] w-full md:space-y-[25px] space-y-[20px]">
-                        <div className="w-full relative">
-                            <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-[48%] lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                            rounded-md"
-                            type="text" placeholder="Event Name" 
-                            value={name} onChange={(e) => setName(e.target.value)} maxLength={25}/>
+                        <div className="flex flex-start flex-wrap justify-between w-full">
+                            <div className="w-[48%] relative">
+                                <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
+                                rounded-md"
+                                type="text" placeholder="Event Name"
+                                value={name} onChange={(e) => setName(e.target.value)} maxLength={20}/>
+                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
+                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
+                                </span> */}
 
-                            {name.length != 0 && (
-                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Event Name
-                                </div>
-                            )}
+                                {name.length != 0 && (
+                                    <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
+                                        Event Name
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="w-[48%] relative">
+                                <FormControl className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}>
+                                    <InputLabel className="text-gray-100">Activity</InputLabel>
+                                    <Select value={activity}
+                                        label="Activity" onChange={(e) => setActivity(e.target.value)} >
+                                        <MenuItem value="Entertainmeny">Entertainent</MenuItem>
+                                        <MenuItem value="Exercise">Exercise</MenuItem>
+                                        <MenuItem value="Volunteer">Volunteen</MenuItem>
+                                        <MenuItem value="Meditation">Meditation</MenuItem>
+                                        <MenuItem value="Cooking">Cooking</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </div>
                         </div>
                         
                         <div className="flex flex-start flex-wrap justify-between w-full">
