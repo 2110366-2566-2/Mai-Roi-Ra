@@ -38,6 +38,12 @@ export default function EditProfileForm({
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
 
+  const reformatDate = (dateStr: string) => {
+    return dateStr.split("T")[0].replace(/-/g, "/");
+  };
+
+  const formattedDate = reformatDate(birthDate);
+
   // HANDLER for fields
   const handleFirstNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -208,7 +214,7 @@ export default function EditProfileForm({
             type="text"
             id="birthdate"
             name="birthdate"
-            value={birthDate}
+            value={formattedDate}
             onChange={handleBirthDateChange}
             className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
             placeholder="Birth Date"
