@@ -101,7 +101,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
 
                                 <div className="w-[48%] relative">
                                     <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px]">
-                                        <InputLabel>Activity</InputLabel>
+                                        <InputLabel className="text-[16px] lg:mt-[-2px] md:mt-[-4px] sm:mt-[-6px] mt-[-8px]">Activity</InputLabel>
                                         <Select value={activity} defaultValue={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
                                     lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
                                             label="Activity" onChange={(e) => setActivity(e.target.value)} >

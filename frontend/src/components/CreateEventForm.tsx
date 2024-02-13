@@ -8,7 +8,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const CreateEventForm = () => {
     const router = useRouter();
-    const [showModal,setShowModal] = useState(false);
+    const [showModal,setShowModal] = useState(true);
     const [name,setName] = useState("");
     const [activity, setActivity] = useState("");
     const [dateRange,setDateRange] = useState("");
@@ -84,11 +84,11 @@ const CreateEventForm = () => {
                             </div>
 
                             <div className="w-[48%] relative">
-                                <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px]">
-                                    <InputLabel>Activity</InputLabel>
+                                <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px] relative">
+                                    <InputLabel className="text-[16px] lg:mt-[-2px] md:mt-[-4px] sm:mt-[-6px] mt-[-8px]">Activity</InputLabel>
                                     <Select value={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
                                     lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
-                                            label="Activity" onChange={(e) => setActivity(e.target.value)} >
+                                        onChange={(e) => setActivity(e.target.value)} >
                                         <MenuItem value="Entertainmeny">Entertainent</MenuItem>
                                         <MenuItem value="Exercise">Exercise</MenuItem>
                                         <MenuItem value="Volunteer">Volunteen</MenuItem>
