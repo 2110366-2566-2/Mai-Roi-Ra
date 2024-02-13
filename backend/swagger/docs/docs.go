@@ -484,8 +484,9 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "activities",
-                "deadline",
+                "city",
                 "description",
+                "district",
                 "end_date",
                 "event_image",
                 "event_name",
@@ -499,10 +500,13 @@ const docTemplate = `{
                 "activities": {
                     "type": "string"
                 },
-                "deadline": {
+                "city": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "district": {
                     "type": "string"
                 },
                 "end_date": {
@@ -667,7 +671,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "activities",
-                "deadline",
                 "description",
                 "end_date",
                 "event_name",
@@ -677,9 +680,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "activities": {
-                    "type": "string"
-                },
-                "deadline": {
                     "type": "string"
                 },
                 "description": {

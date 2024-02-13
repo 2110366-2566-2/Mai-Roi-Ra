@@ -33,7 +33,7 @@ func NewEventService(
 
 func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventResponse, error) {
 	log.Println("[Service: CreateEvent]: Called")
-	resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationByName(req.LocationName)
+	resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationByName(req.LocationName, req.District, req.City)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 		log.Println("[Service: CreateEvent] Start date must be before end date.")
 		return nil, errors.New("start date must be before end date")
 	}
-	
+
 	eventImage := req.EventImage
 	eventModel := models.Event{
 		EventId:        utils.GenerateUUID(),
@@ -90,7 +90,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 	}
 	log.Println("[Service: GetEventLists]: resEvents:", resEvents)
 	resLists := &st.GetEventListsResponse{
-		EventLists: make([]st.GetEventList, 0), // Initialize the slice if necessary
+		EventLists: make([]st.GetEventList, 0),
 	}
 	for _, v := range resEvents {
 		locationId := v.LocationId

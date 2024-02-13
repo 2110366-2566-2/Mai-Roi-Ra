@@ -2,3 +2,4 @@
 .idea/*
 .DS_Store
 tmp/main
+tmp/air.log
