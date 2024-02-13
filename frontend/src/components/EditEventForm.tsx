@@ -206,7 +206,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
                          {imageSrc.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Event Description
+                                    Image Src
                                 </div>
                             )}
                     </div>

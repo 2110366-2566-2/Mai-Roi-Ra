@@ -184,9 +184,15 @@ const CreateEventForm = () => {
                     </div>
 
                     {/* Right Form */}
-                    <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px] border-gray-300 rounded-md flex justify-center items-center">
-                        <textarea className="text-gray-400 hover:text-black w-full h-full indent-4 pt-[10px]"
+                    <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
+                     border-gray-300 rounded-md flex justify-center items-center relative">
+                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px]"
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
+                         {imageSrc.length != 0 && (
+                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
+                                    Image Src
+                                </div>
+                            )}
                     </div>
 
                 </div>
