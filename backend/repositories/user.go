@@ -17,10 +17,10 @@ type UserRepository struct {
 }
 
 type IUserRepository interface {
-	GetUserByID(userID string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
 	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
+	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -31,17 +31,6 @@ func NewUserRepository(
 	return &UserRepository{
 		DB: DB,
 	}
-}
-
-// GetUserByID retrieves a user by their ID.
-func (repo *UserRepository) GetUserByID(userID string) (*models.User, error) {
-	log.Println("[REPO: GetUserByID]: Called")
-	var user models.User
-	result := repo.DB.Where("user_id = ?", userID).First(&user)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &user, nil
 }
 
 // GetUserByEmail retrieves a user by their email address.
@@ -176,4 +165,14 @@ func (r *UserRepository) UpdateUserInformation(req *st.UpdateUserInformationRequ
 	}
 
 	return &modelUser, nil
+}
+
+// GetUserByID retrieves a user by their ID.
+func (r *UserRepository) GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error) {
+	log.Println("[REPO: GetUserByID]: Called")
+	var user models.User
+	if err := r.DB.Where("user_id = ?", req.UserId).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
