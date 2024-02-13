@@ -5,6 +5,7 @@ import styles from "@/styles/FontPage.module.css";
 import Image from "next/image";
 import RegisterInformationForm from "./RegisterInformationForm";
 import RegisterAccountForm from "./RegisterAccountForm";
+import userRegister from "@/libs/userRegister";
 
 export default function RegisterForm() {
   // ** I don't know why `import { useRouter } from "next/navigation";` works, I thought it should be `next/router`
@@ -198,17 +199,42 @@ export default function RegisterForm() {
   const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
 
-  const handleInfoSubmit = (event: FormEvent) => {
+  const [error, setError] = useState("");
+  const handleInfoSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
     if (firstName && lastName && address && district && province) {
-      console.log("All info fields are filled. Form submitted. Modal is up.");
-      setSuccessModal(true);
-      setAllInfoInputsFilled(true);
-      setTimeout(() => {
-        router.push("/auth/signin");
-        setSuccessModal(false);
-      }, 4000);
+      try {
+        const response = await userRegister(
+          name,
+          phoneNumber,
+          email,
+          password,
+          role,
+          firstName,
+          lastName,
+          address,
+          district,
+          province
+        );
+        setSuccessModal(true);
+        setAllInfoInputsFilled(true);
+        setTimeout(() => {
+          router.push("/auth/signin");
+          setSuccessModal(false);
+        }, 4000);
+        // console.log("All info fields are filled. Form submitted. Modal is up.");
+        // setSuccessModal(true);
+        // setAllInfoInputsFilled(true);
+        // console.log("Registration successful");
+        // setTimeout(() => {
+        //   router.push("/auth/signin");
+        //   setSuccessModal(false);
+        // }, 4000);
+      } catch (err) {
+        setError("Register Failed. Might be because of duplicated email");
+        console.log("Error during registration: ", err);
+      }
     } else {
       console.log("Please fill in all info fields.");
       setAllInfoInputsFilled(false);
