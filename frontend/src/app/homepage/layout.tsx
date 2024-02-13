@@ -17,7 +17,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`{inter.className} h-full text-black`}>
+      <body className={`{inter.className} h-screen text-black`}>
             <MenuBar onDevice="PC"/>
             <div className="lg:w-[0px] lg:h-[0px] md:w-[50px] md:h-[50px] h-[25px] w-[25px]">
               <MenuBar onDevice="Tablet"/>
