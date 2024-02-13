@@ -1,19 +1,17 @@
 'use client'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { HandleDeleteEvent } from './organizer/HandleDeleteEvent';
+import DeletePopUp from '@/libs/DeletePopUp';
+import { useState } from 'react';
 
 interface Props {
     id: string
 }
 
 export default function DeleteEventButton({id} : Props) {
+    const [showModal,setShowModal] = useState(false);
 
     const handleDelete = async () => {
-        try {
-            await HandleDeleteEvent(id);
-        } catch (err) {
-            console.log(err)
-        }
+        setShowModal(true);
     }
 
     return (
@@ -24,6 +22,7 @@ export default function DeleteEventButton({id} : Props) {
                     <DeleteForeverIcon className="lg:text-[40px] md:text-[35px] text-[30px]"/>
                 </span> Delete Event
             </button>
+            <DeletePopUp id={id} isVisible={showModal} onClose={() => setShowModal(false)}/>
         </div>
     )
 }

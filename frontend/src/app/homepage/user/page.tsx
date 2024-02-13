@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import EventItem from '@/components/EventItem';
-import Link from 'next/link';
 import getEvents from '@/libs/getEvents';
 
 export default async function UserHomepage() {
