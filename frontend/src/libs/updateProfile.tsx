@@ -11,12 +11,15 @@ export default async function updateProfile(
 ) {
   try {
     const jsonBody = JSON.stringify({
+      user_id: user_id,
       first_name: firstName,
       last_name: lastName,
       address: address,
       district: district,
       province: province,
       birth_date: birthDate,
+      phone_number: "1234567890",
+      user_image: "https://example.com/user1.jpg",
     });
     const response = await fetch(`${apiBackUrl}/users/${user_id}`, {
       method: "PUT",

@@ -13,32 +13,23 @@ export default async function UpdateProfileAction(
   birthDate: string
 ) {
   //   console.log(token);
-  const res = await updateProfile(
-    user_id,
-    firstName,
-    lastName,
-    address,
-    district,
-    province,
-    birthDate
-  );
-  console.log(res);
-  console.log("Update Booking successful (in Action)");
-  //   try {
-  //     const res = await updateProfile(
-  //       user_id,
-  //       firstName,
-  //       lastName,
-  //       address,
-  //       district,
-  //       province,
-  //       birthDate
-  //     );
-  //     console.log(res);
-  //     console.log("Update Booking successful (in Action)");
-  //   } catch (err) {
-  //     console.log("Error during action: ", err);
-  //   }
-  //   revalidateTag(`bookings/${id}`);
-  //   revalidateTag(`bookings`);
+
+  try {
+    console.log(firstName);
+    const res = await updateProfile(
+      user_id,
+      firstName,
+      lastName,
+      address,
+      district,
+      province,
+      birthDate
+    );
+    console.log(res);
+    console.log("Update Booking successful (in Action)");
+  } catch (err) {
+    console.log("Error during action: ", err);
+  }
+  revalidateTag(`users/${user_id}`);
+  revalidateTag(`users`);
 }

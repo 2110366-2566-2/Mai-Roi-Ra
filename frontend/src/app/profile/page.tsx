@@ -1,4 +1,4 @@
-// "use client";
+"use server";
 import React from "react";
 import EventItem from "@/components/EventItem";
 import Image from "next/image";
@@ -11,7 +11,6 @@ import EditProfileButton from "@/components/EditProfileButton";
 
 export default async function Profile() {
   const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-  console.log(profile);
 
   return (
     <div className="bg-white text-black h-full">
@@ -82,11 +81,6 @@ export default async function Profile() {
         <div className="bg-white w-full h-[50px] flex justify-center items-center border-b">
           <div className="text-gray-800">My events</div>
         </div>
-        {/* <div className="bg-white w-full h-[800px] px-10">
-          {mockdata.map((event, index) => (
-            <EventItem key={index} event={event} />
-          ))}
-        </div> */}
       </div>
     </div>
   );
