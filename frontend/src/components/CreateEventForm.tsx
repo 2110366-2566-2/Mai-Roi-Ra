@@ -12,7 +12,7 @@ const CreateEventForm = () => {
     const [name,setName] = useState("");
     const [activity, setActivity] = useState("");
     const [dateRange,setDateRange] = useState("");
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState(null);
     const [error,setError] = useState("");
     const [location,setLocation] = useState("");
     const [district,setDistrict] = useState("");
@@ -33,7 +33,7 @@ const CreateEventForm = () => {
             } if (imageSrc == "") {
                 setError("Image Source Required");
                 return;
-            } if (price == 0) {
+            } if (price == null) {
                 setError("Price Required");
                 return;
             } if (location == ""){
@@ -51,8 +51,7 @@ const CreateEventForm = () => {
             } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
                 setError("Invalid Picture URI");
                 return;
-            } 
-            await HandleCreateEvent(name, activity, dateRange, price, location, district, province, description, imageSrc);
+            } await HandleCreateEvent(name, activity, dateRange, price? price : 0, location, district, province, description, imageSrc);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -89,7 +88,7 @@ const CreateEventForm = () => {
                                     <InputLabel className="text-gray-100">Activity</InputLabel>
                                     <Select value={activity}
                                         label="Activity" onChange={(e) => setActivity(e.target.value)} >
-                                        <MenuItem value="Entertainmeny">Entertainent</MenuItem>
+                                        <MenuItem value="Entertainment">Entertainment</MenuItem>
                                         <MenuItem value="Exercise">Exercise</MenuItem>
                                         <MenuItem value="Volunteer">Volunteen</MenuItem>
                                         <MenuItem value="Meditation">Meditation</MenuItem>
@@ -125,7 +124,7 @@ const CreateEventForm = () => {
                                     <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
                                 </span> */}
 
-                                {price != 0 && (
+                                {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                         Price
                                     </div>

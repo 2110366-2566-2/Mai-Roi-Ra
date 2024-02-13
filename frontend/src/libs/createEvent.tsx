@@ -7,7 +7,7 @@ export default async function createEvent(
     location_name: string,
     district: string,
     province: string,
-    price:number,
+    price: number,
     description: string,
     imageSrc: string,
     start_date: string,
@@ -19,17 +19,18 @@ export default async function createEvent(
             "activities": activity,
             "city": province,
             "description": description,
+            "district": district,
             "end_date": end_date,
             "event_image": imageSrc,
             "event_name": name,
             "location_name": location_name,
-            "district": district,
-            "province": province,
             "organizer_id": organizer_id,
-            "participant_fee": price,
+            "participant_fee": Number(price),
             "start_date": start_date,
             "status": "Waiting"
-        })
+        });
+
+        console.log(jsonBody);
 
         const response = await fetch(`${apiBackUrl}/events`, {
             method: "POST",
