@@ -3,6 +3,7 @@ import { apiBackUrl } from "../constants";
 export default async function createEvent(
     organizer_id: string,
     name: string,
+    activity: string,
     location_name: string,
     price:number,
     description: string,
@@ -11,9 +12,9 @@ export default async function createEvent(
     end_date: string
 ) {
     try {
-        console.log(organizer_id, name, location_name, description, imageSrc, start_date, end_date)
+        console.log(organizer_id, name, activity, location_name, description, imageSrc, start_date, end_date);
         const jsonBody = JSON.stringify({
-            "activities":"Exercise",
+            "activities": activity,
             "description": description,
             "end_date": end_date,
             "event_image": imageSrc,
@@ -38,7 +39,7 @@ export default async function createEvent(
             throw new Error(
                 `Failed to create event: ${response.status} - ${errorData.message || "Unknown error"}`
             );
-        }
+        } console.log("Success To Create Event");
         return await response.json();
 
     } catch (error) {

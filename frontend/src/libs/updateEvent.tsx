@@ -1,0 +1,47 @@
+import { apiBackUrl } from "../constants";
+
+export default async function updateEvent(
+    id:string,
+    organizer_id: string,
+    name: string,
+    activity: string,
+    location_name: string,
+    price:number,
+    description: string,
+    imageSrc: string,
+    start_date: string,
+    end_date: string
+) {
+    try {
+        console.log(id, organizer_id, name, activity, location_name, description, imageSrc, start_date, end_date);
+        const jsonBody = JSON.stringify({
+            "activities": activity,
+            "description": description,
+            "end_date": end_date,
+            "event_image": imageSrc,
+            "event_name": name,
+            "location_name": location_name,
+            "organizer_id": organizer_id,
+            "participant_fee": price,
+            "start_date": start_date,
+            "status": "Waiting"
+        })
+
+        const response = await fetch(`${apiBackUrl}/campgrounds/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: jsonBody,
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                `Failed to update event: ${response.status} - ${errorData.message || "Unknown error"}`
+            );
+        }
+        return await response.json();
+    } catch (error) {
+        throw new Error(`Error updating event: ${error}`);
+    }
+}

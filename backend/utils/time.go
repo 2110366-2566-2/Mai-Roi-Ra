@@ -70,10 +70,14 @@ func (t *TimeUtils) CheckWorkingDate(dateString string) (string, bool) {
 
 // Converts a string in format "YYYY-MM-DD" to a time.Time object.
 func StringToTime(timeStr string) (time.Time, error) {
-	layout := "2006-01-02"
+	layout := "2006/01/02"
 	parsedTime, err := time.Parse(layout, timeStr)
 	if err != nil {
 		return time.Time{}, err
 	}
 	return parsedTime, nil
+}
+
+func GetDateCalendarFormat(ct time.Time) string {
+	return time.Time(ct).In(time.Now().Location()).Format("2006/01/02")
 }

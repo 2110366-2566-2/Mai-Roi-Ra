@@ -4,6 +4,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
+import HandlerUpdateEvent from "./"
 
 interface Props {
     Id:string
@@ -31,19 +32,47 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
     const [province,setProvince] = useState(Province);
     const [description,setDescription] = useState(Description);
     const [imageSrc,setImageSrc] = useState(ImgSrc);
-
-    console.log("dqdqwqdw" + name);
-    console.log(dateRange);
-    console.log(price);
+    const [error,setError] = useState("");
 
     const handleSubmit = async () => {
-        // try {
-        //     setShowModal(true);
-        //     await HandleCreateEvent(name, dateRange, price?price:0 , location, district, province, description, imageSrc);
-        // } catch (err) {
-        //     console.log("Create Failed. Please check the constraint", err);
-        // }
+        try {
+            if (name == "") {
+                setError("Event Name Required ! ");
+                return;
+            } if (activity == ""){
+                setError("Activity Required")
+            } if (dateRange == "") {
+                setError("Date Range Required");
+                return
+            } if (imageSrc == "") {
+                setError("Image Source Required");
+                return;
+            } if (price == 0) {
+                setError("Price Required");
+                return;
+            } if (location == ""){
+                setError("Location Required");
+                return;
+            } if (district == ""){
+                setError("District Required");
+                return;
+            } if (province == "" ){
+                setError("Province Required");
+                return;
+            } if (imageSrc == "") {
+                setError("Image Source Required");
+                return;
+            } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
+                setError("Invalid Picture URI");
+                return;
+            } 
+            await HandleUpdateEvent(name, activity, dateRange, price, location, district, province, description, imageSrc);
+        } catch (err) {
+            setError("Create Failed. Please check the constraint");
+            console.log(err)
+        }
     }
+
 
     return (
         <div className={`${styles.Roboto} w-full text-black`}>
@@ -55,8 +84,8 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                     <div className="lg:w-[48%] w-full md:space-y-[25px] space-y-[20px]">
                         <div className="flex flex-start flex-wrap justify-between w-full">
                                 <div className="w-[48%] relative">
-                                    <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                                    rounded-md"
+                                    <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 
+                                    md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px] rounded-md"
                                     type="text" placeholder="Event Name"
                                     value={name} onChange={(e) => setName(e.target.value)} maxLength={20}/>
                                     {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
@@ -72,7 +101,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
 
                                 <div className="w-[48%] relative">
                                     <FormControl className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}>
-                                        <InputLabel className="text-gray-100">Activity</InputLabel>
+                                        <InputLabel>Activity</InputLabel>
                                         <Select value={activity}
                                             label="Activity" onChange={(e) => setActivity(e.target.value)} >
                                             <MenuItem value="Entertainmeny">Entertainent</MenuItem>
