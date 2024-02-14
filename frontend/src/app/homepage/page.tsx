@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import EventItem from '@/components/EventItem';
-import getMyEvents from '@/libs/getMyEvents';
+import getEvents from '@/libs/getEvents';
 
 export default async function UserHomepage() {
-  const events = await getMyEvents('550e8400-e29b-41d4-a716-446655440200');
+  const events = await getEvents();
   const datas = events.event_lists;
   console.log("successfully");
   console.log(events);
