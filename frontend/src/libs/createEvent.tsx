@@ -40,6 +40,8 @@ export default async function createEvent(
             },
             body: jsonBody,
         });
+
+        console.log(jsonBody);
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(

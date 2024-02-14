@@ -26,7 +26,7 @@ const SuccessModal = ({id,name,activity,dateRange,price,location,district,provin
     if (!isVisible) return null;
     
     const handlerClose = async () => {
-        if (topic == "Evented Created"){
+        if (topic == "Event Created"){
             await HandleCreateEvent(name, activity, dateRange, price? price : 0, location, district, province, description, imageSrc);
         } else {
             await HandleUpdateEvent(id,name, activity, dateRange, price, location, district, province, description, imageSrc);

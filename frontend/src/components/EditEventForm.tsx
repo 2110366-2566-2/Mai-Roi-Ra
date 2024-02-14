@@ -251,7 +251,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                 </div>
                 <SuccessModal id={Id} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
                 district={district} province={province} description={description} imageSrc={imageSrc}
-                topic="Save Changes" isVisible={showModal}/>
+                topic="Saved Change" isVisible={showModal}/>
             </form>
         </div>
     )
