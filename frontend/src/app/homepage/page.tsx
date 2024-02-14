@@ -22,7 +22,7 @@ export default async function UserHomepage() {
                 </button>
             </div>
         </div>
-        <div className="my-8 px-10">
+        <div className="my-8 px-4 lg:px-10">
           {
             datas.map((eventItem:any) => (
               <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
