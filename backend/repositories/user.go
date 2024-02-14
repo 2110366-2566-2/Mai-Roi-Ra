@@ -60,22 +60,22 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 	log.Println("[Repo: CreateUser]: Called")
 
 	userModel := models.User{
-		UserID:                   utils.GenerateUUID(), // Assuming you want to generate a UUID for the user.
+		UserID:                   utils.GenerateUUID(),
 		Username:                 req.Username,
-		PhoneNumber:              *req.PhoneNumber,
-		Email:                    *req.Email,
+		PhoneNumber:              req.PhoneNumber,
+		Email:                    req.Email,
 		FirstName:                req.FirstName,
 		LastName:                 req.LastName,
-		Password:                 req.Password, // Password:  hashedPassword = Store the hashed password
-		PaymentGatewayCustomerID: "",
+		Password:                 req.Password,
+		PaymentGatewayCustomerID: "", // NullString for other string fields
 		UserImage:                "",
 		Address:                  req.Address,
 		District:                 req.District,
 		Province:                 req.Province,
 		BannerImage:              "",
 		CreatedAt:                time.Time{},
-		//BirthDate:                time.Time{},
 	}
+
 	trans := r.DB.Begin().Debug()
 	if err := trans.Create(&userModel).Error; err != nil {
 		trans.Rollback()
