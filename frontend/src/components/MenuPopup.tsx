@@ -5,7 +5,6 @@ import HomeIcon from '@mui/icons-material/HomeOutlined';
 import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
@@ -88,18 +87,12 @@ const MenuPopup = ({onPath,onVisible,onClose} : Props) => {
                                 <SupportAgentIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Support and Service
                             </div>
                             <hr/>
-                            <div className={`px-4 py-2 cursor-pointer flex items-center w-fit
-                              ${pathname === "/homepage/organizer" ? `text-[#FFAE27]` : ""}`}
-                            onClick={() => {router.push("/homepage/organizer"); handleClose();}}>
-                                <BookOnlineIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/> My Event
-                            </div>
-                            <hr/>
                         </div>
                     </div>
                 </div>
 
                 <div className="p-4 flex justify-center">
-                    <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] w-[150px]">
+                    <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] md:w-[150px] w-[100px]">
                     Logout
                     </button>
                 </div>

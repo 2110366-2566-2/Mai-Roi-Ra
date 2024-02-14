@@ -15,10 +15,9 @@ export async function HandleCreateEvent(name:string,activity:string, dateRange:s
         console.log("Error during creating event: ", err)
     }
     revalidateTag(`events`);
-    revalidatePath(`/homepage/user`);
     revalidatePath('/homepage');
-    revalidatePath('/homepage/organizer');
-    redirect(`/homepage/organizer`);
+    revalidatePath("/profile");
+    redirect(`/profile`);
 }
 
 

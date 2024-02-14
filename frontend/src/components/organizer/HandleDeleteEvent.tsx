@@ -15,9 +15,9 @@ export async function HandleDeleteEvent(id: string){
     }
     
     revalidateTag(`events`);
-    revalidatePath('/homepage/user');
-    revalidatePath("/homepage/organizer");
-    redirect(`/homepage/organizer`);
+    revalidatePath('/homepage');
+    revalidatePath("/profile");
+    redirect(`/profile`);
 }
 
 

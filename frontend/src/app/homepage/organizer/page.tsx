@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import EventItem from '@/components/EventItem';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Link from 'next/link';
@@ -32,7 +31,7 @@ export default async function UserHomepage() {
             }
         </div>
         <div className="flex flex-row justify-center w-full mt-[30px] mb-[50px]">
-            <Link href="/homepage/organizer/createvent">
+            <Link href="/homepage/createvent">
                 <button className='border border-slate-400 flex justify-center flex-row items-center rounded-full 
                 lg:h-[40px] md:h-[35px] h-[35px] 
                 lg:w-[140px] md:w-[110px] w-[110px] hover:scale-105 duration-300 text-black py-[10px] px-[10px]

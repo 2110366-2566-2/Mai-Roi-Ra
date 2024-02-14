@@ -41,7 +41,7 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                 {
                   page == 1 ?  <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300'
                   onClick = {(e) => {
-                    router.push(`/homepage/organizer/editevent/${id}`);
+                    router.push(`/homepage/editevent/${id}`);
                     e.stopPropagation();
                   }}>
                       Edit event

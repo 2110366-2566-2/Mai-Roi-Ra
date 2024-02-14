@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import EventItem from '@/components/EventItem';
-import getEvents from '@/libs/getEvents';
+import getMyEvents from '@/libs/getMyEvents';
 
 export default async function UserHomepage() {
-  const events = await getEvents();
+  const events = await getMyEvents('550e8400-e29b-41d4-a716-446655440200');
   const datas = events.event_lists;
   console.log("successfully");
   console.log(events);
@@ -22,23 +22,13 @@ export default async function UserHomepage() {
                 </button>
             </div>
         </div>
-        <div className="mt-8 px-10">
+        <div className="my-8 px-10">
           {
             datas.map((eventItem:any) => (
               <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
               description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image} page={0}/>
             ))
           }
-           {/* <div className="text-[200px] text-center"> {datas[0].event_name} </div>
-          {
-            datas.map((eventItem:any)=>{
-              <div className="text-center text-[600px]">
-                {eventItem.event_name}
-              </div>
-              // <EventItem key={eventItem.event_id} id={eventItem.event_name} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
-              // description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image}/>
-            })
-          } */}
         </div>
     </main>
   )

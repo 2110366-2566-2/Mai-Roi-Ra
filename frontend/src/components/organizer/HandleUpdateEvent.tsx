@@ -17,10 +17,10 @@ export async function HandleUpdateEvent(id:string,name:string,activity:string, d
     }
     revalidateTag(`events`);
     revalidateTag('event');
-    revalidatePath(`/homepage/user`);
-    revalidatePath('/homepage/organizer');
-    revalidatePath(`/homepage/event/${id}`);
-    redirect(`/homepage/organizer`);
+    revalidatePath(`/homepage`);
+    revalidatePath('/profile');
+    revalidatePath(`/event/${id}`);
+    redirect(`/profile`);
 }
 
 
