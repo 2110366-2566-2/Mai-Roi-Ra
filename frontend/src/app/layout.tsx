@@ -1,13 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import TopMenu from '@/components/TopMenu'
 import NextAuthProvider from '@/provider/NextAuthProvider'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
 // import ReduxProvider from '@/redux/ReduxProvider'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Mai-Roi-Ra',
@@ -26,7 +23,6 @@ export default async function RootLayout({
       <body className={`{inter.className} dark:bg-slate-100`}>
         {/* <ReduxProvider> */}
           <NextAuthProvider session={session}>
-            <TopMenu/>
             {children}
           </NextAuthProvider>
         {/* </ReduxProvider> */}

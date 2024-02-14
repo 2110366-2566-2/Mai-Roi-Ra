@@ -192,7 +192,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
           <button
             type="submit"
             className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
-            style={{ backgroundColor: "#1EA1F1" }}
+            style={{ backgroundColor: "#F2D22E" }}
           >
             Done
           </button>

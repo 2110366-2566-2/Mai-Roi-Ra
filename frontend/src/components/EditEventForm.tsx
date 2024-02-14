@@ -1,12 +1,14 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
-import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 
 interface Props {
+    Id:string
     Name:string,
+    Activity:string,
     StartDate:string,
     EndDate:string,
     Price:number,
@@ -17,10 +19,11 @@ interface Props {
     ImgSrc:string
 }
 
-const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
+const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState(Name);
+    const [activity,setActivity] = useState(Activity)
     const [dateRange,setDateRange] = useState(StartDate + " - " + EndDate);
     const [price, setPrice] = useState(Price);
     const [location,setLocation] = useState(Location);
@@ -28,36 +31,87 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
     const [province,setProvince] = useState(Province);
     const [description,setDescription] = useState(Description);
     const [imageSrc,setImageSrc] = useState(ImgSrc);
+    const [error,setError] = useState("");
 
     const handleSubmit = async () => {
-        // try {
-        //     setShowModal(true);
-        //     await HandleCreateEvent(name, dateRange, price?price:0 , location, district, province, description, imageSrc);
-        // } catch (err) {
-        //     console.log("Create Failed. Please check the constraint", err);
-        // }
+        try {
+            if (name == "") {
+                setError("Event Name Required ! ");
+                return;
+            } if (activity == ""){
+                setError("Activity Required")
+            } if (dateRange == "") {
+                setError("Date Range Required");
+                return
+            } if (imageSrc == "") {
+                setError("Image Source Required");
+                return;
+            } if (price == 0) {
+                setError("Price Required");
+                return;
+            } if (location == ""){
+                setError("Location Required");
+                return;
+            } if (district == ""){
+                setError("District Required");
+                return;
+            } if (province == "" ){
+                setError("Province Required");
+                return;
+            } if (imageSrc == "") {
+                setError("Image Source Required");
+                return;
+            } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
+                setError("Invalid Picture URI");
+                return;
+            } setShowModal(true);
+        } catch (err) {
+            setError("Create Failed. Please check the constraint");
+            console.log(err)
+        }
     }
+
 
     return (
         <div className={`${styles.Roboto} w-full text-black`}>
-            <form onSubmit={handleSubmit} action="" className="w-full h-full">
+            <form action={handleSubmit} className="w-full h-full">
                 {/* Form */}
                 <div className="lg:flex lg:flex-row lg:flex-wrap lg:justify-between w-full">
 
                     {/* Left Form */}
                     <div className="lg:w-[48%] w-full md:space-y-[25px] space-y-[20px]">
-                        <div className="w-full relative">
-                            <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-[48%] lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                            rounded-md"
-                            type="text" placeholder="Event Name" 
-                            value={name} onChange={(e) => setName(e.target.value)} maxLength={25}/>
+                        <div className="flex flex-start flex-wrap justify-between w-full">
+                                <div className="w-[48%] relative">
+                                    <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 
+                                    md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px] rounded-md"
+                                    type="text" placeholder="Event Name"
+                                    value={name} onChange={(e) => setName(e.target.value)} maxLength={20}/>
+                                    {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
+                                        <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
+                                    </span> */}
 
-                            {name.length != 0 && (
-                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Event Name
+                                    {name.length != 0 && (
+                                        <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
+                                            Event Name
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
+
+                                <div className="w-[48%] relative">
+                                    <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px]">
+                                        <InputLabel className="text-[16px] lg:mt-[-2px] md:mt-[-4px] sm:mt-[-6px] mt-[-8px]">Activity</InputLabel>
+                                        <Select value={activity} defaultValue={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
+                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
+                                            label="Activity" onChange={(e) => setActivity(e.target.value)} >
+                                            <MenuItem value="Entertainment">Entertaiment</MenuItem>
+                                            <MenuItem value="Exercise">Exercise</MenuItem>
+                                            <MenuItem value="Volunteer">Volunteen</MenuItem>
+                                            <MenuItem value="Meditation">Meditation</MenuItem>
+                                            <MenuItem value="Cooking">Cooking</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                            </div>
                         
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
@@ -85,7 +139,7 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
                                     <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
                                 </span> */}
 
-                                {price && (
+                                {price > 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                         Price
                                     </div>
@@ -144,9 +198,15 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
                     </div>
 
                     {/* Right Form */}
-                    <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px] border-gray-300 rounded-md flex justify-center items-center">
-                        <textarea className="text-gray-400 hover:text-black w-full h-full indent-4 pt-[10px]"
+                    <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
+                     border-gray-300 rounded-md flex justify-center items-center relative">
+                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px]"
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
+                         {imageSrc.length != 0 && (
+                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
+                                    Image Src
+                                </div>
+                            )}
                     </div>
 
                 </div>
@@ -165,8 +225,15 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
                             )}
                 </div> 
 
+                {
+                    error != "" ? 
+                    <div className="w-full text-red-600 text-center text-[25px] mt-[10px]">
+                        {error}
+                    </div>: null
+                }
+
                 {/* Button */}
-                <div className="w-full flex flex-row flex-wrap justify-around mt-[25px] lg:mb-[0px] mb-[30px]">
+                <div className={`w-full flex flex-row flex-wrap justify-around mt-[25px] ${error? "lg:mb-[30px]" : ""} lg:mb-[0px] mb-[30px]`}>
                     <div className="">
                         <button className="bg-[#D9D5D2] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
                         text-[10px] rounded-full"
@@ -182,10 +249,12 @@ const CreateEventForm = ({Name,StartDate,EndDate,Price,Location,District,Provinc
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Evented Created" isVisible={showModal} onClose={()=>setShowModal(false)}/>
+                <SuccessModal id={Id} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
+                district={district} province={province} description={description} imageSrc={imageSrc}
+                topic="Save Changes" isVisible={showModal}/>
             </form>
         </div>
     )
 }
 
-export default CreateEventForm;
+export default EditEventForm;

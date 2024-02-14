@@ -1,21 +1,44 @@
-import { apiBackUrl } from "../constants"
+"use server";
+import { apiBackUrl } from "../constants";
 
-export default async function userRegister(userName: string, userEmail: string, userTel: string, userPassword:string) {
-    const response = await fetch(`${apiBackUrl}/auth/register`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            name: userName,
-            email: userEmail,
-            tel: userTel,
-            password: userPassword
-        }),
-    })
-    if (!response.ok) {
-        throw new Error("Failed to register")
-    }
+export default async function userRegister(
+  userUsername: string,
+  userPhoneNumber: string,
+  userEmail: string,
+  userPassword: string,
+  userRole: string,
+  userFirstName: string,
+  userLastName: string,
+  userAddress: string,
+  userDistrict: string,
+  userProvince: string
+) {
+  const emailToSend = userEmail === "" ? null : userEmail;
+  const phoneNumberToSend = userPhoneNumber === "" ? null : userPhoneNumber;
 
-    return await response.json()
+  const response = await fetch(`${apiBackUrl}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    // next: { tags: ["ีuserRegister"] },
+    body: JSON.stringify({
+      address: userAddress,
+      district: userDistrict,
+      email: emailToSend,
+      first_name: userFirstName,
+      last_name: userLastName,
+      password: userPassword,
+      phone_number: phoneNumberToSend,
+      province: userProvince,
+      role: userRole,
+      username: userUsername,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to register");
+  }
+
+  return await response.json();
 }

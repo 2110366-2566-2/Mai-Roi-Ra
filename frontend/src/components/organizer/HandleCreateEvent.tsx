@@ -4,20 +4,20 @@ import { redirect } from "next/navigation"
 import createEvent from "@/libs/createEvent"
 
 
-export async function HandleCreateEvent(name:string, dateRange:string, price:number, location:string, district:string, province:string, 
-    description:string, imageSrc:string){
+export async function HandleCreateEvent(name:string,activity:string, dateRange:string, price:number, location:string, district:string, 
+    province:string, description:string, imageSrc:string){
 
     try {
-        const res = await createEvent("550e8400-e29b-41d4-a716-446655440200",name,location,price,description,imageSrc,"31-31-411","314-51","113111")
+        const res = await createEvent("550e8400-e29b-41d4-a716-446655440200",name,activity,location,district,province,price,description,imageSrc,dateRange.substring(0,10),dateRange.substring(13,23))
         console.log(res)
         console.log("Create Event successful")
     } catch (err) {
         console.log("Error during creating event: ", err)
     }
     revalidateTag(`events`);
-    revalidatePath(`/homepage/user`);
-    revalidatePath('/homepage/organizer');
-    redirect(`/homepage/user`);
+    revalidatePath('/homepage');
+    revalidatePath("/profile");
+    redirect(`/profile`);
 }
 
 
