@@ -65,7 +65,7 @@ export default function ProfileUserInformation({
         <div className="text-sm text-gray-500">@{username}</div>
       </div>
       <div className="mt-2 ml-16 space-y-2">
-        {1 ? (
+        {phoneNumber ? (
           <div className="flex items-center">
             <FaPhone className="text-gray-500 text-sm mr-1" />
             <div className="text-sm text-gray-500">{phoneNumber}</div>
