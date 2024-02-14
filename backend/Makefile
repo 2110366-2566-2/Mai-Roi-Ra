@@ -14,6 +14,9 @@ docker_build:
 docker_down:
 	docker compose down
 
+migrate:
+	docker compose run --rm pg_migration migrate -path=/migrations -database "postgresql://root:root@pg_db:5432/test_db?sslmode=disable" -verbose up
+
 # อย่าสะเออะทำ migrate เองนะ (natchy ทำ only) ขอพายทำด้วยได้มั้ย
 docker_real_migrate:
 	migrate -database "postgresql://root:root@localhost:5432/test_db?sslmode=disable" -path ./migrations force 0 \

@@ -1,16 +1,16 @@
 package structure
 
 type CreateUserRequest struct {
-	Username    string `json:"username" binding:"required"`
-	PhoneNumber string `json:"phone_number" `
-	Email       string `json:"email"`
-	Password    string `json:"password" binding:"required"`
-	FirstName   string `json:"first_name" binding:"required"`
-	LastName    string `json:"last_name" binding:"required"`
-	Address     string `json:"address" binding:"required"`
-	District    string `json:"district" binding:"required"`
-	Province    string `json:"province" binding:"required"`
-	Role        string `json:"role" binding:"required"`
+	Username    string  `json:"username" binding:"required"`
+	PhoneNumber *string `json:"phone_number" `
+	Email       *string `json:"email"`
+	Password    string  `json:"password" binding:"required"`
+	FirstName   string  `json:"first_name" binding:"required"`
+	LastName    string  `json:"last_name" binding:"required"`
+	Address     string  `json:"address" binding:"required"`
+	District    string  `json:"district" binding:"required"`
+	Province    string  `json:"province" binding:"required"`
+	Role        string  `json:"role" binding:"required"`
 	// You can add other fields here as necessary.
 	// For example, if you want users to provide a birth date upon registration, uncomment the next line:
 	// BirthDate                time.Time `json:"birth_date"`

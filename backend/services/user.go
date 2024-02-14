@@ -43,15 +43,15 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	log.Println("[Service: CreateUser]: Called")
 
 	// Validate the phone number (if login with phonenumber)
-	if req.PhoneNumber != "" {
-		if len(req.PhoneNumber) != 10 || req.PhoneNumber[0] != '0' {
+	if req.PhoneNumber != nil {
+		if len(*req.PhoneNumber) != 10 || (*req.PhoneNumber)[0] != '0' {
 			return nil, errors.New("Invalid phone number format")
 		}
 	}
 
 	// Validate the email (if login with email)
-	if req.Email != "" {
-		if !emailRegex.MatchString(req.Email) {
+	if req.Email != nil {
+		if !emailRegex.MatchString(*req.Email) {
 			return nil, errors.New("Invalid email format")
 		}
 	}
