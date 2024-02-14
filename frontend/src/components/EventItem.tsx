@@ -19,8 +19,30 @@ interface Props {
 export default function EventItem ({id,name,startDate,endDate,description,city,district,imgSrc,page} : Props){
   const router = useRouter();
 
+  const startyear = startDate.substring(0, 4);
+  const startmonth = startDate.substring(4, 6);
+  const startday = startDate.substring(6, 8);
+
+  const startdateObj = new Date(`${startyear}-${startmonth}-${startday}`);
+  const formattedStartDate = startdateObj.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+  });
+
+  const endyear = endDate.substring(0, 4);
+  const endmonth = endDate.substring(4, 6);
+  const endday = endDate.substring(6, 8);
+
+  const enddateObj = new Date(`${endyear}-${endmonth}-${endday}`);
+  const formattedEndDate = enddateObj.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+  });
+
   return (
-    <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-5 w-full hover:scale-[1.02] duration-300"
+    <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-[1.02] duration-300"
     onClick={(e) => {
       router.push(`/events/${id}`);
       e.stopPropagation();
@@ -51,12 +73,12 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
             </div>
       
           <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-[60%] text-gray-500">
-              <div className="">{`${startDate} - ${endDate}`}</div>
-              <div>Location: Patumwan</div>
+              <div className="text-nowrap	">{`${formattedStartDate} - ${formattedEndDate}`}</div>
+              <div className="text-nowrap">Location: Patumwan</div>
           </div>
           
           <div className="">
-            {description && <div className="mt-2 hidden sm:block">{description}</div>}
+            {description && <div className="mt-2 hidden sm:block break-words"><p className='text-wrap break-words'>{description}</p></div>}
           </div>
 
 
