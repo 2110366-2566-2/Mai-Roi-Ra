@@ -18,11 +18,11 @@ export default async function EventDetailPage({ params }: Props) {
             <Link className="absolute top-[38px] left-8 flex items-center justify-center hover:scale-[1.2] duration-300" href={"/homepage"}><ArrowBackIosNewIcon className="text-[#1DA1F2]"/></Link>
             <div className="lg:mx-16">
                 <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>
-                <div className="flex flex-wrap items-start flex-col w-auto w-full lg:flex-row">
+                <div className="flex flex-wrap items-start flex-col w-auto lg:flex-row">
                     <div className="h-full flex flex-col w-auto max-w-[750px] lg:mr-20">
                         <div className="w-full lg:w-[750px] xl:w-full h-auto overflow-hidden">
                             <Image
-                                src="https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                src={event.event_image}
                                 width={800} 
                                 height={400}
                                 alt='event image'

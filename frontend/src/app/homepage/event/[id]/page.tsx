@@ -43,7 +43,7 @@ export default async function EventDetailPage({ params }: Props) {
                         <div className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded-full overflow-hidden mr-6">
                             <Image
                                 className="object-cover w-full h-full"
-                                src="https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                src={event.event_image}
                                 alt="Profile"
                                 width={40}
                                 height={40}
