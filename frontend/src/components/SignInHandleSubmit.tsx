@@ -14,6 +14,7 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
     setError(false);
     setErrorUser(0);
     setErrorPassword(0);
+    console.log("press login button")
 
   // Check User That Gmail Or Phone Number Format?
   if (!(isValidEmail(user) || (user.length === 10 && user[0] === '0'))) {
@@ -45,7 +46,7 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
   }
 
   // Check Authorization For Username And Password
-  // else {
+  else {
   //   try {
   //     const result = await signIn("credentials",{
   //       username : user,
@@ -66,25 +67,27 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
     // For example, you can use the signIn function from next-auth/react
     // and handle the redirect or error accordingly
 
-    // try {
-    //   const res = await signIn("credentials", {
-    //     user,
-    //     password,
-    //     redirect: false
-    //   });
-    //   if (res?.error) {
-    //     setError(res?.error);
-    //     return;
-    //   }
-    //   router.replace('/');
-    //   // I don't know how to fix this one but this works
-    //   setTimeout(() => {
-    //     window.location.reload();
-    //   }, 1000);
-    // } catch (error) {
-    //   setError("Sign in failed. Account isn't existed.");
-    // }
-  // }
+    try {
+      const res = await signIn("credentials", {
+        user,
+        password,
+        redirect: false
+      });
+      if (res?.error) {
+        setError(res?.error);
+        return;
+      }
+      console.log("pass to signIn",res)
+      console.log(res)
+      router.replace('/');
+      // I don't know how to fix this one but this works
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      setError("Sign in failed. Account isn't existed.");
+    }
+  }
 };
 
 export default SignInHandleSubmit;
