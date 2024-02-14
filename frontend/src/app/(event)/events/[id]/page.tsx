@@ -1,10 +1,8 @@
-import { revalidateTag } from "next/cache";
 import Image from "next/image";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import StarIcon from '@mui/icons-material/Star';
 import getEvent from "@/libs/getEvent";
-import Link from "next/link";
 import RegisterEventBox from "@/components/RegisterEventBox";
+import RouterBackEventButton from "@/components/RouterBackEventButton";
 
 interface Props {
     params: {id:string}
@@ -15,7 +13,8 @@ export default async function EventDetailPage({ params }: Props) {
 
     return (
         <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
-            <Link className="absolute top-[38px] left-8 flex items-center justify-center hover:scale-[1.2] duration-300" href={"/homepage"}><ArrowBackIosNewIcon className="text-[#1DA1F2]"/></Link>
+            <RouterBackEventButton/>
+
             <div className="lg:mx-16">
                 <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>
                 <div className="flex flex-wrap items-start flex-col w-auto lg:flex-row">

@@ -29,7 +29,7 @@ const DeletePopUp = ({id,isVisible,onClose} : Props) => {
         bg-opacity-25 bg-black z-20">
             <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[20px] px-[15px] z-20">
 
-                <div className={`${styles.Roboto} w-full text-center mt-[10px] lg:text-[40px] md:text-[30px] text-[25px]`}>
+                <div className={`${styles.Roboto} w-full text-center mt-[20px] lg:text-[40px] md:text-[30px] text-[25px]`}>
                         Delete this event
                 </div>
 
