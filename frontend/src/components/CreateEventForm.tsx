@@ -236,7 +236,7 @@ const CreateEventForm = () => {
                 </div>
                 <SuccessModal id={""} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
                 district={district} province={province} description={description} imageSrc={imageSrc}
-                topic="Evented Created" isVisible={showModal}/>
+                topic="Event Created" isVisible={showModal}/>
             </form>
         </div>
     )

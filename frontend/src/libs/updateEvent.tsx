@@ -24,6 +24,7 @@ export default async function updateEvent(
             "event_name": name,
             "location_name": location_name,
             "district": district,
+            "event_id": id,
             "city": province,
             "participant_fee": Number(price),
             "start_date": start_date,

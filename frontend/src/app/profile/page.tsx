@@ -11,7 +11,7 @@ import Link from "next/link";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 export default async function Profile() {
-  const profile = await getProfile("cbcd5d88-821f-4e5e-b1f8-7846e778ef68");
+  const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
   const events = await getMyEvents('550e8400-e29b-41d4-a716-446655440200');
   const datas = events.event_lists;
   revalidateTag("profile");
