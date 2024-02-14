@@ -62,8 +62,8 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 	userModel := models.User{
 		UserID:                   utils.GenerateUUID(), // Assuming you want to generate a UUID for the user.
 		Username:                 req.Username,
-		PhoneNumber:              req.PhoneNumber,
-		Email:                    req.Email,
+		PhoneNumber:              *req.PhoneNumber,
+		Email:                    *req.Email,
 		FirstName:                req.FirstName,
 		LastName:                 req.LastName,
 		Password:                 req.Password, // Password:  hashedPassword = Store the hashed password
