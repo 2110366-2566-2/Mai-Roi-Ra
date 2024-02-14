@@ -87,13 +87,13 @@ export default function EditProfileForm({
     if (firstName && lastName && address && district && province && birthDate) {
       try {
         await updateProfileAction(
-          "550e8400-e29b-41d4-a716-446655440100",
+          "cbcd5d88-821f-4e5e-b1f8-7846e778ef68",
           firstName,
           lastName,
           address,
           district,
           province,
-          birthDate
+          formattedDate
         );
         router.push("/profile");
         setError("");

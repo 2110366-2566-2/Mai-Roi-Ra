@@ -16,7 +16,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<string>("");
+  const [role, setRole] = useState("");
 
   // USER INPUTS (second page)
   const [firstName, setFirstName] = useState("");
@@ -24,6 +24,9 @@ export default function RegisterForm() {
   const [address, setAddress] = useState("");
   const [district, setDistrict] = useState("");
   const [province, setProvince] = useState("");
+
+  const [phoneNumberProp, setPhoneNumberProp] = useState<string | null>("");
+  const [emailProp, setEmailProp] = useState<string | null>("");
 
   // State if user want to sign up with phone number or email
   const [useEmail, setUseEmail] = useState(false);
@@ -60,6 +63,11 @@ export default function RegisterForm() {
 
   // Function to toggle between using email or phone number
   const toggleInputType = () => {
+    if (useEmail) {
+      setPhoneNumber("");
+    } else {
+      setEmail("");
+    }
     setUseEmail(!useEmail);
   };
 
@@ -205,6 +213,14 @@ export default function RegisterForm() {
 
     if (firstName && lastName && address && district && province) {
       try {
+        console.log("get in try");
+
+        // if (email === "") {
+        //   setEmailProp(null);
+        // } else if (phoneNumber === "") {
+        //   setPhoneNumberProp(null);
+        // }
+
         const response = await userRegister(
           name,
           phoneNumber,
@@ -217,16 +233,11 @@ export default function RegisterForm() {
           district,
           province
         );
-        setSuccessModal(true);
-        setAllInfoInputsFilled(true);
-        setTimeout(() => {
-          router.push("/auth/signin");
-          setSuccessModal(false);
-        }, 4000);
-        // console.log("All info fields are filled. Form submitted. Modal is up.");
+        console.log("done userRegister() successful");
+        router.push("/auth/signin");
+        // console.log("done called userRegister()");
         // setSuccessModal(true);
         // setAllInfoInputsFilled(true);
-        // console.log("Registration successful");
         // setTimeout(() => {
         //   router.push("/auth/signin");
         //   setSuccessModal(false);

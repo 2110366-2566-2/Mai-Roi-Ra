@@ -16,7 +16,7 @@ export default async function updateProfile(
       district: district,
       first_name: firstName,
       last_name: lastName,
-      phone_number: "1234567890",
+      phone_number: "0968800127",
       province: province,
       user_id: user_id,
       user_image: "https://example.com/user1.jpg",
