@@ -11,8 +11,8 @@ type User struct {
 	//UserImage                *string   `gorm:"column:user_image" json:"user_image"`
 	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
 	Username                 string    `gorm:"column:username;not null" json:"username"`
-	PhoneNumber              string    `gorm:"column:phone_number" json:"phone_number"` // Replace "phone_length_constraint" with actual SQL check expression if needed
-	Email                    string    `gorm:"column:email" json:"email"`
+	PhoneNumber              *string   `gorm:"column:phone_number" json:"phone_number"` // Replace "phone_length_constraint" with actual SQL check expression if needed
+	Email                    *string   `gorm:"column:email" json:"email"`
 	FirstName                string    `gorm:"column:first_name;not null" json:"first_name"`
 	LastName                 string    `gorm:"column:last_name;not null" json:"last_name"`
 	Password                 string    `gorm:"column:password;not null" json:"-"` // Excluded from JSON responses
