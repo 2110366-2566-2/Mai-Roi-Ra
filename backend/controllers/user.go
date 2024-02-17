@@ -26,7 +26,7 @@ func NewUserController(
 
 // @Summary Create new user
 // @Description Create a new user with the provided details.
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param request body structure.CreateUserRequest true "Create User Request" example:{"organizer_id": "org123", "admin_id": "admin456", "location_id": "loc789", "start_date": "2024-01-15", "end_date": "2024-01-20", "status": "planned", "participant_fee": 50.0, "description": "Annual tech conference focusing on the future of technology.", "user_name": "TechFuture 2024", "deadline": "2023-12-31", "activities": "Keynotes, Workshops, Panels", "user_image": "http://example.com/image.jpg"}
@@ -142,4 +142,26 @@ func (c *UserController) LogoutUser(ctx *gin.Context, req *st.LogoutUserRequest)
 // @Router /validate-token [get]
 func (c *UserController) ValidateToken(token string) (*models.User, error) {
 	return c.ServiceGateway.UserService.ValidateToken(token)
+}
+
+// @Summary Register an event
+// @Description Register an event based on user_id and event_id
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body structure.RegisterEventRequest true "Create User Request"
+// @Success 200 {object} structure.RegisterEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/participate [post]
+func (c *UserController) RegisterEvent(ctx *gin.Context, req *st.RegisterEventRequest) {
+	log.Println("[CTRL: RegisterEvent] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.RegisterEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: LogoutUser] Output:", res)
+	ctx.JSON(http.StatusOK, res)
 }

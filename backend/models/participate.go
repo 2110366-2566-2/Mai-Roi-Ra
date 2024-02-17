@@ -12,5 +12,5 @@ type Participate struct {
 }
 
 func (Participate) TableName() string {
-	return "participates"
+	return "participate"
 }

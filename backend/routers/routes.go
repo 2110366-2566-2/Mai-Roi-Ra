@@ -114,6 +114,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	}
 
 	err = c.Invoke(func(userController *controllers.UserController) {
+		// POST
 		r.POST("/api/v1/users", func(ctx *gin.Context) {
 			var req st.CreateUserRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -122,14 +123,23 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.CreateUser(ctx, &req)
 		})
+		r.POST("/api/v1/users/participate", func(ctx *gin.Context) {
+			var req st.RegisterEventRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.RegisterEvent(ctx, &req)
+		})
 
+		// GET
 		r.GET("/api/v1/users/:id", func(ctx *gin.Context) {
 			req := st.GetUserByUserIdRequest{
 				UserId: ctx.Param("id"),
 			}
 			userController.GetUserByUserId(ctx, &req)
 		})
-
+		// PUT
 		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
 			var req st.UpdateUserInformationRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
