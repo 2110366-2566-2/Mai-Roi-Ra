@@ -224,6 +224,34 @@ definitions:
       message:
         type: string
     type: object
+  structure.SendAnnounceResponse:
+    properties:
+      announce_status:
+        type: string
+    type: object
+  structure.SendAnnouncementRequest:
+    properties:
+      attach_files:
+        items:
+          type: string
+        type: array
+      bcc:
+        items:
+          type: string
+        type: array
+      cc:
+        items:
+          type: string
+        type: array
+      content:
+        type: string
+      subject:
+        type: string
+      to:
+        items:
+          type: string
+        type: array
+    type: object
   structure.TestResponse:
     properties:
       message:
@@ -567,6 +595,32 @@ paths:
       summary: Log out a user
       tags:
       - user
+  /send-announcement:
+    post:
+      consumes:
+      - application/json
+      description: Sends an announcement email to the specified recipients.
+      parameters:
+      - description: Send Announcement Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendAnnouncementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Announcement successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendAnnounceResponse'
+        "400":
+          description: Bad request - error in sending the announcement
+          schema:
+            type: object
+      summary: Send Announcement
+      tags:
+      - participates
   /test:
     get:
       consumes:

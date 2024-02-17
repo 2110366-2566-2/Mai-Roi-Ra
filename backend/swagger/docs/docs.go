@@ -402,6 +402,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/send-announcement": {
+            "post": {
+                "description": "Sends an announcement email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participates"
+                ],
+                "summary": "Send Announcement",
+                "parameters": [
+                    {
+                        "description": "Send Announcement Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnouncementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Announcement successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the announcement",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -1023,6 +1063,49 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.SendAnnounceResponse": {
+            "type": "object",
+            "properties": {
+                "announce_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendAnnouncementRequest": {
+            "type": "object",
+            "properties": {
+                "attach_files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "bcc": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cc": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
