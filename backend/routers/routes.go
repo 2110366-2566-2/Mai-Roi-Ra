@@ -140,6 +140,11 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		})
 	})
 
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
 	// login/logout is here
 	err = c.Invoke(func(userController *controllers.UserController) {
 		r.POST("/api/v1/login", func(ctx *gin.Context) {
@@ -155,6 +160,22 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			req.UserID = ctx.GetString(middleware.KeyUserID)
 
 			userController.LogoutUser(ctx, &req)
+		})
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	err = c.Invoke(func(participateController *controllers.ParticipateController) {
+		r.POST("/api/v1/send-announcement", func(ctx *gin.Context) {
+			var req st.SendAnnouncementRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			participateController.SendAnnouncement(ctx, &req)
 		})
 	})
 
