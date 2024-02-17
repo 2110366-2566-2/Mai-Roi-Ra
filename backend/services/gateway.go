@@ -9,7 +9,7 @@ type Service struct {
 	ServiceGateway ServiceGateway
 }
 
-// RepositoryGateway ...
+// ServiceGatway ...
 type ServiceGateway struct {
 	dig.In
 	TestService        ITestService

@@ -31,6 +31,8 @@ type IUserService interface {
 	LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error)
 	LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error)
 	ValidateToken(token string) (*models.User, error)
+	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -45,20 +47,20 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	// Validate the phone number (if login with phonenumber)
 	if req.PhoneNumber != nil {
 		if len(*req.PhoneNumber) != 10 || (*req.PhoneNumber)[0] != '0' {
-			return nil, errors.New("Invalid phone number format")
+			return nil, errors.New("invalid phone number format")
 		}
 	}
 
 	// Validate the email (if login with email)
 	if req.Email != nil {
 		if !emailRegex.MatchString(*req.Email) {
-			return nil, errors.New("Invalid email format")
+			return nil, errors.New("invalid email format")
 		}
 	}
 
 	// Validate the password length
 	if len(req.Password) < 6 {
-		return nil, errors.New("Password must be at least 6 characters long")
+		return nil, errors.New("password must be at least 6 characters long")
 	}
 
 	// Hash the password
@@ -95,6 +97,7 @@ func (s *UserService) UpdateUserInformation(req *st.UpdateUserInformationRequest
 	log.Println("[Service: UpdateUserInformation]: Called")
 	res, err := s.RepositoryGateway.UserRepository.UpdateUserInformation(req)
 	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
 		return nil, err
 	}
 	return res, err
@@ -119,12 +122,12 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 	} else if req.PhoneNumber != "" {
 		user, err = s.RepositoryGateway.UserRepository.GetUserByPhoneNumber(req.PhoneNumber)
 	} else {
-		return nil, errors.New("Email or phone number must be provided")
+		return nil, errors.New("email or phone number must be provided")
 	}
 
 	// Check if the user was found
 	if err != nil {
-		return nil, errors.New("Invalid login credentials")
+		return nil, errors.New("invalid login credentials")
 	}
 
 	// Check the password
@@ -135,11 +138,11 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 	// Generate a JWT token (or any other form of token/session identifier)
 	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
 	if err != nil {
-		return nil, errors.New("Failed to generate token")
+		return nil, errors.New("failed to generate token")
 	}
 	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
 	if err != nil {
-		return nil, errors.New("Failed to update token")
+		return nil, errors.New("failed to update token")
 	}
 
 	res := &st.LoginUserResponse{
@@ -154,7 +157,7 @@ func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserRespo
 	err := s.RepositoryGateway.UserRepository.UpdateUserToken(req.UserID, "") // Attempt to remove token
 	if err != nil {
 		log.Printf("[Service: LogoutUser]: Failed to remove token for UserID: %s, Error: %v", req.UserID, err)
-		return nil, errors.New("Failed to remove token")
+		return nil, errors.New("failed to remove token")
 	}
 
 	log.Printf("[Service: LogoutUser]: Token removed successfully for UserID: %s", req.UserID)
@@ -166,7 +169,7 @@ func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserRespo
 func (s *UserService) ValidateToken(token string) (*models.User, error) {
 	user, err := s.RepositoryGateway.UserRepository.GetUserByToken(token)
 	if err != nil {
-		return nil, errors.New("Failed to delete user")
+		return nil, errors.New("failed to delete user")
 	}
 
 	return user, nil
@@ -188,4 +191,24 @@ func GenerateJWTToken(user *models.User) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Service: RegisterEvent]: Called")
+	res, err := s.RepositoryGateway.ParticipateRepository.RegisterEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo RegisterEvent]:", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (s *UserService) CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Service: CancelRegisterEvent]: Called")
+	res, err := s.RepositoryGateway.ParticipateRepository.CancelRegisterEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo CancelRegisterEvent error]:", err)
+		return nil, err
+	}
+	return res, nil
 }
