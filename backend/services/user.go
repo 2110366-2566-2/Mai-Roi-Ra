@@ -32,6 +32,7 @@ type IUserService interface {
 	LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error)
 	ValidateToken(token string) (*models.User, error)
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -96,6 +97,7 @@ func (s *UserService) UpdateUserInformation(req *st.UpdateUserInformationRequest
 	log.Println("[Service: UpdateUserInformation]: Called")
 	res, err := s.RepositoryGateway.UserRepository.UpdateUserInformation(req)
 	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
 		return nil, err
 	}
 	return res, err
@@ -192,9 +194,20 @@ func GenerateJWTToken(user *models.User) (string, error) {
 }
 
 func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
-	log.Println("[Service: CreateUser]: Called")
+	log.Println("[Service: RegisterEvent]: Called")
 	res, err := s.RepositoryGateway.ParticipateRepository.RegisterEvent(req)
 	if err != nil {
+		log.Println("[Service: Call repo RegisterEvent]:", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (s *UserService) CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Service: CancelRegisterEvent]: Called")
+	res, err := s.RepositoryGateway.ParticipateRepository.CancelRegisterEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo CancelRegisterEvent error]:", err)
 		return nil, err
 	}
 	return res, nil

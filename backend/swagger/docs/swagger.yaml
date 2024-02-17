@@ -612,6 +612,40 @@ paths:
       summary: Create new user
       tags:
       - user
+  /users/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Cancel Register an event based on user_id and event_id
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: event_id
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.RegisterEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Cancel Register an event
+      tags:
+      - user
   /users/{user_id}:
     get:
       consumes:

@@ -148,6 +148,18 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.UpdateUserInformation(ctx, &req)
 		})
+		// DELETE
+		r.DELETE("/api/v1/users/:event_id", func(ctx *gin.Context) {
+			eventID := ctx.Param("event_id")
+			userID := ctx.Query("user_id")
+
+			req := st.RegisterEventRequest{
+				EventId: eventID,
+				UserId:  userID,
+			}
+
+			userController.CancelRegisterEvent(ctx, &req)
+		})
 	})
 
 	// login/logout is here

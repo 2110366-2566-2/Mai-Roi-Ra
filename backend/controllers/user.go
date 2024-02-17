@@ -162,6 +162,29 @@ func (c *UserController) RegisterEvent(ctx *gin.Context, req *st.RegisterEventRe
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: LogoutUser] Output:", res)
+	log.Println("[CTRL: RegisterEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Cancel Register an event
+// @Description Cancel Register an event based on user_id and event_id
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Param event_id path string true "event_id"
+// @Success 200 {object} structure.RegisterEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/{event_id} [delete]
+func (c *UserController) CancelRegisterEvent(ctx *gin.Context, req *st.RegisterEventRequest) {
+	log.Println("[CTRL: CancelRegisterEvent] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.CancelRegisterEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: CancelRegisterEvent] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

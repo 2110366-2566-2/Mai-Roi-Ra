@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -16,6 +17,7 @@ type ParticipateRepository struct {
 
 type IParticipateRepository interface {
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -53,4 +55,27 @@ func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st
 	}
 
 	return &message, nil
+}
+
+func (r *ParticipateRepository) CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Repo: CancelRegisterEvent]: Called")
+	participateModel := models.Participate{}
+
+	if result := r.DB.Where("event_id = ? AND user_id = ?", req.EventId, req.UserId).First(&participateModel); result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			log.Println("[Repo: CancelRegisterEvent] no records found")
+			return nil, result.Error
+		} else {
+			log.Println("[Repo: CancelRegisterEvent] something wrong when query in database")
+		}
+	} else {
+		if err := r.DB.Delete(&participateModel).Error; err != nil {
+			log.Println("[Repo: CancelRegisterEvent] errors when delete from database")
+			return nil, err
+		}
+	}
+	// Return a success message
+	return &st.RegisterEventResponse{
+		Message: "Cancel succesful",
+	}, nil
 }
