@@ -51,3 +51,12 @@ type LogoutUserRequest struct {
 }
 type LogoutUserResponse struct {
 }
+
+type RegisterEventRequest struct {
+	UserId  string `json:"user_id" binding:"required"`
+	EventId string `json:"event_id" binding:"required"`
+}
+
+type RegisterEventResponse struct {
+	Message string `json:"message"`
+}
