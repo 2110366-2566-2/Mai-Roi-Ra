@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS events (
     end_date DATE NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('Approved', 'Rejected', 'Waiting')),
     participant_fee DOUBLE PRECISION NOT NULL,
+    participant_count INT NOT NULL DEFAULT 0,
     description VARCHAR(1000),
     event_name VARCHAR(64) NOT NULL,
     deadline DATE NOT NULL,
