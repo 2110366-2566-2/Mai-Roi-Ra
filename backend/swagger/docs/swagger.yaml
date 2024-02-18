@@ -200,6 +200,13 @@ definitions:
       location_name:
         type: string
     type: object
+  structure.GetParticipantListsResponse:
+    properties:
+      participant_list:
+        items:
+          $ref: '#/definitions/structure.Participant'
+        type: array
+    type: object
   structure.LoginUserRequest:
     properties:
       email:
@@ -208,6 +215,21 @@ definitions:
         type: string
       phone_number:
         type: string
+    type: object
+  structure.Participant:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      user_image:
+        type: string
+      username:
+        type: string
+    required:
+    - first_name
+    - last_name
+    - username
     type: object
   structure.RegisterEventRequest:
     properties:
@@ -506,6 +528,43 @@ paths:
           schema:
             type: object
       summary: Update existing event
+      tags:
+      - events
+  /events/participant:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all participant in the events
+      parameters:
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
+      - description: offset i.e. 0
+        in: query
+        name: offset
+        type: integer
+      - description: Items per page i.e. 10
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetParticipantListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetParticipantLists
       tags:
       - events
   /locations/{location_id}:
