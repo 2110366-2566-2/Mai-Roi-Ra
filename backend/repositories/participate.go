@@ -18,7 +18,8 @@ type ParticipateRepository struct {
 type IParticipateRepository interface {
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
-	GetParticipanstForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error)
+	GetParticipantsForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error)
+	GetParticipatedEventsForUser(req *st.GetParticipatedEventListsRequest) ([]*models.Participate, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -81,7 +82,8 @@ func (r *ParticipateRepository) CancelRegisterEvent(req *st.RegisterEventRequest
 	}, nil
 }
 
-func (r *ParticipateRepository) GetParticipanstForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error) {
+func (r *ParticipateRepository) GetParticipantsForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error) {
+	log.Println("[Repo: GetParticipantsForEvent]: Called")
 	var userLists []*models.Participate
 	query := r.DB
 
@@ -100,4 +102,26 @@ func (r *ParticipateRepository) GetParticipanstForEvent(req *st.GetParticipantLi
 		return nil, err
 	}
 	return userLists, nil
+}
+
+func (r *ParticipateRepository) GetParticipatedEventsForUser(req *st.GetParticipatedEventListsRequest) ([]*models.Participate, error) {
+	log.Println("[Repo: GetParticipatedEventsForUser]: Called")
+	var eventLists []*models.Participate
+	query := r.DB
+
+	if req.UserId != "" {
+		query = query.Where(`user_id=?`, req.UserId)
+	}
+
+	// offset & limit
+	query = query.Offset(req.Offset)
+	if req.Limit > 0 {
+		query = query.Limit(req.Limit)
+	}
+
+	if err := query.Find(&eventLists).Error; err != nil {
+		log.Println("[Repo: GetParticipatedEventsForUser]: cannot query the participated events:", err)
+		return nil, err
+	}
+	return eventLists, nil
 }

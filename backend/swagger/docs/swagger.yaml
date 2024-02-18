@@ -207,6 +207,13 @@ definitions:
           $ref: '#/definitions/structure.Participant'
         type: array
     type: object
+  structure.GetParticipatedEventListsResponse:
+    properties:
+      event_list:
+        items:
+          $ref: '#/definitions/structure.ParticipatedEvent'
+        type: array
+    type: object
   structure.LoginUserRequest:
     properties:
       email:
@@ -230,6 +237,27 @@ definitions:
     - first_name
     - last_name
     - username
+    type: object
+  structure.ParticipatedEvent:
+    properties:
+      description:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_name:
+        type: string
+      start_date:
+        type: string
+    required:
+    - description
+    - end_date
+    - event_name
+    - location_name
+    - start_date
     type: object
   structure.RegisterEventRequest:
     properties:
@@ -815,6 +843,43 @@ paths:
           schema:
             type: object
       summary: UpdateUserInformation
+      tags:
+      - user
+  /users/events:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all participated events of the user
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: offset i.e. 0
+        in: query
+        name: offset
+        type: integer
+      - description: Items per page i.e. 10
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetParticipatedEventListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetParticipatedEventLists
       tags:
       - user
   /users/participate:

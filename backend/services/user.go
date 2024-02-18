@@ -20,8 +20,8 @@ type UserService struct {
 
 // Regular expression for validating an email address
 var (
-	emailRegex     = regexp.MustCompile(`^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`)
-	englishOnlyReg = regexp.MustCompile(`^[A-Za-z0-9\s]+$`)
+	emailRegex = regexp.MustCompile(`^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`)
+	// englishOnlyReg = regexp.MustCompile(`^[A-Za-z0-9\s]+$`)
 )
 
 type IUserService interface {
@@ -33,6 +33,7 @@ type IUserService interface {
 	ValidateToken(token string) (*models.User, error)
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -211,4 +212,43 @@ func (s *UserService) CancelRegisterEvent(req *st.RegisterEventRequest) (*st.Reg
 		return nil, err
 	}
 	return res, nil
+}
+
+func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error) {
+	log.Println("[Service: GetParticipatedEventLists]: Called")
+	eventList, err := s.RepositoryGateway.ParticipateRepository.GetParticipatedEventsForUser(req)
+	if err != nil {
+		log.Println("[Service: GetParticipatedEventLists] called repo participant error", err)
+		return nil, err
+	}
+
+	resLists := &st.GetParticipatedEventListsResponse{
+		EventsList: make([]st.ParticipatedEvent, 0),
+	}
+
+	for _, v := range eventList {
+		res, err := s.RepositoryGateway.EventRepository.GetEventDataById(v.EventId)
+		if err != nil {
+			log.Println("[Service: GetParticipatedEventLists] called repo event error", err)
+			return nil, err
+		}
+
+		locName, err := s.RepositoryGateway.LocationRepository.GetLocationById(res.LocationId)
+		if err != nil {
+			log.Println("[Service: GetParticipatedEventLists] called repo location error", err)
+			return nil, err
+		}
+
+		eventData := st.ParticipatedEvent{
+			EventName:    res.EventName,
+			StartDate:    res.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
+			EndDate:      res.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
+			EventImage:   res.EventImage,
+			LocationName: locName.LocationName,
+			Description:  res.Description,
+		}
+
+		resLists.EventsList = append(resLists.EventsList, eventData)
+	}
+	return resLists, nil
 }

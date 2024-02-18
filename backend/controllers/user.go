@@ -188,3 +188,26 @@ func (c *UserController) CancelRegisterEvent(ctx *gin.Context, req *st.RegisterE
 	log.Println("[CTRL: CancelRegisterEvent] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary GetParticipatedEventLists
+// @Description Get list of all participated events of the user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Param offset query int false "offset i.e. 0"
+// @Param limit query int false "Items per page i.e. 10"
+// @Success 200 {object} structure.GetParticipatedEventListsResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/events [get]
+func (c *UserController) GetParticipatedEventLists(ctx *gin.Context, req *st.GetParticipatedEventListsRequest) {
+	log.Println("[CTRL: GetParticipatedEventLists] Input:", req)
+	res, err := c.ServiceGateway.UserService.GetParticipatedEventLists(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetParticipatedEventLists] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
