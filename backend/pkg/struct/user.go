@@ -1,5 +1,7 @@
 package structure
 
+import "github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+
 type CreateUserRequest struct {
 	Username    string  `json:"username" binding:"required"`
 	PhoneNumber *string `json:"phone_number" `
@@ -50,4 +52,29 @@ type LogoutUserRequest struct {
 
 }
 type LogoutUserResponse struct {
+}
+
+// email login
+type LoginUserEmailRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginUserEmailResponse struct {
+	Token string `json:"token"`
+}
+
+// phone login
+type LoginUserPhoneRequest struct {
+	PhoneNumber string `json:"phone_number"`
+	Password    string `json:"password"`
+}
+
+type LoginUserPhoneResponse struct {
+	Token string `json:"token"`
+}
+
+// getAllusers
+type GetAllUsersResponse struct {
+	Users []models.User `json:"users"` //FIXME should not use struct from models
 }

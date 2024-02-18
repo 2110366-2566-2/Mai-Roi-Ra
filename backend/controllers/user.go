@@ -46,6 +46,31 @@ func (c *UserController) CreateUser(ctx *gin.Context, req *st.CreateUserRequest)
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetAllUsers
+// @Summary GetAllUsers
+// @Description Get list of users
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param filter query string false "Filter query"
+// @Param sort query string false "Sort order"
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Success 200 {object} structure.GetAllUsersResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users [get]
+func (c *UserController) GetAllUsers(ctx *gin.Context) {
+	log.Println("[CTRL: GetAllUsers] Input:")
+	res, err := c.ServiceGateway.UserService.GetAllUsers()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetAllUsers] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
 // @Summary UpdateUserInformation
 // @Description Update User information with the desired input
 // @Tags user
@@ -107,6 +132,48 @@ func (c *UserController) LoginUser(ctx *gin.Context, req *st.LoginUserRequest) {
 		return
 	}
 	log.Println("[CTRL: LoginUser] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Log in a user with email
+// @Description Logs in a user by their email and password.
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body structure.LoginUserEmailRequest true "Log in a user with Email" example:{"email":"user1@example.com","password":""}
+// @Success 200 {object} map[string]interface{} "Returns the login token."
+// @Failure 400 {object} map[string]string "Returns an error if login fails."
+// @Router /loginemail [post]
+func (c *UserController) LoginUserEmail(ctx *gin.Context, req *st.LoginUserEmailRequest) {
+	log.Println("[CTRL: LoginUserEmail] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.LoginUserEmail(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: LoginUserEmail] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Log in a user with phone
+// @Description Logs in a user by their phone number and password.
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body structure.LoginUserPhoneRequest true "Log in a user with Phone" example:{"phone_number":"1234567890","password":""}
+// @Success 200 {object} map[string]interface{} "Returns the login token."
+// @Failure 400 {object} map[string]string "Returns an error if login fails."
+// @Router /loginphone [post]
+func (c *UserController) LoginUserPhone(ctx *gin.Context, req *st.LoginUserPhoneRequest) {
+	log.Println("[CTRL: LoginUserPhone] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.LoginUserPhone(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: LoginUserPhone] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
 

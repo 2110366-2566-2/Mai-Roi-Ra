@@ -124,6 +124,14 @@ definitions:
     required:
     - user_id
     type: object
+  structure.GetAllUsersResponse:
+    properties:
+      users:
+        description: FIXME should not use struct from models
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+    type: object
   structure.GetEventDataByIdResponse:
     properties:
       activities:
@@ -198,6 +206,20 @@ definitions:
       district:
         type: string
       location_name:
+        type: string
+    type: object
+  structure.LoginUserEmailRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  structure.LoginUserPhoneRequest:
+    properties:
+      password:
+        type: string
+      phone_number:
         type: string
     type: object
   structure.LoginUserRequest:
@@ -523,6 +545,64 @@ paths:
       summary: Log in a user
       tags:
       - user
+  /loginemail:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user by their email and password.
+      parameters:
+      - description: Log in a user with Email
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.LoginUserEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the login token.
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Returns an error if login fails.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Log in a user with email
+      tags:
+      - user
+  /loginphone:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user by their phone number and password.
+      parameters:
+      - description: Log in a user with Phone
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.LoginUserPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the login token.
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Returns an error if login fails.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Log in a user with phone
+      tags:
+      - user
   /logout:
     post:
       consumes:
@@ -568,6 +648,45 @@ paths:
       tags:
       - Test
   /users:
+    get:
+      consumes:
+      - application/json
+      description: Get list of users
+      parameters:
+      - description: Filter query
+        in: query
+        name: filter
+        type: string
+      - description: Sort order
+        in: query
+        name: sort
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetAllUsersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetAllUsers
+      tags:
+      - users
     post:
       consumes:
       - application/json

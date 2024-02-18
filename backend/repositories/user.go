@@ -25,6 +25,7 @@ type IUserRepository interface {
 	GetUserByToken(token string) (*models.User, error)
 	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
 	UpdateUserToken(userID string, token string) error
+	GetAllUsers() ([]models.User, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -35,6 +36,16 @@ func NewUserRepository(
 	return &UserRepository{
 		DB: DB,
 	}
+}
+
+// GetAllUsers retrieves all users from the database.
+func (repo *UserRepository) GetAllUsers() ([]models.User, error) {
+	var users []models.User
+	result := repo.DB.Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
 }
 
 // GetUserByEmail retrieves a user by their email address.
