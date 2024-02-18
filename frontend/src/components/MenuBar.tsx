@@ -24,7 +24,8 @@ export default function MenuBar({onDevice} : Props) {
     <div>
     {
       onDevice == "PC" ? 
-        <div className="fixed left-0 top-0 h-screen text-black lg:w-[20%] w-[0%] bg-white border-r-[1px] border-gray-300 flex flex-col justify-between">
+        <div className="fixed left-0 top-0 h-screen text-black lg:w-[20%] w-[0%] bg-white border-r-[1px]
+         border-gray-300 flex flex-col justify-between">
           <div className='flex flex-col pt-4 pl-4'>
             <div className="p-4">
               <Image className="w-[60px] h-[60px]"
@@ -55,7 +56,7 @@ export default function MenuBar({onDevice} : Props) {
             </div>
           </div>
           <div className="p-4 flex justify-center">
-            <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] max-h-[150px] w-[70%]">
+            <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#F2D22E] h-[40px] max-h-[150px] w-[70%]">
               Logout
             </button>
           </div>

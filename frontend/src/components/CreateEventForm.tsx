@@ -4,13 +4,19 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import dayjs, { Dayjs } from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const CreateEventForm = () => {
+    const [startDate,setStartDate] = useState<Dayjs | null>(null);
+    const [endDate,setEndDate] = useState<Dayjs | null>(null);
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState("");
     const [activity, setActivity] = useState("");
-    const [dateRange,setDateRange] = useState("");
     const [price, setPrice] = useState(null);
     const [error,setError] = useState("");
     const [location,setLocation] = useState("");
@@ -26,9 +32,6 @@ const CreateEventForm = () => {
                 return;
             } if (activity == ""){
                 setError("Activity Required")
-            } if (dateRange == "") {
-                setError("Date Range Required");
-                return
             } if (imageSrc == "") {
                 setError("Image Source Required");
                 return;
@@ -97,20 +100,39 @@ const CreateEventForm = () => {
                                 </FormControl>
                             </div>
                         </div>
-                        
+
+                        <div className="flex flex-start flex-wrap justify-between w-full">
+                            <div className="w-[48%] relative">
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker']}>
+                                        <DatePicker label="Start Date" 
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e)} />
+                                    </DemoContainer>
+                                 </LocalizationProvider>
+                            </div>
+
+                            <div className="w-[48%] relative">
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker']}>
+                                        <DatePicker label="End Date" 
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e)} />
+                                 </DemoContainer>
+                                 </LocalizationProvider>
+                            </div>
+                        </div>
+
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
-                                type="text" placeholder="Date Start/End"
-                                value={dateRange} onChange={(e) => setDateRange(e.target.value)}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
+                                type="text" placeholder="Location Name"
+                                value={location} onChange={(e) => setLocation(e.target.value)} maxLength={20}/>
 
-                                {dateRange.length != 0 && (
+                                {location.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                        Date Start/End
+                                        Location Name
                                     </div>
                                 )}
                             </div>
@@ -118,11 +140,8 @@ const CreateEventForm = () => {
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
-                                type="number" placeholder="Price" min={0} step={10}
-                                value={price} onChange={(e) => setPrice(e.target.value)}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
+                                type="number" placeholder="Price"
+                                value={price} onChange={(e) => setPrice(e.target.value)} min={0} step={10}/>
 
                                 {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -131,19 +150,6 @@ const CreateEventForm = () => {
                                 )} 
                             </div>
                         </div>
-
-                        <div className="w-full relative"> 
-                            <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-[48%] lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                            rounded-md"
-                            type="text" placeholder="Location Name" 
-                            value={location} onChange={(e) => setLocation(e.target.value)} maxLength={50}/>
-
-                            {location.length != 0 && (
-                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Location Name
-                                </div>
-                            )}
-                        </div>
                             
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
@@ -151,9 +157,6 @@ const CreateEventForm = () => {
                                 rounded-md"
                                 type="text" placeholder="District"
                                 value={district} onChange={(e) => setDistrict(e.target.value)} maxLength={20}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
 
                                 {district.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -167,9 +170,6 @@ const CreateEventForm = () => {
                                 rounded-md"
                                 type="text" placeholder="Province"
                                 value={province} onChange={(e) => setProvince(e.target.value)} maxLength={20}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
 
                                 {province.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -234,7 +234,7 @@ const CreateEventForm = () => {
                         </button>
                     </div>
                 </div>
-                <SuccessModal id={""} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
+                <SuccessModal id={""} name={name} activity={activity} dateRange="12/02/2023 - 13/03/2023" price={price?price:0} location={location} 
                 district={district} province={province} description={description} imageSrc={imageSrc}
                 topic="Event Created" isVisible={showModal}/>
             </form>
