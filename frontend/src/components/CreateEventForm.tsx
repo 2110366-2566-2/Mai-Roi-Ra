@@ -5,18 +5,22 @@ import { useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const CreateEventForm = () => {
+    const isMobile = useMediaQuery('(max-width:768px)');
+
+    const [start,setStart] = useState("");
+    const [end,setEnd] = useState("");
     const [startDate,setStartDate] = useState<Dayjs | null>(null);
     const [endDate,setEndDate] = useState<Dayjs | null>(null);
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState("");
-    const [activity, setActivity] = useState("");
+    const [activity, setActivity] = useState(""); 
     const [price, setPrice] = useState(null);
     const [error,setError] = useState("");
     const [location,setLocation] = useState("");
@@ -53,7 +57,24 @@ const CreateEventForm = () => {
             } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
                 setError("Invalid Picture URI");
                 return;
-            } setShowModal(true);
+            } 
+            const currentDate = dayjs();
+            const startTmp = dayjs(startDate);
+            const endTmp = dayjs(endDate);
+            if (startTmp.isBefore(currentDate) || endTmp.isBefore(currentDate)) {
+                setError("Dates cannot be in the past.");
+                return;
+            }
+    
+            const differenceInDays = endTmp.diff(startTmp, 'day');
+            if (differenceInDays < 0) {
+                setError("End Date cannot before Start Date");
+                return;
+            }
+
+            setStart(startTmp.format('YYYY/MM/DD'));
+            setEnd(endTmp.format('YYYY/MM/DD'));
+            setShowModal(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -74,9 +95,6 @@ const CreateEventForm = () => {
                                 rounded-md"
                                 type="text" placeholder="Event Name"
                                 value={name} onChange={(e) => setName(e.target.value)} maxLength={20}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
 
                                 {name.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -104,22 +122,46 @@ const CreateEventForm = () => {
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={['DatePicker']}>
-                                        <DatePicker label="Start Date" 
-                                        value={startDate}
-                                        onChange={(e) => setStartDate(e)} />
-                                    </DemoContainer>
-                                 </LocalizationProvider>
+                                    {isMobile ? ( // Check if the device is mobile
+                                        <DatePicker
+                                            label="Start Date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'small' } }}
+                                        />
+                                    ) : (
+                                        <DatePicker
+                                            label="Start Date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'medium' } }}
+                                        />
+                                    )}
+                                </LocalizationProvider>
                             </div>
 
                             <div className="w-[48%] relative">
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={['DatePicker']}>
-                                        <DatePicker label="End Date" 
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e)} />
-                                 </DemoContainer>
-                                 </LocalizationProvider>
+                                    {isMobile ? ( // Check if the device is mobile
+                                        <DatePicker
+                                            label="End Date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'small' } }}
+                                        />
+                                    ) : (
+                                        <DatePicker
+                                            label="End Date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'medium' } }}
+                                        />
+                                    )}
+                                </LocalizationProvider>
                             </div>
                         </div>
 
@@ -234,7 +276,8 @@ const CreateEventForm = () => {
                         </button>
                     </div>
                 </div>
-                <SuccessModal id={""} name={name} activity={activity} dateRange="12/02/2023 - 13/03/2023" price={price?price:0} location={location} 
+                <SuccessModal id={""} name={name} activity={activity} startDate={start} endDate={end}
+                price={price?price:0} location={location} 
                 district={district} province={province} description={description} imageSrc={imageSrc}
                 topic="Event Created" isVisible={showModal}/>
             </form>

@@ -10,7 +10,8 @@ interface Props {
     id:string
     name:string
     activity:string
-    dateRange:string
+    startDate:string
+    endDate:string
     price:number
     location:string
     district:string
@@ -21,15 +22,15 @@ interface Props {
     isVisible:boolean
 }
 
-const SuccessModal = ({id,name,activity,dateRange,price,location,district,province,description,
+const SuccessModal = ({id,name,activity,startDate,endDate,price,location,district,province,description,
     imageSrc,topic,isVisible} : Props) => {
     if (!isVisible) return null;
     
     const handlerClose = async () => {
         if (topic == "Event Created"){
-            await HandleCreateEvent(name, activity, dateRange, price? price : 0, location, district, province, description, imageSrc);
+            await HandleCreateEvent(name, activity, startDate, endDate, price? price : 0, location, district, province, description, imageSrc);
         } else {
-            await HandleUpdateEvent(id,name, activity, dateRange, price, location, district, province, description, imageSrc);
+            await HandleUpdateEvent(id,name, activity, startDate, endDate, price, location, district, province, description, imageSrc);
         }
     }
 
@@ -47,7 +48,7 @@ const SuccessModal = ({id,name,activity,dateRange,price,location,district,provin
                 </div>
 
                 <div className="w-full flex justify-center mt-[40px]">
-                    <Image className="lg:w-[250px] lg:h-[220px] md:w-[222px] md:h-[189px] w-[180px] h-[150px]"
+                    <Image className="lg:w-[220px] lg:h-[200px] md:w-[200px] md:h-[170px] sm:w-[120px] sm:h-[120px]"
                     src="/img/true.png"
                     alt="Failed To Load Image"
                     width={1000}
