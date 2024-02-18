@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Powered by Pubpab',
 }
 
-export default async function Layout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode

@@ -1,5 +1,3 @@
-// const handler = NextAuth(authOptions)
-// export {handler as GET, handler as POST}
 import NextAuth from "next-auth/next";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -16,30 +14,31 @@ export const authOptions:AuthOptions = {
             // e.g. domain, username, password, 2FA token, etc.
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-              email: { label: "Email", type: "text", placeholder: "email" },
+              username: { label: "Username", type: "text", placeholder: "username" },
               password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
+              
+              if (!credentials?.username || !credentials.password || !credentials) {
+                throw new Error("Please fill email and password.");
+              }
 
-              if (!credentials) return null
-
-              const user = await userLogin(credentials.email, credentials.password)
-              // const user = {id:"1",name:"J",email:"j@gmail.com"}
-
+              const user = await userLogin(credentials.username, credentials.password);
+              
               if (user) {
                 // Any object returned will be saved in `user` property of the JWT
                 return user
               } else {
                 // If you return null then an error will be displayed advising the user to check their details.
                 return null
-
+        
                 // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
               }
             }
           })
     ],
     pages: {
-      signIn: "/api/auth/signin",
+      signIn: "/auth/signin",
       signOut: "/auth/signout"
     },
     session: {strategy: "jwt"},
