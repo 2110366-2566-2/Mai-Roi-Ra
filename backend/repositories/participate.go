@@ -18,6 +18,7 @@ type ParticipateRepository struct {
 type IParticipateRepository interface {
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	GetParticipanstForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -78,4 +79,25 @@ func (r *ParticipateRepository) CancelRegisterEvent(req *st.RegisterEventRequest
 	return &st.RegisterEventResponse{
 		Message: "Cancel succesful",
 	}, nil
+}
+
+func (r *ParticipateRepository) GetParticipanstForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error) {
+	var userLists []*models.Participate
+	query := r.DB
+
+	if req.EventId != "" {
+		query = query.Where(`event_id=?`, req.EventId)
+	}
+
+	// offset & limit
+	query = query.Offset(req.Offset)
+	if req.Limit > 0 {
+		query = query.Limit(req.Limit)
+	}
+
+	if err := query.Find(&userLists).Error; err != nil {
+		log.Println("[Repo: GetParticipanstForEvent]: cannot query the participants:", err)
+		return nil, err
+	}
+	return userLists, nil
 }
