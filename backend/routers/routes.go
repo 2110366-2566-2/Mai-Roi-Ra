@@ -159,6 +159,26 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.GetUserByUserId(ctx, &req)
 		})
+		r.GET("/api/v1/users/events", func(ctx *gin.Context) {
+			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
+				return
+			}
+
+			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
+				return
+			}
+
+			req := &st.GetParticipatedEventListsRequest{
+				UserId: ctx.Query("user_id"),
+				Offset: offset,
+				Limit:  limit,
+			}
+			userController.GetParticipatedEventLists(ctx, req)
+		})
 		// PUT
 		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
 			var req st.UpdateUserInformationRequest

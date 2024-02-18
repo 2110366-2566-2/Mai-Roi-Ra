@@ -242,7 +242,7 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 
 func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error) {
 	log.Println("[Service: GetParticipantLists]: Called")
-	userList, err := s.RepositoryGateway.ParticipateRepository.GetParticipanstForEvent(req)
+	userList, err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(req)
 	if err != nil {
 		log.Println("[Service: GetParticipantLists] called repo participant error", err)
 		return nil, err

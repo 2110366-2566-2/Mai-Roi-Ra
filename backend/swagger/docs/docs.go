@@ -567,6 +567,62 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/events": {
+            "get": {
+                "description": "Get list of all participated events of the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "GetParticipatedEventLists",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page i.e. 10",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetParticipatedEventListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/participate": {
             "post": {
                 "description": "Register an event based on user_id and event_id",
@@ -1096,6 +1152,17 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.GetParticipatedEventListsResponse": {
+            "type": "object",
+            "properties": {
+                "event_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.ParticipatedEvent"
+                    }
+                }
+            }
+        },
         "structure.LoginUserRequest": {
             "type": "object",
             "properties": {
@@ -1128,6 +1195,36 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ParticipatedEvent": {
+            "type": "object",
+            "required": [
+                "description",
+                "end_date",
+                "event_name",
+                "location_name",
+                "start_date"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "event_image": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "location_name": {
+                    "type": "string"
+                },
+                "start_date": {
                     "type": "string"
                 }
             }
