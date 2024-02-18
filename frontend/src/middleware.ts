@@ -14,14 +14,15 @@ export default withAuth({
       const publicStaticPaths: string[] = [
         "/auth/signin",
         "/auth/signup",
+        "/auth/register",
         "/homepage",
         "/",
       ];
 
       // Function to check if the path is a public dynamic path
       const isPublicDynamicPath = (path: string): boolean => {
-        // Check for dynamic campground path
-        if (path.startsWith("/event/") && path.split("/").length === 3) {
+        // Check for dynamic path
+        if (path.startsWith("/events/")) {
           return true;
         }
         // Check for any subpath under /images
@@ -45,7 +46,7 @@ export default withAuth({
   },
   pages: {
     signIn: "/auth/signin", // Redirect to the custom sign-in page
-    // signUp: '/auth/signup'  // Redirect to a custom error page (optional)
+    // signUp: "/auth/signup"  // Redirect to a custom error page (optional)
   },
   // ... rest of your configuration
 });
