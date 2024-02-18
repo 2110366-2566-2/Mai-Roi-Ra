@@ -9,14 +9,13 @@ type Service struct {
 	ServiceGateway ServiceGateway
 }
 
-// ServiceGatway ...
+// RepositoryGateway ...
 type ServiceGateway struct {
 	dig.In
-	TestService        ITestService
-	EventService       IEventService
-	LocationService    ILocationService
-	UserService        IUserService
-	ParticipateService IParticipateService
+	TestService     ITestService
+	EventService    IEventService
+	LocationService ILocationService
+	UserService     IUserService
 }
 
 // NewService ...
