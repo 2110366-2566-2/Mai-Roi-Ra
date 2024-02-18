@@ -49,28 +49,28 @@ func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventRespons
 }
 
 func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error) {
-    log.Println("[Repo: UpdateEvent]: Called")
+	log.Println("[Repo: UpdateEvent]: Called")
 
-    if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
-        Updates(map[string]interface{}{
-            "StartDate":      req.StartDate,
-            "EndDate":        req.EndDate,
-            "Status":         req.Status,
-            "ParticipantFee": req.ParticipantFee,
-            "Description":    req.Description,
-            "EventName":      req.EventName,
-            "Deadline":       req.Deadline,
-            "Activities":     req.Activities,
-            "EventImage":     req.EventImage,
-			"UpdatedAt": 	  time.Now(),
-        }).Error; err != nil {
-        log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
-        return nil, err
-    }
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+		Updates(map[string]interface{}{
+			"StartDate":      req.StartDate,
+			"EndDate":        req.EndDate,
+			"Status":         req.Status,
+			"ParticipantFee": req.ParticipantFee,
+			"Description":    req.Description,
+			"EventName":      req.EventName,
+			"Deadline":       req.Deadline,
+			"Activities":     req.Activities,
+			"EventImage":     req.EventImage,
+			"UpdatedAt":      time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
 
-    return &st.UpdateEventResponse{
-        EventId: req.EventId,
-    }, nil
+	return &st.UpdateEventResponse{
+		EventId: req.EventId,
+	}, nil
 }
 
 func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
