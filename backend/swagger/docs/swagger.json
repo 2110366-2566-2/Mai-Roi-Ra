@@ -129,6 +129,62 @@
                 }
             }
         },
+        "/events/participant": {
+            "get": {
+                "description": "Get list of all participant in the events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "GetParticipantLists",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page i.e. 10",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetParticipantListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/events/{event_id}": {
             "get": {
                 "description": "Get a test message",
@@ -1023,6 +1079,17 @@
                 }
             }
         },
+        "structure.GetParticipantListsResponse": {
+            "type": "object",
+            "properties": {
+                "participant_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.Participant"
+                    }
+                }
+            }
+        },
         "structure.LoginUserRequest": {
             "type": "object",
             "properties": {
@@ -1033,6 +1100,28 @@
                     "type": "string"
                 },
                 "phone_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.Participant": {
+            "type": "object",
+            "required": [
+                "first_name",
+                "last_name",
+                "username"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "user_image": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
