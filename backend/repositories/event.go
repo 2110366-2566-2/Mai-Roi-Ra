@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -75,11 +76,22 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
 
 func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Repo: DeleteEventById]: Called")
+	eventModel := models.Event{} 
 
 	// Delete the event from the database
-	if err := r.db.Where("event_id = ?", req.EventId).Delete(&models.Event{}).Error; err != nil {
-		log.Println("[Repo: DeleteEventById] Error deleting event from Events table:", err)
-		return nil, err
+	if result := r.db.Where("event_id = ?", req.EventId).First(&eventModel); result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			log.Println("[Repo: DeleteEventById] no records found")
+			return nil, result.Error
+		} else {
+			log.Println("[Repo: DeleteEventById] something wrong when deleting from database:", result.Error)
+			return nil, result.Error
+		}
+	} else {
+		if err := r.db.Delete(&eventModel).Error; err != nil {
+			log.Println("[Repo: DeleteEventById] errors when delete from database")
+			return nil, err
+		}
 	}
 
 	// Return a success message
