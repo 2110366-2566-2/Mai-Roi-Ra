@@ -203,10 +203,11 @@ func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*
 		}
 
 		particiapant := st.Participant{
-			Username:  tmpUser.Username,
-			FirstName: tmpUser.FirstName,
-			LastName:  tmpUser.LastName,
-			UserImage: tmpUser.UserImage,
+			Username:       tmpUser.Username,
+			FirstName:      tmpUser.FirstName,
+			LastName:       tmpUser.LastName,
+			UserImage:      tmpUser.UserImage,
+			NumParticipant: v.NumParticipant,
 		}
 
 		resLists.ParticipantList = append(resLists.ParticipantList, particiapant)
