@@ -1233,11 +1233,15 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "event_id",
+                "num_participant",
                 "user_id"
             ],
             "properties": {
                 "event_id": {
                     "type": "string"
+                },
+                "num_participant": {
+                    "type": "integer"
                 },
                 "user_id": {
                     "type": "string"

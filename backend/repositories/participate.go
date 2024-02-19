@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -17,7 +17,7 @@ type ParticipateRepository struct {
 
 type IParticipateRepository interface {
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
-	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
 	GetParticipantsForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error)
 	GetParticipatedEventsForUser(req *st.GetParticipatedEventListsRequest) ([]*models.Participate, error)
 }
@@ -34,9 +34,10 @@ func NewParticipateRepository(
 
 func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
 	participateModel := models.Participate{
-		UserId:    req.UserId,
-		EventId:   req.EventId,
-		CreatedAt: time.Time{},
+		UserId:         req.UserId,
+		EventId:        req.EventId,
+		NumParticipant: req.NumParticipant,
+		CreatedAt:      time.Time{},
 	}
 
 	trans := r.DB.Begin().Debug()
@@ -59,26 +60,21 @@ func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st
 	return &message, nil
 }
 
-func (r *ParticipateRepository) CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+func (r *ParticipateRepository) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error) {
 	log.Println("[Repo: CancelRegisterEvent]: Called")
-	participateModel := models.Participate{}
 
-	if result := r.DB.Where("event_id = ? AND user_id = ?", req.EventId, req.UserId).First(&participateModel); result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			log.Println("[Repo: CancelRegisterEvent] no records found")
-			return nil, result.Error
-		} else {
-			log.Println("[Repo: CancelRegisterEvent] something wrong when query in database")
-		}
-	} else {
-		if err := r.DB.Delete(&participateModel).Error; err != nil {
-			log.Println("[Repo: CancelRegisterEvent] errors when delete from database")
-			return nil, err
-		}
+	result := r.DB.Where("event_id = ? AND user_id = ?", req.EventId, req.UserId).Delete(&models.Participate{})
+
+	if result.Error != nil {
+		log.Println("[Repo: CancelRegisterEvent] errors when deleting from the database")
+		return nil, result.Error
+	} else if result.RowsAffected == 0 {
+		log.Println("[Repo: CancelRegisterEvent] no records found")
+		return nil, fmt.Errorf("record not found")
 	}
-	// Return a success message
+
 	return &st.RegisterEventResponse{
-		Message: "Cancel succesful",
+		Message: "Cancel successful",
 	}, nil
 }
 

@@ -32,7 +32,7 @@ type IUserService interface {
 	LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error)
 	ValidateToken(token string) (*models.User, error)
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
-	CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
 	GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error)
 }
 
@@ -204,7 +204,7 @@ func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterE
 	return res, nil
 }
 
-func (s *UserService) CancelRegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+func (s *UserService) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error) {
 	log.Println("[Service: CancelRegisterEvent]: Called")
 	res, err := s.RepositoryGateway.ParticipateRepository.CancelRegisterEvent(req)
 	if err != nil {

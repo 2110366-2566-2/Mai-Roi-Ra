@@ -177,7 +177,7 @@ func (c *UserController) RegisterEvent(ctx *gin.Context, req *st.RegisterEventRe
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/{event_id} [delete]
-func (c *UserController) CancelRegisterEvent(ctx *gin.Context, req *st.RegisterEventRequest) {
+func (c *UserController) CancelRegisterEvent(ctx *gin.Context, req *st.CancelRegisterEventRequest) {
 	log.Println("[CTRL: CancelRegisterEvent] Input:", req)
 
 	res, err := c.ServiceGateway.UserService.CancelRegisterEvent(req)
