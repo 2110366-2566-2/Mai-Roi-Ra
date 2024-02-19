@@ -253,5 +253,6 @@ func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (
 	if err != nil {
 		log.Println("[Service: GetParticipantLists] error when called repo GetUserDataForEvents", err)
 	}
+
 	return resLists, nil
 }

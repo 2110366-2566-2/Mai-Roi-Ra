@@ -1182,6 +1182,7 @@ const docTemplate = `{
             "required": [
                 "first_name",
                 "last_name",
+                "num_participant",
                 "username"
             ],
             "properties": {
@@ -1190,6 +1191,9 @@ const docTemplate = `{
                 },
                 "last_name": {
                     "type": "string"
+                },
+                "num_participant": {
+                    "type": "integer"
                 },
                 "user_image": {
                     "type": "string"
