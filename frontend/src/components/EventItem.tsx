@@ -1,8 +1,8 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import {useRouter} from "next/navigation"
-import Link from 'next/link';
+import AnnouncementPopup from './AnnouncementPopup';
 
 interface Props {
   id:string;
@@ -17,6 +17,7 @@ interface Props {
 }
 
 export default function EventItem ({id,name,startDate,endDate,description,city,district,imgSrc,page} : Props){
+  const [showModal,setShowModal] = useState(true); 
   const router = useRouter();
 
   const startyear = startDate.substring(0, 4);
@@ -61,15 +62,26 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
             <div className='flex justify-between'>
                 <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">{name}</h2>
                 {
-                  page == 1 ?  <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300'
-                  onClick = {(e) => {
-                    router.push(`/homepage/editevent/${id}`);
-                    e.stopPropagation();
-                  }}>
+                  page == 1 ?  
+                  <div className="space-x-2">
+                      <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300'
+                    onClick = {(e) => {
+                      router.push(`/homepage/editevent/${id}`);
+                      e.stopPropagation();
+                    }}>
                       Edit event
-                  </button> : null
+                    </button> 
+                    <button className='border border-slate-400 rounded-xl h-[30px] w-fit px-[5px] text-sm hover:scale-105 duration-300'
+                    onClick = {(e) => {
+                      setShowModal(true);
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}>
+                        Announcement
+                    </button>
+                  </div>
+                  : null
                 }
-               
             </div>
       
           <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-[60%] text-gray-500">
@@ -83,6 +95,7 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
 
 
         </div>
+        <AnnouncementPopup isVisible={showModal} onClose={()=>setShowModal(false)} id={id} name={name}/>
     </div>
   );
 };
