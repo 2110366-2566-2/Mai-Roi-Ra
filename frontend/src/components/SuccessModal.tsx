@@ -2,7 +2,6 @@
 import styles from "@/styles/FontPage.module.css"
 import Image from "next/image"
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { Icon } from "@mui/material";
 import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
 
