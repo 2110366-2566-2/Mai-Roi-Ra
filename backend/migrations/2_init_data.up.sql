@@ -33,7 +33,7 @@ BEGIN
     -- Corrected: Insert data into Events table with ENUM values for activities
     INSERT INTO events (event_id, organizer_id, admin_id, location_id, start_date, end_date, status, participant_fee, participant_count, description, event_name, deadline, activities, event_image, created_at, updated_at)
     VALUES 
-    ('550e8400-e29b-41d4-a716-446655440400', '550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440000', '550e8400-e29b-41d4-a716-446655440300', '2024-03-01', '2024-03-05', 'Approved', 50.0, 3, 'Event description 1', 'Event 1', '2024-02-15', 'Entertainment', 'https://example.com/event1.jpg', CURRENT_TIMESTAMP, NULL);
+    ('550e8400-e29b-41d4-a716-446655440400', '550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440000', '550e8400-e29b-41d4-a716-446655440300', '2024-03-01', '2024-03-05', 'Approved', 50.0, 6, 'Event description 1', 'Event 1', '2024-02-15', 'Entertainment', 'https://example.com/event1.jpg', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Posts table
     INSERT INTO posts (post_id, user_id, post_image, caption, rating_score, created_at, updated_at)

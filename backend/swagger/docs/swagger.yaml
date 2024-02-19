@@ -263,10 +263,13 @@ definitions:
     properties:
       event_id:
         type: string
+      num_participant:
+        type: integer
       user_id:
         type: string
     required:
     - event_id
+    - num_participant
     - user_id
     type: object
   structure.RegisterEventResponse:

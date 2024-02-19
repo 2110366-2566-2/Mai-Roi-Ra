@@ -193,7 +193,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			eventID := ctx.Param("event_id")
 			userID := ctx.Query("user_id")
 
-			req := st.RegisterEventRequest{
+			req := st.CancelRegisterEventRequest{
 				EventId: eventID,
 				UserId:  userID,
 			}

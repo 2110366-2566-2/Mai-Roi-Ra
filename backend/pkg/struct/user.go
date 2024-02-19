@@ -53,6 +53,12 @@ type LogoutUserResponse struct {
 }
 
 type RegisterEventRequest struct {
+	UserId         string `json:"user_id" binding:"required"`
+	EventId        string `json:"event_id" binding:"required"`
+	NumParticipant int    `json:"num_participant" binding:"required"`
+}
+
+type CancelRegisterEventRequest struct {
 	UserId  string `json:"user_id" binding:"required"`
 	EventId string `json:"event_id" binding:"required"`
 }
