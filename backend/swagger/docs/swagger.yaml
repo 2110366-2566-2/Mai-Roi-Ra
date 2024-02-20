@@ -200,6 +200,13 @@ definitions:
       location_name:
         type: string
     type: object
+  structure.GetParticipatedEventListsResponse:
+    properties:
+      event_list:
+        items:
+          $ref: '#/definitions/structure.ParticipatedEvent'
+        type: array
+    type: object
   structure.LoginUserRequest:
     properties:
       email:
@@ -207,6 +214,45 @@ definitions:
       password:
         type: string
       phone_number:
+        type: string
+    type: object
+  structure.ParticipatedEvent:
+    properties:
+      description:
+        type: string
+      end_date:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_name:
+        type: string
+      start_date:
+        type: string
+    required:
+    - description
+    - end_date
+    - event_name
+    - location_name
+    - start_date
+    type: object
+  structure.RegisterEventRequest:
+    properties:
+      event_id:
+        type: string
+      num_participant:
+        type: integer
+      user_id:
+        type: string
+    required:
+    - event_id
+    - num_participant
+    - user_id
+    type: object
+  structure.RegisterEventResponse:
+    properties:
+      message:
         type: string
     type: object
   structure.TestResponse:
@@ -597,6 +643,40 @@ paths:
       summary: Create new user
       tags:
       - users
+  /users/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Cancel Register an event based on user_id and event_id
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: event_id
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.RegisterEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Cancel Register an event
+      tags:
+      - user
   /users/{user_id}:
     get:
       consumes:
@@ -653,6 +733,73 @@ paths:
           schema:
             type: object
       summary: UpdateUserInformation
+      tags:
+      - user
+  /users/events:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all participated events of the user
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: offset i.e. 0
+        in: query
+        name: offset
+        type: integer
+      - description: Items per page i.e. 10
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetParticipatedEventListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetParticipatedEventLists
+      tags:
+      - user
+  /users/participate:
+    post:
+      consumes:
+      - application/json
+      description: Register an event based on user_id and event_id
+      parameters:
+      - description: Create User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.RegisterEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.RegisterEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Register an event
       tags:
       - user
   /validate-token:

@@ -186,3 +186,30 @@ func (repo *UserRepository) UpdateUserToken(userID string, token string) error {
 	}
 	return nil
 }
+
+func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error) {
+	log.Println("[Repo: GetUserDataForEvents]: Called")
+
+	resLists := &st.GetParticipantListsResponse{
+		ParticipantList: make([]st.Participant, 0),
+	}
+
+	for _, v := range userList {
+		var tmpUser models.User
+		if err := r.DB.Where("user_id = ?", v.UserId).Find(&tmpUser).Error; err != nil {
+			log.Println("[Repo: GetUserDataForEvents] error query user_id for ", v.UserId)
+			return nil, err
+		}
+
+		particiapant := st.Participant{
+			Username:       tmpUser.Username,
+			FirstName:      tmpUser.FirstName,
+			LastName:       tmpUser.LastName,
+			UserImage:      tmpUser.UserImage,
+			NumParticipant: v.NumParticipant,
+		}
+
+		resLists.ParticipantList = append(resLists.ParticipantList, particiapant)
+	}
+	return resLists, nil
+}

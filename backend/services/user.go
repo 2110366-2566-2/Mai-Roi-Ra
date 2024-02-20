@@ -31,6 +31,9 @@ type IUserService interface {
 	LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error)
 	LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error)
 	ValidateToken(token string) (*models.User, error)
+	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
+	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
+	GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -188,4 +191,63 @@ func GenerateJWTToken(user *models.User) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Service: RegisterEvent]: Called")
+	res, err := s.RepositoryGateway.ParticipateRepository.RegisterEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo RegisterEvent]:", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (s *UserService) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Service: CancelRegisterEvent]: Called")
+	res, err := s.RepositoryGateway.ParticipateRepository.CancelRegisterEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo CancelRegisterEvent error]:", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error) {
+	log.Println("[Service: GetParticipatedEventLists]: Called")
+	eventList, err := s.RepositoryGateway.ParticipateRepository.GetParticipatedEventsForUser(req)
+	if err != nil {
+		log.Println("[Service: GetParticipatedEventLists] called repo participant error", err)
+		return nil, err
+	}
+
+	resLists := &st.GetParticipatedEventListsResponse{
+		EventsList: make([]st.ParticipatedEvent, 0),
+	}
+
+	for _, v := range eventList {
+		res, err := s.RepositoryGateway.EventRepository.GetEventDataById(v.EventId)
+		if err != nil {
+			log.Println("[Service: GetParticipatedEventLists] called repo event error", err)
+			return nil, err
+		}
+
+		locName, err := s.RepositoryGateway.LocationRepository.GetLocationById(res.LocationId)
+		if err != nil {
+			log.Println("[Service: GetParticipatedEventLists] called repo location error", err)
+			return nil, err
+		}
+
+		eventData := st.ParticipatedEvent{
+			EventName:    res.EventName,
+			StartDate:    res.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
+			EndDate:      res.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
+			EventImage:   res.EventImage,
+			LocationName: locName.LocationName,
+			Description:  res.Description,
+		}
+
+		resLists.EventsList = append(resLists.EventsList, eventData)
+	}
+	return resLists, nil
 }

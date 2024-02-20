@@ -93,3 +93,21 @@ type GetEventDataByIdResponse struct {
 	District       string  `json:"district"`
 	LocationName   string  `json:"location_name"`
 }
+
+type Participant struct {
+	FirstName      string `json:"first_name" binding:"required"`
+	LastName       string `json:"last_name" binding:"required"`
+	Username       string `json:"username" binding:"required"`
+	NumParticipant int    `json:"num_participant" binding:"required"`
+	UserImage      string `json:"user_image"`
+}
+
+type GetParticipantListsRequest struct {
+	EventId string `json:"event_id" binding:"required"`
+	Offset  int    `json:"offset"`
+	Limit   int    `json:"limit"`
+}
+
+type GetParticipantListsResponse struct {
+	ParticipantList []Participant `json:"participant_list"`
+}
