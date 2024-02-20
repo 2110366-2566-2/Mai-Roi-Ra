@@ -179,13 +179,23 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		return nil, errors.New("failed to update token")
 	}
 
+	var email = ""
+	var phoneNumber = ""
+	if user.Email != nil {
+		email = *user.Email
+	}
+	if user.PhoneNumber != nil {
+		phoneNumber = *user.PhoneNumber
+	}
+
 	res := &st.LoginUserResponse{
 		UserId:      user.UserID,
 		FirstName:   user.FirstName,
-		Email:       *user.Email,
-		PhoneNumber: *user.PhoneNumber,
+		Email:       email,
+		PhoneNumber: phoneNumber,
 		Token:       token,
 	}
+
 	return res, nil
 }
 
@@ -222,11 +232,20 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 		return nil, errors.New("Failed to update token")
 	}
 
+	var email = ""
+	var phoneNumber = ""
+	if user.Email != nil {
+		email = *user.Email
+	}
+	if user.PhoneNumber != nil {
+		phoneNumber = *user.PhoneNumber
+	}
+
 	res := &st.LoginUserEmailResponse{
 		UserId:      user.UserID,
 		FirstName:   user.FirstName,
-		Email:       *user.Email,
-		PhoneNumber: *user.PhoneNumber,
+		Email:       email,
+		PhoneNumber: phoneNumber,
 		Token:       token,
 	}
 	return res, nil
@@ -266,11 +285,20 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 		return nil, errors.New("Failed to update token")
 	}
 
+	var email = ""
+	var phoneNumber = ""
+	if user.Email != nil {
+		email = *user.Email
+	}
+	if user.PhoneNumber != nil {
+		phoneNumber = *user.PhoneNumber
+	}
+
 	res := &st.LoginUserPhoneResponse{
 		UserId:      user.UserID,
 		FirstName:   user.FirstName,
-		Email:       *user.Email,
-		PhoneNumber: *user.PhoneNumber,
+		Email:       email,
+		PhoneNumber: phoneNumber,
 		Token:       token,
 	}
 	return res, nil
