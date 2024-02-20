@@ -43,6 +43,7 @@ func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
 }
 
 func (s *UserService) GetAllUsers() (*st.GetAllUsersResponse, error) {
+	log.Println("[Service: GetAllUsersResponse]: Called")
 	users, err := s.RepositoryGateway.UserRepository.GetAllUsers()
 	if err != nil {
 		return nil, errors.New("Failed to retrieve users")
@@ -134,6 +135,8 @@ func (s *UserService) GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.U
 // }
 
 func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error) {
+	log.Println("[Service: LoginUser]: Called")
+
 	var user *models.User
 	var err error
 
@@ -182,6 +185,8 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 }
 
 func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error) {
+	log.Println("[Service: LoginUserEmail]: Called")
+
 	var user *models.User
 	var err error
 
@@ -223,6 +228,8 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 }
 
 func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUserPhoneResponse, error) {
+	log.Println("[Service: LoginUserPhone]: Called")
+
 	var user *models.User
 	var err error
 
@@ -280,6 +287,7 @@ func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserRespo
 
 // ValidateToken implements IUserService.
 func (s *UserService) ValidateToken(token string) (*models.User, error) {
+	log.Println("[Service: ValidateToken]: Called")
 	user, err := s.RepositoryGateway.UserRepository.GetUserByToken(token)
 	if err != nil {
 		return nil, errors.New("Failed to delete user")
@@ -290,6 +298,7 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 
 // GenerateJWTToken generates a new JWT token for authenticated users
 func GenerateJWTToken(user *models.User) (string, error) {
+	log.Println("[Service: GenerateJWTToken]: Called")
 	var secretKey = []byte("secret-key")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":  user.UserID,                           // Include the user's ID

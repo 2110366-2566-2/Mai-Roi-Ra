@@ -40,6 +40,7 @@ func NewUserRepository(
 
 // GetAllUsers retrieves all users from the database.
 func (repo *UserRepository) GetAllUsers() ([]models.User, error) {
+	log.Println("[Repo: GetAllUsers]: Called")
 	var users []models.User
 	result := repo.DB.Find(&users)
 	if result.Error != nil {
@@ -50,8 +51,10 @@ func (repo *UserRepository) GetAllUsers() ([]models.User, error) {
 
 // GetUserByEmail retrieves a user by their email address.
 func (repo *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+	log.Println("[Repo: GetUserByEmail]: Called")
 	var user models.User
 	if err := repo.DB.Where("email = ?", email).First(&user).Error; err != nil {
+		log.Println("[Repo: GetUserByEmail]: can't find user")
 		return nil, err
 	}
 	return &user, nil
@@ -59,8 +62,10 @@ func (repo *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 
 // GetUserByPhoneNumber retrieves a user by their phone number.
 func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.User, error) {
+	log.Println("[Repo: GetUserByPhoneNumber]: Called")
 	var user models.User
 	if err := repo.DB.Where("phone_number = ?", phoneNumber).First(&user).Error; err != nil {
+		log.Println("[Repo: GetUserByPhoneNumber]: can't find user")
 		return nil, err
 	}
 	return &user, nil
@@ -178,6 +183,7 @@ func (r *UserRepository) GetUserByID(req *st.GetUserByUserIdRequest) (*models.Us
 
 // GetUserByToken retrieves a user by their token.
 func (repo *UserRepository) GetUserByToken(token string) (*models.User, error) {
+	log.Println("[REPO: GetUserByToken]: Called")
 	var user models.User
 	if err := repo.DB.Where("token = ?", token).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -191,6 +197,7 @@ func (repo *UserRepository) GetUserByToken(token string) (*models.User, error) {
 
 // UpdateUserToken updates a token to existing user in the database.
 func (repo *UserRepository) UpdateUserToken(userID string, token string) error {
+	log.Println("[REPO: UpdateUserToken]: Called")
 	err := repo.DB.Model(&models.User{}).Where("user_id = ?", userID).Update("token", token).Error
 	if err != nil {
 		return err

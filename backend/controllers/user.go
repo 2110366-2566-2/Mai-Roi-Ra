@@ -225,5 +225,6 @@ func (c *UserController) LogoutUser(ctx *gin.Context, req *st.LogoutUserRequest)
 // @Failure 400 {object} map[string]string "Returns an error if the token is invalid or expired."
 // @Router /validate-token [get]
 func (c *UserController) ValidateToken(token string) (*models.User, error) {
+	log.Println("[CTRL: ValidateToken] Input:", token)
 	return c.ServiceGateway.UserService.ValidateToken(token)
 }
