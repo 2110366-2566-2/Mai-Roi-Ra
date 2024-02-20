@@ -211,3 +211,25 @@ func (c *UserController) GetParticipatedEventLists(ctx *gin.Context, req *st.Get
 	log.Println("[CTRL: GetParticipatedEventLists] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary ToggleNotifications
+// @Description Toggle the enabling notification for user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Success 200 {object} structure.RegisterEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/notification [put]
+func (c *UserController) ToggleNotifications(ctx *gin.Context, req *st.GetUserByUserIdRequest) {
+	log.Println("[CTRL: ToggleNotifications] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.ToggleNotifications(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: ToggleNotifications] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}

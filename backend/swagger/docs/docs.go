@@ -527,6 +527,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/notification": {
+            "put": {
+                "description": "Toggle the enabling notification for user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "ToggleNotifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/participate": {
             "post": {
                 "description": "Register an event based on user_id and event_id",
@@ -778,6 +822,9 @@ const docTemplate = `{
                 },
                 "first_name": {
                     "type": "string"
+                },
+                "is_enable_notification": {
+                    "type": "boolean"
                 },
                 "last_name": {
                     "type": "string"

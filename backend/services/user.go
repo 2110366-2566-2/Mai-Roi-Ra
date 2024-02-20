@@ -34,6 +34,7 @@ type IUserService interface {
 	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
 	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
 	GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error)
+	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -250,4 +251,15 @@ func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventList
 		resLists.EventsList = append(resLists.EventsList, eventData)
 	}
 	return resLists, nil
+}
+
+// used the same struct as before, cause this function is so ez
+func (s *UserService) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Service: ToggleNotifications]: Called")
+	res, err := s.RepositoryGateway.UserRepository.ToggleNotifications(req)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return nil, err
+	}
+	return res, err
 }
