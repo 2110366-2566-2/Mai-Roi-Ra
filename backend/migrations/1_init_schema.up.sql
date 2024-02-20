@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    is_enable_notification BOOLEAN NOT NULL DEFAULT FALSE,
     payment_gateway_customer_id CHAR(10) NOT NULL,
     birth_date DATE NOT NULL,
     user_image VARCHAR(1024) NOT NULL,
