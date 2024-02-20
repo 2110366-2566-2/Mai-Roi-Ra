@@ -16,6 +16,7 @@ type User struct {
 	FirstName                string    `gorm:"column:first_name;not null" json:"first_name"`
 	LastName                 string    `gorm:"column:last_name;not null" json:"last_name"`
 	Password                 string    `gorm:"column:password;not null" json:"-"` // Excluded from JSON responses
+	IsEnableNotification     bool      `gorm:"column:is_enable_notification;not null" json:"is_enable_notification"`
 	PaymentGatewayCustomerID string    `gorm:"column:payment_gateway_customer_id" json:"payment_gateway_customer_id"`
 	BirthDate                time.Time `gorm:"column:birth_date" json:"birth_date"`
 	UserImage                string    `gorm:"column:user_image" json:"user_image"`

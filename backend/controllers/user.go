@@ -26,7 +26,7 @@ func NewUserController(
 
 // @Summary Create new user
 // @Description Create a new user with the provided details.
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param request body structure.CreateUserRequest true "Create User Request" example:{"organizer_id": "org123", "admin_id": "admin456", "location_id": "loc789", "start_date": "2024-01-15", "end_date": "2024-01-20", "status": "planned", "participant_fee": 50.0, "description": "Annual tech conference focusing on the future of technology.", "user_name": "TechFuture 2024", "deadline": "2023-12-31", "activities": "Keynotes, Workshops, Panels", "user_image": "http://example.com/image.jpg"}
@@ -142,4 +142,94 @@ func (c *UserController) LogoutUser(ctx *gin.Context, req *st.LogoutUserRequest)
 // @Router /validate-token [get]
 func (c *UserController) ValidateToken(token string) (*models.User, error) {
 	return c.ServiceGateway.UserService.ValidateToken(token)
+}
+
+// @Summary Register an event
+// @Description Register an event based on user_id and event_id
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body structure.RegisterEventRequest true "Create User Request"
+// @Success 200 {object} structure.RegisterEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/participate [post]
+func (c *UserController) RegisterEvent(ctx *gin.Context, req *st.RegisterEventRequest) {
+	log.Println("[CTRL: RegisterEvent] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.RegisterEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: RegisterEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Cancel Register an event
+// @Description Cancel Register an event based on user_id and event_id
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Param event_id path string true "event_id"
+// @Success 200 {object} structure.RegisterEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/{event_id} [delete]
+func (c *UserController) CancelRegisterEvent(ctx *gin.Context, req *st.CancelRegisterEventRequest) {
+	log.Println("[CTRL: CancelRegisterEvent] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.CancelRegisterEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: CancelRegisterEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary GetParticipatedEventLists
+// @Description Get list of all participated events of the user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Param offset query int false "offset i.e. 0"
+// @Param limit query int false "Items per page i.e. 10"
+// @Success 200 {object} structure.GetParticipatedEventListsResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/events [get]
+func (c *UserController) GetParticipatedEventLists(ctx *gin.Context, req *st.GetParticipatedEventListsRequest) {
+	log.Println("[CTRL: GetParticipatedEventLists] Input:", req)
+	res, err := c.ServiceGateway.UserService.GetParticipatedEventLists(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetParticipatedEventLists] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary ToggleNotifications
+// @Description Toggle the enabling notification for user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Success 200 {object} structure.RegisterEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/notification [put]
+func (c *UserController) ToggleNotifications(ctx *gin.Context, req *st.GetUserByUserIdRequest) {
+	log.Println("[CTRL: ToggleNotifications] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.ToggleNotifications(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: ToggleNotifications] Output:", res)
+	ctx.JSON(http.StatusOK, res)
 }

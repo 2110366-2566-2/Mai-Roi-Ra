@@ -25,6 +25,8 @@ type IUserRepository interface {
 	GetUserByToken(token string) (*models.User, error)
 	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
 	UpdateUserToken(userID string, token string) error
+	GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error)
+	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -185,4 +187,54 @@ func (repo *UserRepository) UpdateUserToken(userID string, token string) error {
 		return err
 	}
 	return nil
+}
+
+func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error) {
+	log.Println("[Repo: GetUserDataForEvents]: Called")
+
+	resLists := &st.GetParticipantListsResponse{
+		ParticipantList: make([]st.Participant, 0),
+	}
+
+	for _, v := range userList {
+		var tmpUser models.User
+		if err := r.DB.Where("user_id = ?", v.UserId).Find(&tmpUser).Error; err != nil {
+			log.Println("[Repo: GetUserDataForEvents] error query user_id for ", v.UserId)
+			return nil, err
+		}
+
+		particiapant := st.Participant{
+			Username:       tmpUser.Username,
+			FirstName:      tmpUser.FirstName,
+			LastName:       tmpUser.LastName,
+			UserImage:      tmpUser.UserImage,
+			NumParticipant: v.NumParticipant,
+		}
+
+		resLists.ParticipantList = append(resLists.ParticipantList, particiapant)
+	}
+	return resLists, nil
+}
+
+func (r *UserRepository) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error) {
+	log.Println("[Repo: ToggleNotifications] Called")
+
+	// find the user by user_id
+	var modelUser models.User
+	if err := r.DB.Where(`user_id=?`, req.UserId).Find(&modelUser).Error; err != nil {
+		log.Print("[Repo: ToggleNotifications] user_id not found")
+		return nil, err
+	}
+
+	modelUser.IsEnableNotification = !modelUser.IsEnableNotification
+
+	// Save the updated version
+	if err := r.DB.Save(&modelUser).Error; err != nil {
+		log.Println("[Repo: ToggleNotifications] Error updating in the database:", err)
+		return nil, err
+	}
+
+	return &st.RegisterEventResponse{
+		Message: "Toggle Successful",
+	}, nil
 }

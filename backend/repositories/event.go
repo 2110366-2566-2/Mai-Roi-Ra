@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -49,37 +50,48 @@ func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventRespons
 }
 
 func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error) {
-    log.Println("[Repo: UpdateEvent]: Called")
+	log.Println("[Repo: UpdateEvent]: Called")
 
-    if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
-        Updates(map[string]interface{}{
-            "StartDate":      req.StartDate,
-            "EndDate":        req.EndDate,
-            "Status":         req.Status,
-            "ParticipantFee": req.ParticipantFee,
-            "Description":    req.Description,
-            "EventName":      req.EventName,
-            "Deadline":       req.Deadline,
-            "Activities":     req.Activities,
-            "EventImage":     req.EventImage,
-			"UpdatedAt": 	  time.Now(),
-        }).Error; err != nil {
-        log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
-        return nil, err
-    }
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+		Updates(map[string]interface{}{
+			"StartDate":      req.StartDate,
+			"EndDate":        req.EndDate,
+			"Status":         req.Status,
+			"ParticipantFee": req.ParticipantFee,
+			"Description":    req.Description,
+			"EventName":      req.EventName,
+			"Deadline":       req.Deadline,
+			"Activities":     req.Activities,
+			"EventImage":     req.EventImage,
+			"UpdatedAt":      time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
 
-    return &st.UpdateEventResponse{
-        EventId: req.EventId,
-    }, nil
+	return &st.UpdateEventResponse{
+		EventId: req.EventId,
+	}, nil
 }
 
 func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Repo: DeleteEventById]: Called")
+	eventModel := models.Event{} 
 
 	// Delete the event from the database
-	if err := r.db.Where("event_id = ?", req.EventId).Delete(&models.Event{}).Error; err != nil {
-		log.Println("[Repo: DeleteEventById] Error deleting event from Events table:", err)
-		return nil, err
+	if result := r.db.Where("event_id = ?", req.EventId).First(&eventModel); result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			log.Println("[Repo: DeleteEventById] no records found")
+			return nil, result.Error
+		} else {
+			log.Println("[Repo: DeleteEventById] something wrong when deleting from database:", result.Error)
+			return nil, result.Error
+		}
+	} else {
+		if err := r.db.Delete(&eventModel).Error; err != nil {
+			log.Println("[Repo: DeleteEventById] errors when delete from database")
+			return nil, err
+		}
 	}
 
 	// Return a success message
