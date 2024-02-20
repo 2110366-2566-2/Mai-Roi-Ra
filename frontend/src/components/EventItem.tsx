@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function EventItem ({id,name,startDate,endDate,description,city,district,imgSrc,page} : Props){
-  const [showModal,setShowModal] = useState(true); 
+  const [showModal,setShowModal] = useState(false); 
   const router = useRouter();
 
   const startyear = startDate.substring(0, 4);
@@ -58,7 +58,7 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                 className="rounded object-cover h-full" />
         </div>
 
-        <div className='h-full flex flex-col justify-start w-full'>
+        <div className='h-full flex flex-col justify-start w-full space-y-[7px]'>
             <div className='flex justify-between'>
                 <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">{name}</h2>
                 {
@@ -68,9 +68,21 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                     onClick = {(e) => {
                       router.push(`/homepage/editevent/${id}`);
                       e.stopPropagation();
+                      e.preventDefault();
                     }}>
                       Edit event
                     </button> 
+                  </div>
+                  : null
+                }
+            </div>
+      
+          <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-full text-gray-500">
+              <div className="text-nowrap	">{`${formattedStartDate} - ${formattedEndDate}`}</div>
+              <div className="text-nowrap">Location: Patumwan</div>
+              {
+                  page == 1 ?  
+                  <div className="space-x-2 text-black">
                     <button className='border border-slate-400 rounded-xl h-[30px] w-fit px-[5px] text-sm hover:scale-105 duration-300'
                     onClick = {(e) => {
                       setShowModal(true);
@@ -82,15 +94,10 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                   </div>
                   : null
                 }
-            </div>
-      
-          <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-[60%] text-gray-500">
-              <div className="text-nowrap	">{`${formattedStartDate} - ${formattedEndDate}`}</div>
-              <div className="text-nowrap">Location: Patumwan</div>
           </div>
           
           <div className="">
-            {description && <div className="mt-2 hidden sm:block break-words"><p className='text-wrap break-words'>{description}</p></div>}
+            {description && <div className="hidden sm:block break-words"><p className='text-wrap break-words'>{description}</p></div>}
           </div>
 
 
