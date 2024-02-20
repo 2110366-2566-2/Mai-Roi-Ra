@@ -300,17 +300,44 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 func GenerateJWTToken(user *models.User) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
 	var secretKey = []byte("secret-key")
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	// 	"user_id":  user.UserID,                           // Include the user's ID
+	// 	"username": user.Username,                         // Include the username
+	// 	"email":    user.Email,                            // Include the email
+	// 	"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
+	// })
+
+	// tokenString, err := token.SignedString(secretKey)
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	// return tokenString, nil
+	claims := jwt.MapClaims{
 		"user_id":  user.UserID,                           // Include the user's ID
 		"username": user.Username,                         // Include the username
 		"email":    user.Email,                            // Include the email
 		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
-	})
-
-	tokenString, err := token.SignedString(secretKey)
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signedToken, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", err
 	}
+	return signedToken, nil
+}
 
-	return tokenString, nil
+func validateToken(signedToken string) (string, error) {
+	var secretKey = []byte("secret-key")
+	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secretKey), nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
+		username := claims["username"].(string)
+		return username, nil
+	}
+	return "", errors.New("Invalid token")
 }

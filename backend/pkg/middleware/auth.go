@@ -1,12 +1,13 @@
 package middleware
 
 import (
-	"fmt"
+	"errors"
+	"log"
 	"net/http"
 	"strings"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"go.uber.org/dig"
 )
 
@@ -17,6 +18,20 @@ const (
 	KeyToken  = "token"
 	KeyUserID = "userID"
 )
+
+func validateToken(signedToken string) (string, error) {
+	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
+		userID := claims["user_id"].(string)
+		return userID, nil
+	}
+	return "", errors.New("Invalid token")
+}
 
 func Authentication(con *dig.Container) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -34,33 +49,14 @@ func Authentication(con *dig.Container) gin.HandlerFunc {
 
 		tokenString := authHeader[len(BearerSchema):]
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if token.Method != jwt.SigningMethodHS256 {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Method)
-			}
-			return []byte(SecretKey), nil
-		})
-
+		userID, err := validateToken(tokenString)
 		if err != nil {
-			fmt.Printf("Token parsing error: %v\n", err)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token", "details": err.Error()})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token???", "details": err.Error()})
 			return
 		}
-
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			userID, ok := claims["user_id"].(string)
-			if !ok {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-				return
-			}
-			c.Set(KeyToken, tokenString)
-			c.Set(KeyUserID, userID)
-			fmt.Println("Authentication successful")
-		} else {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-			return
-		}
-
+		log.Println("Hi if you are seeing this you're very close")
+		c.Set(KeyToken, tokenString)
+		c.Set(KeyUserID, userID)
 		c.Next()
 	}
 }
