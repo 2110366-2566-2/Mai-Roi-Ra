@@ -119,7 +119,7 @@ export default function EditProfileForm({
               className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="First name"
             />
-            {firstName.length != 0 && (
+            {firstName && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
                 First Name
               </div>
@@ -135,7 +135,7 @@ export default function EditProfileForm({
               className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Last name"
             />
-            {lastName.length != 0 && (
+            {lastName && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
                 Last Name
               </div>
@@ -152,7 +152,7 @@ export default function EditProfileForm({
             className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
             placeholder="Address"
           />
-          {address.length != 0 && (
+          {address && (
             <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
               Address
             </div>
@@ -169,7 +169,7 @@ export default function EditProfileForm({
               className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
               placeholder="District"
             />
-            {district.length != 0 && (
+            {district && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
                 District
               </div>
@@ -185,7 +185,7 @@ export default function EditProfileForm({
               className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Province"
             />
-            {province.length != 0 && (
+            {province && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
                 Province
               </div>
@@ -202,7 +202,7 @@ export default function EditProfileForm({
             placeholder="Phone number"
             readOnly
           />
-          {phoneNumber.length != 0 && (
+          {phoneNumber && (
             <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
               Phone number
             </div>
@@ -219,7 +219,7 @@ export default function EditProfileForm({
             className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
             placeholder="Birth Date"
           />
-          {birthDate.length != 0 && (
+          {birthDate && (
             <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
               Birth Date
             </div>

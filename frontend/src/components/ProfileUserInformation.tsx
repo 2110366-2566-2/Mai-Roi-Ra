@@ -5,6 +5,7 @@ import { FaPhone } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { PiBalloonBold } from "react-icons/pi";
 import { SlLocationPin } from "react-icons/sl";
+import { useSession } from "next-auth/react";
 
 interface Props {
   firstNameProp: string;
@@ -30,6 +31,10 @@ export default function ProfileUserInformation({
   usernameProp,
 }: Props) {
   // USER FIELDS
+  const { data: session } = useSession();
+  console.log("here");
+  console.log(session?.user.name);
+
   const [firstName, setFirstName] = useState(firstNameProp);
   const [lastName, setLastName] = useState(lastNameProp);
   const [address, setAddress] = useState(addressProp);
