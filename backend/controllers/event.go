@@ -51,7 +51,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context, req *st.CreateEventReque
 // @Accept json
 // @Produce json
 // @Param event_id path string true "Event ID" example:"event123"
-// @Param request body structure.UpdateEventRequest true "Update Event Request" 
+// @Param request body structure.UpdateEventRequest true "Update Event Request"
 // @Success 200 {object} structure.UpdateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
@@ -66,6 +66,7 @@ func (c *EventController) UpdateEvent(ctx *gin.Context, req *st.UpdateEventReque
 	log.Println("[CTRL: UpdateEvent] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
 // DeleteEventById deletes an event by its ID.
 // @Summary Delete event by ID
 // @Description Delete an event with the specified ID.
@@ -131,5 +132,28 @@ func (c *EventController) GetEventDataById(ctx *gin.Context, req st.GetEventData
 		return
 	}
 	log.Println("[CTRL: GetEventDataById] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary GetParticipantLists
+// @Description Get list of all participant in the events
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param event_id query string true "event_id"
+// @Param offset query int false "offset i.e. 0"
+// @Param limit query int false "Items per page i.e. 10"
+// @Success 200 {object} structure.GetParticipantListsResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/participant [get]
+func (c *EventController) GetParticipantLists(ctx *gin.Context, req *st.GetParticipantListsRequest) {
+	log.Println("[CTRL: GetParticipantLists] Input:", req)
+	res, err := c.ServiceGateway.EventService.GetParticipantLists(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetParticipantLists] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

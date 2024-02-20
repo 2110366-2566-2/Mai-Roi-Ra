@@ -66,24 +66,24 @@ setError: Function, setErrorUser: Function, setErrorPassword: Function, user: st
     // For example, you can use the signIn function from next-auth/react
     // and handle the redirect or error accordingly
 
-    // try {
-    //   const res = await signIn("credentials", {
-    //     user,
-    //     password,
-    //     redirect: false
-    //   });
-    //   if (res?.error) {
-    //     setError(res?.error);
-    //     return;
-    //   }
-    //   router.replace('/');
-    //   // I don't know how to fix this one but this works
-    //   setTimeout(() => {
-    //     window.location.reload();
-    //   }, 1000);
-    // } catch (error) {
-    //   setError("Sign in failed. Account isn't existed.");
-    // }
+    try {
+      const res = await signIn("credentials", {
+        email: user,
+        password,
+        redirect: false
+      });
+      if (res?.error) {
+        setError(res?.error);
+        return;
+      }
+      router.replace('/homepage');
+      // I don't know how to fix this one but this works
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+    } catch (error) {
+      setError("Sign in failed. Account isn't existed.");
+    }
   // }
 };
 

@@ -24,67 +24,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/users": {
-            "get": {
-                "description": "Get list of users",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "GetAllUsers",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Filter query",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort order",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Items per page",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structure.GetAllUsersResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
         "/events": {
             "get": {
                 "description": "Get list of events",
@@ -179,6 +118,62 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.CreateEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/participant": {
+            "get": {
+                "description": "Get list of all participant in the events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "GetParticipantLists",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page i.e. 10",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetParticipantListsResponse"
                         }
                     },
                     "400": {
@@ -403,113 +398,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Returns the login token.",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Returns an error if login fails.",
                         "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
-        "/loginemail": {
-            "post": {
-                "description": "Logs in a user by their email and password.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Log in a user with email",
-                "parameters": [
-                    {
-                        "description": "Log in a user with Email",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.LoginUserEmailRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
-        "/loginphone": {
-            "post": {
-                "description": "Logs in a user by their phone number and password.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Log in a user with phone",
-                "parameters": [
-                    {
-                        "description": "Log in a user with Phone",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.LoginUserPhoneRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -557,6 +458,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/send-announcement": {
+            "post": {
+                "description": "Sends an announcement email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participates"
+                ],
+                "summary": "Send Announcement",
+                "parameters": [
+                    {
+                        "description": "Send Announcement Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnouncementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Announcement successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the announcement",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -590,7 +531,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "Create new user",
                 "parameters": [
@@ -609,6 +550,203 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/events": {
+            "get": {
+                "description": "Get list of all participated events of the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "GetParticipatedEventLists",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page i.e. 10",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetParticipatedEventListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notification": {
+            "put": {
+                "description": "Toggle the enabling notification for user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "ToggleNotifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/participate": {
+            "post": {
+                "description": "Register an event based on user_id and event_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Register an event",
+                "parameters": [
+                    {
+                        "description": "Create User Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.RegisterEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{event_id}": {
+            "delete": {
+                "description": "Cancel Register an event based on user_id and event_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Cancel Register an event",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.RegisterEventResponse"
                         }
                     },
                     "400": {
@@ -781,6 +919,9 @@ const docTemplate = `{
                 "first_name": {
                     "type": "string"
                 },
+                "is_enable_notification": {
+                    "type": "boolean"
+                },
                 "last_name": {
                     "type": "string"
                 },
@@ -931,18 +1072,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.GetAllUsersResponse": {
-            "type": "object",
-            "properties": {
-                "users": {
-                    "description": "FIXME should not use struct from models",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.User"
-                    }
-                }
-            }
-        },
         "structure.GetEventDataByIdResponse": {
             "type": "object",
             "properties": {
@@ -1059,25 +1188,25 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.LoginUserEmailRequest": {
+        "structure.GetParticipantListsResponse": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
+                "participant_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.Participant"
+                    }
                 }
             }
         },
-        "structure.LoginUserPhoneRequest": {
+        "structure.GetParticipatedEventListsResponse": {
             "type": "object",
             "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "phone_number": {
-                    "type": "string"
+                "event_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.ParticipatedEvent"
+                    }
                 }
             }
         },
@@ -1092,6 +1221,132 @@ const docTemplate = `{
                 },
                 "phone_number": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.Participant": {
+            "type": "object",
+            "required": [
+                "first_name",
+                "last_name",
+                "num_participant",
+                "username"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "num_participant": {
+                    "type": "integer"
+                },
+                "user_image": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ParticipatedEvent": {
+            "type": "object",
+            "required": [
+                "description",
+                "end_date",
+                "event_name",
+                "location_name",
+                "start_date"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "event_image": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "location_name": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.RegisterEventRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "num_participant",
+                "user_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "num_participant": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.RegisterEventResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendAnnounceResponse": {
+            "type": "object",
+            "properties": {
+                "announce_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendAnnouncementRequest": {
+            "type": "object",
+            "properties": {
+                "attach_files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "bcc": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cc": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

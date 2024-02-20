@@ -61,6 +61,26 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			eventController.GetEventDataById(ctx, req)
 		})
+		r.GET("/api/v1/events/participant", func(ctx *gin.Context) {
+			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
+				return
+			}
+
+			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
+				return
+			}
+
+			req := &st.GetParticipantListsRequest{
+				EventId: ctx.Query("event_id"),
+				Offset:  offset,
+				Limit:   limit,
+			}
+			eventController.GetParticipantLists(ctx, req)
+		})
 		r.PUT("/api/v1/events/:id", func(ctx *gin.Context) {
 			var req st.UpdateEventRequest
 			if err := ctx.BindJSON(&req); err != nil {
@@ -115,6 +135,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	}
 
 	err = c.Invoke(func(userController *controllers.UserController) {
+		// POST
 		r.POST("/api/v1/users", func(ctx *gin.Context) {
 			var req st.CreateUserRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -123,14 +144,43 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.CreateUser(ctx, &req)
 		})
+		r.POST("/api/v1/users/participate", func(ctx *gin.Context) {
+			var req st.RegisterEventRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.RegisterEvent(ctx, &req)
+		})
 
+		// GET
 		r.GET("/api/v1/users/:id", func(ctx *gin.Context) {
 			req := st.GetUserByUserIdRequest{
 				UserId: ctx.Param("id"),
 			}
 			userController.GetUserByUserId(ctx, &req)
 		})
+		r.GET("/api/v1/users/events", func(ctx *gin.Context) {
+			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
+				return
+			}
 
+			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
+				return
+			}
+
+			req := &st.GetParticipatedEventListsRequest{
+				UserId: ctx.Query("user_id"),
+				Offset: offset,
+				Limit:  limit,
+			}
+			userController.GetParticipatedEventLists(ctx, req)
+		})
+		// PUT
 		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
 			var req st.UpdateUserInformationRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -158,6 +208,33 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		// })
 
 		// login/logout is here
+		r.PUT("/api/v1/users/notification", func(ctx *gin.Context) {
+			req := st.GetUserByUserIdRequest{
+				UserId: ctx.Query("user_id"),
+			}
+			userController.ToggleNotifications(ctx, &req)
+		})
+		// DELETE
+		r.DELETE("/api/v1/users/:event_id", func(ctx *gin.Context) {
+			eventID := ctx.Param("event_id")
+			userID := ctx.Query("user_id")
+
+			req := st.CancelRegisterEventRequest{
+				EventId: eventID,
+				UserId:  userID,
+			}
+
+			userController.CancelRegisterEvent(ctx, &req)
+		})
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	// login/logout is here
+	err = c.Invoke(func(userController *controllers.UserController) {
 		r.POST("/api/v1/login", func(ctx *gin.Context) {
 			var req st.LoginUserRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -195,6 +272,22 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		// require token function to test
 		auth.GET("/api/v1/auth/users", func(ctx *gin.Context) {
 			userController.GetAllUsers(ctx)
+		})
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	err = c.Invoke(func(participateController *controllers.ParticipateController) {
+		r.POST("/api/v1/send-announcement", func(ctx *gin.Context) {
+			var req st.SendAnnouncementRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			participateController.SendAnnouncement(ctx, &req)
 		})
 	})
 
