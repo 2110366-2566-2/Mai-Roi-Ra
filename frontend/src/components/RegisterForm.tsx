@@ -213,14 +213,6 @@ export default function RegisterForm() {
 
     if (firstName && lastName && address && district && province) {
       try {
-        console.log("get in try");
-
-        // if (email === "") {
-        //   setEmailProp(null);
-        // } else if (phoneNumber === "") {
-        //   setPhoneNumberProp(null);
-        // }
-
         const response = await userRegister(
           name,
           phoneNumber,
@@ -233,15 +225,12 @@ export default function RegisterForm() {
           district,
           province
         );
-        console.log("done userRegister() successful");
-        router.push("/auth/signin");
-        // console.log("done called userRegister()");
-        // setSuccessModal(true);
-        // setAllInfoInputsFilled(true);
-        // setTimeout(() => {
-        //   router.push("/auth/signin");
-        //   setSuccessModal(false);
-        // }, 4000);
+        setSuccessModal(true);
+        setAllInfoInputsFilled(true);
+        setTimeout(() => {
+          router.push("/auth/signin");
+          setSuccessModal(false);
+        }, 4000);
       } catch (err) {
         setError("Register Failed. Might be because of duplicated email");
         console.log("Error during registration: ", err);

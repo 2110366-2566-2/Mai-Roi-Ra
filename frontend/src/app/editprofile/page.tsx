@@ -7,7 +7,6 @@ import getProfile from "@/libs/getProfile";
 
 export default async function EditProfile() {
   const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-  console.log(profile);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white p-8">
