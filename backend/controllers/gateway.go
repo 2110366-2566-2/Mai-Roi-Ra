@@ -12,9 +12,10 @@ type Controller struct {
 // Gateway ...
 type Gateway struct {
 	dig.In
-	TestController     *TestController
-	EventController    *EventController
-	LocationController *LocationController
+	TestController        *TestController
+	EventController       *EventController
+	LocationController    *LocationController
+	ParticipateController *ParticipateController
 }
 
 // NewController ...

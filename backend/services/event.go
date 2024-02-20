@@ -22,6 +22,7 @@ type IEventService interface {
 	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
 }
 
 func NewEventService(

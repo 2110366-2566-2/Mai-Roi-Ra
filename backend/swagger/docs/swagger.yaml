@@ -202,6 +202,13 @@ definitions:
       location_name:
         type: string
     type: object
+  structure.GetParticipantListsResponse:
+    properties:
+      participant_list:
+        items:
+          $ref: '#/definitions/structure.Participant'
+        type: array
+    type: object
   structure.GetParticipatedEventListsResponse:
     properties:
       event_list:
@@ -217,6 +224,24 @@ definitions:
         type: string
       phone_number:
         type: string
+    type: object
+  structure.Participant:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      num_participant:
+        type: integer
+      user_image:
+        type: string
+      username:
+        type: string
+    required:
+    - first_name
+    - last_name
+    - num_participant
+    - username
     type: object
   structure.ParticipatedEvent:
     properties:
@@ -256,6 +281,34 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  structure.SendAnnounceResponse:
+    properties:
+      announce_status:
+        type: string
+    type: object
+  structure.SendAnnouncementRequest:
+    properties:
+      attach_files:
+        items:
+          type: string
+        type: array
+      bcc:
+        items:
+          type: string
+        type: array
+      cc:
+        items:
+          type: string
+        type: array
+      content:
+        type: string
+      subject:
+        type: string
+      to:
+        items:
+          type: string
+        type: array
     type: object
   structure.TestResponse:
     properties:
@@ -513,6 +566,43 @@ paths:
       summary: Update existing event
       tags:
       - events
+  /events/participant:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all participant in the events
+      parameters:
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
+      - description: offset i.e. 0
+        in: query
+        name: offset
+        type: integer
+      - description: Items per page i.e. 10
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetParticipantListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetParticipantLists
+      tags:
+      - events
   /locations/{location_id}:
     get:
       consumes:
@@ -600,6 +690,32 @@ paths:
       summary: Log out a user
       tags:
       - user
+  /send-announcement:
+    post:
+      consumes:
+      - application/json
+      description: Sends an announcement email to the specified recipients.
+      parameters:
+      - description: Send Announcement Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendAnnouncementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Announcement successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendAnnounceResponse'
+        "400":
+          description: Bad request - error in sending the announcement
+          schema:
+            type: object
+      summary: Send Announcement
+      tags:
+      - participates
   /test:
     get:
       consumes:
