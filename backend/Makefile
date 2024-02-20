@@ -1,4 +1,4 @@
-.PHONY: all run docker_migrate docker_down docker_build swagger
+.PHONY: all run docker_down docker_build swagger migrate
 
 all: build run
 
