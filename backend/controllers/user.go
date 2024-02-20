@@ -26,7 +26,7 @@ func NewUserController(
 
 // @Summary Create new user
 // @Description Create a new user with the provided details.
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param request body structure.CreateUserRequest true "Create User Request" example:{"organizer_id": "org123", "admin_id": "admin456", "location_id": "loc789", "start_date": "2024-01-15", "end_date": "2024-01-20", "status": "planned", "participant_fee": 50.0, "description": "Annual tech conference focusing on the future of technology.", "user_name": "TechFuture 2024", "deadline": "2023-12-31", "activities": "Keynotes, Workshops, Panels", "user_image": "http://example.com/image.jpg"}

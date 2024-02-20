@@ -760,7 +760,7 @@ paths:
             type: object
       summary: Create new user
       tags:
-      - users
+      - user
   /users/{event_id}:
     delete:
       consumes:
