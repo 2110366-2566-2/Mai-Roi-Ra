@@ -19,7 +19,7 @@ type Event struct {
 	Deadline         time.Time `gorm:"column:deadline;not null" json:"deadline" binding:"required"`
 	Activities       string    `gorm:"column:activities;not null" json:"activities" binding:"required"`
 	EventImage       *string   `gorm:"column:event_image" json:"event_image"`
-	Created_at       time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
+	CreatedAt        time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt        time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
 
