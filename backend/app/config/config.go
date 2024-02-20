@@ -10,8 +10,7 @@ import (
 type Config struct {
 	App     *App
 	MongoDB *MongoDB
-	PgDB    *PgDB
-	Email   *Email
+	PgDB	*PgDB
 }
 
 type App struct {
@@ -26,15 +25,9 @@ type MongoDB struct {
 }
 
 type PgDB struct {
-	Username string
-	Password string
-	DbName   string
-}
-
-type Email struct {
-	Name     string
-	Address  string
-	Password string
+	Username	string
+	Password	string
+	DbName		string
 }
 
 func NewConfig(path string) (*Config, error) {
@@ -55,12 +48,7 @@ func NewConfig(path string) (*Config, error) {
 		PgDB: &PgDB{
 			Username: os.Getenv("PG_USER"),
 			Password: os.Getenv("PG_PASSWORD"),
-			DbName:   os.Getenv("PG_DB"),
-		},
-		Email: &Email{
-			Name:     os.Getenv("EMAIL_SENDER_NAME"),
-			Address:  os.Getenv("EMAIL_SENDER_ADDRESS"),
-			Password: os.Getenv("EMAIL_SENDER_PASSWORD"),
+			DbName: os.Getenv("PG_DB"),
 		},
 	}, nil
 }

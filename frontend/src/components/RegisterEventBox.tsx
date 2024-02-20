@@ -9,6 +9,8 @@ import { useState } from 'react';
 interface Event {
     participant_fee: number;
     location_name: string;
+    district:string;
+    city:string;
     start_date: string;
     end_date: string;
 }
@@ -31,7 +33,7 @@ export default function RegisterEventBox({event}:{event : Event}) {
                             <div className="w-full border rounded-lg flex flex-col h-auto mt-4">
                                 <div className="w-full h-auto border flex flex-col p-4">
                                     <span className="w-full font-semibold flex items-center mb-4"><LocationIcon className="mr-2"/>Location</span>
-                                    <label>{event.location_name}</label>
+                                    <label>{event.location_name + ", " + event.district + ", " + event.city}</label>
                                 </div>
                                 <div className="w-full h-auto border flex flex-col p-4">
                                     <span className="w-full font-semibold flex items-center mb-4"><CalendarIcon className="mr-2"/>Date</span>

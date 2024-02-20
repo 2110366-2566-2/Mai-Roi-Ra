@@ -24,8 +24,4 @@ func (c *Container) ControllerProvider() {
 	if err := c.Container.Provide(controllers.NewLocationController); err != nil {
 		c.Error = err
 	}
-
-	if err := c.Container.Provide(controllers.NewParticipateController); err != nil {
-		c.Error = err
-	}
 }

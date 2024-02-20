@@ -1,15 +1,11 @@
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../globals.css'
-// import ReduxProvider from '@/redux/ReduxProvider'
+import MenuIcon from '@mui/icons-material/Menu';
 import MenuBar from '@/components/MenuBar'
+import MenuPopup from '@/components/MenuPopup'
+import Menu from '@/components/Menu';
 
-export const metadata: Metadata = {
-  title: 'Mai-Roi-Ra',
-  description: 'Powered by Pubpab',
-}
-
-export default async function Layout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -18,11 +14,9 @@ export default async function Layout({
   return (
     <html lang="en">
       <body className={`{inter.className} h-screen text-black`}>
-            <MenuBar onDevice="PC"/>
-            <div className="lg:w-[0px] lg:h-[0px] md:w-[50px] md:h-[50px] h-[25px] w-[25px]">
-              <MenuBar onDevice="Tablet"/>
-            </div>
-            <div className='lg:pl-[20%]'>
+            <MenuBar/>
+            <Menu/>
+            <div className='lg:pl-[20%] md:mt-0 mt-[20px]'>
                 {children}
             </div>
       </body>

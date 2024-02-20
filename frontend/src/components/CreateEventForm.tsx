@@ -4,13 +4,23 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import dayjs, { Dayjs } from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const CreateEventForm = () => {
+    const isMobile = useMediaQuery('(max-width:768px)');
+
+    const [start,setStart] = useState("");
+    const [end,setEnd] = useState("");
+    const [startDate,setStartDate] = useState<Dayjs | null>(null);
+    const [endDate,setEndDate] = useState<Dayjs | null>(null);
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState("");
-    const [activity, setActivity] = useState("");
-    const [dateRange,setDateRange] = useState("");
+    const [activity, setActivity] = useState(""); 
     const [price, setPrice] = useState(null);
     const [error,setError] = useState("");
     const [location,setLocation] = useState("");
@@ -26,9 +36,6 @@ const CreateEventForm = () => {
                 return;
             } if (activity == ""){
                 setError("Activity Required")
-            } if (dateRange == "") {
-                setError("Date Range Required");
-                return
             } if (imageSrc == "") {
                 setError("Image Source Required");
                 return;
@@ -50,7 +57,24 @@ const CreateEventForm = () => {
             } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
                 setError("Invalid Picture URI");
                 return;
-            } setShowModal(true);
+            } 
+            const currentDate = dayjs();
+            const startTmp = dayjs(startDate);
+            const endTmp = dayjs(endDate);
+            if (startTmp.isBefore(currentDate) || endTmp.isBefore(currentDate)) {
+                setError("Dates cannot be in the past.");
+                return;
+            }
+    
+            const differenceInDays = endTmp.diff(startTmp, 'day');
+            if (differenceInDays < 0) {
+                setError("End Date cannot before Start Date");
+                return;
+            }
+
+            setStart(startTmp.format('YYYY/MM/DD'));
+            setEnd(endTmp.format('YYYY/MM/DD'));
+            setShowModal(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -71,9 +95,6 @@ const CreateEventForm = () => {
                                 rounded-md"
                                 type="text" placeholder="Event Name"
                                 value={name} onChange={(e) => setName(e.target.value)} maxLength={20}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
 
                                 {name.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -97,20 +118,63 @@ const CreateEventForm = () => {
                                 </FormControl>
                             </div>
                         </div>
-                        
+
+                        <div className="flex flex-start flex-wrap justify-between w-full">
+                            <div className="w-[48%] relative">
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {isMobile ? ( // Check if the device is mobile
+                                        <DatePicker
+                                            label="Start Date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'small' } }}
+                                        />
+                                    ) : (
+                                        <DatePicker
+                                            label="Start Date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'medium' } }}
+                                        />
+                                    )}
+                                </LocalizationProvider>
+                            </div>
+
+                            <div className="w-[48%] relative">
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {isMobile ? ( // Check if the device is mobile
+                                        <DatePicker
+                                            label="End Date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'small' } }}
+                                        />
+                                    ) : (
+                                        <DatePicker
+                                            label="End Date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e)}
+                                            className="w-full"
+                                            slotProps={{ textField: { size: 'medium' } }}
+                                        />
+                                    )}
+                                </LocalizationProvider>
+                            </div>
+                        </div>
+
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
-                                type="text" placeholder="Date Start/End"
-                                value={dateRange} onChange={(e) => setDateRange(e.target.value)}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
+                                type="text" placeholder="Location Name"
+                                value={location} onChange={(e) => setLocation(e.target.value)} maxLength={20}/>
 
-                                {dateRange.length != 0 && (
+                                {location.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                        Date Start/End
+                                        Location Name
                                     </div>
                                 )}
                             </div>
@@ -118,11 +182,8 @@ const CreateEventForm = () => {
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
-                                type="number" placeholder="Price" min={0} step={10}
-                                value={price} onChange={(e) => setPrice(e.target.value)}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
+                                type="number" placeholder="Price"
+                                value={price} onChange={(e) => setPrice(e.target.value)} min={0} step={10}/>
 
                                 {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -131,19 +192,6 @@ const CreateEventForm = () => {
                                 )} 
                             </div>
                         </div>
-
-                        <div className="w-full relative"> 
-                            <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-[48%] lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                            rounded-md"
-                            type="text" placeholder="Location Name" 
-                            value={location} onChange={(e) => setLocation(e.target.value)} maxLength={50}/>
-
-                            {location.length != 0 && (
-                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Location Name
-                                </div>
-                            )}
-                        </div>
                             
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
@@ -151,9 +199,6 @@ const CreateEventForm = () => {
                                 rounded-md"
                                 type="text" placeholder="District"
                                 value={district} onChange={(e) => setDistrict(e.target.value)} maxLength={20}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
 
                                 {district.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -167,9 +212,6 @@ const CreateEventForm = () => {
                                 rounded-md"
                                 type="text" placeholder="Province"
                                 value={province} onChange={(e) => setProvince(e.target.value)} maxLength={20}/>
-                                {/* <span className="absolute inset-y-0 left-72 flex items-center pl-3 text-[60px]">
-                                    <CalendarMonthOutlinedIcon className="text-gray-500 hover:text-black cursor-pointer" />
-                                </span> */}
 
                                 {province.length != 0 && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -185,7 +227,7 @@ const CreateEventForm = () => {
                     {/* Right Form */}
                     <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
                      border-gray-300 rounded-md flex justify-center items-center relative">
-                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px]"
+                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px] lg:text-[17px] md:text-[15px] text-[13px]"
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
                          {imageSrc.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -234,7 +276,8 @@ const CreateEventForm = () => {
                         </button>
                     </div>
                 </div>
-                <SuccessModal id={""} name={name} activity={activity} dateRange={dateRange} price={price?price:0} location={location} 
+                <SuccessModal id={""} name={name} activity={activity} startDate={start} endDate={end}
+                price={price?price:0} location={location} 
                 district={district} province={province} description={description} imageSrc={imageSrc}
                 topic="Event Created" isVisible={showModal}/>
             </form>

@@ -51,31 +51,3 @@ type LogoutUserRequest struct {
 }
 type LogoutUserResponse struct {
 }
-
-type RegisterEventRequest struct {
-	UserId  string `json:"user_id" binding:"required"`
-	EventId string `json:"event_id" binding:"required"`
-}
-
-type RegisterEventResponse struct {
-	Message string `json:"message"`
-}
-
-type ParticipatedEvent struct {
-	EventName    string  `json:"event_name" binding:"required"`
-	StartDate    string  `json:"start_date" binding:"required"`
-	EndDate      string  `json:"end_date" binding:"required"`
-	EventImage   *string `json:"event_image"`
-	LocationName string  `json:"location_name" binding:"required"`
-	Description  string  `json:"description" binding:"required"`
-}
-
-type GetParticipatedEventListsRequest struct {
-	UserId string `json:"user_id" binding:"required"`
-	Offset int    `json:"offset"`
-	Limit  int    `json:"limit"`
-}
-
-type GetParticipatedEventListsResponse struct {
-	EventsList []ParticipatedEvent `json:"event_list"`
-}
