@@ -190,7 +190,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		})
 
 		// require token function to test
-		auth.GET("/api/v1/users", func(ctx *gin.Context) {
+		auth.GET("/api/v1/auth/users", func(ctx *gin.Context) {
 			userController.GetAllUsers(ctx)
 		})
 	})

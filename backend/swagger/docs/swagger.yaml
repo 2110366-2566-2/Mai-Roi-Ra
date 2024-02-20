@@ -323,6 +323,46 @@ info:
   title: Mai-Roi-Ra Swagger API
   version: "1.0"
 paths:
+  /auth/users:
+    get:
+      consumes:
+      - application/json
+      description: Get list of users
+      parameters:
+      - description: Filter query
+        in: query
+        name: filter
+        type: string
+      - description: Sort order
+        in: query
+        name: sort
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetAllUsersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetAllUsers
+      tags:
+      - users
   /events:
     get:
       consumes:
@@ -648,45 +688,6 @@ paths:
       tags:
       - Test
   /users:
-    get:
-      consumes:
-      - application/json
-      description: Get list of users
-      parameters:
-      - description: Filter query
-        in: query
-        name: filter
-        type: string
-      - description: Sort order
-        in: query
-        name: sort
-        type: string
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/structure.GetAllUsersResponse'
-        "400":
-          description: Bad Request
-          schema:
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            type: object
-      summary: GetAllUsers
-      tags:
-      - users
     post:
       consumes:
       - application/json

@@ -3,13 +3,12 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
+	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
@@ -59,7 +58,7 @@ func (c *UserController) CreateUser(ctx *gin.Context, req *st.CreateUserRequest)
 // @Success 200 {object} structure.GetAllUsersResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
-// @Router /users [get]
+// @Router /auth/users [get]
 func (c *UserController) GetAllUsers(ctx *gin.Context) {
 	log.Println("[CTRL: GetAllUsers] Input:")
 	res, err := c.ServiceGateway.UserService.GetAllUsers()
