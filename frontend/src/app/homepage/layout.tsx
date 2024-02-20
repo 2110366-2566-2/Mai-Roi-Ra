@@ -1,8 +1,6 @@
 import { Inter } from 'next/font/google'
 import '../globals.css'
-import MenuIcon from '@mui/icons-material/Menu';
 import MenuBar from '@/components/MenuBar'
-import MenuPopup from '@/components/MenuPopup'
 import Menu from '@/components/Menu';
 
 export default async function RootLayout({
