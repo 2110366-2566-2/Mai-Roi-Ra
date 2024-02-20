@@ -22,6 +22,7 @@ type IEventService interface {
 	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
 }
 
 func NewEventService(
@@ -157,8 +158,8 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 
 func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
 	log.Println("[Service: UpdateEvent]: Called")
-	
-	resEvent,err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	if err != nil {
 		return nil, err
 	}
@@ -169,13 +170,13 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	}
 
 	locationModel := models.Location{
-		LocationId: resLocation.LocationId,
-		Country: resLocation.Country,
-		City: req.City,
-		District: req.District,
+		LocationId:   resLocation.LocationId,
+		Country:      resLocation.Country,
+		City:         req.City,
+		District:     req.District,
 		LocationName: req.LocationName,
-		CreatedAt: resLocation.CreatedAt,
-		UpdatedAt: time.Now(),
+		CreatedAt:    resLocation.CreatedAt,
+		UpdatedAt:    time.Now(),
 	}
 
 	err = s.RepositoryGateway.LocationRepository.UpdateLocation(locationModel)
@@ -237,4 +238,21 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 	}
 
 	return deleteMessage, nil
+}
+
+func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error) {
+	log.Println("[Service: GetParticipantLists]: Called")
+	userList, err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(req)
+	if err != nil {
+		log.Println("[Service: GetParticipantLists] called repo participant error", err)
+		return nil, err
+	}
+	log.Println("[Service: GetParticipantLists]: userList:", userList)
+
+	resLists, err := s.RepositoryGateway.UserRepository.GetUserDataForEvents(userList)
+	if err != nil {
+		log.Println("[Service: GetParticipantLists] error when called repo GetUserDataForEvents", err)
+	}
+
+	return resLists, nil
 }
