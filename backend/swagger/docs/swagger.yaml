@@ -16,6 +16,8 @@ definitions:
         type: string
       first_name:
         type: string
+      is_enable_notification:
+        type: boolean
       last_name:
         type: string
       payment_gateway_customer_id:
@@ -886,6 +888,35 @@ paths:
           schema:
             type: object
       summary: GetParticipatedEventLists
+      tags:
+      - user
+  /users/notification:
+    put:
+      consumes:
+      - application/json
+      description: Toggle the enabling notification for user
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.RegisterEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: ToggleNotifications
       tags:
       - user
   /users/participate:

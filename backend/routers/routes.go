@@ -188,6 +188,12 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.UpdateUserInformation(ctx, &req)
 		})
+		r.PUT("/api/v1/users/notification", func(ctx *gin.Context) {
+			req := st.GetUserByUserIdRequest{
+				UserId: ctx.Query("user_id"),
+			}
+			userController.ToggleNotifications(ctx, &req)
+		})
 		// DELETE
 		r.DELETE("/api/v1/users/:event_id", func(ctx *gin.Context) {
 			eventID := ctx.Param("event_id")
