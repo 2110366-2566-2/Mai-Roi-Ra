@@ -44,7 +44,11 @@ type LoginUserRequest struct {
 }
 
 type LoginUserResponse struct {
-	Token string `json:"token"`
+	UserId      string `json:"user_id"`
+	FirstName   string `json:"first_name" binding:"required"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	Token       string `json:"token"`
 }
 type LogoutUserRequest struct {
 	UserID string `json:"user_id" binding:"required"`
@@ -61,7 +65,11 @@ type LoginUserEmailRequest struct {
 }
 
 type LoginUserEmailResponse struct {
-	Token string `json:"token"`
+	UserId      string `json:"user_id"`
+	FirstName   string `json:"first_name" binding:"required"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	Token       string `json:"token"`
 }
 
 // phone login
@@ -71,10 +79,22 @@ type LoginUserPhoneRequest struct {
 }
 
 type LoginUserPhoneResponse struct {
-	Token string `json:"token"`
+	UserId      string `json:"user_id"`
+	FirstName   string `json:"first_name" binding:"required"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	Token       string `json:"token"`
 }
 
 // getAllusers
 type GetAllUsersResponse struct {
 	Users []models.User `json:"users"` //FIXME should not use struct from models
 }
+
+// type AuthMeRequest struct {
+// 	Token string `json:"token"`
+// }
+
+// type AuthMeResponse struct {
+// 	Users []models.User `json:"users"`
+// }

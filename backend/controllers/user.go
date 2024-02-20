@@ -119,8 +119,9 @@ func (c *UserController) GetUserByUserId(ctx *gin.Context, req *st.GetUserByUser
 // @Accept json
 // @Produce json
 // @Param request body structure.LoginUserRequest true "Log in a user" example:{"email":"user1@example.com","phone_number":"1234567890","password":""}
-// @Success 200 {object} map[string]interface{} "Returns the login token."
-// @Failure 400 {object} map[string]string "Returns an error if login fails."
+// @Success 200 {object} models.User
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
 // @Router /login [post]
 func (c *UserController) LoginUser(ctx *gin.Context, req *st.LoginUserRequest) {
 	log.Println("[CTRL: LoginUser] Input:", req)
@@ -140,8 +141,9 @@ func (c *UserController) LoginUser(ctx *gin.Context, req *st.LoginUserRequest) {
 // @Accept json
 // @Produce json
 // @Param request body structure.LoginUserEmailRequest true "Log in a user with Email" example:{"email":"user1@example.com","password":""}
-// @Success 200 {object} map[string]interface{} "Returns the login token."
-// @Failure 400 {object} map[string]string "Returns an error if login fails."
+// @Success 200 {object} models.User
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
 // @Router /loginemail [post]
 func (c *UserController) LoginUserEmail(ctx *gin.Context, req *st.LoginUserEmailRequest) {
 	log.Println("[CTRL: LoginUserEmail] Input:", req)
@@ -161,8 +163,9 @@ func (c *UserController) LoginUserEmail(ctx *gin.Context, req *st.LoginUserEmail
 // @Accept json
 // @Produce json
 // @Param request body structure.LoginUserPhoneRequest true "Log in a user with Phone" example:{"phone_number":"1234567890","password":""}
-// @Success 200 {object} map[string]interface{} "Returns the login token."
-// @Failure 400 {object} map[string]string "Returns an error if login fails."
+// @Success 200 {object} models.User
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
 // @Router /loginphone [post]
 func (c *UserController) LoginUserPhone(ctx *gin.Context, req *st.LoginUserPhoneRequest) {
 	log.Println("[CTRL: LoginUserPhone] Input:", req)
@@ -196,6 +199,21 @@ func (c *UserController) LogoutUser(ctx *gin.Context, req *st.LogoutUserRequest)
 	log.Println("[CTRL: LogoutUser] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// // @Summary AuthMe
+// // @Description Logs out a user by invalidating the session token associated with the uid.
+// // @Tags user
+// // @Accept json
+// // @Produce json
+// // @Param user_id path string true "User ID"
+// // @Success 200 {object} models.User
+// // @Failure 400 {object} object "Bad Request"
+// // @Failure 500 {object} object "Internal Server Error"
+// // @Router /auth/me [get]
+// func (c *UserController) AuthMe(token string) (*models.User, error) {
+// 	log.Println("[CTRL: AuthMe] Input:", token)
+// 	return c.ServiceGateway.UserService.AuthMe(token)
+// }
 
 // @Summary Validate user token
 // @Description Validates a user's authentication token and returns the associated user details if valid.

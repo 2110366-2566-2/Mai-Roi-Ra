@@ -33,6 +33,7 @@ type IUserService interface {
 	LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error)
 	LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUserPhoneResponse, error)
 	GetAllUsers() (*st.GetAllUsersResponse, error)
+	// AuthMe(token string) (*models.User, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -122,6 +123,16 @@ func (s *UserService) GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.U
 	return res, err
 }
 
+// func (s *UserService) AuthMe(token string) (*models.User, error) {
+// 	log.Println("[Service: AuthMe]: Called")
+// 	user, err := s.RepositoryGateway.UserRepository.GetUserByToken(token)
+// 	if err != nil {
+// 		return nil, errors.New("Failed to AuthMe")
+// 	}
+
+// 	return user, nil
+// }
+
 func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error) {
 	var user *models.User
 	var err error
@@ -161,7 +172,11 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 	}
 
 	res := &st.LoginUserResponse{
-		Token: token,
+		UserId:      user.UserID,
+		FirstName:   user.FirstName,
+		Email:       *user.Email,
+		PhoneNumber: *user.PhoneNumber,
+		Token:       token,
 	}
 	return res, nil
 }
@@ -198,7 +213,11 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 	}
 
 	res := &st.LoginUserEmailResponse{
-		Token: token,
+		UserId:      user.UserID,
+		FirstName:   user.FirstName,
+		Email:       *user.Email,
+		PhoneNumber: *user.PhoneNumber,
+		Token:       token,
 	}
 	return res, nil
 }
@@ -236,7 +255,11 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 	}
 
 	res := &st.LoginUserPhoneResponse{
-		Token: token,
+		UserId:      user.UserID,
+		FirstName:   user.FirstName,
+		Email:       *user.Email,
+		PhoneNumber: *user.PhoneNumber,
+		Token:       token,
 	}
 	return res, nil
 }

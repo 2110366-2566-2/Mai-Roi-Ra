@@ -403,19 +403,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns the login token.",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
-                        "description": "Returns an error if login fails.",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
@@ -447,19 +449,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns the login token.",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
-                        "description": "Returns an error if login fails.",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
@@ -491,19 +495,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns the login token.",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
-                        "description": "Returns an error if login fails.",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
