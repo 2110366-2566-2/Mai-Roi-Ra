@@ -38,6 +38,8 @@ export default function EditProfileForm({
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
 
+  const [allInputsFilled, setAllInputsFilled] = useState(true);
+
   const reformatDate = (dateStr: string) => {
     return dateStr.split("T")[0].replace(/-/g, "/");
   };
@@ -78,6 +80,9 @@ export default function EditProfileForm({
     const newBirthDate = event.target.value;
     setBirthDate(newBirthDate);
   };
+
+  // const [successModal, setSuccessModal] = useState(false);
+
   const [error, setError] = useState<string>("");
   const router = useRouter();
 
@@ -87,7 +92,7 @@ export default function EditProfileForm({
     if (firstName && lastName && address && district && province && birthDate) {
       try {
         await updateProfileAction(
-          "550e8400-e29b-41d4-a716-446655440100",
+          "e44cd955-914a-430c-9037-6c433aa5c1fd",
           firstName,
           lastName,
           address,
@@ -95,13 +100,19 @@ export default function EditProfileForm({
           province,
           formattedDate
         );
-        router.push("/profile");
+        setAllInputsFilled(true);
         setError("");
-        console.log("Update booking successful JA");
+        // setSuccessModal(true);
+        // setTimeout(() => {
+        //   setSuccessModal(false);
+        //   router.push("/profile");
+        // }, 4000);
       } catch (err) {
         setError("Update error. Server Failed ?");
         console.log("Err: ", err);
       }
+    } else {
+      setAllInputsFilled(false);
     }
   };
 
@@ -192,22 +203,37 @@ export default function EditProfileForm({
             )}
           </div>
         </div>
-        <div className="relative">
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={phoneNumber}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-            placeholder="Phone number"
-            readOnly
-          />
-          {phoneNumber && (
+        {phoneNumber ? (
+          <div className="relative">
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={phoneNumber}
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+              placeholder="Phone number"
+              readOnly
+            />
             <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
               Phone number
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="relative">
+            <input
+              type="text"
+              id="email"
+              name="email"
+              value={email}
+              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+              placeholder="Email"
+              readOnly
+            />
+            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+              Email
+            </div>
+          </div>
+        )}
 
         <div className="relative">
           <input
@@ -225,19 +251,11 @@ export default function EditProfileForm({
             </div>
           )}
         </div>
-
-        {/* <div className="relative">
-              <input
-                type="text"
-                id="paymentmethod"
-                name="paymentmethod"
-                // value={phoneNumber}
-                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-                placeholder="Payment method"
-                readOnly
-              />
-            </div> */}
-
+        <div className="flex flex-col !mt-2">
+          <div style={{ color: "#F16E1E" }}>
+            {allInputsFilled ? "" : "All fields must be filled correctly !"}
+          </div>
+        </div>
         <div className="pt-8">
           <button
             type="submit"
@@ -248,6 +266,14 @@ export default function EditProfileForm({
           </button>
         </div>
       </form>
+      {/* {successModal && (
+        <div className="fixed inset-0 z-50">
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
+          <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-7 rounded-lg max-w-lg w-2/5 h-auto z-50">
+            <div className="text-gray-600">Successfully edit profile!</div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 }
