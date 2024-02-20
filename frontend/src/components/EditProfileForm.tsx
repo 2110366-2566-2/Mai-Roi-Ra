@@ -4,6 +4,13 @@ import styles from "@/styles/FontPage.module.css";
 import { useRouter } from "next/navigation";
 import updateProfile from "@/libs/updateProfile";
 import updateProfileAction from "@/action/updateProfileAction";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { TextField } from "@mui/material";
 
 interface Props {
   firstNameProp: string;
@@ -26,6 +33,8 @@ export default function EditProfileForm({
   emailProp,
   birthDateProp,
 }: Props) {
+  const isMobile = useMediaQuery("(max-width:768px)");
+
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
   const [lastName, setLastName] = useState(lastNameProp);
@@ -34,17 +43,21 @@ export default function EditProfileForm({
   const [province, setProvince] = useState(provinceProp);
   const [phoneNumber, setPhoneNumber] = useState(phoneNumberProp);
   const [email, setEmail] = useState(emailProp);
-  const [birthDate, setBirthDate] = useState(birthDateProp);
+  // const [birthDate, setBirthDate] = useState(birthDateProp);
+  const initialBirthDate = dayjs(birthDateProp);
+  const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
 
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+
   const [allInputsFilled, setAllInputsFilled] = useState(true);
 
-  const reformatDate = (dateStr: string) => {
-    return dateStr.split("T")[0].replace(/-/g, "/");
-  };
+  // const reformatDate = (dateStr: string) => {
+  //   return dateStr.split("T")[0].replace(/-/g, "/");
+  // };
 
-  const formattedDate = reformatDate(birthDate);
+  // const formattedDate = reformatDate(birthDate);
 
   // HANDLER for fields
   const handleFirstNameChange = (
@@ -74,11 +87,14 @@ export default function EditProfileForm({
     setProvince(newProvince);
   };
 
-  const handleBirthDateChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newBirthDate = event.target.value;
-    setBirthDate(newBirthDate);
+  // const handleBirthDateChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const newBirthDate = event.target.value;
+  //   setBirthDate(newBirthDate);
+  // };
+  const handleBirthDateChange = (newDate: Dayjs | null) => {
+    setBirthDate(newDate);
   };
 
   // const [successModal, setSuccessModal] = useState(false);
@@ -89,6 +105,8 @@ export default function EditProfileForm({
   const handleEditProfileSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
+    const formattedBirthDate = birthDate ? birthDate.format("YYYY/MM/DD") : "";
+
     if (firstName && lastName && address && district && province && birthDate) {
       try {
         await updateProfileAction(
@@ -98,7 +116,7 @@ export default function EditProfileForm({
           address,
           district,
           province,
-          formattedDate
+          formattedBirthDate
         );
         setAllInputsFilled(true);
         setError("");
@@ -235,14 +253,14 @@ export default function EditProfileForm({
           </div>
         )}
 
-        <div className="relative">
+        {/* <div className="relative">
           <input
             type="text"
             id="birthdate"
             name="birthdate"
             value={formattedDate}
             onChange={handleBirthDateChange}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none"
             placeholder="Birth Date"
           />
           {birthDate && (
@@ -250,7 +268,19 @@ export default function EditProfileForm({
               Birth Date
             </div>
           )}
+        </div> */}
+        <div className="relative">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Birth Date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e)}
+              className="w-full"
+              slotProps={{ textField: { size: "medium" } }}
+            />
+          </LocalizationProvider>
         </div>
+
         <div className="flex flex-col !mt-2">
           <div style={{ color: "#F16E1E" }}>
             {allInputsFilled ? "" : "All fields must be filled correctly !"}
