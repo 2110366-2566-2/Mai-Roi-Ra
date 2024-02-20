@@ -50,7 +50,7 @@ func (s *UserService) GetAllUsers() (*st.GetAllUsersResponse, error) {
 	log.Println("[Service: GetAllUsersResponse]: Called")
 	users, err := s.RepositoryGateway.UserRepository.GetAllUsers()
 	if err != nil {
-		return nil, errors.New("Failed to retrieve users")
+		return nil, errors.New("failed to retrieve users")
 	}
 	res := &st.GetAllUsersResponse{
 		Users: users,
@@ -154,6 +154,19 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		return nil, errors.New("email or phone number must be provided")
 	}
 
+	var organizerId *string // Replace DataType with the actual type of organizerId
+
+	if user.IsOrganizer {
+		var err error
+		organizerId, err = s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(user.UserID)
+		if err != nil {
+			log.Println("[Service: LoginUser]: Error when querying organizer_id")
+			return nil, err
+		}
+	} else {
+		organizerId = nil
+	}
+
 	// Check if the user was found
 	if err != nil {
 		return nil, errors.New("invalid login credentials")
@@ -194,6 +207,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		Email:       email,
 		PhoneNumber: phoneNumber,
 		Token:       token,
+		OrganizerId: organizerId,
 	}
 
 	return res, nil
@@ -209,7 +223,7 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 	user, err = s.RepositoryGateway.UserRepository.GetUserByEmail(req.Email)
 	// Check if the user was found
 	if err != nil {
-		return nil, errors.New("Invalid login credentials")
+		return nil, errors.New("invalid login credentials")
 	}
 
 	// // Check the password
@@ -225,11 +239,11 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 	// Generate a JWT token (or any other form of token/session identifier)
 	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
 	if err != nil {
-		return nil, errors.New("Failed to generate token")
+		return nil, errors.New("failed to generate token")
 	}
 	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
 	if err != nil {
-		return nil, errors.New("Failed to update token")
+		return nil, errors.New("failed to update token")
 	}
 
 	var email = ""
@@ -262,7 +276,7 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 
 	// Check if the user was found
 	if err != nil {
-		return nil, errors.New("Invalid login credentials")
+		return nil, errors.New("invalid login credentials")
 	}
 
 	// // Check the password
@@ -278,11 +292,11 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 	// Generate a JWT token (or any other form of token/session identifier)
 	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
 	if err != nil {
-		return nil, errors.New("Failed to generate token")
+		return nil, errors.New("failed to generate token")
 	}
 	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
 	if err != nil {
-		return nil, errors.New("Failed to update token")
+		return nil, errors.New("failed to update token")
 	}
 
 	var email = ""
@@ -372,7 +386,7 @@ func validateToken(signedToken string) (string, error) {
 		username := claims["username"].(string)
 		return username, nil
 	}
-	return "", errors.New("Invalid token")
+	return "", errors.New("invalid token")
 }
 
 func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {

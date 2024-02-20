@@ -1077,6 +1077,9 @@ const docTemplate = `{
                 "is_enable_notification": {
                     "type": "boolean"
                 },
+                "is_organizer": {
+                    "type": "boolean"
+                },
                 "last_name": {
                     "type": "string"
                 },

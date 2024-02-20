@@ -18,6 +18,8 @@ definitions:
         type: string
       is_enable_notification:
         type: boolean
+      is_organizer:
+        type: boolean
       last_name:
         type: string
       payment_gateway_customer_id:
