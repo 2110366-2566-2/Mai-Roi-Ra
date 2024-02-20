@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
+	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -188,6 +189,25 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.UpdateUserInformation(ctx, &req)
 		})
+		// // need to login type api in future usage
+		// auth.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
+		// 	var req st.UpdateUserInformationRequest
+		// 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// 		return
+		// 	}
+		// 	userController.UpdateUserInformation(ctx, &req)
+		// })
+
+		// // delete user but I don't think It's necessary
+		// r.DELETE("/api/v1/users/:id", func(ctx *gin.Context) {
+		// 	req := st.DeleteUserRequest{
+		// 		ID: ctx.Param("id"),
+		// 	}
+		// 	userController.DeleteUser(ctx, &req)
+		// })
+
+		// login/logout is here
 		r.PUT("/api/v1/users/notification", func(ctx *gin.Context) {
 			req := st.GetUserByUserIdRequest{
 				UserId: ctx.Query("user_id"),
@@ -223,11 +243,35 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.LoginUser(ctx, &req)
 		})
+		r.POST("/api/v1/loginemail", func(ctx *gin.Context) {
+			var req st.LoginUserEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.LoginUserEmail(ctx, &req)
+		})
+		r.POST("/api/v1/loginphone", func(ctx *gin.Context) {
+			var req st.LoginUserPhoneRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			userController.LoginUserPhone(ctx, &req)
+		})
 		auth.POST("/api/v1/logout", func(ctx *gin.Context) {
 			var req st.LogoutUserRequest
 			req.UserID = ctx.GetString(middleware.KeyUserID)
 
 			userController.LogoutUser(ctx, &req)
+		})
+		// r.GET("/api/v1/auth/me", func(ctx *gin.Context) {
+
+		// })
+
+		// require token function to test
+		auth.GET("/api/v1/auth/users", func(ctx *gin.Context) {
+			userController.GetAllUsers(ctx)
 		})
 	})
 

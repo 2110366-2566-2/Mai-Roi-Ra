@@ -26,7 +26,7 @@ type User struct {
 	BannerImage              string    `gorm:"column:banner_image" json:"banner_image"`
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
-	Token                    string    `gorm:"type:varchar(1024) " json:"-"` // Excluded from JSON responses
+	Token                    string    `gorm:"column:token" json:"-"` // Excluded from JSON responses
 }
 
 func (User) TableName() string {
