@@ -99,6 +99,7 @@ func (s *UserService) UpdateUserInformation(req *st.UpdateUserInformationRequest
 	log.Println("[Service: UpdateUserInformation]: Called")
 	res, err := s.RepositoryGateway.UserRepository.UpdateUserInformation(req)
 	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
 		return nil, err
 	}
 	return res, err
