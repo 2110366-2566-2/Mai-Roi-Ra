@@ -1,10 +1,12 @@
 "use client";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPhone } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { PiBalloonBold } from "react-icons/pi";
 import { SlLocationPin } from "react-icons/sl";
+import { useSession } from "next-auth/react";
+import getProfile from "@/libs/getProfile";
 
 interface Props {
   firstNameProp: string;
