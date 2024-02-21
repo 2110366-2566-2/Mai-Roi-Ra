@@ -37,4 +37,7 @@ func (c *Container) RepositoryProvider() {
 	if err := c.Container.Provide(repositories.NewParticipateRepository); err != nil {
 		c.Error = err
 	}
+	if err := c.Container.Provide(repositories.NewAnnouncementRepository); err != nil {
+		c.Error = err
+	}
 }
