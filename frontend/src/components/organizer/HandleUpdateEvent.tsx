@@ -1,15 +1,18 @@
 'use server'
 import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
-import UpdateEvent from "@/libs/updateEvent"
+import updateEvent from "@/libs/updateEvent"
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 
 export async function HandleUpdateEvent(id:string,name:string,activity:string, startDate:string, endDate:string, price:number, location:string, district:string, 
     province:string, description:string, imageSrc:string){
-
+    const session = await getServerSession(authOptions);
+        
     try {
-        const res = await UpdateEvent(id,name,activity,location,district,province,price,description,
-            imageSrc,startDate,endDate)
+        const res = await updateEvent(id,name,activity,location,district,province,price,description,
+            imageSrc,startDate,endDate,session?.user.token);
         console.log(res)
         console.log("Update Event successful")
     } catch (err) {

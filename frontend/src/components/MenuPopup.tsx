@@ -5,6 +5,7 @@ import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface Props {
     isVisible:boolean
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const MenuPopup = ({isVisible,onClose} : Props) => {
+    const session = useSession();
+    const user = session.data?.user;
     const pathname = usePathname(); 
     const router = useRouter();
     if (!isVisible) return null;
@@ -55,12 +58,27 @@ const MenuPopup = ({isVisible,onClose} : Props) => {
                              </div>
      
                              <div className="md:text-[30px] text-[15px] mt-[10px]">
-                                 Guncv
+                                {
+                                    session?
+                                     user?.first_name:
+                                     "Guest"
+                                }
                              </div>
      
-                             <div className="text-gray-400 md:text-[15px] text-[12px]">
-                                 chanagun.vir@gmail.com
-                             </div>
+                             {
+                                session?
+                                    <div className="text-gray-400 md:text-[15px] text-[12px]">
+                                     {
+                                        user?.email == "" ? user.phone_number :
+                                        user?.email
+                                     } 
+                                    </div>
+                                    : 
+                                    <div className="text-gray-400 md:text-[15px] text-[12px]">
+                                        "Guest"
+                                    </div>
+                            }
+                             
                          </div>
      
                          <div>

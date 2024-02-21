@@ -9,10 +9,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useSession } from "next-auth/react";
 
 const CreateEventForm = () => {
     const isMobile = useMediaQuery('(max-width:768px)');
-
+    
     const [start,setStart] = useState("");
     const [end,setEnd] = useState("");
     const [startDate,setStartDate] = useState<Dayjs | null>(null);

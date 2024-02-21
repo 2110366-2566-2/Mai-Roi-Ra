@@ -4,6 +4,7 @@ import Image from "next/image"
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
+import { useSession } from "next-auth/react";
 
 interface Props {
     id:string
@@ -24,7 +25,8 @@ interface Props {
 const SuccessModal = ({id,name,activity,startDate,endDate,price,location,district,province,description,
     imageSrc,topic,isVisible} : Props) => {
     if (!isVisible) return null;
-    
+    const session = useSession();
+    console.log(session);
     const handlerClose = async () => {
         if (topic == "Event Created"){
             await HandleCreateEvent(name, activity, startDate, endDate, price? price : 0, location, district, province, description, imageSrc);
