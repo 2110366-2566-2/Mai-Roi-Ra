@@ -1,11 +1,12 @@
 import { apiBackUrl } from "../constants";
 
-export default async function deleteEvent(id: string) {
+export default async function deleteEvent(id: string,token:string) {
     try {
         const response = await fetch(`${apiBackUrl}/events/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             }
         });
         if (!response.ok) {
