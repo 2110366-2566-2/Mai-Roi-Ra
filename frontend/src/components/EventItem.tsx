@@ -43,11 +43,11 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
   });
 
   return (
-    <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-[1.02] duration-300"
+    <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full"
     onClick={(e) => {
-      router.push(`/events/${id}`);
       e.stopPropagation();
       e.preventDefault();
+      router.push(`/events/${id}`);
       }}>
         <div className="flex-shrink-0 mr-4 h-full lg:w-[200px] md:w-[160px] w-[120px]">
             <Image src={imgSrc} 
@@ -66,9 +66,9 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                   <div className="space-x-2">
                       <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300'
                     onClick = {(e) => {
-                      router.push(`/homepage/editevent/${id}`);
                       e.stopPropagation();
                       e.preventDefault();
+                      router.push(`/homepage/editevent/${id}`);
                     }}>
                       Edit event
                     </button> 
@@ -85,9 +85,9 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                   <div className="space-x-2 text-black">
                     <button className='border border-slate-400 rounded-xl h-[30px] w-fit px-[5px] text-sm hover:scale-105 duration-300'
                     onClick = {(e) => {
-                      setShowModal(true);
                       e.stopPropagation();
                       e.preventDefault();
+                      setShowModal(true);
                     }}>
                         Announcement
                     </button>

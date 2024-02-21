@@ -18,11 +18,15 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
     const [error,setError] = useState("");
     if (!isVisible) return null;
     
-    const handleClose = () => {
+    const handleClose = (e:React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        e.preventDefault();
         onClose();
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e:React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        e.preventDefault();
         if (subject == "") {
             setError("Header require");
             return;
@@ -35,7 +39,7 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
     }
 
     return ( 
-        <div className={`w-screen h-screen absolute top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black z-20 ${styles.Roboto}`}>
+        <div className={`w-screen h-screen fixed inset-0 z-auto top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>
             <div className="lg:w-[1000px] lg:h-[450px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[20px] z-20 rounded-3xl"> 
 
                 <div className="flex w-full justify-end pr-[10px]">
@@ -47,7 +51,7 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
                         <CampaignIcon className="text-[100px] mr-[15px]"/>Announcement
                     </div>
 
-                    <form action={handleSubmit}>
+                    <form action={handleClose}>
                         <div className="w-[50%] relative md:mt-[20px] mt-[15px]">
                             <input className="border-[1px] border-black lg:py-[10px] md:py-[8px] py-[7px] h-full w-full lg:indent-4 md:indent-4 indent-3 
                             lg:text-[20px] md:text-[17px] text-[15px] rounded-xl placeholder:text-black"
@@ -73,18 +77,18 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
                                         </div>
                                     )} */}
                         </div> 
-                    </form>
-                    {
-                        error != "" && 
-                        <div className="w-full flex flex-row justify-center">
-                            {error}
+                        {
+                            error != "" && 
+                            <div className="w-full flex flex-row justify-center">
+                                {error}
+                            </div>
+                        }
+                        <div className="flex justify-end items-center md:mt-[15px] mt-[12px]">
+                            <button type="submit" className="bg-[#F2D22E] w-[15%] rounded-full text-[20px] py-[5px]">
+                                Done
+                            </button>
                         </div>
-                    }
-                    <div className="flex justify-end items-center md:mt-[15px] mt-[12px]">
-                        <button type="submit" className="bg-[#F2D22E] w-[15%] rounded-full text-[20px] py-[5px]">
-                            Done
-                        </button>
-                    </div>
+                    </form>
                 </div>
                
             </div>
