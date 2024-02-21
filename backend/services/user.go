@@ -156,7 +156,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 
 	organizerId := ""
 
-	if user.IsOrganizer {
+	if user.Role == "ORGANIZER" {
 		var err error
 		organizerId, err = s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(user.UserID)
 		if err != nil {

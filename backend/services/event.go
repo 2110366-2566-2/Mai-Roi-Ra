@@ -39,7 +39,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	if err != nil {
 		return nil, err
 	}
-	resAdmin, err := s.RepositoryGateway.AdminRepository.GetRandomAdmin()
+	resAdmin, err := s.RepositoryGateway.UserRepository.GetRandomAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	eventModel := models.Event{
 		EventId:        utils.GenerateUUID(),
 		OrganizerId:    req.OrganizerId,
-		AdminId:        resAdmin.AdminId,
+		UserId:         resAdmin.UserID,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -145,7 +145,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	res := &st.GetEventDataByIdResponse{
 		EventId:          resEvent.EventId,
 		OrganizerId:      resEvent.OrganizerId,
-		AdminId:          resEvent.AdminId,
+		UserId:           resEvent.UserId,
 		LocationId:       resLocation.LocationId,
 		StartDate:        utils.GetDateCalendarFormat(resEvent.StartDate),
 		EndDate:          utils.GetDateCalendarFormat(resEvent.EndDate),
@@ -216,7 +216,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
-		AdminId:        resEvent.AdminId,
+		UserId:         resEvent.UserId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,

@@ -16,6 +16,7 @@ type OrganizerRepository struct {
 type IOrganizerRepository interface {
 	CreateOrganizerWithUserId(userId string) (*string, error)
 	GetOrganizerIdFromUserId(req string) (string, error)
+	GetUserIdFromOrganizerId(req string) (string, error)
 }
 
 func NewOrganizerRepository(
@@ -61,4 +62,13 @@ func (r *OrganizerRepository) GetOrganizerIdFromUserId(req string) (string, erro
 		return "", err
 	}
 	return organizer.OrganizerId, nil
+}
+
+func (r *OrganizerRepository) GetUserIdFromOrganizerId(req string) (string, error) {
+	log.Println("[REPO: GetUserIdFromOrganizerId]: Called")
+	var organizer models.Organizer
+	if err := r.db.Where("organizer_id = ?", req).Find(&organizer).Error; err != nil {
+		return "", err
+	}
+	return organizer.UserId, nil
 }
