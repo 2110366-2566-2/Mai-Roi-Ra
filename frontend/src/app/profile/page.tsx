@@ -14,14 +14,19 @@ import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export default async function Profile() {
   // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-  const events = await getMyEvents("550e8400-e29b-41d4-a716-446655440200");
-  const datas = events.event_lists;
+  // const events = await getMyEvents("550e8400-e29b-41d4-a716-446655440200");
+
   revalidateTag("profile");
 
   // get user profile from user_id from session
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
   const profile = session ? await getProfile(session.user.user_id) : null;
+
+  const events = session ? await getMyEvents(session.user.organizer_id) : null;
+  const datas = events.event_lists;
+
+  console.log(session);
 
   return (
     <div className="bg-white text-black h-full">
