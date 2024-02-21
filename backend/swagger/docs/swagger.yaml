@@ -18,6 +18,8 @@ definitions:
         type: string
       is_enable_notification:
         type: boolean
+      is_organizer:
+        type: boolean
       last_name:
         type: string
       payment_gateway_customer_id:
@@ -246,6 +248,23 @@ definitions:
         type: string
       phone_number:
         type: string
+    type: object
+  structure.LoginUserResponse:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      organizer_id:
+        type: string
+      phone_number:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: string
+    required:
+    - first_name
     type: object
   structure.Participant:
     properties:
@@ -712,7 +731,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/structure.LoginUserResponse'
         "400":
           description: Bad Request
           schema:

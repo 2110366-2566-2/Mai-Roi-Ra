@@ -77,6 +77,8 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
 
+	organizer := req.Role == "Organizer"
+
 	userModel := models.User{
 		UserID:                   utils.GenerateUUID(),
 		Username:                 req.Username,
@@ -92,6 +94,7 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		Province:                 req.Province,
 		BannerImage:              "",
 		CreatedAt:                time.Time{},
+		IsOrganizer:              organizer,
 	}
 
 	trans := r.DB.Begin().Debug()
