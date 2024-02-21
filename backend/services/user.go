@@ -10,6 +10,7 @@ import (
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -81,11 +82,11 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	}
 
 	// Hash the password
-	// hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// req.Password = string(hashedPassword)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.MinCost)
+	if err != nil {
+		return nil, err
+	}
+	req.Password = string(hashedPassword)
 
 	res, err := s.RepositoryGateway.UserRepository.CreateUser(req)
 	if err != nil {
@@ -170,12 +171,25 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		return nil, errors.New("invalid login credentials")
 	}
 
-	// // Check the password
-	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-	// 	log.Println([]byte(user.Password))
-	// 	log.Println([]byte(req.Password))
-	// 	log.Println(user.Password)
-	// 	log.Println(req.Password)
+	// Check the password
+	byteHash := []byte(user.Password)
+	bytepwd := []byte(req.Password)
+	pwerr := bcrypt.CompareHashAndPassword(byteHash, bytepwd)
+	if pwerr != nil {
+		log.Println([]byte(byteHash))
+		log.Println([]byte(bytepwd))
+		log.Println(byteHash)
+		log.Println(bytepwd)
+		log.Println("Invalid login credentials [PASSWORD ERROR]:")
+		log.Println(err)
+		return nil, err
+	}
+
+	// if err := bcrypt.CompareHashAndPassword(byteHash, bytepwd); err != nil {
+	// 	log.Println([]byte(byteHash))
+	// 	log.Println([]byte(bytepwd))
+	// 	log.Println(byteHash)
+	// 	log.Println(bytepwd)
 	// 	log.Println("Invalid login credentials [PASSWORD ERROR]:")
 	// 	return nil, err
 	// }

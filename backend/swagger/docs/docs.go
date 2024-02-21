@@ -1108,6 +1108,23 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.Announcement": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "header": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateEventRequest": {
             "type": "object",
             "required": [
@@ -1251,6 +1268,12 @@ const docTemplate = `{
                 "admin_id": {
                     "type": "string"
                 },
+                "announcement_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.Announcement"
+                    }
+                },
                 "city": {
                     "type": "string"
                 },
@@ -1286,6 +1309,9 @@ const docTemplate = `{
                 },
                 "organizer_id": {
                     "type": "string"
+                },
+                "participant_count": {
+                    "type": "integer"
                 },
                 "participant_fee": {
                     "type": "number"
