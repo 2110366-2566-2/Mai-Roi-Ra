@@ -7,7 +7,6 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export default async function UserHomepage() {
 
   const session = await getServerSession(authOptions)
-
   const events = await getEvents();
   const datas = events.event_lists;
   console.log("successfully");

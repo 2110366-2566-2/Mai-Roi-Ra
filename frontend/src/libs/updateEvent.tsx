@@ -11,7 +11,8 @@ export default async function updateEvent(
     description: string,
     imageSrc: string,
     start_date: string,
-    end_date: string
+    end_date: string,
+    token: string
 ) {
 
     try {
@@ -36,6 +37,7 @@ export default async function updateEvent(
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             },
             body: jsonBody,
         });
