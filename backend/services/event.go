@@ -94,6 +94,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 	resLists := &st.GetEventListsResponse{
 		EventLists: make([]st.GetEventList, 0),
 	}
+	
 	for _, v := range resEvents {
 		locationId := v.LocationId
 		resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationById(locationId)
@@ -103,6 +104,13 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 		eventImage := ""
 		if v.EventImage != nil {
 			eventImage = *v.EventImage
+		}
+		announcementreq := &st.GetAnnouncementListsRequest{
+			EventId: v.EventId,
+		}
+		resAnnouncement,err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
+		if err != nil {
+			return nil, err
 		}
 		res := st.GetEventList{
 			EventId:     v.EventId,
@@ -114,6 +122,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 			EventImage:  eventImage,
 			City:        resLocation.City,
 			District:    resLocation.District,
+			AnnouncementList: resAnnouncement.AnnouncementList,
 		}
 		resLists.EventLists = append(resLists.EventLists, res)
 	}
@@ -134,6 +143,13 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if resEvent.EventImage != nil {
 		eventImage = *resEvent.EventImage
 	}
+	announcementreq := &st.GetAnnouncementListsRequest{
+		EventId: req.EventId,
+	}
+	resAnnouncement,err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
+	if err != nil {
+		return nil, err
+	}
 	res := &st.GetEventDataByIdResponse{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
@@ -152,6 +168,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 		City:           resLocation.City,
 		District:       resLocation.District,
 		LocationName:   resLocation.LocationName,
+		AnnouncementList: resAnnouncement.AnnouncementList,
 	}
 	return res, nil
 }

@@ -19,6 +19,7 @@ type RepositoryGateway struct {
 	AdminRepository       IAdminRepository
 	OrganizerRepository   IOrganizerRepository
 	ParticipateRepository IParticipateRepository
+	AnnouncementRepository IAnnouncementRepository
 }
 
 // NewRepository ...

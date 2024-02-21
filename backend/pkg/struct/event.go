@@ -1,5 +1,7 @@
 package structure
 
+import "time"
+
 type CreateEventRequest struct {
 	OrganizerId    string  `json:"organizer_id" binding:"required"`
 	StartDate      string  `json:"start_date" binding:"required"`
@@ -56,6 +58,7 @@ type GetEventList struct {
 	EventImage  string `json:"event_image"`
 	City        string `json:"city"`
 	District    string `json:"district"`
+	AnnouncementList []Announcement `json:"announcement_list"`
 }
 
 type GetEventListsRequest struct {
@@ -92,6 +95,7 @@ type GetEventDataByIdResponse struct {
 	City           string  `json:"city"`
 	District       string  `json:"district"`
 	LocationName   string  `json:"location_name"`
+	AnnouncementList []Announcement `json:"announcement_list"`
 }
 
 type Participant struct {
@@ -110,4 +114,18 @@ type GetParticipantListsRequest struct {
 
 type GetParticipantListsResponse struct {
 	ParticipantList []Participant `json:"participant_list"`
+}
+
+type Announcement struct {
+	Header      string    `gorm:"column:header;not null" json:"header"`
+	Description string    `gorm:"column:description;not null" json:"description"`
+	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updated_at"`
+}
+
+type GetAnnouncementListsRequest struct {
+	EventId string `json:"event_id" binding:"required"`
+}
+type GetAnnouncementListsResponse struct {
+	AnnouncementList []Announcement `json:"announcement_list"`
 }
