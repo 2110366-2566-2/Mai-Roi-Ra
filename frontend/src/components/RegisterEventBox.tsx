@@ -5,16 +5,71 @@ import LocationIcon from '@mui/icons-material/Place';
 import CalendarIcon from '@mui/icons-material/CalendarMonth';
 import AddGuestIcon from '@mui/icons-material/GroupAdd';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import participateEvent from "@/libs/participateEvent";
+import getEvent from "@/libs/getEvent";
+
+
 
 interface Event {
-    participant_fee: number;
-    location_name: string;
-    start_date: string;
-    end_date: string;
+    activities: string,
+    admin_id: string,
+    city: string,
+    country: string,
+    deadline: string,
+    description: string,
+    district: string,
+    end_date: string,
+    event_id: string,
+    event_image: string,
+    event_name: string,
+    location_id: string,
+    location_name: string,
+    organizer_id: string,
+    participant_fee: 0,
+    start_date: string,
+    status: string
 }
 
 export default function RegisterEventBox({event}:{event : Event}) {
+
+    const {data:session} = useSession()
+   
+    const handleRegisterEventButton = async () => {
+        try {
+            // Call the userRegister function to register the user for the event
+            const registrationResult = await participateEvent(event.event_id, numberOfGuest, session?.user?.user_id);
+            // Handle successful registration
+            console.log("Registration successful:", registrationResult);
+        } catch (error:any) {
+            // Handle registration error
+            console.error("Registration failed:", error.message);
+        }
+    };
+
     const [numberOfGuest, setNumberOfGuest] = useState(1);
+
+    const startyear = event.start_date.substring(0, 4);
+    const startmonth = event.start_date.substring(4, 6);
+    const startday = event.start_date.substring(6, 8);
+  
+    const startdateObj = new Date(`${startyear}-${startmonth}-${startday}`);
+    const formattedStartDate = startdateObj.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+    });
+  
+    const endyear = event.end_date.substring(0, 4);
+    const endmonth = event.end_date.substring(4, 6);
+    const endday = event.end_date.substring(6, 8);
+  
+    const enddateObj = new Date(`${endyear}-${endmonth}-${endday}`);
+    const formattedEndDate = enddateObj.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+    });
 
     const handleMinusGuestButton = () => {
         if(numberOfGuest == 1){
@@ -31,11 +86,11 @@ export default function RegisterEventBox({event}:{event : Event}) {
                             <div className="w-full border rounded-lg flex flex-col h-auto mt-4">
                                 <div className="w-full h-auto border flex flex-col p-4">
                                     <span className="w-full font-semibold flex items-center mb-4"><LocationIcon className="mr-2"/>Location</span>
-                                    <label>{event.location_name}</label>
+                                    <label>{`${event.location_name}, ${event.district}, ${event.city}, ${event.country}`}</label>
                                 </div>
                                 <div className="w-full h-auto border flex flex-col p-4">
                                     <span className="w-full font-semibold flex items-center mb-4"><CalendarIcon className="mr-2"/>Date</span>
-                                    <label>{event.start_date + " - " + event.end_date}</label>
+                                    <label>{formattedStartDate + " - " + formattedEndDate}</label>
                                 </div>
                                 <div className="w-full h-[50px] border flex items-center justify-between p-4">
                                     <span className="font-semibold flex items-center"><AddGuestIcon className="mr-2"/>Guest</span>
@@ -53,11 +108,15 @@ export default function RegisterEventBox({event}:{event : Event}) {
                         </div>
                         <div>
                             <div className="flex items-center justify-between my-4">
-                                <label className="px-1">Total fee {1} person</label>
-                                <label className="px-1">{event.participant_fee} $</label>
+                                <label className="px-1">Total fee {numberOfGuest} person</label>
+                                <label className="px-1">{event.participant_fee * numberOfGuest} ฿</label>
                             </div>
                         </div>
-                        <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4">
+                        <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4"
+                            onClick={()=>{
+                                handleRegisterEventButton();
+                            }}
+                        >
                             Register
                         </button>
                     </div>
