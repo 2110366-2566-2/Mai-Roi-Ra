@@ -44,12 +44,12 @@ type LoginUserRequest struct {
 }
 
 type LoginUserResponse struct {
-	UserId      string  `json:"user_id"`
-	FirstName   string  `json:"first_name" binding:"required"`
-	Email       string  `json:"email"`
-	PhoneNumber string  `json:"phone_number"`
-	Token       string  `json:"token"`
-	OrganizerId *string `json:"organizer_id"`
+	UserId      string `json:"user_id"`
+	FirstName   string `json:"first_name" binding:"required"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	Token       string `json:"token"`
+	OrganizerId string `json:"organizer_id"`
 }
 type LogoutUserRequest struct {
 	UserID string `json:"user_id" binding:"required"`

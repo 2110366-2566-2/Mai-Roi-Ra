@@ -154,7 +154,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		return nil, errors.New("email or phone number must be provided")
 	}
 
-	var organizerId *string // Replace DataType with the actual type of organizerId
+	organizerId := ""
 
 	if user.IsOrganizer {
 		var err error
@@ -163,8 +163,6 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 			log.Println("[Service: LoginUser]: Error when querying organizer_id")
 			return nil, err
 		}
-	} else {
-		organizerId = nil
 	}
 
 	// Check if the user was found
