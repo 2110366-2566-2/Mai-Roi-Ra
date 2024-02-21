@@ -18,8 +18,6 @@ definitions:
         type: string
       is_enable_notification:
         type: boolean
-      is_organizer:
-        type: boolean
       last_name:
         type: string
       payment_gateway_customer_id:
@@ -30,16 +28,27 @@ definitions:
         type: string
       province:
         type: string
+      role:
+        description: Added role field
+        type: string
       updated_at:
         type: string
       user_id:
-        description: |-
-          gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
-          UserImage                *string   `gorm:"column:user_image" json:"user_image"`
         type: string
       user_image:
         type: string
       username:
+        type: string
+    type: object
+  structure.Announcement:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      header:
+        type: string
+      updated_at:
         type: string
     type: object
   structure.CreateEventRequest:
@@ -142,6 +151,10 @@ definitions:
         type: string
       admin_id:
         type: string
+      announcement_list:
+        items:
+          $ref: '#/definitions/structure.Announcement'
+        type: array
       city:
         type: string
       country:
@@ -166,6 +179,8 @@ definitions:
         type: string
       organizer_id:
         type: string
+      participant_count:
+        type: integer
       participant_fee:
         type: number
       start_date:
@@ -330,26 +345,14 @@ definitions:
     type: object
   structure.SendAnnouncementRequest:
     properties:
-      attach_files:
-        items:
-          type: string
-        type: array
-      bcc:
-        items:
-          type: string
-        type: array
-      cc:
-        items:
-          type: string
-        type: array
       content:
+        type: string
+      event_id:
+        type: string
+      event_name:
         type: string
       subject:
         type: string
-      to:
-        items:
-          type: string
-        type: array
     type: object
   structure.TestResponse:
     properties:
@@ -443,6 +446,32 @@ info:
   title: Mai-Roi-Ra Swagger API
   version: "1.0"
 paths:
+  /announcement:
+    post:
+      consumes:
+      - application/json
+      description: Sends an announcement email to the specified recipients.
+      parameters:
+      - description: Send Announcement Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendAnnouncementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Announcement successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendAnnounceResponse'
+        "400":
+          description: Bad request - error in sending the announcement
+          schema:
+            type: object
+      summary: Send Announcement
+      tags:
+      - announcements
   /auth/users:
     get:
       consumes:
@@ -832,32 +861,6 @@ paths:
       summary: Log out a user
       tags:
       - user
-  /send-announcement:
-    post:
-      consumes:
-      - application/json
-      description: Sends an announcement email to the specified recipients.
-      parameters:
-      - description: Send Announcement Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendAnnouncementRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Announcement successfully sent
-          schema:
-            $ref: '#/definitions/structure.SendAnnounceResponse'
-        "400":
-          description: Bad request - error in sending the announcement
-          schema:
-            type: object
-      summary: Send Announcement
-      tags:
-      - participates
   /test:
     get:
       consumes:

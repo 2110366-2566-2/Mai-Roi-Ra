@@ -24,6 +24,46 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/announcement": {
+            "post": {
+                "description": "Sends an announcement email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send Announcement",
+                "parameters": [
+                    {
+                        "description": "Send Announcement Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnouncementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Announcement successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the announcement",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/users": {
             "get": {
                 "description": "Get list of users",
@@ -613,46 +653,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/send-announcement": {
-            "post": {
-                "description": "Sends an announcement email to the specified recipients.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "participates"
-                ],
-                "summary": "Send Announcement",
-                "parameters": [
-                    {
-                        "description": "Send Announcement Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendAnnouncementRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Announcement successfully sent",
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendAnnounceResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request - error in sending the announcement",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -1077,9 +1077,6 @@ const docTemplate = `{
                 "is_enable_notification": {
                     "type": "boolean"
                 },
-                "is_organizer": {
-                    "type": "boolean"
-                },
                 "last_name": {
                     "type": "string"
                 },
@@ -1093,17 +1090,37 @@ const docTemplate = `{
                 "province": {
                     "type": "string"
                 },
+                "role": {
+                    "description": "Added role field",
+                    "type": "string"
+                },
                 "updated_at": {
                     "type": "string"
                 },
                 "user_id": {
-                    "description": "gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt\nUserImage                *string   ` + "`" + `gorm:\"column:user_image\" json:\"user_image\"` + "`" + `",
                     "type": "string"
                 },
                 "user_image": {
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.Announcement": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "header": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -1251,6 +1268,12 @@ const docTemplate = `{
                 "admin_id": {
                     "type": "string"
                 },
+                "announcement_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.Announcement"
+                    }
+                },
                 "city": {
                     "type": "string"
                 },
@@ -1286,6 +1309,9 @@ const docTemplate = `{
                 },
                 "organizer_id": {
                     "type": "string"
+                },
+                "participant_count": {
+                    "type": "integer"
                 },
                 "participant_fee": {
                     "type": "number"
@@ -1536,35 +1562,17 @@ const docTemplate = `{
         "structure.SendAnnouncementRequest": {
             "type": "object",
             "properties": {
-                "attach_files": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "bcc": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "cc": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "content": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_name": {
                     "type": "string"
                 },
                 "subject": {
                     "type": "string"
-                },
-                "to": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },

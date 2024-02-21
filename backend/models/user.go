@@ -1,14 +1,11 @@
 package models
 
-// we could use grom model I think it contain ID on it's own so we don't have to create uid or self but that just my research Idk if I'm wrong or not
 import (
 	"time"
 )
 
 // User model struct
 type User struct {
-	//gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt
-	//UserImage                *string   `gorm:"column:user_image" json:"user_image"`
 	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
 	Username                 string    `gorm:"column:username;not null" json:"username"`
 	PhoneNumber              *string   `gorm:"column:phone_number" json:"phone_number"` // Replace "phone_length_constraint" with actual SQL check expression if needed
@@ -24,7 +21,7 @@ type User struct {
 	District                 string    `gorm:"column:district;not null" json:"district"`
 	Province                 string    `gorm:"column:province;not null" json:"province"`
 	BannerImage              string    `gorm:"column:banner_image" json:"banner_image"`
-	IsOrganizer              bool      `gorm:"column:is_organizer;not null" json:"is_organizer"`
+	Role                     string    `gorm:"column:role;not null" json:"role"` // Added role field
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
 	Token                    string    `gorm:"column:token" json:"-"` // Excluded from JSON responses

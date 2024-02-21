@@ -77,7 +77,7 @@ type GetEventDataByIdRequest struct {
 type GetEventDataByIdResponse struct {
 	EventId          string         `json:"event_id"`
 	OrganizerId      string         `json:"organizer_id"`
-	AdminId          string         `json:"admin_id"`
+	UserId           string         `json:"admin_id"`
 	LocationId       string         `json:"location_id"`
 	StartDate        string         `json:"start_date"`
 	EndDate          string         `json:"end_date"`

@@ -21,6 +21,7 @@ type IEventRepository interface {
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
 }
 
 func NewEventRepository(
@@ -137,4 +138,14 @@ func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error
 		return nil, err
 	}
 	return &event, nil
+}
+
+func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string, *string, error) {
+	log.Println("[Repo: GetAdminAndOrganizerEventById]: Called")
+	var eventModel models.Event
+	if err := r.db.Where(`event_id = ?`, eventId).Find(&eventModel).Error; err != nil {
+		log.Println("[Repo: GetAdminAndOrganizerEventById]: cannot find event_id:", err)
+		return nil, nil, err
+	}
+	return &eventModel.UserId, &eventModel.OrganizerId, nil
 }

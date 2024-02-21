@@ -14,6 +14,7 @@ type AnnouncementRepository struct {
 
 type IAnnouncementRepository interface {
 	GetAnnouncementsForEvent(req *st.GetAnnouncementListsRequest) (*st.GetAnnouncementListsResponse, error)
+	CreateAnnouncement(req *models.Announcement) error
 }
 
 func NewAnnouncementRepository(
@@ -37,7 +38,7 @@ func (r *AnnouncementRepository) GetAnnouncementsForEvent(req *st.GetAnnouncemen
 	query = query.Order("created_at DESC")
 
 	if err := query.Find(&AnnouncementLists).Error; err != nil {
-		log.Println("[Repo: GetParticipanstForEvent]: cannot query the participants:", err)
+		log.Println("[Repo: GetAnnouncementsForEvent]: cannot query the announcements:", err)
 		return nil, err
 	}
 
@@ -54,4 +55,20 @@ func (r *AnnouncementRepository) GetAnnouncementsForEvent(req *st.GetAnnouncemen
 		res.AnnouncementList = append(res.AnnouncementList, *announcement)
 	}
 	return res, nil
+}
+
+func (r *AnnouncementRepository) CreateAnnouncement(req *models.Announcement) error {
+	log.Println("[Repo: CreateAnnouncement]: Called")
+	trans := r.DB.Begin().Debug()
+	if err := trans.Create(&req).Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateAnnouncement]: Insert data in Announcements table error:", err)
+		return err
+	}
+	if err := trans.Commit().Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateAnnouncement]: Call orm DB Commit error:", err)
+		return err
+	}
+	return nil
 }

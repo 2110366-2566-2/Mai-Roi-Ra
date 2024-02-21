@@ -7,7 +7,7 @@ import (
 type Event struct {
 	EventId          string    `gorm:"column:event_id;not null;primaryKey" json:"event_id" binding:"required"`
 	OrganizerId      string    `gorm:"column:organizer_id;not null" json:"organizer_id" binding:"required"`
-	AdminId          string    `gorm:"column:admin_id;not null" json:"admin_id" binding:"required"`
+	UserId           string    `gorm:"column:user_id;not null" json:"user_id" binding:"required"`
 	LocationId       string    `gorm:"column:location_id;not null" json:"location_id" binding:"required"`
 	StartDate        time.Time `gorm:"column:start_date;not null" json:"start_date" binding:"required"`
 	EndDate          time.Time `gorm:"column:end_date;not null" json:"end_date" binding:"required"`
