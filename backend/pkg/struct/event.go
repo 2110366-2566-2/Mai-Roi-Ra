@@ -75,23 +75,24 @@ type GetEventDataByIdRequest struct {
 }
 
 type GetEventDataByIdResponse struct {
-	EventId        string  `json:"event_id"`
-	OrganizerId    string  `json:"organizer_id"`
-	AdminId        string  `json:"admin_id"`
-	LocationId     string  `json:"location_id"`
-	StartDate      string  `json:"start_date"`
-	EndDate        string  `json:"end_date"`
-	Status         string  `json:"status"`
-	ParticipantFee float64 `json:"participant_fee"`
-	Description    string  `json:"description"`
-	EventName      string  `json:"event_name"`
-	Deadline       string  `json:"deadline"`
-	Activities     string  `json:"activities"`
-	EventImage     string  `json:"event_image"`
-	Country        string  `json:"country"`
-	City           string  `json:"city"`
-	District       string  `json:"district"`
-	LocationName   string  `json:"location_name"`
+	EventId          string  `json:"event_id"`
+	OrganizerId      string  `json:"organizer_id"`
+	AdminId          string  `json:"admin_id"`
+	LocationId       string  `json:"location_id"`
+	StartDate        string  `json:"start_date"`
+	EndDate          string  `json:"end_date"`
+	Status           string  `json:"status"`
+	ParticipantFee   float64 `json:"participant_fee"`
+	Description      string  `json:"description"`
+	EventName        string  `json:"event_name"`
+	Deadline         string  `json:"deadline"`
+	Activities       string  `json:"activities"`
+	EventImage       string  `json:"event_image"`
+	Country          string  `json:"country"`
+	City             string  `json:"city"`
+	District         string  `json:"district"`
+	LocationName     string  `json:"location_name"`
+	ParticipantCount int     `json:"participant_count"`
 }
 
 type Participant struct {

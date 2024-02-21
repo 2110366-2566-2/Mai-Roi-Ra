@@ -76,7 +76,7 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
 
 func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Repo: DeleteEventById]: Called")
-	eventModel := models.Event{} 
+	eventModel := models.Event{}
 
 	// Delete the event from the database
 	if result := r.db.Where("event_id = ?", req.EventId).First(&eventModel); result.Error != nil {
