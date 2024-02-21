@@ -10,13 +10,13 @@ BEGIN
     ('550e8400-e29b-41d4-a716-446655440004', 'password567', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Users table
-    INSERT INTO users (user_id, username, phone_number, email, first_name, last_name, password, is_enable_notification, payment_gateway_customer_id, birth_date, user_image, address, district, province, banner_image, token, created_at, updated_at)
+    INSERT INTO users (user_id, username, phone_number, email, first_name, last_name, password, is_enable_notification, payment_gateway_customer_id, birth_date, user_image, address, district, province, banner_image, token, is_organizer, created_at, updated_at)
     VALUES 
-    ('550e8400-e29b-41d4-a716-446655440100', 'TerranceJ', '1234567890', 'user1@example.com', 'Terrance', 'Jeffords', 'password1', TRUE, 'paymentid1', '1990-01-01', 'https://example.com/user1.jpg', '123 Main St', 'Downtown', 'New York', 'https://example.com/banner1.jpg', '', CURRENT_TIMESTAMP, NULL),
-    ('550e8400-e29b-41d4-a716-446655440101', 'JakeP', '1234567891', 'user2@example.com', 'Jake', 'Peralta', 'password2', FALSE, 'paymentid2', '1992-01-01', 'https://example.com/user2.jpg', '456 Side St', 'Midtown', 'New York', 'https://example.com/banner2.jpg', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day'),
-    ('550e8400-e29b-41d4-a716-446655440102', 'CharlesB', '1234567892', 'user3@example.com', 'Charles', 'Boyle', 'password3', TRUE, 'paymentid3', '1994-01-01', 'https://example.com/user3.jpg', '789 Circle Ave', 'Uptown', 'New York', 'https://example.com/banner3.jpg', '', CURRENT_TIMESTAMP, NULL),
-    ('550e8400-e29b-41d4-a716-446655440103', 'RosaD', '1234567893', 'user4@example.com', 'Rosa', 'Diaz', 'password4', FALSE, 'paymentid4', '1996-01-01', 'https://example.com/user4.jpg', '1010 Square Rd', 'East Village', 'New York', 'https://example.com/banner4.jpg', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 days'),
-    ('550e8400-e29b-41d4-a716-446655440104', 'AmyS', '1234567894', 'user5@example.com', 'Amy', 'Santiago', 'password5', FALSE, 'paymentid5', '1998-01-01', 'https://example.com/user5.jpg', '1313 Hex St', 'West End', 'New York', 'https://example.com/banner5.jpg', '', CURRENT_TIMESTAMP, NULL);
+    ('550e8400-e29b-41d4-a716-446655440100', 'TerranceJ', '1234567890', 'user1@example.com', 'Terrance', 'Jeffords', 'password1', TRUE, 'paymentid1', '1990-01-01', 'https://example.com/user1.jpg', '123 Main St', 'Downtown', 'New York', 'https://example.com/banner1.jpg', '', TRUE, CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440101', 'JakeP', '1234567891', 'user2@example.com', 'Jake', 'Peralta', 'password2', FALSE, 'paymentid2', '1992-01-01', 'https://example.com/user2.jpg', '456 Side St', 'Midtown', 'New York', 'https://example.com/banner2.jpg', '', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1 day'),
+    ('550e8400-e29b-41d4-a716-446655440102', 'CharlesB', '1234567892', 'user3@example.com', 'Charles', 'Boyle', 'password3', TRUE, 'paymentid3', '1994-01-01', 'https://example.com/user3.jpg', '789 Circle Ave', 'Uptown', 'New York', 'https://example.com/banner3.jpg', '', FALSE, CURRENT_TIMESTAMP, NULL),
+    ('550e8400-e29b-41d4-a716-446655440103', 'RosaD', '1234567893', 'user4@example.com', 'Rosa', 'Diaz', 'password4', FALSE, 'paymentid4', '1996-01-01', 'https://example.com/user4.jpg', '1010 Square Rd', 'East Village', 'New York', 'https://example.com/banner4.jpg', '', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '2 days'),
+    ('550e8400-e29b-41d4-a716-446655440104', 'AmyS', '1234567894', 'user5@example.com', 'Amy', 'Santiago', 'password5', FALSE, 'paymentid5', '1998-01-01', 'https://example.com/user5.jpg', '1313 Hex St', 'West End', 'New York', 'https://example.com/banner5.jpg', '', FALSE, CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Organizers table
     INSERT INTO organizers (organizer_id, user_id, start_office_hours, end_office_hours, created_at, updated_at)

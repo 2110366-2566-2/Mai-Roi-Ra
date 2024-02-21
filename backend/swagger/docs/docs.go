@@ -461,7 +461,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/structure.LoginUserResponse"
                         }
                     },
                     "400": {
@@ -1077,6 +1077,9 @@ const docTemplate = `{
                 "is_enable_notification": {
                     "type": "boolean"
                 },
+                "is_organizer": {
+                    "type": "boolean"
+                },
                 "last_name": {
                     "type": "string"
                 },
@@ -1409,6 +1412,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.LoginUserResponse": {
+            "type": "object",
+            "required": [
+                "first_name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
