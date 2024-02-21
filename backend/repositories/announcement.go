@@ -44,12 +44,12 @@ func (r *AnnouncementRepository) GetAnnouncementsForEvent(req *st.GetAnnouncemen
 	res := &st.GetAnnouncementListsResponse{
 		AnnouncementList: make([]st.Announcement, 0),
 	}
-	for _,v := range AnnouncementLists {
+	for _, v := range AnnouncementLists {
 		announcement := &st.Announcement{
-			Header: v.Header,
+			Header:      v.Header,
 			Description: v.Description,
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 		res.AnnouncementList = append(res.AnnouncementList, *announcement)
 	}

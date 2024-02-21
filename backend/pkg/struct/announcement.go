@@ -3,10 +3,10 @@ package structure
 import "time"
 
 type Announcement struct {
-	Header      string    `gorm:"column:header;not null" json:"header"`
-	Description string    `gorm:"column:description;not null" json:"description"`
-	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
-	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updated_at"`
+	Header      string    `json:"header" binding:"required"`
+	Description string    `json:"description" binding:"required"`
+	CreatedAt   time.Time `json:"created_at" binding:"required"`
+	UpdatedAt   time.Time `json:"updated_at" binding:"required"`
 }
 
 type GetAnnouncementListsRequest struct {

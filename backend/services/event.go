@@ -160,6 +160,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 		City:             resLocation.City,
 		District:         resLocation.District,
 		LocationName:     resLocation.LocationName,
+		ParticipantCount: resEvent.ParticipantCount,
 		AnnouncementList: resAnnouncement.AnnouncementList,
 	}
 	return res, nil
