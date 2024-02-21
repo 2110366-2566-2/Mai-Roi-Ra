@@ -3,14 +3,28 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useState } from "react";
+import updateEnableNotification from "@/libs/updateEnableNotification";
 
-export default function EditProfileButton() {
+interface Props {
+  isEnableNotificationProp: boolean;
+}
+
+export default function EditProfileButton({ isEnableNotificationProp }: Props) {
   const router = useRouter();
 
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(isEnableNotificationProp);
 
-  const handleCheckboxChange = () => {
+  const [error, setError] = useState<string>("");
+
+  const handleCheckboxChange = async () => {
     setIsChecked(!isChecked);
+    try {
+      await updateEnableNotification("550e8400-e29b-41d4-a716-446655440100");
+      setError("");
+    } catch (err) {
+      setError("Update enable notification error. Server Failed ?");
+      console.log("Err: ", err);
+    }
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -9,13 +9,19 @@ import ProfileUserInformation from "@/components/ProfileUserInformation";
 import getMyEvents from "@/libs/getMyEvents";
 import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export default async function Profile() {
-  const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
+  // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
   const events = await getMyEvents("550e8400-e29b-41d4-a716-446655440200");
   const datas = events.event_lists;
   revalidateTag("profile");
+
+  // get user profile from user_id from session
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.token) return null;
+  const profile = session ? await getProfile(session.user.user_id) : null;
 
   return (
     <div className="bg-white text-black h-full">
@@ -54,7 +60,9 @@ export default async function Profile() {
               birthDateProp={profile.birth_date}
               usernameProp={profile.username}
             ></ProfileUserInformation>
-            <EditProfileButton></EditProfileButton>
+            <EditProfileButton
+              isEnableNotificationProp={profile.is_enable_notification}
+            ></EditProfileButton>
           </div>
         </div>
         <div className="bg-white w-full h-[50px] flex justify-center items-center border-b">

@@ -21,6 +21,7 @@ interface Props {
   phoneNumberProp: string;
   emailProp: string;
   birthDateProp: string;
+  userId: string;
 }
 
 export default function EditProfileForm({
@@ -32,6 +33,7 @@ export default function EditProfileForm({
   phoneNumberProp,
   emailProp,
   birthDateProp,
+  userId,
 }: Props) {
   const isMobile = useMediaQuery("(max-width:768px)");
 
@@ -52,12 +54,6 @@ export default function EditProfileForm({
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
 
   const [allInputsFilled, setAllInputsFilled] = useState(true);
-
-  // const reformatDate = (dateStr: string) => {
-  //   return dateStr.split("T")[0].replace(/-/g, "/");
-  // };
-
-  // const formattedDate = reformatDate(birthDate);
 
   // HANDLER for fields
   const handleFirstNameChange = (
@@ -87,17 +83,9 @@ export default function EditProfileForm({
     setProvince(newProvince);
   };
 
-  // const handleBirthDateChange = (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const newBirthDate = event.target.value;
-  //   setBirthDate(newBirthDate);
-  // };
   const handleBirthDateChange = (newDate: Dayjs | null) => {
     setBirthDate(newDate);
   };
-
-  // const [successModal, setSuccessModal] = useState(false);
 
   const [error, setError] = useState<string>("");
   const router = useRouter();
@@ -110,7 +98,7 @@ export default function EditProfileForm({
     if (firstName && lastName && address && district && province && birthDate) {
       try {
         await updateProfileAction(
-          "550e8400-e29b-41d4-a716-446655440100",
+          userId,
           firstName,
           lastName,
           address,
