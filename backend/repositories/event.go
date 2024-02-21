@@ -21,7 +21,6 @@ type IEventRepository interface {
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
-	// CountParticipantsByEventId(eventId string) (int64, error)
 }
 
 func NewEventRepository(
@@ -139,15 +138,3 @@ func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error
 	}
 	return &event, nil
 }
-
-// // In your event repository or a participant repository (assuming one exists)
-// func (r *EventRepository) CountParticipantsByEventId(eventId string) (int64, error) {
-//     var count int64
-//     // Assuming there's a table or mechanism to track participants
-//     // This is a placeholder query; adjust according to your actual data structure
-//     query := `SELECT COUNT(*) FROM participant_tracking WHERE event_id = ?`
-//     if err := r.db.Raw(query, eventId).Scan(&count).Error; err != nil {
-//         return 0, err
-//     }
-//     return count, nil
-// }
