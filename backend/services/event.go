@@ -105,13 +105,6 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 		if v.EventImage != nil {
 			eventImage = *v.EventImage
 		}
-		announcementreq := &st.GetAnnouncementListsRequest{
-			EventId: v.EventId,
-		}
-		resAnnouncement,err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
-		if err != nil {
-			return nil, err
-		}
 		res := st.GetEventList{
 			EventId:     v.EventId,
 			EventName:   v.EventName,
@@ -122,7 +115,6 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 			EventImage:  eventImage,
 			City:        resLocation.City,
 			District:    resLocation.District,
-			AnnouncementList: resAnnouncement.AnnouncementList,
 		}
 		resLists.EventLists = append(resLists.EventLists, res)
 	}
