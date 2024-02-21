@@ -94,7 +94,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 	resLists := &st.GetEventListsResponse{
 		EventLists: make([]st.GetEventList, 0),
 	}
-	
+
 	for _, v := range resEvents {
 		locationId := v.LocationId
 		resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationById(locationId)
@@ -138,28 +138,28 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	announcementreq := &st.GetAnnouncementListsRequest{
 		EventId: req.EventId,
 	}
-	resAnnouncement,err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
+	resAnnouncement, err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
 	if err != nil {
 		return nil, err
 	}
 	res := &st.GetEventDataByIdResponse{
-		EventId:        resEvent.EventId,
-		OrganizerId:    resEvent.OrganizerId,
-		AdminId:        resEvent.AdminId,
-		LocationId:     resLocation.LocationId,
-		StartDate:      utils.GetDateCalendarFormat(resEvent.StartDate),
-		EndDate:        utils.GetDateCalendarFormat(resEvent.EndDate),
-		Status:         resEvent.Status,
-		ParticipantFee: resEvent.ParticipantFee,
-		Description:    resEvent.Description,
-		EventName:      resEvent.EventName,
-		Deadline:       utils.GetDateCalendarFormat(resEvent.Deadline),
-		Activities:     resEvent.Activities,
-		EventImage:     eventImage,
-		Country:        resLocation.Country,
-		City:           resLocation.City,
-		District:       resLocation.District,
-		LocationName:   resLocation.LocationName,
+		EventId:          resEvent.EventId,
+		OrganizerId:      resEvent.OrganizerId,
+		AdminId:          resEvent.AdminId,
+		LocationId:       resLocation.LocationId,
+		StartDate:        utils.GetDateCalendarFormat(resEvent.StartDate),
+		EndDate:          utils.GetDateCalendarFormat(resEvent.EndDate),
+		Status:           resEvent.Status,
+		ParticipantFee:   resEvent.ParticipantFee,
+		Description:      resEvent.Description,
+		EventName:        resEvent.EventName,
+		Deadline:         utils.GetDateCalendarFormat(resEvent.Deadline),
+		Activities:       resEvent.Activities,
+		EventImage:       eventImage,
+		Country:          resLocation.Country,
+		City:             resLocation.City,
+		District:         resLocation.District,
+		LocationName:     resLocation.LocationName,
 		AnnouncementList: resAnnouncement.AnnouncementList,
 	}
 	return res, nil

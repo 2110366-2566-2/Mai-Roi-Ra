@@ -24,6 +24,7 @@ type User struct {
 	District                 string    `gorm:"column:district;not null" json:"district"`
 	Province                 string    `gorm:"column:province;not null" json:"province"`
 	BannerImage              string    `gorm:"column:banner_image" json:"banner_image"`
+	IsOrganizer              bool      `gorm:"column:is_organizer;not null" json:"is_organizer"`
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
 	Token                    string    `gorm:"column:token" json:"-"` // Excluded from JSON responses
