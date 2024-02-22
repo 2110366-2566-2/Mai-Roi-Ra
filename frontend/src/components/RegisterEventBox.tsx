@@ -31,6 +31,7 @@ interface Event {
 
 export default function RegisterEventBox({ event }: { event: Event }) {
     const { data: session } = useSession();
+    console.log(session)
 
     const handleRegisterEventButton = async () => {
         try {
@@ -141,13 +142,25 @@ export default function RegisterEventBox({ event }: { event: Event }) {
                         <label className="px-1">{event.participant_fee * numberOfGuest} ฿</label>
                     </div>
                 </div>
-                {session && !isRegistrationClosed ? (
+                {session && !session.user.organizer_id && !isRegistrationClosed ? (
                     <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4" onClick={() => { setIsModalOpen(true); }}>
                         Register
                     </button>
                 ) : (
                     <button className="rounded-lg text-center w-full h-full bg-gray-300 text-white p-4 cursor-not-allowed">
-                        {session ? (isRegistrationClosed ? 'The Event has passed' : null) : 'Please Sign in first'}
+                        {session ? 
+                            (session.user.organizer_id ? 
+                                'You are organizer. Only user can register'
+                                : 
+                                (isRegistrationClosed ?
+                                    'The Event has passed' 
+                                    : 
+                                    null
+                                )
+                            )
+                            :
+                            'Please Sign in first'
+                        }
                     </button>
                 )}
             </div>
