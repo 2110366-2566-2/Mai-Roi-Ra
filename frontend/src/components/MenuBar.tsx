@@ -7,9 +7,12 @@ import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+
 
 
 export default function MenuBar() {
+  const {data:session} = useSession()
   const pathname = usePathname(); 
   const router = useRouter();
   console.log(pathname)
@@ -54,9 +57,12 @@ export default function MenuBar() {
         </div>
 
         <div className="p-4 flex justify-center">
-          <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#F2D22E] h-[40px] max-h-[150px] w-[70%]">
-            Logout
-          </button>
+            <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] max-h-[150px] w-[70%]" 
+              onClick={()=>{
+                session ? router.push("/auth/signout") : router.push("/auth/signin")
+                }}>
+              {session ? <>Log out</> : <>Sign in</>}
+            </button>
         </div>
 
     </div>
