@@ -27,3 +27,14 @@ type SendAnnouncementRequest struct {
 type SendAnnounceResponse struct {
 	AnnounceStatus string `json:"announce_status"`
 }
+
+type SendRegisteredEmailRequest struct {
+	UserId      string `json:"user_id"`
+	OrganizerId string `json:"organizer_id"`
+	EventId     string `json:"event_id"`
+	EventName   string `json:"event_name"`
+}
+
+type SendRegisteredEmailResponse struct {
+	SendStatus string `json:"announce_status"`
+}
