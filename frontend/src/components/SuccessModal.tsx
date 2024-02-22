@@ -2,15 +2,16 @@
 import styles from "@/styles/FontPage.module.css"
 import Image from "next/image"
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { Icon } from "@mui/material";
 import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
 import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
+import { useSession } from "next-auth/react";
 
 interface Props {
     id:string
     name:string
     activity:string
-    dateRange:string
+    startDate:string
+    endDate:string
     price:number
     location:string
     district:string
@@ -21,22 +22,23 @@ interface Props {
     isVisible:boolean
 }
 
-const SuccessModal = ({id,name,activity,dateRange,price,location,district,province,description,
+const SuccessModal = ({id,name,activity,startDate,endDate,price,location,district,province,description,
     imageSrc,topic,isVisible} : Props) => {
     if (!isVisible) return null;
-    
+    const session = useSession();
+    console.log(session);
     const handlerClose = async () => {
         if (topic == "Event Created"){
-            await HandleCreateEvent(name, activity, dateRange, price? price : 0, location, district, province, description, imageSrc);
+            await HandleCreateEvent(name, activity, startDate, endDate, price? price : 0, location, district, province, description, imageSrc);
         } else {
-            await HandleUpdateEvent(id,name, activity, dateRange, price, location, district, province, description, imageSrc);
+            await HandleUpdateEvent(id,name, activity, startDate, endDate, price, location, district, province, description, imageSrc);
         }
     }
 
     return (
         <div className="w-screen h-screen fixed inset-0 flex flex-row justify-center items-center 
         bg-opacity-25 bg-black">
-            <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[15px] px-[15px] z-20">
+            <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[15px] px-[15px] z-40">
                 <div className="relative top-[-5px] right-[-5px] text-end">
                     <CancelOutlinedIcon className="text-3xl icon-large cursor-pointer" onClick={handlerClose}/>
                 </div>
@@ -47,7 +49,7 @@ const SuccessModal = ({id,name,activity,dateRange,price,location,district,provin
                 </div>
 
                 <div className="w-full flex justify-center mt-[40px]">
-                    <Image className="lg:w-[250px] lg:h-[220px] md:w-[222px] md:h-[189px] w-[180px] h-[150px]"
+                    <Image className="lg:w-[220px] lg:h-[200px] md:w-[200px] md:h-[170px] sm:w-[120px] sm:h-[120px]"
                     src="/img/true.png"
                     alt="Failed To Load Image"
                     width={1000}

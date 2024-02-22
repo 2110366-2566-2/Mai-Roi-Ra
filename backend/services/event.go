@@ -39,7 +39,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	if err != nil {
 		return nil, err
 	}
-	resAdmin, err := s.RepositoryGateway.AdminRepository.GetRandomAdmin()
+	resAdmin, err := s.RepositoryGateway.UserRepository.GetRandomAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	eventModel := models.Event{
 		EventId:        utils.GenerateUUID(),
 		OrganizerId:    req.OrganizerId,
-		AdminId:        resAdmin.AdminId,
+		UserId:         resAdmin.UserID,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -94,6 +94,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 	resLists := &st.GetEventListsResponse{
 		EventLists: make([]st.GetEventList, 0),
 	}
+
 	for _, v := range resEvents {
 		locationId := v.LocationId
 		resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationById(locationId)
@@ -134,24 +135,33 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if resEvent.EventImage != nil {
 		eventImage = *resEvent.EventImage
 	}
+	announcementreq := &st.GetAnnouncementListsRequest{
+		EventId: req.EventId,
+	}
+	resAnnouncement, err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
+	if err != nil {
+		return nil, err
+	}
 	res := &st.GetEventDataByIdResponse{
-		EventId:        resEvent.EventId,
-		OrganizerId:    resEvent.OrganizerId,
-		AdminId:        resEvent.AdminId,
-		LocationId:     resLocation.LocationId,
-		StartDate:      utils.GetDateCalendarFormat(resEvent.StartDate),
-		EndDate:        utils.GetDateCalendarFormat(resEvent.EndDate),
-		Status:         resEvent.Status,
-		ParticipantFee: resEvent.ParticipantFee,
-		Description:    resEvent.Description,
-		EventName:      resEvent.EventName,
-		Deadline:       utils.GetDateCalendarFormat(resEvent.Deadline),
-		Activities:     resEvent.Activities,
-		EventImage:     eventImage,
-		Country:        resLocation.Country,
-		City:           resLocation.City,
-		District:       resLocation.District,
-		LocationName:   resLocation.LocationName,
+		EventId:          resEvent.EventId,
+		OrganizerId:      resEvent.OrganizerId,
+		UserId:           resEvent.UserId,
+		LocationId:       resLocation.LocationId,
+		StartDate:        utils.GetDateCalendarFormat(resEvent.StartDate),
+		EndDate:          utils.GetDateCalendarFormat(resEvent.EndDate),
+		Status:           resEvent.Status,
+		ParticipantFee:   resEvent.ParticipantFee,
+		Description:      resEvent.Description,
+		EventName:        resEvent.EventName,
+		Deadline:         utils.GetDateCalendarFormat(resEvent.Deadline),
+		Activities:       resEvent.Activities,
+		EventImage:       eventImage,
+		Country:          resLocation.Country,
+		City:             resLocation.City,
+		District:         resLocation.District,
+		LocationName:     resLocation.LocationName,
+		ParticipantCount: resEvent.ParticipantCount,
+		AnnouncementList: resAnnouncement.AnnouncementList,
 	}
 	return res, nil
 }
@@ -206,7 +216,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
-		AdminId:        resEvent.AdminId,
+		UserId:         resEvent.UserId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
