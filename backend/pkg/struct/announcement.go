@@ -38,3 +38,16 @@ type SendRegisteredEmailRequest struct {
 type SendRegisteredEmailResponse struct {
 	SendStatus string `json:"announce_status"`
 }
+
+type SendReminderEmailRequest struct {
+	UserId      string `json:"user_id"`
+	OrganizerId string `json:"organizer_id"`
+	EventId     string `json:"event_id"`
+	EventName   string `json:"event_name"`
+	EventDate	string `json:"event_date"`
+	EventLocation string `json:"event_location"`
+}
+
+type SendReminderEmailResponse struct {
+	SendStatus string `json:"announce_status"`
+}
