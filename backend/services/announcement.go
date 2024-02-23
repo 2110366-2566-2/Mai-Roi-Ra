@@ -277,7 +277,7 @@ if err = sender.SendEmail("Register Event Successful!", "", contentHTML, to, cc,
 }
 
 func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest) (*st.SendReminderEmailResponse, error) {
-	log.Println("[Service: SendRegisteredEmail]: Called")
+	log.Println("[Service: SendReminderEmail]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
@@ -388,7 +388,7 @@ if err = sender.SendEmail("Reminder of Event Tomorrow", "", contentHTML, to, cc,
 }
 
 func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.SendCancelledEmailResponse, error) {
-	log.Println("[Service: SendRegisteredEmail]: Called")
+	log.Println("[Service: SendCancelledEmail]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
