@@ -12,13 +12,14 @@ type Repository struct {
 // RepositoryGateway ...
 type RepositoryGateway struct {
 	dig.In
-	TestRepository        ITestRepository
-	EventRepository       IEventRepository
-	UserRepository        IUserRepository
-	LocationRepository    ILocationRepository
-	AdminRepository       IAdminRepository
-	OrganizerRepository   IOrganizerRepository
-	ParticipateRepository IParticipateRepository
+	TestRepository         ITestRepository
+	EventRepository        IEventRepository
+	UserRepository         IUserRepository
+	LocationRepository     ILocationRepository
+	AdminRepository        IAdminRepository
+	OrganizerRepository    IOrganizerRepository
+	ParticipateRepository  IParticipateRepository
+	AnnouncementRepository IAnnouncementRepository
 }
 
 // NewRepository ...

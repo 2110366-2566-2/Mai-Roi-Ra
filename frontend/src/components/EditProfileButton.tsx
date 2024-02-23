@@ -1,9 +1,31 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { useState } from "react";
+import updateEnableNotification from "@/libs/updateEnableNotification";
 
-export default function EditProfileButton() {
+interface Props {
+  isEnableNotificationProp: boolean;
+}
+
+export default function EditProfileButton({ isEnableNotificationProp }: Props) {
   const router = useRouter();
+
+  const [isChecked, setIsChecked] = useState(isEnableNotificationProp);
+
+  const [error, setError] = useState<string>("");
+
+  const handleCheckboxChange = async () => {
+    setIsChecked(!isChecked);
+    try {
+      await updateEnableNotification("550e8400-e29b-41d4-a716-446655440100");
+      setError("");
+    } catch (err) {
+      setError("Update enable notification error. Server Failed ?");
+      console.log("Err: ", err);
+    }
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -19,6 +41,21 @@ export default function EditProfileButton() {
         >
           Edit Profile
         </button>
+      </div>
+      <div className="text-blue-500 absolute bottom-2 right-0 m-10">
+        <div className="inline-flex items-center">
+          <IoIosNotificationsOutline className="text-gray-800 text-xl mr-1" />
+          <span className="text-gray-800 text-sm mr-2">Notification</span>
+          <label className="cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={handleCheckboxChange}
+              className="sr-only peer"
+            />
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+          </label>
+        </div>
       </div>
     </div>
   );

@@ -280,14 +280,14 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		return nil
 	}
 
-	err = c.Invoke(func(participateController *controllers.ParticipateController) {
-		r.POST("/api/v1/send-announcement", func(ctx *gin.Context) {
+	err = c.Invoke(func(announcementController *controllers.AnnouncementController) {
+		r.POST("/api/v1/announcement", func(ctx *gin.Context) {
 			var req st.SendAnnouncementRequest
 			if err := ctx.ShouldBindJSON(&req); err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			participateController.SendAnnouncement(ctx, &req)
+			announcementController.SendAnnouncement(ctx, &req)
 		})
 	})
 

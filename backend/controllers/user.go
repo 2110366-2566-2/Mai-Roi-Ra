@@ -119,7 +119,7 @@ func (c *UserController) GetUserByUserId(ctx *gin.Context, req *st.GetUserByUser
 // @Accept json
 // @Produce json
 // @Param request body structure.LoginUserRequest true "Log in a user" example:{"email":"user1@example.com","phone_number":"1234567890","password":""}
-// @Success 200 {object} models.User
+// @Success 200 {object} structure.LoginUserResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /login [post]

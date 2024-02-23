@@ -3,11 +3,15 @@ import React from "react";
 import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import getProfile from "@/libs/getProfile";
-// import UpdateProfile from "@/components/admin/UpdateProfile";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export default async function EditProfile() {
-  const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-  console.log(profile);
+  // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
+
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.token) return null;
+  const profile = session ? await getProfile(session.user.user_id) : null;
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white p-8">
@@ -36,6 +40,7 @@ export default async function EditProfile() {
           phoneNumberProp={profile.phone_number}
           emailProp={profile.email}
           birthDateProp={profile.birth_date}
+          userId={session.user.user_id}
         ></EditProfileForm>
       </div>
     </div>
