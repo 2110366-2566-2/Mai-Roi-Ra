@@ -124,11 +124,7 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 
 func (s *EventService) GetEventListsByEndDate(req *st.GetEventListsByEndDateRequest) (*st.GetEventListsByEndDateResponse, error) {
 	log.Println("[Service: GetEventListsByEndDate]: Called")
-	endDate,err := utils.StringToTime(req.EndDate)
-	if err != nil {
-		return nil, err
-	}
-	resEvents, err := s.RepositoryGateway.EventRepository.GetEventListsByEndDate(endDate)
+	resEvents, err := s.RepositoryGateway.EventRepository.GetEventListsByEndDate(req.EndDate)
 	if err != nil {
 		return nil, err
 	}

@@ -36,7 +36,7 @@ func SendReminderEmail() error {
 	EventService := service.NewEventService(repository.RepositoryGateway{})					//Initialize ไงวะ
 
 	reqEvent := &st.GetEventListsByEndDateRequest{
-		EndDate: Tomorrow.String(),
+		EndDate: Tomorrow.Format("2006-01-02"),
 	}
 	resEvents,err := EventService.GetEventListsByEndDate(reqEvent)
 	if err != nil {
