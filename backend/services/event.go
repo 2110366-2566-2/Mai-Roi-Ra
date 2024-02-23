@@ -247,6 +247,32 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 		return nil, err
 	}
 
+	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	if err != nil {
+		return nil, err
+	}
+	announcementService := NewAnnouncementService(s.RepositoryGateway)
+	reqparticipate := &st.GetParticipantListsRequest{
+		EventId: req.EventId,
+	}
+	resparticipate,err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
+	if err != nil {
+		return nil, err
+	}
+
+	for _,v := range resparticipate{
+		reqcancelled := &st.SendCancelledEmailRequest{
+			UserId:      v.UserId,
+			EventId:	 resevent.EventId,	
+			EventName:   resevent.EventName,
+			EventDate:   resevent.EndDate.String(),
+		}
+		if _,err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
+			log.Println("[Service: Call SendCancelledEmail]:", err)
+			return nil, err
+		}
+	}
+
 	return deleteMessage, nil
 }
 

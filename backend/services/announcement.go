@@ -18,6 +18,7 @@ type IAnnouncementService interface {
 	SendAnnouncement(req *st.SendAnnouncementRequest) (*st.SendAnnounceResponse, error)
 	SendRegisteredEmail(req *st.SendRegisteredEmailRequest) (*st.SendRegisteredEmailResponse, error)
 	SendReminderEmail(req *st.SendReminderEmailRequest) (*st.SendReminderEmailResponse, error)
+	SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.SendCancelledEmailResponse, error)
 }
 
 func NewAnnouncementService(
@@ -368,10 +369,10 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 		<p>. Date: %s</p>
 		<p>. Location: %s</p>
 		<p>Please ensure that you have everything you need for the event. If there are any last-minute preparations or questions you have, don't hesitate to reach out to us at %s. We're here to assist you and make sure you have a smooth and enjoyable experience.</p>
-		<p class="signature">Best regards,<br>%s %s(Organizer),<br>Mai-Roi-Ra team</p>
+		<p class="signature">Best regards,<br><br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`,req.EventDate, req.EventName, req.EventDate,req.EventLocation,*orgRes.PhoneNumber,orgRes.FirstName,orgRes.LastName)
+	`,req.EventDate, req.EventName, req.EventDate,req.EventLocation,*orgRes.PhoneNumber)
 
 	// Insert image
 	attachFiles = append(attachFiles, eventImage)
@@ -382,6 +383,99 @@ if err = sender.SendEmail("Reminder of Event Tomorrow", "", contentHTML, to, cc,
 }
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
 	return &st.SendReminderEmailResponse{
+		SendStatus: res,
+	}, nil
+}
+
+func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.SendCancelledEmailResponse, error) {
+	log.Println("[Service: SendRegisteredEmail]: Called")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return nil, err
+	}
+	log.Println("Config path from Gmail:", cfg)
+
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+	to := make([]string, 0)
+	cc := make([]string, 0)
+	bcc := make([]string, 0)
+	attachFiles := make([]string, 0)
+
+	status, userEmail, err := s.RepositoryGateway.UserRepository.IsEnableNotification(req.UserId)
+	if err != nil || status == nil {
+		return nil, err
+	}
+	isEnableNotification := *status
+	email := ""
+	if userEmail != nil {
+		email = *userEmail
+	}
+
+	if isEnableNotification && email != "" {
+		to = append(to, email)
+	} else {
+		return nil, err
+	}
+
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	if err != nil {
+		return nil, err
+	}
+
+	eventImage := ""
+	if resEvent.EventImage != nil {
+		eventImage = *resEvent.EventImage
+	}
+
+	contentHTML := fmt.Sprintf(`
+	<html>
+	<head>
+		<style>
+			body {
+    			font-family: Arial, sans-serif;
+    			font-size: 16px;
+    			line-height: 1.6;
+    			margin: 40px auto;
+    			max-width: 600px;
+    			color: #333333;
+			}
+			h3 {
+			    font-size: 24px;
+ 				margin-bottom: 20px;
+    			color: #333333;
+			}
+			p {
+    			margin-bottom: 20px;
+    			color: #666666;
+			}
+			.signature {
+    			margin-top: 20px;
+    			font-style: italic;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Dear participants,</h3>
+		<p>We regret to inform you that %s, scheduled for %s, has been canceled. We understand the inconvenience this may cause and sincerely apologize for any disruption to your plans.</p>
+  		<p>We understand that this news may be disappointing, especially after the anticipation leading up to the event. Please know that this decision was not taken lightly, and we explored all possible alternatives before reaching this conclusion.</p>
+  		<p>Once again, we apologize for any inconvenience caused and thank you for your understanding and support during this challenging time.</p>
+		<p class="signature">Best regards,<br><br>Mai-Roi-Ra team</p>
+	</body>
+	</html>
+	`,req.EventName, req.EventDate)
+
+	// Insert image
+	attachFiles = append(attachFiles, eventImage)
+	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
+
+if err = sender.SendEmail("Event Cancelled", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+	return nil, err
+}
+	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
+	return &st.SendCancelledEmailResponse{
 		SendStatus: res,
 	}, nil
 }
