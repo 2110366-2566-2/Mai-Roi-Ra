@@ -289,6 +289,30 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			announcementController.SendAnnouncement(ctx, &req)
 		})
+		r.POST("/api/v1/registeredemail", func(ctx *gin.Context) {
+			var req st.SendRegisteredEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			announcementController.SendRegisteredEmail(ctx, &req)
+		})
+		r.POST("/api/v1/reminderemail", func(ctx *gin.Context) {
+			var req st.SendReminderEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			announcementController.SendReminderEmail(ctx, &req)
+		})
+		r.POST("/api/v1/cancelledemail", func(ctx *gin.Context) {
+			var req st.SendCancelledEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			announcementController.SendCancelledEmail(ctx, &req)
+		})
 	})
 
 	if err != nil {
