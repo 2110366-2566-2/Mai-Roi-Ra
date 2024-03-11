@@ -29,7 +29,7 @@ export default async function EventDetailPage({ params }: Props) {
                             />
                         </div>
                         <div className="w-full lg:w-[750px] mt-4 border-b border-slate-300 pb-4">
-                            <h2 className=" text-lg font-semibold">Description</h2>
+                            <h2 className=" text-lg font-semibold">Description <label className="font-normal text-slate-500 mx-3">|</label><label className="font-normal text-slate-500 ml-2">{event.activities}</label></h2>
                             <p className="text-lg text-gray-800">
                                 {event.description}
                             </p>
@@ -46,7 +46,7 @@ export default async function EventDetailPage({ params }: Props) {
                                 />
                             </div>
                             <div className="flex flex-col items-start">
-                                <label className="font-semibold">{'ลุงสุรินทร์'}</label>
+                                <label className="font-semibold">{event.organizer_id}</label>
                                 <label className="text-md text-slate-600">Hosted {8} Events</label>
                             </div>
                         </div>
