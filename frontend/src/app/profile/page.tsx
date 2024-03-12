@@ -6,11 +6,13 @@ import getProfile from "@/libs/getProfile";
 import EditProfileButton from "@/components/EditProfileButton";
 import { revalidateTag } from "next/cache";
 import ProfileUserInformation from "@/components/ProfileUserInformation";
-import getMyEvents from "@/libs/getMyEvents";
+import getMyOrganizerEvents from "@/libs/getMyOrganizerEvents";
+import getMyUserEvents from "@/libs/getMyUserEvents";
 import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import EventsList from "@/components/EventsList";
 
 export default async function Profile() {
   // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
@@ -23,10 +25,18 @@ export default async function Profile() {
   if (!session || !session.user || !session.user.token) return null;
   const profile = session ? await getProfile(session.user.user_id) : null;
 
-  const events = session ? await getMyEvents(session.user.organizer_id) : null;
-  const datas = events.event_lists;
-
-  console.log(session);
+  let events;
+  let datas;
+  let role;
+  if (session.user.organizer_id?.length == 0) {
+    events = await getMyUserEvents(session.user.user_id);
+    datas = events?.event_list;
+    role = "USER";
+  } else {
+    events = await getMyOrganizerEvents(session.user.organizer_id);
+    datas = events?.event_lists;
+    role = "ORGANIZER";
+  }
 
   return (
     <div className="bg-white text-black h-full">
@@ -92,7 +102,9 @@ export default async function Profile() {
             </button>
           </div>
         </div>
+        <EventsList datas={datas} role={role}></EventsList>
 
+        {/* BELOW CODE HAS BEEN MOVED TO <EventsList/>
         <div className="mt-8 px-10">
           {datas.map((eventItem: any) => (
             <EventItem
@@ -124,7 +136,7 @@ export default async function Profile() {
               Add events
             </button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
