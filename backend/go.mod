@@ -21,7 +21,7 @@ require (
 	gorm.io/gorm v1.25.6
 )
 
-require github.com/robfig/cron/v3 v3.0.1 // indirect
+require github.com/robfig/cron/v3 v3.0.1
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
@@ -40,7 +40,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.17.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
