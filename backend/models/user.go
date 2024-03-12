@@ -25,6 +25,7 @@ type User struct {
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
 	Token                    string    `gorm:"column:token" json:"-"` // Excluded from JSON responses
+	IsEmailVerified          bool      `gorm:"column:is_email_verified;not null;default:false" json:"is_email_verified"`
 }
 
 func (User) TableName() string {

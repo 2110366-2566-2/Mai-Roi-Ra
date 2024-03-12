@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS users (
     role account_type NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
+    is_email_verified BOOLEAN NOT NULL DEFAULT FALSE, 
     PRIMARY KEY (user_id)
 );
 
@@ -141,4 +142,14 @@ CREATE TABLE IF NOT EXISTS reviews (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     CONSTRAINT fk_event FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS verify_emails (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR NOT NULL REFERENCES users(username),
+    email VARCHAR NOT NULL,
+    secret_code VARCHAR NOT NULL,
+    is_used BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    expired_at TIMESTAMPTZ NOT NULL DEFAULT (now() + INTERVAL '15 minutes')
 );
