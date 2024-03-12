@@ -4,29 +4,27 @@ export default async function createAnnouncement(
     event_id: string,
     name: string,
     header: string,
-    description: string
+    content: string,
+    token: string
 ) {
     try {
-        console.log(event_id,name,header,description);
+        console.log(event_id,name,header,content);
         const jsonBody = JSON.stringify({
+            "content" : content,
             "event_id" : event_id,
             "event_name" : name,
-            "subject" : header,
-            "content" : description
+            "subject" : header
         });
-
-        console.log(jsonBody);
 
         const response = await fetch(`${apiBackUrl}/announcement`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },
             body: jsonBody,
         });
 
-        console.log(jsonBody);
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(

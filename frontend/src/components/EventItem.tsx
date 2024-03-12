@@ -43,7 +43,8 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
   });
 
   return (
-    <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full"
+    <div>
+      <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-105 duration-300"
     onClick={(e) => {
       e.stopPropagation();
       e.preventDefault();
@@ -102,7 +103,8 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
 
 
         </div>
-        <AnnouncementPopup isVisible={showModal} onClose={()=>setShowModal(false)} id={id} name={name}/>
+      </div>
+      <AnnouncementPopup isVisible={showModal} onClose={()=>setShowModal(false)} id={id} name={name}/>
     </div>
   );
 };
