@@ -3,20 +3,27 @@
 import { useState } from 'react';
 import Modal from './Modal';
 import GroupsIcon from '@mui/icons-material/Groups';
+import ParticipantProfileModal from './ParticipantProfileModal';
 
 
 export default function ParticipantListModal({ participants, numParticipants }: { participants: any, numParticipants: any }) {
     const [showModal, setShowModal] = useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const openModal = () => {
         setShowModal(true);
     }
     const closeModal = () => {
         setShowModal(false);
     }
+    const openProfileModal = () => { setIsProfileModalOpen(true) }
+    const closeProfileModal = () => { setIsProfileModalOpen(false) }
     console.log(participants)
 
     return (
         <div className="flex flex-col justify-center items-center pt-8">
+            <Modal isOpen={isProfileModalOpen} closeModal={closeProfileModal}>
+                123
+            </Modal>
             <Modal isOpen={showModal} closeModal={closeModal}
                 style={'absolute right-0 mr-16 top-1/2 transform -translate-y-1/2 w-[400px] h-[450px]'}
                 isNotRound={true}
@@ -30,7 +37,8 @@ export default function ParticipantListModal({ participants, numParticipants }: 
                 </button>
                 <div className=''>
                     {participants.participant_list.map((item: any) => (
-                        <div key={item.username} className="flex items-center space-x-4 border-b border-gray-200 justify-between py-4 hover:bg-gray-200 px-4">
+                        <div key={item.username} className="flex items-center space-x-4 border-b border-gray-200 justify-between py-4 hover:bg-gray-200 px-4"
+                            onClick={()=>{setIsProfileModalOpen(true)}}>
                             <div className="flex items-center w-full">
                                 <img className="w-12 h-12 rounded-full object-cover" src={item.user_image} alt={`${item.first_name} ${item.last_name}`} />
                                 <div className="flex flex-col ml-3"> {/* Added flex-col class */}
