@@ -278,13 +278,6 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Service: DeleteEvent]: Called")
 
-	// Delete the event using the repository
-	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
-	if err != nil {
-		log.Println("[Service: DeleteEvent] Error deleting event:", err)
-		return nil, err
-	}
-
 	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	if err != nil {
 		return nil, err
@@ -309,6 +302,13 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 			log.Println("[Service: Call SendCancelledEmail]:", err)
 			return nil, err
 		}
+	}
+
+	// Delete the event using the repository
+	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
+	if err != nil {
+		log.Println("[Service: DeleteEvent] Error deleting event:", err)
+		return nil, err
 	}
 
 	return deleteMessage, nil
