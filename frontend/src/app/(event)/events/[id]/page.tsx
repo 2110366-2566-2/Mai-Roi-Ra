@@ -5,10 +5,12 @@ import RegisterEventBox from "@/components/RegisterEventBox";
 import RouterBackEventButton from "@/components/RouterBackEventButton";
 import GroupsIcon from '@mui/icons-material/Groups';
 import getEventParticipants from "@/libs/getEventParticipants";
+import ParticipantListModal from "@/components/ParticipantListModal";
 
 interface Props {
     params: {id:string}
 }
+
 
 export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
@@ -63,15 +65,7 @@ export default async function EventDetailPage({ params }: Props) {
                     </div>
                     <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
                         <RegisterEventBox event={event}/>
-                        <div className="flex flex-col justify-center items-center pt-8">
-                            <div>
-                                <GroupsIcon className="text-3xl mr-4"/>
-                                {numParticipants}
-                            </div>
-                            <button className="bg-[#F2D22E] hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded my-3">
-                                Participants
-                            </button>
-                        </div>
+                        <ParticipantListModal participants={participants} numParticipants={numParticipants} />
                     </div>
                 </div>
             </div>

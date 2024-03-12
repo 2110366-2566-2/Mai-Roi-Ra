@@ -90,7 +90,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
 
     return (
         <>
-            <Modal isOpen={isModalOpen} closeModal={closeModal} title="Are you sure to register to this event?">
+            <Modal isOpen={isModalOpen} closeModal={closeModal} title="Are you sure to register to this event?" style={null}>
                 <p>The Registeration cannot be cancel in the future.</p>
                 <div className='w-full flex justify-between'>
                     <button
