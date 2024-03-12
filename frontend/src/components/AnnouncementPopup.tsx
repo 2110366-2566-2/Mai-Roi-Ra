@@ -53,8 +53,8 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
             return;
         }
         setError(0);
-        await HandleCreateAnnouncement(id,name,subject,content);
         handleClose();
+        await HandleCreateAnnouncement(id,name,subject,content);
     }
 
     if (!isVisible) return null;
