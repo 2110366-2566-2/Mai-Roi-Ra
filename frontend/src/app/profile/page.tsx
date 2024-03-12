@@ -67,6 +67,7 @@ export default async function Profile() {
             ></ProfileUserInformation>
             <EditProfileButton
               isEnableNotificationProp={profile.is_enable_notification}
+              userIDProp={session.user.user_id}
             ></EditProfileButton>
           </div>
         </div>

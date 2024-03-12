@@ -7,9 +7,13 @@ import updateEnableNotification from "@/libs/updateEnableNotification";
 
 interface Props {
   isEnableNotificationProp: boolean;
+  userIDProp: string;
 }
 
-export default function EditProfileButton({ isEnableNotificationProp }: Props) {
+export default function EditProfileButton({
+  isEnableNotificationProp,
+  userIDProp,
+}: Props) {
   const router = useRouter();
 
   const [isChecked, setIsChecked] = useState(isEnableNotificationProp);
@@ -19,7 +23,7 @@ export default function EditProfileButton({ isEnableNotificationProp }: Props) {
   const handleCheckboxChange = async () => {
     setIsChecked(!isChecked);
     try {
-      await updateEnableNotification("550e8400-e29b-41d4-a716-446655440100");
+      await updateEnableNotification(userIDProp);
       setError("");
     } catch (err) {
       setError("Update enable notification error. Server Failed ?");
