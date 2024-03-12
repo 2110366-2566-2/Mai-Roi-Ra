@@ -4,13 +4,14 @@ import { Fragment } from "react";
 type ModalProps = {
   isOpen: boolean;
   closeModal: () => void;
-  title: string;
+  title: string | null;
   children: React.ReactNode; // for the main content of the modal
   footerContent?: React.ReactNode; // optional footer content (like buttons)
   style: string;
   modalsize: string;
   isNotRound: boolean;
   canScroll: boolean;
+  MarginTop : string;
 };
 
 export default function Modal({
@@ -22,11 +23,12 @@ export default function Modal({
   style,
   modalsize,
   isNotRound,
-  canScroll
+  canScroll,
+  MarginTop
 }: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as="div" className="relative z-10" onClose={()=>null}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -57,7 +59,7 @@ export default function Modal({
                 >
                   {title}
                 </Dialog.Title> : null}
-                <div className="mt-2">{children}</div>
+                <div className={`mt-2 ${MarginTop}`}>{children}</div>
 
                 {footerContent && <div className="mt-4">{footerContent}</div>}
               </Dialog.Panel>

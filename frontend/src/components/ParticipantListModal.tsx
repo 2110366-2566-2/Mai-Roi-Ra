@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Modal from './Modal';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ParticipantProfileModal from './ParticipantProfileModal';
+import Image from "next/image";
+import ProfileUserInformation from './ProfileUserInformation';
 
 
 export default function ParticipantListModal({ participants, numParticipants }: { participants: any, numParticipants: any }) {
@@ -21,14 +23,18 @@ export default function ParticipantListModal({ participants, numParticipants }: 
 
     return (
         <div className="flex flex-col justify-center items-center pt-8">
-            <Modal isOpen={isProfileModalOpen} closeModal={closeProfileModal}>
-                123
-            </Modal>
+            <ParticipantProfileModal 
+                user_id={''} 
+                isProfileModalOpen={isProfileModalOpen} 
+                closeProfileModal={closeProfileModal}
+            />
             <Modal isOpen={showModal} closeModal={closeModal}
                 style={'absolute right-0 mr-16 top-1/2 transform -translate-y-1/2 w-[400px] h-[450px]'}
                 isNotRound={true}
                 modalsize='w-[400px] h-[450px] !px-0'
                 canScroll={true}
+                title={null}
+                MarginTop=''
             >
                 <button onClick={closeModal} className="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-800">
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +44,7 @@ export default function ParticipantListModal({ participants, numParticipants }: 
                 <div className=''>
                     {participants.participant_list.map((item: any) => (
                         <div key={item.username} className="flex items-center space-x-4 border-b border-gray-200 justify-between py-4 hover:bg-gray-200 px-4"
-                            onClick={()=>{setIsProfileModalOpen(true)}}>
+                            onClick={() => { setIsProfileModalOpen(true) }}>
                             <div className="flex items-center w-full">
                                 <img className="w-12 h-12 rounded-full object-cover" src={item.user_image} alt={`${item.first_name} ${item.last_name}`} />
                                 <div className="flex flex-col ml-3"> {/* Added flex-col class */}
