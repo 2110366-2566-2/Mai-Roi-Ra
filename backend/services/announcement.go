@@ -3,10 +3,13 @@ package services
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 )
 
@@ -163,6 +166,18 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 		return nil, err
 	}
 
+	announceModel := &models.Announcement{
+		AnnouncementId: utils.GenerateUUID(),
+		EventId:        req.EventId,
+		Header:         req.Subject,
+		Description:    req.Content,
+		CreatedAt:      time.Now(),
+	}
+
+	if err = s.RepositoryGateway.AnnouncementRepository.CreateAnnouncement(announceModel); err != nil {
+		return nil, err
+	}
+
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
 	return &st.SendAnnounceResponse{
 		AnnounceStatus: res,
@@ -267,9 +282,9 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
-if err = sender.SendEmail("Register Event Successful!", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-	return nil, err
-}
+	if err = sender.SendEmail("Register Event Successful!", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		return nil, err
+	}
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
 	return &st.SendRegisteredEmailResponse{
 		SendStatus: res,
@@ -372,15 +387,15 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 		<p class="signature">Best regards,<br><br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`,req.EventDate, req.EventName, req.EventDate,req.EventLocation,*orgRes.PhoneNumber)
+	`, req.EventDate, req.EventName, req.EventDate, req.EventLocation, *orgRes.PhoneNumber)
 
 	// Insert image
 	attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
-if err = sender.SendEmail("Reminder of Event Tomorrow", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-	return nil, err
-}
+	if err = sender.SendEmail("Reminder of Event Tomorrow", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		return nil, err
+	}
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
 	return &st.SendReminderEmailResponse{
 		SendStatus: res,
@@ -465,15 +480,15 @@ func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailReque
 		<p class="signature">Best regards,<br><br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`,req.EventName, req.EventDate)
+	`, req.EventName, req.EventDate)
 
 	// Insert image
 	attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
-if err = sender.SendEmail("Event Cancelled", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-	return nil, err
-}
+	if err = sender.SendEmail("Event Cancelled", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		return nil, err
+	}
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
 	return &st.SendCancelledEmailResponse{
 		SendStatus: res,
