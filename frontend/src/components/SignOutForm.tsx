@@ -14,7 +14,8 @@ export default function SignOut() {
             // setTimeout(() => {
             //     window.location.reload();
             // }, 1000);
-        } router.back();
+        }
+        router.push('/');
     };
 
     return (

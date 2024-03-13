@@ -10,3 +10,7 @@ type Announcement struct {
 	CreatedAt      time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt      time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
+
+func (Announcement) TableName() string {
+	return "announcements"
+}

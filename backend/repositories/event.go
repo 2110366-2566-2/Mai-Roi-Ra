@@ -18,6 +18,7 @@ type EventRepository struct {
 type IEventRepository interface {
 	CreateEvent(req *models.Event) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
+	GetEventListsByEndDate(endDate string) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
@@ -128,6 +129,16 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 		return nil, err
 	}
 	return eventLists, nil
+}
+
+func (r *EventRepository) GetEventListsByEndDate(endDate string) ([]*models.Event, error) {
+    log.Println("[Repo: GetEventListsByEndDate] Called")
+    var eventLists []*models.Event
+    if err := r.db.Where("DATE_FORMAT(end_date, '%Y-%m-%d') = ?", endDate).Find(&eventLists).Error; err != nil {
+        log.Println("[Repo: GetEventListsByEndDate]: cannot query the events:", err)
+        return nil, err
+    }
+    return eventLists, nil
 }
 
 func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error) {
