@@ -231,6 +231,7 @@ func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*
 		}
 
 		particiapant := st.Participant{
+			UserId: 		tmpUser.UserID,
 			Username:       tmpUser.Username,
 			FirstName:      tmpUser.FirstName,
 			LastName:       tmpUser.LastName,

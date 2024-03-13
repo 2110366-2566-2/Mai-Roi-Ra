@@ -10,13 +10,22 @@ import (
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/token"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/dig"
 )
 
+type routers struct {
+	tokenMaker token.Maker
+}
+
 func SetupRouter(c *dig.Container) *gin.Engine {
+	// tokenMaker , err := token.NewPasetoMaker("")
+	// if err != nil {
+	// 	return nil , fmt.Errorf("cannot create token maker : %w" , err)
+	// }
 	r := gin.Default()
 	auth := r.Group("", middleware.Authentication(c)) //use auth instead of r if that api want authentication
 
@@ -207,7 +216,6 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		// 	userController.DeleteUser(ctx, &req)
 		// })
 
-		// login/logout is here
 		r.PUT("/api/v1/users/notification", func(ctx *gin.Context) {
 			req := st.GetUserByUserIdRequest{
 				UserId: ctx.Query("user_id"),
@@ -288,6 +296,30 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 				return
 			}
 			announcementController.SendAnnouncement(ctx, &req)
+		})
+		r.POST("/api/v1/registeredemail", func(ctx *gin.Context) {
+			var req st.SendRegisteredEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			announcementController.SendRegisteredEmail(ctx, &req)
+		})
+		r.POST("/api/v1/reminderemail", func(ctx *gin.Context) {
+			var req st.SendReminderEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			announcementController.SendReminderEmail(ctx, &req)
+		})
+		r.POST("/api/v1/cancelledemail", func(ctx *gin.Context) {
+			var req st.SendCancelledEmailRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			announcementController.SendCancelledEmail(ctx, &req)
 		})
 	})
 
