@@ -19,7 +19,7 @@ type EventService struct {
 type IEventService interface {
 	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error)
-	GetEventListsByEndDate(req *st.GetEventListsByEndDateRequest) (*st.GetEventListsByEndDateResponse, error)
+	GetEventListsByStartDate(req *st.GetEventListsByStartDateRequest) (*st.GetEventListsByStartDateResponse, error)
 	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
@@ -122,20 +122,18 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 	return resLists, nil
 }
 
-func (s *EventService) GetEventListsByEndDate(req *st.GetEventListsByEndDateRequest) (*st.GetEventListsByEndDateResponse, error) {
-	log.Println("[Service: GetEventListsByEndDate]: Called")
-	resEvents, err := s.RepositoryGateway.EventRepository.GetEventListsByEndDate(req.EndDate)
+func (s *EventService) GetEventListsByStartDate(req *st.GetEventListsByStartDateRequest) (*st.GetEventListsByStartDateResponse, error) {
+	log.Println("[Service: GetEventListsByStartDate]: Called")
+	resEvents, err := s.RepositoryGateway.EventRepository.GetEventListsByStartDate(req.StartDate)
 	if err != nil {
 		return nil, err
 	}
-	log.Println("[Service: GetEventListsByEndDate]: resEvents:", resEvents)
-	resLists := &st.GetEventListsByEndDateResponse{
-		EventLists: make([]st.GetEventListByEndDate, 0),
+	log.Println("[Service: GetEventListsByStartDate]: resEvents:", resEvents)
+	resLists := &st.GetEventListsByStartDateResponse{
+		EventLists: make([]st.GetEventListByStartDate, 0),
 	}
-
 	for _, v := range resEvents {
-		locationId := v.LocationId
-		resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationById(locationId)
+		resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationById(v.LocationId)
 		if err != nil {
 			return nil, err
 		}
@@ -143,7 +141,7 @@ func (s *EventService) GetEventListsByEndDate(req *st.GetEventListsByEndDateRequ
 		if v.EventImage != nil {
 			eventImage = *v.EventImage
 		}
-		res := st.GetEventListByEndDate{
+		res := st.GetEventListByStartDate{
 			EventId:     v.EventId,
 			OrganizerId: v.OrganizerId,
 			EventName:   v.EventName,
@@ -278,13 +276,6 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Service: DeleteEvent]: Called")
 
-	// Delete the event using the repository
-	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
-	if err != nil {
-		log.Println("[Service: DeleteEvent] Error deleting event:", err)
-		return nil, err
-	}
-
 	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	if err != nil {
 		return nil, err
@@ -303,12 +294,19 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 			UserId:      v.UserId,
 			EventId:	 resevent.EventId,	
 			EventName:   resevent.EventName,
-			EventDate:   resevent.EndDate.String(),
+			EventDate:   resevent.StartDate.Format("2006-01-02"),
 		}
 		if _,err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
 			log.Println("[Service: Call SendCancelledEmail]:", err)
 			return nil, err
 		}
+	}
+
+	// Delete the event using the repository
+	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
+	if err != nil {
+		log.Println("[Service: DeleteEvent] Error deleting event:", err)
+		return nil, err
 	}
 
 	return deleteMessage, nil

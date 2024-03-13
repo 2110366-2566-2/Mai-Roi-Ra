@@ -221,26 +221,22 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	if err != nil {
 		return nil, err
 	}
-	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(orgId)
-	if err != nil {
-		return nil, err
-	}
 	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
-		UserId: orgUserId,
+		UserId: orgId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
-	if err != nil {
-		return nil, err
-	}
+	// resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	eventImage := ""
-	if resEvent.EventImage != nil {
-		eventImage = *resEvent.EventImage
-	}
+	// eventImage := ""
+	// if resEvent.EventImage != nil {
+	// 	eventImage = *resEvent.EventImage
+	// }
 
 	contentHTML := fmt.Sprintf(`
 	<html>
@@ -279,7 +275,7 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	`, req.EventName, *orgRes.PhoneNumber)
 
 	// Insert image
-	attachFiles = append(attachFiles, eventImage)
+	//attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
 	if err = sender.SendEmail("Register Event Successful!", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
@@ -328,26 +324,22 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 	if err != nil {
 		return nil, err
 	}
-	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(orgId)
-	if err != nil {
-		return nil, err
-	}
 	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
-		UserId: orgUserId,
+		UserId: orgId,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
-	if err != nil {
-		return nil, err
-	}
+	// resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	eventImage := ""
-	if resEvent.EventImage != nil {
-		eventImage = *resEvent.EventImage
-	}
+	// eventImage := ""
+	// if resEvent.EventImage != nil {
+	// 	eventImage = *resEvent.EventImage
+	// }
 
 	contentHTML := fmt.Sprintf(`
 	<html>
@@ -390,7 +382,7 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 	`, req.EventDate, req.EventName, req.EventDate, req.EventLocation, *orgRes.PhoneNumber)
 
 	// Insert image
-	attachFiles = append(attachFiles, eventImage)
+	//attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
 	if err = sender.SendEmail("Reminder of Event Tomorrow", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
@@ -435,15 +427,15 @@ func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailReque
 		return nil, err
 	}
 
-	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
-	if err != nil {
-		return nil, err
-	}
+	//resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	eventImage := ""
-	if resEvent.EventImage != nil {
-		eventImage = *resEvent.EventImage
-	}
+	//eventImage := ""
+	//if resEvent.EventImage != nil {
+		//eventImage = *resEvent.EventImage
+	//}
 
 	contentHTML := fmt.Sprintf(`
 	<html>
@@ -483,7 +475,7 @@ func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailReque
 	`, req.EventName, req.EventDate)
 
 	// Insert image
-	attachFiles = append(attachFiles, eventImage)
+	//attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
 	if err = sender.SendEmail("Event Cancelled", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
