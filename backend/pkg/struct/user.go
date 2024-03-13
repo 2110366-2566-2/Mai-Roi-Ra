@@ -116,6 +116,7 @@ type RegisterEventResponse struct {
 }
 
 type ParticipatedEvent struct {
+	EventId      string  `json:"event_id"`
 	EventName    string  `json:"event_name" binding:"required"`
 	StartDate    string  `json:"start_date" binding:"required"`
 	EndDate      string  `json:"end_date" binding:"required"`
