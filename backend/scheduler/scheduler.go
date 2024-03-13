@@ -14,8 +14,8 @@ func StartReminderEmailJob() {
 	// Create a new cron job runner
 	c := cron.New()
 
-	// Define the schedule for the job (run at every midnight)
-	schedule := "18 13 * * *"
+	// Define the schedule for the job (run at every midnight GMT+7 Thailand)
+	schedule := "00 17 * * *"
 
 	// Add the job to the cron schedule
 	c.AddFunc(schedule, func() {
