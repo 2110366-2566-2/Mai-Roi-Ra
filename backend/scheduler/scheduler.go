@@ -1,16 +1,13 @@
 package scheduler
 
 import (
-	"log"
-	"time"
-
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	db "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	service "github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
-	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 	"github.com/robfig/cron/v3"
-	db "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
+	"log"
+	"time"
 )
 
 func StartReminderEmailJob() {
@@ -18,7 +15,7 @@ func StartReminderEmailJob() {
 	c := cron.New()
 
 	// Define the schedule for the job (run at every midnight)
-	schedule := "06 15 * * *"
+	schedule := "18 13 * * *"
 
 	// Add the job to the cron schedule
 	c.AddFunc(schedule, func() {
@@ -32,65 +29,61 @@ func StartReminderEmailJob() {
 	select {}
 }
 
-func TestSendEmailWithGmail() error {
-	
-	cfg,err := config.NewConfig("github.com/2110366-2566-2/Mai-Roi-Ra/backend/.env")
-	if(err != nil) {return err}
-	
-	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
-
-	subject := "A test email"
-	content := `
-	<h1>Hello World </h1>
-	<p> This is a test message from natchy </p>
-	`
-	to := []string{"JdaKung@gmail.com"}
-	attachFiles := []string{"../../README.md"}
-
-	_ = sender.SendEmail(subject, content, content, to, nil, nil, attachFiles)
-	return nil
-}
-
 func SendReminderEmail() error {
 	g := db.InitPgDB()
 	announcementrepository := repository.NewAnnouncementRepository(g)
+	eventrepository := repository.NewEventRepository(g)
+	locationrepository := repository.NewLocationRepository(g)
+	participaterepository := repository.NewParticipateRepository(g)
+	userrepository := repository.NewUserRepository(g)
+	organizerrepository := repository.NewOrganizerRepository(g)
+
 	AnnouncementService := service.NewAnnouncementService(repository.RepositoryGateway{
 		AnnouncementRepository: announcementrepository,
+		UserRepository:         userrepository,
+		OrganizerRepository:    organizerrepository,
 	})
 	currentTime := time.Now()
 	Tomorrow := currentTime.Add(24 * time.Hour)
-	eventrepository := repository.NewEventRepository(g)
 	EventService := service.NewEventService(repository.RepositoryGateway{
-		EventRepository: eventrepository,
+		EventRepository:       eventrepository,
+		LocationRepository:    locationrepository,
+		UserRepository:        userrepository,
+		ParticipateRepository: participaterepository,
 	})
-	reqEvent := &st.GetEventListsByEndDateRequest{
-		EndDate: Tomorrow.Format("2006-01-02"),
+	reqEvent := &st.GetEventListsByStartDateRequest{
+		StartDate: Tomorrow.Format("2006-01-02"),
 	}
-	resEvents,err := EventService.GetEventListsByEndDate(reqEvent)
+	resEvents, err := EventService.GetEventListsByStartDate(reqEvent)
 	if err != nil {
 		log.Printf("Error sending reminder email for event")
 		return err
 	}
-	
+
 	for _, event := range resEvents.EventLists {
 		reqparticipant := &st.GetParticipantListsRequest{
 			EventId: event.EventId,
 		}
-		respaticipant,err := EventService.GetParticipantLists(reqparticipant)
+		respaticipant, err := EventService.GetParticipantLists(reqparticipant)
 		if err != nil {
 			log.Printf("Error sending reminder email for event")
 			return err
 		}
+		startDate, err := time.Parse("20060102", event.StartDate)
+		if err != nil {
+			log.Printf("Error parsing time")
+			return err
+		}
 		for _, participant := range respaticipant.ParticipantList {
 			reqreminder := &st.SendReminderEmailRequest{
-				UserId: participant.UserId,
-				OrganizerId: event.OrganizerId,
-				EventId: event.EventId,
-				EventName: event.EventName,
-				EventDate: event.EndDate,
+				UserId:        participant.UserId,
+				OrganizerId:   event.OrganizerId,
+				EventId:       event.EventId,
+				EventName:     event.EventName,
+				EventDate:     startDate.Format("2006-01-02"),
 				EventLocation: event.LocationName,
 			}
-			_,err :=AnnouncementService.SendReminderEmail(reqreminder)
+			_, err := AnnouncementService.SendReminderEmail(reqreminder)
 			if err != nil {
 				log.Printf("Error sending reminder email for event")
 				return err

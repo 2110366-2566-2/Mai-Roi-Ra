@@ -14,7 +14,7 @@ type LocationRepository struct {
 }
 
 type ILocationRepository interface {
-	GetLocationById(string) (*models.Location, error)
+	GetLocationById(locationId string) (*models.Location, error)
 	GetLocationByName(locationName string, district string, city string) (*models.Location, error)
 	CreateLocation(req models.Location) (*string, error)
 	UpdateLocation(req models.Location) (error)

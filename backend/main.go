@@ -5,7 +5,9 @@ import (
 
 	container "github.com/2110366-2566-2/Mai-Roi-Ra/backend/container"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/routers"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/scheduler"
+	
+	//uncomment to start scheduler
+	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/scheduler"
 )
 
 // @title           Mai-Roi-Ra Swagger API
@@ -32,7 +34,8 @@ func main() {
 
 	r := routers.SetupRouter(c.Container)
 
-	go scheduler.StartReminderEmailJob()
+	//uncomment to start scheduler
+	//go scheduler.StartReminderEmailJob()
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("Failed to start server:", err)

@@ -70,7 +70,7 @@ type GetEventListsResponse struct {
 	EventLists []GetEventList `json:"event_lists"`
 }
 
-type GetEventListByEndDate struct {
+type GetEventListByStartDate struct {
 	EventId     	string `json:"event_id"`
 	OrganizerId 	string `json:"organizer_id"`
 	EventName   	string `json:"event_name"`
@@ -82,12 +82,12 @@ type GetEventListByEndDate struct {
 	LocationName	string `json:"location_name"`
 }
 
-type GetEventListsByEndDateRequest struct {
-	EndDate string `json:"end_date"`
+type GetEventListsByStartDateRequest struct {
+	StartDate string `json:"start_date"`
 }
 
-type GetEventListsByEndDateResponse struct {
-	EventLists []GetEventListByEndDate `json:"event_lists"`
+type GetEventListsByStartDateResponse struct {
+	EventLists []GetEventListByStartDate `json:"event_lists"`
 }
 
 type GetEventDataByIdRequest struct {

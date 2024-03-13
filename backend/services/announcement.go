@@ -206,12 +206,8 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	if err != nil {
 		return nil, err
 	}
-	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(orgId)
-	if err != nil {
-		return nil, err
-	}
 	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
-		UserId: orgUserId,
+		UserId: orgId,
 	})
 	if err != nil {
 		return nil, err
@@ -313,12 +309,8 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 	if err != nil {
 		return nil, err
 	}
-	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(orgId)
-	if err != nil {
-		return nil, err
-	}
 	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
-		UserId: orgUserId,
+		UserId: orgId,
 	})
 	if err != nil {
 		return nil, err
