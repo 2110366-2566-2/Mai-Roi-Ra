@@ -1633,6 +1633,9 @@ const docTemplate = `{
                 "end_date": {
                     "type": "string"
                 },
+                "event_id": {
+                    "type": "string"
+                },
                 "event_image": {
                     "type": "string"
                 },
