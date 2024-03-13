@@ -1,8 +1,8 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import {useRouter} from "next/navigation"
-import Link from 'next/link';
+import AnnouncementPopup from './AnnouncementPopup';
 
 interface Props {
   id:string;
@@ -17,6 +17,7 @@ interface Props {
 }
 
 export default function EventItem ({id,name,startDate,endDate,description,city,district,imgSrc,page} : Props){
+  const [showModal,setShowModal] = useState(false); 
   const router = useRouter();
 
   const startyear = startDate.substring(0, 4);
@@ -42,11 +43,12 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
   });
 
   return (
-    <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-[1.02] duration-300"
+    <div>
+      <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-105 duration-300"
     onClick={(e) => {
-      router.push(`/events/${id}`);
       e.stopPropagation();
       e.preventDefault();
+      router.push(`/events/${id}`);
       }}>
         <div className="flex-shrink-0 mr-4 h-full lg:w-[200px] md:w-[160px] w-[120px]">
             <Image src={imgSrc} 
@@ -57,32 +59,52 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
                 className="rounded object-cover h-full" />
         </div>
 
-        <div className='h-full flex flex-col justify-start w-full'>
+        <div className='h-full flex flex-col justify-start w-full space-y-[7px]'>
             <div className='flex justify-between'>
                 <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">{name}</h2>
                 {
-                  page == 1 ?  <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300'
-                  onClick = {(e) => {
-                    router.push(`/homepage/editevent/${id}`);
-                    e.stopPropagation();
-                  }}>
+                  page == 1 ?  
+                  <div className="space-x-2">
+                      <button className='border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300'
+                    onClick = {(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      router.push(`/homepage/editevent/${id}`);
+                    }}>
                       Edit event
-                  </button> : null
+                    </button> 
+                  </div>
+                  : null
                 }
-               
             </div>
       
-          <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-[60%] text-gray-500">
+          <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-full text-gray-500">
               <div className="text-nowrap	">{`${formattedStartDate} - ${formattedEndDate}`}</div>
               <div className="text-nowrap">Location: Patumwan</div>
+              {
+                  page == 1 ?  
+                  <div className="space-x-2 text-black">
+                    <button className='border border-slate-400 rounded-xl h-[30px] w-fit px-[5px] text-sm hover:scale-105 duration-300'
+                    onClick = {(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setShowModal(true);
+                    }}>
+                        Announcement
+                    </button>
+                  </div>
+                  : null
+                }
           </div>
           
           <div className="">
-            {description && <div className="mt-2 hidden sm:block break-words"><p className='text-wrap break-words'>{description}</p></div>}
+            {description && <div className="hidden sm:block break-words"><p className='text-wrap break-words'>{description}</p></div>}
           </div>
 
 
         </div>
+      </div>
+      <AnnouncementPopup isVisible={showModal} onClose={()=>setShowModal(false)} id={id} name={name}/>
     </div>
   );
 };

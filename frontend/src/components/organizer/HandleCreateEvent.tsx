@@ -13,8 +13,8 @@ export async function HandleCreateEvent(name:string,activity:string, startdate:s
 
     try {
         const res = await createEvent(user?.organizer_id,name,activity,location,district,province,price,description,imageSrc,startdate,endDate,user.token);
-        console.log(res)
-        console.log("Create Event successful")
+        console.log(res);
+        console.log("Create Event successful");
     } catch (err) {
         console.log("Error during creating event: ", err)
     }

@@ -11,7 +11,7 @@ const Menu = () => {
               <div className="flex justify-start flex-row items-center bg-opacity-50 font-normal w-screen 
               border-gray-400 lg:border-b-[0px] border-b-[1px] lg:static relative">
                         <div className="flex flex-row justify-end px-4 py-2 items-center border-gray-400 border-r-[1px]">
-                            <MenuIcon className='text-[25px] cursor-pointer'
+                            <MenuIcon className='text-[25px] text-black cursor-pointer'
                             onClick={() => setShowModal(true)}/>
                         </div>
               </div>
