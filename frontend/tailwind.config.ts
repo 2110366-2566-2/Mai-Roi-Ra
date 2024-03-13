@@ -8,6 +8,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        'large_campaign_icon': '70px',
+        'medium_campaign_icon': '40px',
+        'small_campaign_icon': '25px', 
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

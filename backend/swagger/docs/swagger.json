@@ -119,6 +119,46 @@
                 }
             }
         },
+        "/cancelledemail": {
+            "post": {
+                "description": "Sends an Cancelled email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send CancelledEmail",
+                "parameters": [
+                    {
+                        "description": "Send CancelledEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CancelledEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the CancelledEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/events": {
             "get": {
                 "description": "Get list of events",
@@ -642,6 +682,86 @@
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/registeredemail": {
+            "post": {
+                "description": "Sends an Registered email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send RegisteredEmail",
+                "parameters": [
+                    {
+                        "description": "Send RegisteredEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRegisteredEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "RegisteredEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the RegisteredEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/reminderemail": {
+            "post": {
+                "description": "Sends an Reminder email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send ReminderEmail",
+                "parameters": [
+                    {
+                        "description": "Send ReminderEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ReminderEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the ReminderEmail",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
@@ -1480,6 +1600,9 @@
                 "num_participant": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "user_image": {
                     "type": "string"
                 },
@@ -1566,6 +1689,79 @@
                     "type": "string"
                 },
                 "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendCancelledEmailRequest": {
+            "type": "object",
+            "properties": {
+                "event_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRegisteredEmailRequest": {
+            "type": "object",
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRegisteredEmailResponse": {
+            "type": "object",
+            "properties": {
+                "announce_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendReminderEmailRequest": {
+            "type": "object",
+            "properties": {
+                "event_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_location": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendReminderEmailResponse": {
+            "type": "object",
+            "properties": {
+                "announce_status": {
                     "type": "string"
                 }
             }

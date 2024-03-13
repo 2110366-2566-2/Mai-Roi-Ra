@@ -1,6 +1,6 @@
 'use client'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import DeletePopUp from '@/libs/DeletePopUp';
+import DeletePopUp from '@/components/DeletePopUp';
 import { useState } from 'react';
 
 interface Props {

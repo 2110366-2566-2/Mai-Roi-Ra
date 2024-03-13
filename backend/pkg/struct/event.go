@@ -70,6 +70,26 @@ type GetEventListsResponse struct {
 	EventLists []GetEventList `json:"event_lists"`
 }
 
+type GetEventListByStartDate struct {
+	EventId     	string `json:"event_id"`
+	OrganizerId 	string `json:"organizer_id"`
+	EventName   	string `json:"event_name"`
+	StartDate   	string `json:"start_date"`
+	EndDate     	string `json:"end_date"`
+	Description 	string `json:"description"`
+	Status      	string `json:"status"`
+	EventImage  	string `json:"event_image"`
+	LocationName	string `json:"location_name"`
+}
+
+type GetEventListsByStartDateRequest struct {
+	StartDate string `json:"start_date"`
+}
+
+type GetEventListsByStartDateResponse struct {
+	EventLists []GetEventListByStartDate `json:"event_lists"`
+}
+
 type GetEventDataByIdRequest struct {
 	EventId string `json:"event_id"`
 }
@@ -97,6 +117,7 @@ type GetEventDataByIdResponse struct {
 }
 
 type Participant struct {
+	UserId 		   string `json:"user_id"`
 	FirstName      string `json:"first_name" binding:"required"`
 	LastName       string `json:"last_name" binding:"required"`
 	Username       string `json:"username" binding:"required"`

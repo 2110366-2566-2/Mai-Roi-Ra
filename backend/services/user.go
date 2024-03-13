@@ -358,7 +358,7 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 // GenerateJWTToken generates a new JWT token for authenticated users
 func GenerateJWTToken(user *models.User) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
-	var secretKey = []byte("secret-key")
+	var secretKey = []byte("YourSecretKey")
 	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 	// 	"user_id":  user.UserID,                           // Include the user's ID
 	// 	"username": user.Username,                         // Include the username
@@ -408,6 +408,24 @@ func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterE
 		log.Println("[Service: Call repo RegisterEvent]:", err)
 		return nil, err
 	}
+
+	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	if err != nil {
+		return nil, err
+	}
+	announcementService := NewAnnouncementService(s.RepositoryGateway)
+	reqregister := &st.SendRegisteredEmailRequest{
+		UserId:      req.UserId,
+		OrganizerId: resevent.OrganizerId,
+		EventId:     req.EventId,
+		EventName:   resevent.EventName,
+	}
+
+	if _, err := announcementService.SendRegisteredEmail(reqregister); err != nil {
+		log.Println("[Service: Call SendRegisteredEmail]:", err)
+		return nil, err
+	}
+
 	return res, nil
 }
 
