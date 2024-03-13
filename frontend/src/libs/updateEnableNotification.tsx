@@ -3,18 +3,17 @@ import { apiBackUrl } from "../constants";
 
 export default async function updateEnableNotification(user_id: string) {
   try {
-    const jsonBody = JSON.stringify({
-      user_id: user_id,
-    });
-    const response = await fetch(`${apiBackUrl}/users/notification`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        // Authorization: `Bearer ${token}`,
-      },
-      next: { tags: ["updateEnableNotification"] },
-      body: jsonBody,
-    });
+    const response = await fetch(
+      `${apiBackUrl}/users/notification?user_id=${encodeURIComponent(user_id)}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          // Authorization: `Bearer ${token}`, // Uncomment if needed
+        },
+        // No need for 'next: { tags: ["updateEnableNotification"] }' or 'body: jsonBody' here, since you're not sending a request body
+      }
+    );
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(

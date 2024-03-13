@@ -84,23 +84,23 @@ const MenuPopup = ({isVisible,onClose} : Props) => {
                          <div>
                              <div className="space-y-2 md:text-[20px] text-[15px]">
                                  <hr/>
-                                 <div className={`px-4 py-2 flex cursor-pointer items-center w-fit
+                                 <div className={`px-4 py-2 flex cursor-pointer items-center w-full hover:bg-gray-200
                                     ${pathname === "/homepage" ? "text-[#FFAE27]" : ""}`}
                                     onClick={() => {router.push("/homepage"); handlerClose;}}>
                                      <HomeIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Home
                                  </div>
                                  <hr/>
-                                 <div className={`px-4 py-2 flex items-center w-fit`}>
+                                 <div className={`px-4 py-2 flex items-center w-full hover:bg-gray-200`}>
                                      <NotificationsIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Notifications
                                  </div>
                                  <hr/>
-                                 <div className={`px-4 py-2 cursor-pointer flex items-center w-fit
+                                 <div className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
                                     ${pathname === "/profile" ? "text-[#FFAE27]" : ""}`}
                                     onClick={() => {router.push("/profile"); handlerClose;}}>
                                     <PersonIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Profile
                                  </div>
                                  <hr/>
-                                 <div className={`px-4 py-2 flex items-center w-fit`}>
+                                 <div className={`px-4 py-2 flex items-center w-full hover:bg-gray-200`}>
                                      <SupportAgentIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Support and Service
                                  </div>
                                  <hr/>
