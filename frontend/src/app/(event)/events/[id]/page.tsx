@@ -3,13 +3,25 @@ import StarIcon from '@mui/icons-material/Star';
 import getEvent from "@/libs/getEvent";
 import RegisterEventBox from "@/components/RegisterEventBox";
 import RouterBackEventButton from "@/components/RouterBackEventButton";
+import GroupsIcon from '@mui/icons-material/Groups';
+import getEventParticipants from "@/libs/getEventParticipants";
+import ParticipantListModal from "@/components/ParticipantListModal";
 
 interface Props {
     params: {id:string}
 }
 
+
 export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
+
+    const participants = await getEventParticipants(params.id);
+    let numParticipants = 0;
+
+    participants.participant_list.forEach((participant: any) => {
+        numParticipants += participant.num_participant;
+        // Perform any desired operations with numParticipants
+    });
 
     return (
         <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
@@ -51,8 +63,9 @@ export default async function EventDetailPage({ params }: Props) {
                             </div>
                         </div>
                     </div>
-                    <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center">
+                    <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
                         <RegisterEventBox event={event}/>
+                        <ParticipantListModal participants={participants} numParticipants={numParticipants} />
                     </div>
                 </div>
             </div>
