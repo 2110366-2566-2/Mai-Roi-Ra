@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/smtp"
+	"os"
+	"strings"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/jordan-wright/email"
 )
 
@@ -16,7 +19,8 @@ const (
 type EmailSender interface {
 	SendEmail(
 		subject string,
-		content string,
+		contentText string,
+		contentHTML string,
 		to []string,
 		cc []string,
 		bcc []string,
@@ -38,36 +42,64 @@ func NewGmailSender(name string, fromEmailAddress string, fromEmailPassword stri
 	}
 }
 
-func (sender *GmailSender) SendEmail(subject string, content string, to []string, cc []string, bcc []string, attachFiles []string) error {
+func (sender *GmailSender) SendEmail(subject string, contentText string, contentHTML string, to []string, cc []string, bcc []string, attachFiles []string) error {
 	e := email.NewEmail()
 	e.From = fmt.Sprintf("%s <%s>", sender.name, sender.fromEmailAddress)
 	e.To = to
 	e.Cc = cc
 	e.Bcc = bcc
 	e.Subject = subject
-	e.HTML = []byte(content)
+	e.Text = []byte(contentText)
+	e.HTML = []byte(contentHTML)
 
-	// Attached file
-	for _, file := range attachFiles {
-		_, err := e.AttachFile(file)
-		if err != nil {
-			log.Println("[Utils: SendEmail]: Failed to attached file:", err)
-			return err
-		}
+	tempFiles := []string{}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Println("Error getting working directory:", err)
+	} else {
+		log.Println("Current working directory:", wd)
 	}
 
-	// Set up SMTP server configuration.
+	for _, file := range attachFiles {
+		// Handle http file path
+		if strings.HasPrefix(file, "http://") || strings.HasPrefix(file, "https://") {
+			tempFilePath := "temp_image.jpg"
+			err := utils.DownloadImage(file, tempFilePath)
+			if err != nil {
+				log.Println("[Utils: SendEmail]: Failed to download image:", err)
+				return err
+			}
+			_, err = e.AttachFile(tempFilePath)
+			if err != nil {
+				log.Println("[Utils: SendEmail]: Failed to attach downloaded image:", err)
+				return err
+			}
+			tempFiles = append(tempFiles, tempFilePath)
+		} else {
+			// Handle local file path
+			_, err := e.AttachFile(file)
+			if err != nil {
+				log.Println("[Utils: SendEmail]: Failed to attach file:", err)
+				return err
+			}
+		}
+	}
 	smtpAddr := fmt.Sprintf("%s:%s", smtpHost, smtpPort)
-
-	// SMTP server authentication information.
-	fmt.Println("From:", sender.fromEmailAddress)
-	fmt.Println("FromPassword:", sender.fromEmailPassword)
 	auth := smtp.PlainAuth("", sender.fromEmailAddress, sender.fromEmailPassword, smtpHost)
-
-	err := e.Send(smtpAddr, auth)
-	if err != nil {
+	if err := e.Send(smtpAddr, auth); err != nil {
 		log.Println("[Utils: SendEmail]: Failed to send email:", err)
 		return err
+	}
+
+	// Cleanup temporary files
+	for _, tempFile := range tempFiles {
+		path := "usr/src/app/" + tempFile
+		log.Println("PATH:", path)
+		err := os.Remove(path)
+		if err != nil {
+			log.Println("[Utils: SendEmail]: Failed to remove temporary file:", tempFile, err)
+		}
 	}
 	return nil
 }

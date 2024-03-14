@@ -11,7 +11,8 @@ export default async function createEvent(
     description: string,
     imageSrc: string,
     start_date: string,
-    end_date: string
+    end_date: string,
+    token:string
 ) {
     try {
         console.log(organizer_id, name, activity, location_name, district, province, description, imageSrc, start_date, end_date);
@@ -36,7 +37,7 @@ export default async function createEvent(
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },
             body: jsonBody,
         });

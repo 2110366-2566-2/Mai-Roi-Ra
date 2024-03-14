@@ -10,6 +10,7 @@ import (
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -50,7 +51,7 @@ func (s *UserService) GetAllUsers() (*st.GetAllUsersResponse, error) {
 	log.Println("[Service: GetAllUsersResponse]: Called")
 	users, err := s.RepositoryGateway.UserRepository.GetAllUsers()
 	if err != nil {
-		return nil, errors.New("Failed to retrieve users")
+		return nil, errors.New("failed to retrieve users")
 	}
 	res := &st.GetAllUsersResponse{
 		Users: users,
@@ -81,11 +82,11 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	}
 
 	// Hash the password
-	// hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// req.Password = string(hashedPassword)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.MinCost)
+	if err != nil {
+		return nil, err
+	}
+	req.Password = string(hashedPassword)
 
 	res, err := s.RepositoryGateway.UserRepository.CreateUser(req)
 	if err != nil {
@@ -154,6 +155,84 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		return nil, errors.New("email or phone number must be provided")
 	}
 
+	organizerId := ""
+
+	if user.Role == "ORGANIZER" {
+		var err error
+		organizerId, err = s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(user.UserID)
+		if err != nil {
+			log.Println("[Service: LoginUser]: Error when querying organizer_id")
+			return nil, err
+		}
+	}
+
+	// Check if the user was found
+	if err != nil {
+		return nil, errors.New("invalid login credentials")
+	}
+
+	// Check the password
+	byteHash := []byte(user.Password)
+	bytepwd := []byte(req.Password)
+	pwerr := bcrypt.CompareHashAndPassword(byteHash, bytepwd)
+	if pwerr != nil {
+		log.Println([]byte(byteHash))
+		log.Println([]byte(bytepwd))
+		log.Println(byteHash)
+		log.Println(bytepwd)
+		log.Println("Invalid login credentials [PASSWORD ERROR]:")
+		log.Println(err)
+		return nil, err
+	}
+
+	// if err := bcrypt.CompareHashAndPassword(byteHash, bytepwd); err != nil {
+	// 	log.Println([]byte(byteHash))
+	// 	log.Println([]byte(bytepwd))
+	// 	log.Println(byteHash)
+	// 	log.Println(bytepwd)
+	// 	log.Println("Invalid login credentials [PASSWORD ERROR]:")
+	// 	return nil, err
+	// }
+
+	// Generate a JWT token (or any other form of token/session identifier)
+	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	if err != nil {
+		return nil, errors.New("failed to generate token")
+	}
+	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
+	if err != nil {
+		return nil, errors.New("failed to update token")
+	}
+
+	var email = ""
+	var phoneNumber = ""
+	if user.Email != nil {
+		email = *user.Email
+	}
+	if user.PhoneNumber != nil {
+		phoneNumber = *user.PhoneNumber
+	}
+
+	res := &st.LoginUserResponse{
+		UserId:      user.UserID,
+		FirstName:   user.FirstName,
+		Email:       email,
+		PhoneNumber: phoneNumber,
+		Token:       token,
+		OrganizerId: organizerId,
+	}
+
+	return res, nil
+}
+
+func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error) {
+	log.Println("[Service: LoginUserEmail]: Called")
+
+	var user *models.User
+	var err error
+
+	// Determine if we are logging in with email or phone number and get the user
+	user, err = s.RepositoryGateway.UserRepository.GetUserByEmail(req.Email)
 	// Check if the user was found
 	if err != nil {
 		return nil, errors.New("invalid login credentials")
@@ -188,59 +267,6 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		phoneNumber = *user.PhoneNumber
 	}
 
-	res := &st.LoginUserResponse{
-		UserId:      user.UserID,
-		FirstName:   user.FirstName,
-		Email:       email,
-		PhoneNumber: phoneNumber,
-		Token:       token,
-	}
-
-	return res, nil
-}
-
-func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error) {
-	log.Println("[Service: LoginUserEmail]: Called")
-
-	var user *models.User
-	var err error
-
-	// Determine if we are logging in with email or phone number and get the user
-	user, err = s.RepositoryGateway.UserRepository.GetUserByEmail(req.Email)
-	// Check if the user was found
-	if err != nil {
-		return nil, errors.New("Invalid login credentials")
-	}
-
-	// // Check the password
-	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-	// 	log.Println([]byte(user.Password))
-	// 	log.Println([]byte(req.Password))
-	// 	log.Println(user.Password)
-	// 	log.Println(req.Password)
-	// 	log.Println("Invalid login credentials [PASSWORD ERROR]:")
-	// 	return nil, err
-	// }
-
-	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
-	if err != nil {
-		return nil, errors.New("Failed to generate token")
-	}
-	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
-	if err != nil {
-		return nil, errors.New("Failed to update token")
-	}
-
-	var email = ""
-	var phoneNumber = ""
-	if user.Email != nil {
-		email = *user.Email
-	}
-	if user.PhoneNumber != nil {
-		phoneNumber = *user.PhoneNumber
-	}
-
 	res := &st.LoginUserEmailResponse{
 		UserId:      user.UserID,
 		FirstName:   user.FirstName,
@@ -262,7 +288,7 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 
 	// Check if the user was found
 	if err != nil {
-		return nil, errors.New("Invalid login credentials")
+		return nil, errors.New("invalid login credentials")
 	}
 
 	// // Check the password
@@ -278,11 +304,11 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 	// Generate a JWT token (or any other form of token/session identifier)
 	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
 	if err != nil {
-		return nil, errors.New("Failed to generate token")
+		return nil, errors.New("failed to generate token")
 	}
 	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
 	if err != nil {
-		return nil, errors.New("Failed to update token")
+		return nil, errors.New("failed to update token")
 	}
 
 	var email = ""
@@ -332,7 +358,7 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 // GenerateJWTToken generates a new JWT token for authenticated users
 func GenerateJWTToken(user *models.User) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
-	var secretKey = []byte("secret-key")
+	var secretKey = []byte("YourSecretKey")
 	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 	// 	"user_id":  user.UserID,                           // Include the user's ID
 	// 	"username": user.Username,                         // Include the username
@@ -372,7 +398,7 @@ func validateToken(signedToken string) (string, error) {
 		username := claims["username"].(string)
 		return username, nil
 	}
-	return "", errors.New("Invalid token")
+	return "", errors.New("invalid token")
 }
 
 func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
@@ -382,6 +408,24 @@ func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterE
 		log.Println("[Service: Call repo RegisterEvent]:", err)
 		return nil, err
 	}
+
+	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
+	if err != nil {
+		return nil, err
+	}
+	announcementService := NewAnnouncementService(s.RepositoryGateway)
+	reqregister := &st.SendRegisteredEmailRequest{
+		UserId:      req.UserId,
+		OrganizerId: resevent.OrganizerId,
+		EventId:     req.EventId,
+		EventName:   resevent.EventName,
+	}
+
+	if _, err := announcementService.SendRegisteredEmail(reqregister); err != nil {
+		log.Println("[Service: Call SendRegisteredEmail]:", err)
+		return nil, err
+	}
+
 	return res, nil
 }
 
@@ -421,6 +465,7 @@ func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventList
 		}
 
 		eventData := st.ParticipatedEvent{
+			EventId:      res.EventId,
 			EventName:    res.EventName,
 			StartDate:    res.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
 			EndDate:      res.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"

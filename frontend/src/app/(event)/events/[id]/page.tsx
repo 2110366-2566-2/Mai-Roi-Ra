@@ -3,13 +3,37 @@ import StarIcon from '@mui/icons-material/Star';
 import getEvent from "@/libs/getEvent";
 import RegisterEventBox from "@/components/RegisterEventBox";
 import RouterBackEventButton from "@/components/RouterBackEventButton";
+import getEventParticipants from "@/libs/getEventParticipants";
+import ParticipantListModal from "@/components/ParticipantListModal";
+import isRegisteredEvent from '@/libs/isRegisteredEvent';
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../api/auth/[...nextauth]/route";
 
 interface Props {
     params: {id:string}
 }
 
+
 export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
+
+    let isRegisterable = false;
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.token){
+        
+    }else{
+        isRegisterable = await isRegisteredEvent(session?.user?.user_id,event.event_id);
+        console.log(isRegisterable)
+    }
+
+
+    const participants = await getEventParticipants(params.id);
+    let numParticipants = 0;
+
+    participants.participant_list.forEach((participant: any) => {
+        numParticipants += participant.num_participant;
+        // Perform any desired operations with numParticipants
+    });
 
     return (
         <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
@@ -29,7 +53,7 @@ export default async function EventDetailPage({ params }: Props) {
                             />
                         </div>
                         <div className="w-full lg:w-[750px] mt-4 border-b border-slate-300 pb-4">
-                            <h2 className=" text-lg font-semibold">Description</h2>
+                            <h2 className=" text-lg font-semibold">Description <label className="font-normal text-slate-500 mx-3">|</label><label className="font-normal text-slate-500 ml-2">{event.activities}</label></h2>
                             <p className="text-lg text-gray-800">
                                 {event.description}
                             </p>
@@ -46,13 +70,14 @@ export default async function EventDetailPage({ params }: Props) {
                                 />
                             </div>
                             <div className="flex flex-col items-start">
-                                <label className="font-semibold">{'ลุงสุรินทร์'}</label>
+                                <label className="font-semibold">{event.organizer_id}</label>
                                 <label className="text-md text-slate-600">Hosted {8} Events</label>
                             </div>
                         </div>
                     </div>
-                    <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center">
-                        <RegisterEventBox event={event}/>
+                    <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
+                        <RegisterEventBox event={event} isRegisterable={isRegisterable}/>
+                        <ParticipantListModal participants={participants} numParticipants={numParticipants} />
                     </div>
                 </div>
             </div>

@@ -28,6 +28,8 @@ type IUserRepository interface {
 	GetAllUsers() ([]models.User, error)
 	GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error)
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
+	IsEnableNotification(userId string) (*bool, *string, error)
+	GetRandomAdmin() (*models.User, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -77,6 +79,12 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
 
+	role := "USER"
+	if req.Role == "Organizer" {
+		role = "ORGANIZER"
+	} else if req.Role == "Admin" {
+		role = "ADMIN"
+	}
 	userModel := models.User{
 		UserID:                   utils.GenerateUUID(),
 		Username:                 req.Username,
@@ -92,6 +100,7 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		Province:                 req.Province,
 		BannerImage:              "",
 		CreatedAt:                time.Time{},
+		Role:                     role,
 	}
 
 	trans := r.DB.Begin().Debug()
@@ -222,11 +231,18 @@ func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*
 		}
 
 		particiapant := st.Participant{
+			UserId:         tmpUser.UserID,
 			Username:       tmpUser.Username,
 			FirstName:      tmpUser.FirstName,
 			LastName:       tmpUser.LastName,
 			UserImage:      tmpUser.UserImage,
 			NumParticipant: v.NumParticipant,
+			PhoneNumber:    tmpUser.PhoneNumber,
+			Email:          tmpUser.Email,
+			BirthDate:      tmpUser.BirthDate.Format("2006/02/01"),
+			Address:        tmpUser.Address,
+			District:       tmpUser.District,
+			Province:       tmpUser.Province,
 		}
 
 		resLists.ParticipantList = append(resLists.ParticipantList, particiapant)
@@ -255,4 +271,24 @@ func (r *UserRepository) ToggleNotifications(req *st.GetUserByUserIdRequest) (*s
 	return &st.RegisterEventResponse{
 		Message: "Toggle Successful",
 	}, nil
+}
+
+func (r *UserRepository) GetRandomAdmin() (*models.User, error) {
+	log.Println("[Repo: GetRandomAdmin]: Called")
+	var admin models.User
+	if err := r.DB.Where(`role = ?`, "ADMIN").Order("RANDOM()").First(&admin).Error; err != nil {
+		log.Println("[Repo: GetRandomAdmin]: Error randomized the admin")
+		return nil, err
+	}
+	return &admin, nil
+}
+
+func (r *UserRepository) IsEnableNotification(userId string) (*bool, *string, error) {
+	log.Println("[Repo: IsEnableNotification] Called")
+	var userModel models.User
+	if err := r.DB.Where(`user_id = ?`, userId).Find(&userModel).Error; err != nil {
+		log.Print("[Repo: IsEnableNotification] user_id not found")
+		return nil, nil, err
+	}
+	return &userModel.IsEnableNotification, userModel.Email, nil
 }

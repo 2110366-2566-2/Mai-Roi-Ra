@@ -1,13 +1,10 @@
 package services
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
-	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 )
 
 type ParticipateService struct {
@@ -15,7 +12,7 @@ type ParticipateService struct {
 }
 
 type IParticipateService interface {
-	SendAnnouncement(req *st.SendAnnouncementRequest) (*st.SendAnnounceResponse, error)
+	IsRegistered(req *st.IsRegisteredRequest) (*st.IsRegisteredResponse, error)
 }
 
 func NewParticipateService(
@@ -26,28 +23,13 @@ func NewParticipateService(
 	}
 }
 
-func (s *ParticipateService) SendAnnouncement(req *st.SendAnnouncementRequest) (*st.SendAnnounceResponse, error) {
-	log.Println("[Service: SendAnnouncement]: Called")
-	cfg, err := config.NewConfig(func() string {
-		return ".env"
-	}())
+// used the same struct as before, cause this function is so ez
+func (s *ParticipateService) IsRegistered(req *st.IsRegisteredRequest) (*st.IsRegisteredResponse, error) {
+	log.Println("[Service: IsRegistered]: Called")
+	res, err := s.RepositoryGateway.ParticipateRepository.IsRegistered(req)
 	if err != nil {
-		log.Println("[Config]: Error initializing .env")
+		log.Println("[Service: Call Repo Error]:", err)
 		return nil, err
 	}
-	log.Println("Config path from Gmail:", cfg)
-
-	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
-	log.Println("Sender:", sender)
-	to := req.To
-	cc := req.Cc
-	bcc := req.Bcc
-	attachFiles := req.AttachFiles
-	if err = sender.SendEmail(req.Subject, req.Content, to, cc, bcc, attachFiles); err != nil {
-		return nil, err
-	}
-	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
-	return &st.SendAnnounceResponse{
-		AnnounceStatus: res,
-	}, nil
+	return res, err
 }

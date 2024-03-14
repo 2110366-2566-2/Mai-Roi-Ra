@@ -21,22 +21,25 @@ func NewParticipateController(
 	}
 }
 
-// @Summary Send Announcement
-// @Description Sends an announcement email to the specified recipients.
-// @Tags participates
+// @Summary IsRegistered
+// @Description Determine that whether the user has registered in this events
+// @Tags participate
 // @Accept json
 // @Produce json
-// @Param request body st.SendAnnouncementRequest true "Send Announcement Request"
-// @Success 200 {object} st.SendAnnounceResponse "Announcement successfully sent"
-// @Failure 400 {object} object "Bad request - error in sending the announcement"
-// @Router /send-announcement [post]
-func (c *ParticipateController) SendAnnouncement(ctx *gin.Context, req *st.SendAnnouncementRequest) {
-	log.Println("[CTRL: SendAnnouncement]: Input:", req)
-	res, err := c.ServiceGateway.ParticipateService.SendAnnouncement(req)
+// @Param user_id query string true "user_id"
+// @Param event_id query string true "event_id"
+// @Success 200 {object} structure.IsRegisteredResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /isregistered [get]
+func (c *ParticipateController) IsRegistered(ctx *gin.Context, req *st.IsRegisteredRequest) {
+	log.Println("[CTRL: ToggleNotifications] Input:", req)
+
+	res, err := c.ServiceGateway.ParticipateService.IsRegistered(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: SendAnnouncement]: Output:", res)
+	log.Println("[CTRL: ToggleNotifications] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

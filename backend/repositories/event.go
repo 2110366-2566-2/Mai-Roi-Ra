@@ -18,9 +18,11 @@ type EventRepository struct {
 type IEventRepository interface {
 	CreateEvent(req *models.Event) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
+	GetEventListsByStartDate(endDate string) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
 }
 
 func NewEventRepository(
@@ -76,7 +78,7 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
 
 func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
 	log.Println("[Repo: DeleteEventById]: Called")
-	eventModel := models.Event{} 
+	eventModel := models.Event{}
 
 	// Delete the event from the database
 	if result := r.db.Where("event_id = ?", req.EventId).First(&eventModel); result.Error != nil {
@@ -129,6 +131,19 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	return eventLists, nil
 }
 
+func (r *EventRepository) GetEventListsByStartDate(startDate string) ([]*models.Event, error) {
+    log.Println("[Repo: GetEventListsByStartDate] Called")
+    
+    var eventLists []*models.Event
+    
+    // Find events where start_date is equal to the input startDate
+    if err := r.db.Where("start_date = ?", startDate).Find(&eventLists).Error; err != nil {
+        log.Println("[Repo: GetEventListsByStartDate] Error querying the events:", err)
+        return nil, err
+    }
+    return eventLists, nil
+}
+
 func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error) {
 	log.Println("[Repo: GetEventDataById]: Called")
 	var event models.Event
@@ -137,4 +152,14 @@ func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error
 		return nil, err
 	}
 	return &event, nil
+}
+
+func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string, *string, error) {
+	log.Println("[Repo: GetAdminAndOrganizerEventById]: Called")
+	var eventModel models.Event
+	if err := r.db.Where(`event_id = ?`, eventId).Find(&eventModel).Error; err != nil {
+		log.Println("[Repo: GetAdminAndOrganizerEventById]: cannot find event_id:", err)
+		return nil, nil, err
+	}
+	return &eventModel.UserId, &eventModel.OrganizerId, nil
 }

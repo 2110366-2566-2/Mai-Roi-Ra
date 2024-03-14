@@ -49,6 +49,7 @@ type LoginUserResponse struct {
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	Token       string `json:"token"`
+	OrganizerId string `json:"organizer_id"`
 }
 type LogoutUserRequest struct {
 	UserID string `json:"user_id" binding:"required"`
@@ -57,6 +58,7 @@ type LogoutUserRequest struct {
 }
 type LogoutUserResponse struct {
 }
+
 // email login
 type LoginUserEmailRequest struct {
 	Email    string `json:"email"`
@@ -114,6 +116,7 @@ type RegisterEventResponse struct {
 }
 
 type ParticipatedEvent struct {
+	EventId      string  `json:"event_id"`
 	EventName    string  `json:"event_name" binding:"required"`
 	StartDate    string  `json:"start_date" binding:"required"`
 	EndDate      string  `json:"end_date" binding:"required"`

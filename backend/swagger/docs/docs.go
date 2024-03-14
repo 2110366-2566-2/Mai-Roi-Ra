@@ -24,6 +24,46 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/announcement": {
+            "post": {
+                "description": "Sends an announcement email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send Announcement",
+                "parameters": [
+                    {
+                        "description": "Send Announcement Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnouncementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Announcement successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the announcement",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/users": {
             "get": {
                 "description": "Get list of users",
@@ -78,6 +118,46 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/cancelledemail": {
+            "post": {
+                "description": "Sends an Cancelled email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send CancelledEmail",
+                "parameters": [
+                    {
+                        "description": "Send CancelledEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CancelledEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the CancelledEmail",
                         "schema": {
                             "type": "object"
                         }
@@ -389,6 +469,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/isregistered": {
+            "get": {
+                "description": "Determine that whether the user has registered in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participate"
+                ],
+                "summary": "IsRegistered",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsRegisteredResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/locations/{location_id}": {
             "get": {
                 "description": "Get location by id",
@@ -461,7 +592,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/structure.LoginUserResponse"
                         }
                     },
                     "400": {
@@ -613,9 +744,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/send-announcement": {
+        "/registeredemail": {
             "post": {
-                "description": "Sends an announcement email to the specified recipients.",
+                "description": "Sends an Registered email to the specified recipients.",
                 "consumes": [
                     "application/json"
                 ],
@@ -623,29 +754,69 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "participates"
+                    "announcements"
                 ],
-                "summary": "Send Announcement",
+                "summary": "Send RegisteredEmail",
                 "parameters": [
                     {
-                        "description": "Send Announcement Request",
+                        "description": "Send RegisteredEmail Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/structure.SendAnnouncementRequest"
+                            "$ref": "#/definitions/structure.SendRegisteredEmailRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Announcement successfully sent",
+                        "description": "RegisteredEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad request - error in sending the announcement",
+                        "description": "Bad request - error in sending the RegisteredEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/reminderemail": {
+            "post": {
+                "description": "Sends an Reminder email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send ReminderEmail",
+                "parameters": [
+                    {
+                        "description": "Send ReminderEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ReminderEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the ReminderEmail",
                         "schema": {
                             "type": "object"
                         }
@@ -1090,17 +1261,37 @@ const docTemplate = `{
                 "province": {
                     "type": "string"
                 },
+                "role": {
+                    "description": "Added role field",
+                    "type": "string"
+                },
                 "updated_at": {
                     "type": "string"
                 },
                 "user_id": {
-                    "description": "gorm.Model                         // This includes fields ID, CreatedAt, UpdatedAt, DeletedAt\nUserImage                *string   ` + "`" + `gorm:\"column:user_image\" json:\"user_image\"` + "`" + `",
                     "type": "string"
                 },
                 "user_image": {
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.Announcement": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "header": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -1248,6 +1439,12 @@ const docTemplate = `{
                 "admin_id": {
                     "type": "string"
                 },
+                "announcement_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.Announcement"
+                    }
+                },
                 "city": {
                     "type": "string"
                 },
@@ -1283,6 +1480,9 @@ const docTemplate = `{
                 },
                 "organizer_id": {
                     "type": "string"
+                },
+                "participant_count": {
+                    "type": "integer"
                 },
                 "participant_fee": {
                     "type": "number"
@@ -1377,6 +1577,17 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.IsRegisteredResponse": {
+            "type": "object",
+            "required": [
+                "is_registered"
+            ],
+            "properties": {
+                "is_registered": {
+                    "type": "boolean"
+                }
+            }
+        },
         "structure.LoginUserEmailRequest": {
             "type": "object",
             "properties": {
@@ -1413,15 +1624,57 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.LoginUserResponse": {
+            "type": "object",
+            "required": [
+                "first_name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.Participant": {
             "type": "object",
             "required": [
+                "address",
+                "birth_date",
+                "district",
                 "first_name",
                 "last_name",
                 "num_participant",
+                "province",
                 "username"
             ],
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "birth_date": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
                 "first_name": {
                     "type": "string"
                 },
@@ -1430,6 +1683,15 @@ const docTemplate = `{
                 },
                 "num_participant": {
                     "type": "integer"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "user_image": {
                     "type": "string"
@@ -1453,6 +1715,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "end_date": {
+                    "type": "string"
+                },
+                "event_id": {
                     "type": "string"
                 },
                 "event_image": {
@@ -1507,35 +1772,90 @@ const docTemplate = `{
         "structure.SendAnnouncementRequest": {
             "type": "object",
             "properties": {
-                "attach_files": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "bcc": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "cc": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "content": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_name": {
                     "type": "string"
                 },
                 "subject": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.SendCancelledEmailRequest": {
+            "type": "object",
+            "properties": {
+                "event_date": {
+                    "type": "string"
                 },
-                "to": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "event_id": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRegisteredEmailRequest": {
+            "type": "object",
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRegisteredEmailResponse": {
+            "type": "object",
+            "properties": {
+                "announce_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendReminderEmailRequest": {
+            "type": "object",
+            "properties": {
+                "event_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_location": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendReminderEmailResponse": {
+            "type": "object",
+            "properties": {
+                "announce_status": {
+                    "type": "string"
                 }
             }
         },
