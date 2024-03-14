@@ -241,6 +241,13 @@ definitions:
           $ref: '#/definitions/structure.ParticipatedEvent'
         type: array
     type: object
+  structure.IsRegisteredResponse:
+    properties:
+      is_registered:
+        type: boolean
+    required:
+    - is_registered
+    type: object
   structure.LoginUserEmailRequest:
     properties:
       email:
@@ -283,12 +290,24 @@ definitions:
     type: object
   structure.Participant:
     properties:
+      address:
+        type: string
+      birth_date:
+        type: string
+      district:
+        type: string
+      email:
+        type: string
       first_name:
         type: string
       last_name:
         type: string
       num_participant:
         type: integer
+      phone_number:
+        type: string
+      province:
+        type: string
       user_id:
         type: string
       user_image:
@@ -296,9 +315,13 @@ definitions:
       username:
         type: string
     required:
+    - address
+    - birth_date
+    - district
     - first_name
     - last_name
     - num_participant
+    - province
     - username
     type: object
   structure.ParticipatedEvent:
@@ -790,6 +813,40 @@ paths:
       summary: GetParticipantLists
       tags:
       - events
+  /isregistered:
+    get:
+      consumes:
+      - application/json
+      description: Determine that whether the user has registered in this events
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.IsRegisteredResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: IsRegistered
+      tags:
+      - participate
   /locations/{location_id}:
     get:
       consumes:

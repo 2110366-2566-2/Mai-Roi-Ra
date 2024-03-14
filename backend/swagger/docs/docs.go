@@ -469,6 +469,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/isregistered": {
+            "get": {
+                "description": "Determine that whether the user has registered in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participate"
+                ],
+                "summary": "IsRegistered",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsRegisteredResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/locations/{location_id}": {
             "get": {
                 "description": "Get location by id",
@@ -1526,6 +1577,17 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.IsRegisteredResponse": {
+            "type": "object",
+            "required": [
+                "is_registered"
+            ],
+            "properties": {
+                "is_registered": {
+                    "type": "boolean"
+                }
+            }
+        },
         "structure.LoginUserEmailRequest": {
             "type": "object",
             "properties": {
@@ -1591,12 +1653,28 @@ const docTemplate = `{
         "structure.Participant": {
             "type": "object",
             "required": [
+                "address",
+                "birth_date",
+                "district",
                 "first_name",
                 "last_name",
                 "num_participant",
+                "province",
                 "username"
             ],
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "birth_date": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
                 "first_name": {
                     "type": "string"
                 },
@@ -1605,6 +1683,12 @@ const docTemplate = `{
                 },
                 "num_participant": {
                     "type": "integer"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
                 },
                 "user_id": {
                     "type": "string"

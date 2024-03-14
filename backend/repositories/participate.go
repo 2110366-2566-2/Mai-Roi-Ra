@@ -20,6 +20,7 @@ type IParticipateRepository interface {
 	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
 	GetParticipantsForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error)
 	GetParticipatedEventsForUser(req *st.GetParticipatedEventListsRequest) ([]*models.Participate, error)
+	IsRegistered(req *st.IsRegisteredRequest) (*st.IsRegisteredResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -120,4 +121,25 @@ func (r *ParticipateRepository) GetParticipatedEventsForUser(req *st.GetParticip
 		return nil, err
 	}
 	return eventLists, nil
+}
+
+func (r *ParticipateRepository) IsRegistered(req *st.IsRegisteredRequest) (*st.IsRegisteredResponse, error) {
+	log.Println("[Repo: IsRegistered]: Called")
+
+	response := &st.IsRegisteredResponse{
+		IsRegistered: false, // Default to false
+	}
+
+	query := r.DB.Where("event_id = ? AND user_id = ?", req.EventId, req.UserId)
+	var count int64
+	if err := query.Model(&models.Participate{}).Count(&count).Error; err != nil {
+		log.Println("[Repo: IsRegistered]: cannot query for existing rows:", err)
+		return nil, err
+	}
+
+	if count > 0 {
+		response.IsRegistered = true
+	}
+
+	return response, nil
 }
