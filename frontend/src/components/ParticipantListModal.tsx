@@ -51,7 +51,7 @@ export default function ParticipantListModal({ participants, numParticipants }: 
     return (
         <div className="flex flex-col justify-center items-center pt-8">
             <ParticipantProfileModal 
-                profile={profile} 
+                profile={clickedParticipant} 
                 isProfileModalOpen={isProfileModalOpen} 
                 closeProfileModal={closeProfileModal}
             />
@@ -73,7 +73,7 @@ export default function ParticipantListModal({ participants, numParticipants }: 
                         <div key={item.username} className="flex items-center space-x-4 border-b border-gray-200 justify-between py-4 hover:bg-gray-200 px-4"
                             onClick={() => { 
                                 setIsProfileModalOpen(true);
-                                setClikedParticipant(item.user_id);
+                                setClikedParticipant(item);
                             }}>
                             <div className="flex items-center w-full">
                                 <img className="w-12 h-12 rounded-full object-cover" src={item.user_image} alt={`${item.first_name} ${item.last_name}`} />

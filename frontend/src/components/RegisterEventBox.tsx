@@ -29,7 +29,7 @@ interface Event {
     status: string;
 }
 
-export default function RegisterEventBox({ event }: { event: Event }) {
+export default function RegisterEventBox({ event, isRegisterable }: { event: Event, isRegisterable:boolean }) {
     const { data: session } = useSession();
     console.log(session)
 
@@ -40,8 +40,6 @@ export default function RegisterEventBox({ event }: { event: Event }) {
             const registrationResult = await participateEvent(event.event_id, numberOfGuest, session?.user?.user_id);
             // Handle successful registration
             console.log("Registration successful:", registrationResult);
-            // const notify = await notifyRegisterEvent(event.event_id,event.event_name,event.organizer_id,session?.user?.user_id)
-            // console.log(notify,"notify")
         } catch (error: any) {
             // Handle registration error
             console.error("Registration failed:", error.message);
@@ -146,9 +144,12 @@ export default function RegisterEventBox({ event }: { event: Event }) {
                     </div>
                 </div>
                 {session && !session.user.organizer_id && !isRegistrationClosed ? (
+                    isRegisterable ? 
                     <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4" onClick={() => { setIsModalOpen(true);}}>
                         Register
                     </button>
+                    :
+                    null
                 ) : (
                     <button className="rounded-lg text-center w-full h-full bg-gray-300 text-white p-4 cursor-not-allowed">
                         {session ? 
