@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ParticipantProfileModal from './ParticipantProfileModal';
-import Image from "next/image";
-import ProfileUserInformation from './ProfileUserInformation';
+import getProfile from "@/libs/getProfile";
+
 
 
 export default function ParticipantListModal({ participants, numParticipants }: { participants: any, numParticipants: any }) {
     const [showModal, setShowModal] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [clickedParticipant, setClikedParticipant] = useState("");
+    const [profile, setProfile] = useState({});
     const openModal = () => {
         setShowModal(true);
     }
@@ -21,10 +23,35 @@ export default function ParticipantListModal({ participants, numParticipants }: 
     const closeProfileModal = () => { setIsProfileModalOpen(false) }
     console.log(participants)
 
+    useEffect(() => {
+        console.log("mounted")
+        const fetchProfile = async () => {
+            try {
+                const response = await getProfile(clickedParticipant);
+
+                // Handle the response and update the state or perform any other necessary actions
+                setProfile(response);
+                console.log(profile,"kuay")
+            } catch (error) {
+                // Handle the error
+                console.log("error is")
+                console.error("Error fetching profile:", error.message);
+            }
+        };
+
+        fetchProfile();
+
+        return () => (
+            console.log("unmounted")
+        )
+    }, [clickedParticipant]);
+    console.log(clickedParticipant,"c")
+
+
     return (
         <div className="flex flex-col justify-center items-center pt-8">
             <ParticipantProfileModal 
-                user_id={''} 
+                profile={profile} 
                 isProfileModalOpen={isProfileModalOpen} 
                 closeProfileModal={closeProfileModal}
             />
@@ -44,7 +71,10 @@ export default function ParticipantListModal({ participants, numParticipants }: 
                 <div className=''>
                     {participants.participant_list.map((item: any) => (
                         <div key={item.username} className="flex items-center space-x-4 border-b border-gray-200 justify-between py-4 hover:bg-gray-200 px-4"
-                            onClick={() => { setIsProfileModalOpen(true) }}>
+                            onClick={() => { 
+                                setIsProfileModalOpen(true);
+                                setClikedParticipant(item.user_id);
+                            }}>
                             <div className="flex items-center w-full">
                                 <img className="w-12 h-12 rounded-full object-cover" src={item.user_image} alt={`${item.first_name} ${item.last_name}`} />
                                 <div className="flex flex-col ml-3"> {/* Added flex-col class */}

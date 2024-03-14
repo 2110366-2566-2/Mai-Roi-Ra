@@ -4,26 +4,33 @@ import Modal from './Modal';
 import { useState, useEffect } from "react";
 import getProfile from "@/libs/getProfile";
 
-export default function ParticipantProfileModal({ user_id, isProfileModalOpen, closeProfileModal}: { user_id: string, isProfileModalOpen:boolean, closeProfileModal:Function }) {
-    const [profile, setProfile] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+export default function ParticipantProfileModal({ profile, isProfileModalOpen, closeProfileModal}: { profile: any, isProfileModalOpen:boolean, closeProfileModal:Function }) {
+    // const [profile, setProfile] = useState(null);
+    // const [isLoading, setIsLoading] = useState(false);
+    // console.log("here")
+    // console.log(user_id);
+    // useEffect(() => {
+    //     console.log("mounted")
+    //     const fetchProfile = async () => {
+    //         setIsLoading(true);
+    //         try {
+    //             const response = await getProfile(user_id);
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            setIsLoading(true);
-            try {
-                const response = await getProfile(user_id);
-                // Handle the response and update the state or perform any other necessary actions
-                setProfile(response);
-            } catch (error) {
-                // Handle the error
-                console.error("Error fetching profile:", error.message);
-            }
-            setIsLoading(false);
-        };
+    //             // Handle the response and update the state or perform any other necessary actions
+    //             setProfile(response);
+    //         } catch (error) {
+    //             // Handle the error
+    //             console.log("error is")
+    //             console.error("Error fetching profile:", error.message);
+    //         }
+    //     };
 
-        fetchProfile();
-    }, [user_id]);
+    //     fetchProfile();
+
+    //     return () => (
+    //         console.log("unmounted")
+    //     )
+    // }, [user_id]);
 
     return (
         <Modal isOpen={isProfileModalOpen}
