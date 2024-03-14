@@ -89,7 +89,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
     };
 
     return (
-        <>
+        <div>
             <Modal isOpen={isModalOpen} closeModal={closeModal} title="Are you sure to register to this event?" style={null}>
                 <p>The Registeration cannot be cancel in the future.</p>
                 <div className='w-full flex justify-between'>
@@ -143,11 +143,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
                     </div>
                 </div>
                 {session && !session.user.organizer_id && !isRegistrationClosed ? (
-<<<<<<< Updated upstream
-                    <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4" onClick={() => { setIsModalOpen(true); }}>
-=======
                     <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4" onClick={() => { setIsModalOpen(true);}}>
->>>>>>> Stashed changes
                         Register
                     </button>
                 ) : (
@@ -168,6 +164,6 @@ export default function RegisterEventBox({ event }: { event: Event }) {
                     </button>
                 )}
             </div>
-        </>
+        </div>
     );
 }
