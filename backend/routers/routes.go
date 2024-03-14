@@ -328,5 +328,20 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		return nil
 	}
 
+	err = c.Invoke(func(participateController *controllers.ParticipateController) {
+		r.GET("/api/v1/isregistered", func(ctx *gin.Context) {
+			req := st.IsRegisteredRequest{
+				EventId: ctx.Query("event_id"),
+				UserId:  ctx.Query("user_id"),
+			}
+			participateController.IsRegistered(ctx, &req)
+		})
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
 	return r
 }

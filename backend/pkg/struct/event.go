@@ -71,15 +71,15 @@ type GetEventListsResponse struct {
 }
 
 type GetEventListByStartDate struct {
-	EventId     	string `json:"event_id"`
-	OrganizerId 	string `json:"organizer_id"`
-	EventName   	string `json:"event_name"`
-	StartDate   	string `json:"start_date"`
-	EndDate     	string `json:"end_date"`
-	Description 	string `json:"description"`
-	Status      	string `json:"status"`
-	EventImage  	string `json:"event_image"`
-	LocationName	string `json:"location_name"`
+	EventId      string `json:"event_id"`
+	OrganizerId  string `json:"organizer_id"`
+	EventName    string `json:"event_name"`
+	StartDate    string `json:"start_date"`
+	EndDate      string `json:"end_date"`
+	Description  string `json:"description"`
+	Status       string `json:"status"`
+	EventImage   string `json:"event_image"`
+	LocationName string `json:"location_name"`
 }
 
 type GetEventListsByStartDateRequest struct {
@@ -117,12 +117,18 @@ type GetEventDataByIdResponse struct {
 }
 
 type Participant struct {
-	UserId 		   string `json:"user_id"`
-	FirstName      string `json:"first_name" binding:"required"`
-	LastName       string `json:"last_name" binding:"required"`
-	Username       string `json:"username" binding:"required"`
-	NumParticipant int    `json:"num_participant" binding:"required"`
-	UserImage      string `json:"user_image"`
+	UserId         string  `json:"user_id"`
+	FirstName      string  `json:"first_name" binding:"required"`
+	LastName       string  `json:"last_name" binding:"required"`
+	Username       string  `json:"username" binding:"required"`
+	NumParticipant int     `json:"num_participant" binding:"required"`
+	PhoneNumber    *string `json:"phone_number" `
+	Email          *string `json:"email"`
+	BirthDate      string  `json:"birth_date" binding:"required"`
+	UserImage      string  `json:"user_image"`
+	Address        string  `json:"address" binding:"required"`
+	District       string  `json:"district" binding:"required"`
+	Province       string  `json:"province" binding:"required"`
 }
 
 type GetParticipantListsRequest struct {
