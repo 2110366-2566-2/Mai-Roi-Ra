@@ -90,7 +90,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
     const closeModal = () => {
       setIsModalOpen(false);
     };
-    console.log(enddateObj)
+    console.log(`${endyear}-${endmonth}-${endday}`,"date")
 
     return (
         <div>
