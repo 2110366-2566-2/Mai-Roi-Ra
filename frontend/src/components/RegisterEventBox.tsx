@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import participateEvent from "@/libs/participateEvent";
 import Modal from './Modal';
+import notifyRegisterEvent from "@/libs/notifyRegisterEvent";
 
 interface Event {
     activities: string;
@@ -40,6 +41,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
             const registrationResult = await participateEvent(event.event_id, numberOfGuest, session?.user?.user_id);
             // Handle successful registration
             console.log("Registration successful:", registrationResult);
+            const notify = await notifyRegisterEvent(event.event_id,event.event_name,event.organizer_id,session?.user?.user_id)
+            console.log(notify)
         } catch (error: any) {
             // Handle registration error
             console.error("Registration failed:", error.message);
@@ -87,6 +90,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
     const closeModal = () => {
       setIsModalOpen(false);
     };
+    console.log(enddateObj)
 
     return (
         <div>
