@@ -143,7 +143,11 @@ export default function RegisterEventBox({ event }: { event: Event }) {
                     </div>
                 </div>
                 {session && !session.user.organizer_id && !isRegistrationClosed ? (
+<<<<<<< Updated upstream
                     <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4" onClick={() => { setIsModalOpen(true); }}>
+=======
+                    <button className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4" onClick={() => { setIsModalOpen(true);}}>
+>>>>>>> Stashed changes
                         Register
                     </button>
                 ) : (

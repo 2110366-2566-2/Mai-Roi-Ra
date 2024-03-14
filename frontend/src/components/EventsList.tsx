@@ -17,6 +17,7 @@ export default function EventsList({ datas, role }: Props) {
     const parts = dateString.split("/");
     return parts[0] + parts[2] + parts[1];
   };
+  console.log(datas);
 
   return (
     <div className="w-full">
