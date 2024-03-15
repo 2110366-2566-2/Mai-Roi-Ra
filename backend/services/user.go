@@ -220,6 +220,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		PhoneNumber: phoneNumber,
 		Token:       token,
 		OrganizerId: organizerId,
+		Role:        user.Role,
 	}
 
 	return res, nil
