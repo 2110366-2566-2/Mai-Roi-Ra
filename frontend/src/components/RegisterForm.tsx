@@ -315,7 +315,7 @@ export default function RegisterForm() {
         <div className="fixed inset-0 z-50">
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
           <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-7 rounded-lg max-w-lg w-2/5 h-auto z-50">
-            <div className="text-gray-600">Successfully create account!</div>
+            <div className="text-gray-600">Successfully created account!</div>
           </div>
         </div>
       )}
