@@ -50,6 +50,7 @@ type LoginUserResponse struct {
 	PhoneNumber string `json:"phone_number"`
 	Token       string `json:"token"`
 	OrganizerId string `json:"organizer_id"`
+	Role        string `json:"role"`
 }
 type LogoutUserRequest struct {
 	UserID string `json:"user_id" binding:"required"`
