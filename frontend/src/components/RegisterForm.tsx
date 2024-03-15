@@ -6,9 +6,14 @@ import Image from "next/image";
 import RegisterInformationForm from "./RegisterInformationForm";
 import RegisterAccountForm from "./RegisterAccountForm";
 import userRegister from "@/libs/userRegister";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import SuccessSignupModal from "./SuccessSignupModal";
+import CircularIndeterminate from "./CircularIndeterminate";
 
 export default function RegisterForm() {
   // ** I don't know why `import { useRouter } from "next/navigation";` works, I thought it should be `next/router`
+  const [isLoading, setIsLoading] = useState(false);
 
   // USER INPUTS (first page)
   const [name, setName] = useState("");
@@ -210,6 +215,7 @@ export default function RegisterForm() {
   const [error, setError] = useState("");
   const handleInfoSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true); // Start loading
 
     if (firstName && lastName && address && district && province) {
       try {
@@ -226,6 +232,7 @@ export default function RegisterForm() {
           province
         );
         setSuccessModal(true);
+        setIsLoading(false); // Stop loading
         setAllInfoInputsFilled(true);
         setTimeout(() => {
           router.push("/auth/signin");
@@ -234,10 +241,12 @@ export default function RegisterForm() {
       } catch (err) {
         setError("Register Failed. Might be because of duplicated email");
         console.log("Error during registration: ", err);
+        setIsLoading(false); // Stop loading
       }
     } else {
       console.log("Please fill in all info fields.");
       setAllInfoInputsFilled(false);
+      setIsLoading(false); // Stop loading
     }
   };
   ///////////////////////////////////////
@@ -279,6 +288,7 @@ export default function RegisterForm() {
             handlePhoneNumberChange={handlePhoneNumberChange}
             handleBackwardClick={handleBackwardClick}
             handleInfoSubmit={handleInfoSubmit}
+            isLoading={isLoading}
           ></RegisterInformationForm>
         ) : (
           <RegisterAccountForm
@@ -311,14 +321,18 @@ export default function RegisterForm() {
           ></RegisterAccountForm>
         )}
       </div>
-      {successModal && (
-        <div className="fixed inset-0 z-50">
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
-          <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-7 rounded-lg max-w-lg w-2/5 h-auto z-50">
-            <div className="text-gray-600">Successfully created account!</div>
+      <SuccessSignupModal
+        successModal={successModal}
+        setSuccessModal={setSuccessModal}
+      ></SuccessSignupModal>
+      {/* {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className=" bg-opacity-75 absolute inset-0"></div>
+          <div className="bg-white p-6 rounded shadow-lg z-50">
+            <CircularIndeterminate></CircularIndeterminate>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

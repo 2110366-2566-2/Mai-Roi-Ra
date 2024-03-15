@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import CircularIndeterminate from "./CircularIndeterminate";
 
 interface RegisterInformationFormProps {
   firstName: string;
@@ -13,6 +15,8 @@ interface RegisterInformationFormProps {
   useEmail: boolean;
 
   allInfoInputsFilled: boolean;
+
+  isLoading: boolean;
 
   handleFirstNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleLastNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -38,6 +42,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
 
   allInfoInputsFilled,
 
+  isLoading,
+
   handleFirstNameChange,
   handleLastNameChange,
   handleAddressChange,
@@ -50,14 +56,11 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
 }) => {
   return (
     <div className="w-full">
-      <div className="absolute top-0 left-0 mt-12 ml-16">
-        <button
-          className="text-4xl"
-          style={{ color: "#1EA1F1" }}
+      <div className="absolute top-[16px] left-0 mt-12 ml-16 hover:scale-[1.8] duration-300 scale-[1.4]">
+        <ArrowBackIosNewIcon
+          className="text-[#1DA1F2]"
           onClick={handleBackwardClick}
-        >
-          &#60; {/* Backward button */}
-        </button>
+        />
       </div>
       <form className="space-y-6" onSubmit={handleInfoSubmit}>
         <div className="flex">
@@ -183,11 +186,8 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             All fields must be filled correctly !
           </div>
         )}
-        {/* <div>
-          <div style={{ color: "#F16E1E" }}>
-            {allInfoInputsFilled ? "" : "All fields must be filled correctly !"}
-          </div>
-        </div> */}
+        {isLoading && <CircularIndeterminate></CircularIndeterminate>}
+
         <div className="">
           <button
             type="submit"
