@@ -274,6 +274,8 @@ definitions:
         type: string
       phone_number:
         type: string
+      role:
+        type: string
       token:
         type: string
       user_id:
