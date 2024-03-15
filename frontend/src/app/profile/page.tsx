@@ -13,6 +13,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import EventsList from "@/components/EventsList";
+import ProfileImage from "@/components/ProfileImage"; // Import the ImageUploadForm component
 
 export default async function Profile() {
   // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
@@ -54,13 +55,14 @@ export default async function Profile() {
         <div className="relative bg-white w-full h-[200px]">
           <div className="absolute top-[-50px] px-2 left-8">
             <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center">
-              <Image
+              {/* <Image
                 src="/img/profile_picture.png"
                 alt="Profile Image"
                 width={96}
                 height={96}
                 objectFit="cover"
-              />
+              /> */}
+              <ProfileImage></ProfileImage>
             </div>
           </div>
           <div className="flex">
