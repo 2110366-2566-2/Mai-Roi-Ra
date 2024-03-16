@@ -88,6 +88,9 @@ const SignInHandleSubmit = async (
       redirect: false,
     });
     if (res?.error) {
+      setErrorPassword(2);
+      setError(true);
+      setPassword("");
       setError(res?.error);
       setIsLoading(false);
       return;

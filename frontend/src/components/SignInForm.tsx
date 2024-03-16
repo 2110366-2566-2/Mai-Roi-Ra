@@ -18,15 +18,12 @@ const SignInForm = () => {
   const [errorPassword, setErrorPassword] = useState<number>(0);
 
   const ErrorUser = [
-    "Error: Please fill your phone number or email address",
-    "Error: Not phone number or email address format",
-    "Error: This username did not register yet",
+    "Please fill your phone number or email address",
+    "Not phone number or email address format",
+    "This username is not registered yet",
   ];
 
-  const ErrorPassword = [
-    "Error: Please fill your password",
-    "Error: Wrong password",
-  ];
+  const ErrorPassword = ["Please fill your password", "Incorrect password"];
 
   const router = useRouter();
 
