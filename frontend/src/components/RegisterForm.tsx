@@ -9,7 +9,7 @@ import userRegister from "@/libs/userRegister";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import SuccessSignupModal from "./SuccessSignupModal";
-import CircularIndeterminate from "./CircularIndeterminate";
+import CircularIndeterminate from "./LoadingLine";
 
 export default function RegisterForm() {
   // ** I don't know why `import { useRouter } from "next/navigation";` works, I thought it should be `next/router`

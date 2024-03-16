@@ -1,13 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/FontPage.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import SignInHandleSubmit from "./SignInHandleSubmit";
 import { TextField } from "@mui/material";
+import LoadingLine from "./LoadingLine";
 
 const SignInForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
@@ -26,6 +29,24 @@ const SignInForm = () => {
   ];
 
   const router = useRouter();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await SignInHandleSubmit(
+      e,
+      setUser,
+      setPassword,
+      setError,
+      setErrorUser,
+      setErrorPassword,
+      user,
+      password,
+      error,
+      router,
+      setIsLoading // Pass setIsLoading to handle loading state inside SignInHandleSubmit
+    );
+  };
 
   return (
     <div className="text-black bg-white w-screen h-screen flex justify-center items-center">
@@ -47,22 +68,7 @@ const SignInForm = () => {
           Log in to MAI-ROI-RA
         </div>
 
-        <form
-          onSubmit={(e) =>
-            SignInHandleSubmit(
-              e,
-              setUser,
-              setPassword,
-              setError,
-              setErrorUser,
-              setErrorPassword,
-              user,
-              password,
-              error,
-              router
-            )
-          }
-        >
+        <form onSubmit={handleSubmit}>
           <div className="mt-8 w-full lg:text-[16px] md:text-[16px] sm:text-[14px] text-[12px]">
             <div className="relative">
               <input
@@ -116,6 +122,8 @@ const SignInForm = () => {
               ) : null}
             </div>
           </div>
+
+          <div className="mt-8">{isLoading && <LoadingLine />}</div>
 
           <div className="mt-10">
             <button

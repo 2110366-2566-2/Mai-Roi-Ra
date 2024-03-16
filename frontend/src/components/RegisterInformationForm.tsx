@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import CircularIndeterminate from "./CircularIndeterminate";
+import LoadingLine from "./LoadingLine";
 
 interface RegisterInformationFormProps {
   firstName: string;
@@ -186,7 +186,7 @@ const RegisterInformationForm: React.FC<RegisterInformationFormProps> = ({
             All fields must be filled correctly !
           </div>
         )}
-        {isLoading && <CircularIndeterminate></CircularIndeterminate>}
+        {isLoading && <LoadingLine></LoadingLine>}
 
         <div className="">
           <button
