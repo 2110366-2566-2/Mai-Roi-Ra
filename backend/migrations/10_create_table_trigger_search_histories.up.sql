@@ -1,4 +1,4 @@
-CREATE TABLE search_histories (
+CREATE TABLE IF NOT EXISTS search_histories (
     search_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
     user_id VARCHAR(36) NOT NULL,
     search_name VARCHAR(64) NOT NULL,
