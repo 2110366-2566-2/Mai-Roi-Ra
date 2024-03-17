@@ -175,7 +175,7 @@ func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Eve
 
 	if req.Search != "" {
 		search := "%" + req.Search + "%"
-		query = query.Where(`event_name LIKE ? OR description LIKE ? `, search, search)
+		query = query.Where(`event_name ILIKE ? OR description ILIKE ? `, search, search)
 	}
 
 	query = query.Offset(req.Offset)
