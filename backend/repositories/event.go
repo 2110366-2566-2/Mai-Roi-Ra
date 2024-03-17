@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 
@@ -23,6 +24,7 @@ type IEventRepository interface {
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
+	SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error)
 }
 
 func NewEventRepository(
@@ -132,16 +134,16 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 }
 
 func (r *EventRepository) GetEventListsByStartDate(startDate string) ([]*models.Event, error) {
-    log.Println("[Repo: GetEventListsByStartDate] Called")
-    
-    var eventLists []*models.Event
-    
-    // Find events where start_date is equal to the input startDate
-    if err := r.db.Where("start_date = ?", startDate).Find(&eventLists).Error; err != nil {
-        log.Println("[Repo: GetEventListsByStartDate] Error querying the events:", err)
-        return nil, err
-    }
-    return eventLists, nil
+	log.Println("[Repo: GetEventListsByStartDate] Called")
+
+	var eventLists []*models.Event
+
+	// Find events where start_date is equal to the input startDate
+	if err := r.db.Where("start_date = ?", startDate).Find(&eventLists).Error; err != nil {
+		log.Println("[Repo: GetEventListsByStartDate] Error querying the events:", err)
+		return nil, err
+	}
+	return eventLists, nil
 }
 
 func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error) {
@@ -162,4 +164,29 @@ func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string
 		return nil, nil, err
 	}
 	return &eventModel.UserId, &eventModel.OrganizerId, nil
+}
+
+func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error) {
+	log.Println("[Repo: SearchEvent] Called")
+	var eventLists []*models.Event
+	query := r.db
+
+	query = query.Where(`status=?`, constant.APPROVED)
+
+	if req.Search != "" {
+		search := "%" + req.Search + "%"
+		query = query.Where(`event_name ILIKE ? OR description ILIKE ? `, search, search)
+	}
+
+	query = query.Offset(req.Offset)
+
+	if req.Limit > 0 {
+		query = query.Limit(req.Limit)
+	}
+
+	if err := query.Find(&eventLists).Error; err != nil {
+		log.Println("[Repo: SearchEvent]: cannot query the events:", err)
+		return nil, err
+	}
+	return eventLists, nil
 }

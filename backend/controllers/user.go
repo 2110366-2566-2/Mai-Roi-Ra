@@ -318,3 +318,50 @@ func (c *UserController) ToggleNotifications(ctx *gin.Context, req *st.GetUserBy
 	log.Println("[CTRL: ToggleNotifications] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary SearchEvent
+// @Description Search the Event
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id path string true "user_id"
+// @Param search query string true "search"
+// @Param offset query string false "offset i.e. 0"
+// @Param limit query string false "Items per page i.e. 10"
+// @Success 200 {object} structure.SearchEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/{user_id}/searchevent [get]
+func (c *UserController) SearchEvent(ctx *gin.Context, req *st.SearchEventRequest) {
+	log.Println("[CTRL: SearchEvent] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.SearchEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: SearchEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary GetSearchHistories
+// @Description Get Search History for the User
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_id path string true "user_id"
+// @Success 200 {object} structure.GetSearchHistoriesResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/{user_id}/searchhistory [get]
+func (c *UserController) GetSearchHistories(ctx *gin.Context, req *string) {
+	log.Println("[CTRL: GetSearchHistories] Input:", req)
+
+	res, err := c.ServiceGateway.UserService.GetSearchHistories(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: GetSearchHistories] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
