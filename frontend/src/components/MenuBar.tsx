@@ -45,10 +45,12 @@ export default function MenuBar() {
               ${pathname === "/profile" ? "text-[#FFAE27]" : ""}`}
                 onClick={() => {router.push("/profile");}}>
                 <PersonIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Profile
-            </div>
+            </div>  
           : null }
 
-          <div className={`px-4 py-2 flex items-center w-full hover:bg-gray-200`}>
+          <div className={`px-4 py-2 flex items-center w-full hover:bg-gray-200
+            ${pathname === "/homepage/reportproblem" ? "text-[#FFAE27]" : ""}`}
+              onClick={() => {router.push("/homepage/reportproblem");}}>
             <SupportAgentIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Support and Service
           </div>
 
