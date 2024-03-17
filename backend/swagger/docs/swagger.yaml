@@ -241,6 +241,13 @@ definitions:
           $ref: '#/definitions/structure.ParticipatedEvent'
         type: array
     type: object
+  structure.GetSearchHistoriesResponse:
+    properties:
+      search_history:
+        items:
+          $ref: '#/definitions/structure.SearchHistory'
+        type: array
+    type: object
   structure.IsRegisteredResponse:
     properties:
       is_registered:
@@ -366,6 +373,23 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  structure.SearchEventResponse:
+    properties:
+      event_list:
+        items:
+          $ref: '#/definitions/structure.ParticipatedEvent'
+        type: array
+    type: object
+  structure.SearchHistory:
+    properties:
+      search_name:
+        type: string
+      user_id:
+        type: string
+    required:
+    - search_name
+    - user_id
     type: object
   structure.SendAnnounceResponse:
     properties:
@@ -1184,6 +1208,77 @@ paths:
           schema:
             type: object
       summary: UpdateUserInformation
+      tags:
+      - user
+  /users/{user_id}/searchevent:
+    get:
+      consumes:
+      - application/json
+      description: Search the Event
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: search
+        in: query
+        name: search
+        required: true
+        type: string
+      - description: offset i.e. 0
+        in: query
+        name: offset
+        type: string
+      - description: Items per page i.e. 10
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.SearchEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: SearchEvent
+      tags:
+      - user
+  /users/{user_id}/searchhistory:
+    get:
+      consumes:
+      - application/json
+      description: Get Search History for the User
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetSearchHistoriesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetSearchHistories
       tags:
       - user
   /users/events:

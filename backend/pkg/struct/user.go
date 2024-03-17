@@ -135,3 +135,23 @@ type GetParticipatedEventListsRequest struct {
 type GetParticipatedEventListsResponse struct {
 	EventsList []ParticipatedEvent `json:"event_list"`
 }
+
+type SearchEventRequest struct {
+	UserId string `json:"user_id" binding:"required"`
+	Search string `json:"search"`
+	Offset int    `json:"offset"`
+	Limit  int    `json:"limit"`
+}
+
+type SearchEventResponse struct {
+	EventsList []ParticipatedEvent `json:"event_list"`
+}
+
+type SearchHistory struct {
+	SearchId   string `json:"user_id" binding:"required"`
+	SearchName string `json:"search_name" binding:"required"`
+}
+
+type GetSearchHistoriesResponse struct {
+	SearchHistoryList []SearchHistory `json:"search_history"`
+}
