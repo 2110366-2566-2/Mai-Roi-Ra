@@ -8,11 +8,11 @@ import (
 type User struct {
 	UserID                   string    `gorm:"column:user_id;not null;primaryKey" json:"user_id"`
 	Username                 string    `gorm:"column:username;not null" json:"username"`
-	PhoneNumber              *string   `gorm:"column:phone_number" json:"phone_number"` // Replace "phone_length_constraint" with actual SQL check expression if needed
+	PhoneNumber              *string   `gorm:"column:phone_number" json:"phone_number"`
 	Email                    *string   `gorm:"column:email" json:"email"`
 	FirstName                string    `gorm:"column:first_name;not null" json:"first_name"`
 	LastName                 string    `gorm:"column:last_name;not null" json:"last_name"`
-	Password                 string    `gorm:"column:password;not null" json:"-"` // Excluded from JSON responses
+	Password                 string    `gorm:"column:password;not null" json:"-"`
 	IsEnableNotification     bool      `gorm:"column:is_enable_notification;not null" json:"is_enable_notification"`
 	PaymentGatewayCustomerID string    `gorm:"column:payment_gateway_customer_id" json:"payment_gateway_customer_id"`
 	BirthDate                time.Time `gorm:"column:birth_date" json:"birth_date"`
@@ -21,10 +21,11 @@ type User struct {
 	District                 string    `gorm:"column:district;not null" json:"district"`
 	Province                 string    `gorm:"column:province;not null" json:"province"`
 	BannerImage              string    `gorm:"column:banner_image" json:"banner_image"`
-	Role                     string    `gorm:"column:role;not null" json:"role"` // Added role field
+	Role                     string    `gorm:"column:role;not null" json:"role"`
+	RegistrationMethod       string    `gorm:"column:registration_method;not null" json:"registration_method"`
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
-	Token                    string    `gorm:"column:token" json:"-"` // Excluded from JSON responses
+	Token                    string    `gorm:"column:token" json:"-"`
 }
 
 func (User) TableName() string {
