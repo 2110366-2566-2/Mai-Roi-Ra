@@ -17,6 +17,7 @@ type Gateway struct {
 	LocationController     *LocationController
 	ParticipateController  *ParticipateController
 	AnnouncementController *AnnouncementController
+	ProblemController	   *ProblemController
 }
 
 // NewController ...
