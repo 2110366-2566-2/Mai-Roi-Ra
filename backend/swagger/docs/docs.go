@@ -1362,14 +1362,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone_number": {
-                    "description": "Replace \"phone_length_constraint\" with actual SQL check expression if needed",
                     "type": "string"
                 },
                 "province": {
                     "type": "string"
                 },
+                "registration_method": {
+                    "type": "string"
+                },
                 "role": {
-                    "description": "Added role field",
                     "type": "string"
                 },
                 "updated_at": {
