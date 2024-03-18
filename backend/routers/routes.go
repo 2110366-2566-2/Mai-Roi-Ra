@@ -189,6 +189,30 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			}
 			userController.GetParticipatedEventLists(ctx, req)
 		})
+		r.GET("/api/v1/users/:id/searchevent", func(ctx *gin.Context) {
+			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
+				return
+			}
+
+			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
+				return
+			}
+			req := st.SearchEventRequest{
+				UserId: ctx.Param("id"),
+				Search: ctx.Query("search"),
+				Offset: offset,
+				Limit:  limit,
+			}
+			userController.SearchEvent(ctx, &req)
+		})
+		r.GET("/api/v1/users/:id/searchhistory", func(ctx *gin.Context) {
+			userId := ctx.Param("id")
+			userController.GetSearchHistories(ctx, &userId)
+		})
 		// PUT
 		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
 			var req st.UpdateUserInformationRequest

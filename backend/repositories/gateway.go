@@ -21,6 +21,7 @@ type RepositoryGateway struct {
 	ParticipateRepository  IParticipateRepository
 	AnnouncementRepository IAnnouncementRepository
 	ProblemRepository      IProblemRepository
+	SearchRepository       ISearchRepository
 }
 
 // NewRepository ...
