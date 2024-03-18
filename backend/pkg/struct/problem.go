@@ -1,41 +1,64 @@
 package structure
 
-import (
-	"time"
-
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
-)
-
 type CreateProblemRequest struct {
-	AdminUsername string    `json:"admin_username" binding:"required"`
-	Problem       string    `json:"problem" binding:"required"`
-	Description   string    `json:"description" binding:"required"`
-	Reply         *string   `json:"reply"`
-	Status        string    `json:"status" binding:"required"`
-	CreatedAt     time.Time `json:"created_at"` // Add this field
+	UserId      string `json:"user_id" binding:"required"`
+	Problem     string `json:"problem" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
-type GetProblemByIDRequest struct {
+type CreateProblemResponse struct {
+	ProblemId   string `json:"problem_id"`
+	UserId      string `json:"user_id"`
+	Problem     string `json:"problem"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+}
+
+type GetProblemDetailByIdRequest struct {
 	ProblemId string `json:"problem_id" binding:"required"`
 }
 
-type GetProblemsByStatusRequest struct {
+type GetProblemDetailByIdResponse struct {
+	ProblemId     string `json:"problem_id"`
+	AdminUsername string `json:"admin_username"`
+	Problem       string `json:"problem"`
+	Description   string `json:"description"`
+	Reply         string `json:"reply"`
+	Status        string `json:"status"`
+}
+
+type ProblemList struct {
+	ProblemId     string `json:"problem_id"`
+	AdminUsername string `json:"admin_username"`
+	Problem       string `json:"problem"`
+	Description   string `json:"description"`
+	Reply         string `json:"reply"`
+	Status        string `json:"status"`
+}
+
+type GetProblemListsRequest struct {
+	UserId string `json:"user_id" binding:"required"`
 	Status string `json:"status" binding:"required"`
+}
+
+type GetProblemListsResponse struct {
+	ProblemLists []ProblemList `json:"problem_lists"`
 }
 
 type UpdateProblemRequest struct {
 	ProblemId     string  `json:"problem_id" binding:"required"`
-	AdminUsername string  `json:"admin_username"`
+	AdminUsername *string `json:"admin_username"`
 	Problem       string  `json:"problem"`
 	Description   string  `json:"description"`
 	Reply         *string `json:"reply"`
 	Status        string  `json:"status"`
 }
 
-type ProblemResponse struct {
-	Problem models.Problem `json:"problem"`
+type DeleteProblemByIdRequest struct {
+	ProblemId string `json:"problem_id" binding:"required"`
 }
 
-type ProblemsResponse struct {
-	Problems []models.Problem `json:"problems"`
+// Use on Update, Delete
+type ProblemResponse struct {
+	Response string `json:"response"`
 }

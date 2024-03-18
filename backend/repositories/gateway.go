@@ -20,7 +20,7 @@ type RepositoryGateway struct {
 	OrganizerRepository    IOrganizerRepository
 	ParticipateRepository  IParticipateRepository
 	AnnouncementRepository IAnnouncementRepository
-	ProblemRepository	   IProblemRepository
+	ProblemRepository      IProblemRepository
 }
 
 // NewRepository ...
