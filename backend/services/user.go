@@ -39,6 +39,8 @@ type IUserService interface {
 	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
 	GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error)
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
+	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
+	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -220,6 +222,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		PhoneNumber: phoneNumber,
 		Token:       token,
 		OrganizerId: organizerId,
+		Role:        user.Role,
 	}
 
 	return res, nil
@@ -488,4 +491,63 @@ func (s *UserService) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.R
 		return nil, err
 	}
 	return res, err
+}
+
+func (s *UserService) SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error) {
+	log.Println("[Service: SearchEvent]: Called")
+	_, err := s.RepositoryGateway.SearchRepository.SaveSearchEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo SaveSearchEvent error]:", err)
+	}
+	res, err := s.RepositoryGateway.EventRepository.SearchEvent(req)
+	if err != nil {
+		log.Println("[Service: Call repo SearchEvent error]:", err)
+		return nil, err
+	}
+
+	resLists := &st.SearchEventResponse{
+		EventsList: make([]st.ParticipatedEvent, 0),
+	}
+
+	for _, v := range res {
+		locName, err := s.RepositoryGateway.LocationRepository.GetLocationById(v.LocationId)
+		if err != nil {
+			log.Println("[Service: SearchEvent] called repo location error", err)
+			return nil, err
+		}
+
+		eventData := st.ParticipatedEvent{
+			EventId:      v.EventId,
+			EventName:    v.EventName,
+			StartDate:    v.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
+			EndDate:      v.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
+			EventImage:   v.EventImage,
+			LocationName: locName.LocationName,
+			Description:  v.Description,
+		}
+		resLists.EventsList = append(resLists.EventsList, eventData)
+	}
+
+	return resLists, nil
+}
+
+func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error) {
+	log.Println("[Service: GetSearchHistories]: Called")
+	res, err := s.RepositoryGateway.SearchRepository.GetSearchHistories(userId)
+	if err != nil {
+		log.Println("[Service: Call repo GetSearchHistories error]:", err)
+	}
+
+	resLists := &st.GetSearchHistoriesResponse{
+		SearchHistoryList: make([]st.SearchHistory, 0),
+	}
+
+	for _, v := range res {
+		historyData := st.SearchHistory{
+			SearchId:   v.SearchID,
+			SearchName: v.SearchName,
+		}
+		resLists.SearchHistoryList = append(resLists.SearchHistoryList, historyData)
+	}
+	return resLists, nil
 }

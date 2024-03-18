@@ -1,25 +1,25 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- CREATE TABLE IF NOT EXISTS admins (
---     admin_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
---     password VARCHAR(64) NOT NULL,
---     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     updated_at TIMESTAMP WITHOUT TIME ZONE,
---     PRIMARY KEY (admin_id)
--- );
-
--- CREATE TYPE account_type AS ENUM ('Entertainment', 'Meditation', 'Exercise', 'Cooking', 'Volunteer');
 DO $$ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM pg_type
         WHERE typname = 'account_type') 
-        THEN CREATE TYPE account_type AS ENUM ('ADMIN', 'USER', 'ORGANIZER');
+    THEN
+        CREATE TYPE account_type AS ENUM ('ADMIN', 'USER', 'ORGANIZER');
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_type
+        WHERE typname = 'registration_method')
+    THEN
+        CREATE TYPE registration_method AS ENUM ('GOOGLE', 'NORMAL');
     END IF;
 END $$;
 
 CREATE TABLE IF NOT EXISTS users (
-    user_id VARCHAR(255) NOT NULL UNIQUE,
+    user_id VARCHAR(255) NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
     username VARCHAR(255) UNIQUE NOT NULL,
     phone_number CHAR(10) UNIQUE,
     email VARCHAR(64) UNIQUE,
@@ -34,8 +34,9 @@ CREATE TABLE IF NOT EXISTS users (
     district VARCHAR(64) NOT NULL,
     province VARCHAR(64) NOT NULL,
     banner_image VARCHAR(1024) NOT NULL,
-    token VARCHAR(1024) DEFAULT '' NOT NULL,
     role account_type NOT NULL,
+    register_type registration_method NOT NULL,
+    token VARCHAR(1024) DEFAULT '' NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (user_id)

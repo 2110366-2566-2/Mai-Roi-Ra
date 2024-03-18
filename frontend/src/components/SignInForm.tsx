@@ -1,13 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/FontPage.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import SignInHandleSubmit from "./SignInHandleSubmit";
 import { TextField } from "@mui/material";
+import LoadingLine from "./LoadingLine";
 
 const SignInForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
@@ -15,22 +18,37 @@ const SignInForm = () => {
   const [errorPassword, setErrorPassword] = useState<number>(0);
 
   const ErrorUser = [
-    "Error: Please fill your phone number or email address",
-    "Error: Not phone number or email address format",
-    "Error: This username did not register yet",
+    "Please fill your phone number or email address",
+    "Not phone number or email address format",
+    "This username is not registered yet",
   ];
 
-  const ErrorPassword = [
-    "Error: Please fill your password",
-    "Error: Wrong password",
-  ];
+  const ErrorPassword = ["Please fill your password", "Incorrect password"];
 
   const router = useRouter();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await SignInHandleSubmit(
+      e,
+      setUser,
+      setPassword,
+      setError,
+      setErrorUser,
+      setErrorPassword,
+      user,
+      password,
+      error,
+      router,
+      setIsLoading // Pass setIsLoading to handle loading state inside SignInHandleSubmit
+    );
+  };
 
   return (
     <div className="text-black bg-white w-screen h-screen flex justify-center items-center">
       <div
-        className={`${styles.Roboto} text-center lg:w-[450px] lg:h-[450px] md:w-[350px] md:h-[350]`}
+        className={` text-center lg:w-[450px] lg:h-[450px] md:w-[350px] md:h-[350]`}
       >
         <div className="lg:w-[60px] lg:h-[60px] md:w-[50px] md:h-[50px] sm:w-[40px] sm:h-[40px] h-[30px] w-[30px]">
           <Image
@@ -41,31 +59,18 @@ const SignInForm = () => {
           />
         </div>
 
-        <div className="w-full lg:text-[42px] md:text-[35px] sm:text-[30px] text-[25px] mt-[10px] font-black">
+        <div
+          className={`${styles.Roboto} w-full lg:text-[42px] md:text-[35px] sm:text-[30px] text-[25px] mt-[10px] font-black`}
+        >
           Log in to MAI-ROI-RA
         </div>
 
-        <form
-          onSubmit={(e) =>
-            SignInHandleSubmit(
-              e,
-              setUser,
-              setPassword,
-              setError,
-              setErrorUser,
-              setErrorPassword,
-              user,
-              password,
-              error,
-              router
-            )
-          }
-        >
-          <div className="mt-[20px] w-full lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]">
+        <form onSubmit={handleSubmit}>
+          <div className="mt-8 w-full lg:text-[16px] md:text-[16px] sm:text-[14px] text-[12px]">
             <div className="relative">
               <input
-                className={`w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
-                            border-[1px] indent-[20px] ${
+                className={`w-full px-4 py-4 rounded-md border-gray-200 
+                            border  ${
                               errorUser ? "border-red-500" : "border-black"
                             } focus:outline-none`}
                 type="text"
@@ -88,10 +93,10 @@ const SignInForm = () => {
               ) : null}
             </div>
 
-            <div className="relative mt-[20px]">
+            <div className="relative mt-4">
               <input
-                className={`w-full lg:h-[60px] md:h-[55px] sm:h-[50px] h-[45px] rounded-md border-gray-200 
-                            border-[1px] indent-[20px] ${
+                className={`w-full px-4 py-4 rounded-md border-gray-200 
+                            border  ${
                               errorPassword ? "border-red-500" : "border-black"
                             } focus:outline-none`}
                 type="password"
@@ -115,11 +120,12 @@ const SignInForm = () => {
             </div>
           </div>
 
-          <div className="mt-[20px]">
+          <div className="mt-8">{isLoading && <LoadingLine />}</div>
+
+          <div className="mt-10">
             <button
               type="submit"
-              className="rounded-full text-white hover:bg-sky-600 bg-sky-500 w-full 
-                        lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px] lg:h-[50px] md:h-[45px] sm:h-[40px] h-[35px]"
+              className=" w-full text-white px-4 py-4 rounded-full bg-[#F2D22E] hover:bg-yellow-500 text-white lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]"
             >
               Log in
             </button>

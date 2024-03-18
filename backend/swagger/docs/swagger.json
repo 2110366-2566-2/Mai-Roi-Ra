@@ -1172,6 +1172,113 @@
                 }
             }
         },
+        "/users/{user_id}/searchevent": {
+            "get": {
+                "description": "Search the Event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "SearchEvent",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "offset i.e. 0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Items per page i.e. 10",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SearchEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/searchhistory": {
+            "get": {
+                "description": "Get Search History for the User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "GetSearchHistories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetSearchHistoriesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/validate-token": {
             "get": {
                 "description": "Validates a user's authentication token and returns the associated user details if valid.",
@@ -1249,14 +1356,15 @@
                     "type": "string"
                 },
                 "phone_number": {
-                    "description": "Replace \"phone_length_constraint\" with actual SQL check expression if needed",
                     "type": "string"
                 },
                 "province": {
                     "type": "string"
                 },
+                "registration_method": {
+                    "type": "string"
+                },
                 "role": {
-                    "description": "Added role field",
                     "type": "string"
                 },
                 "updated_at": {
@@ -1571,6 +1679,17 @@
                 }
             }
         },
+        "structure.GetSearchHistoriesResponse": {
+            "type": "object",
+            "properties": {
+                "search_history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.SearchHistory"
+                    }
+                }
+            }
+        },
         "structure.IsRegisteredResponse": {
             "type": "object",
             "required": [
@@ -1634,6 +1753,9 @@
                     "type": "string"
                 },
                 "phone_number": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 },
                 "token": {
@@ -1751,6 +1873,32 @@
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SearchEventResponse": {
+            "type": "object",
+            "properties": {
+                "event_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.ParticipatedEvent"
+                    }
+                }
+            }
+        },
+        "structure.SearchHistory": {
+            "type": "object",
+            "required": [
+                "search_name",
+                "user_id"
+            ],
+            "properties": {
+                "search_name": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
