@@ -17,6 +17,7 @@ type IProblemRepository interface {
 	GetProblemLists(req *st.GetProblemListsRequest) ([]models.Problem, error)
 	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
 	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
+	CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error)
 }
 
 type ProblemRepository struct {
@@ -151,5 +152,24 @@ func (r *ProblemRepository) DeleteProblemById(req *st.DeleteProblemByIdRequest) 
 
 	return &st.ProblemResponse{
 		Response: "Delete problem successfully",
+	}, nil
+}
+
+func (r *ProblemRepository) CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error) {
+	log.Println("[Repo: CreateOrUpdateProblemReply]: Called")
+
+	if err := r.DB.Model(&models.Problem{}).Where("problem_id = ?", req.ProblemId).
+		Updates(map[string]interface{}{
+			"AdminUsername": req.AdminUsername,
+			"Reply":         req.Reply,
+			"Status":        "Replied",
+			"UpdatedAt":     time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: CreateOrUpdateProblemReply] Error creating or updating problem reply in Problems table:", err)
+		return nil, err
+	}
+
+	return &st.CreateOrUpdateProblemReplyResponse{
+		ProblemId: req.ProblemId,
 	}, nil
 }
