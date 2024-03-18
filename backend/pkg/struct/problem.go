@@ -73,4 +73,11 @@ type CreateOrUpdateProblemReplyResponse struct {
 	ProblemId string `json:"problem_id"`
 }
 
+type SendReplyEmailRequest struct {
+	ProblemId string `json:"problem_id"`
+}
+
+type SendReplyEmailResponse struct {
+	SendStatus string `json:"send_status"`
+}
 
