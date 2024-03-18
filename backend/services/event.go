@@ -87,14 +87,13 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 
 func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error) {
 	log.Println("[Service: GetEventLists]: Called")
-	resEvents, err := s.RepositoryGateway.EventRepository.GetEventLists(req)
+	resEvents, totalEvents, totalPages, err := s.RepositoryGateway.EventRepository.GetEventLists(req)
 	if err != nil {
 		return nil, err
 	}
 	log.Println("[Service: GetEventLists]: resEvents:", resEvents)
-	resLists := &st.GetEventListsResponse{
-		EventLists: make([]st.GetEventList, 0),
-	}
+
+	eventLists := make([]st.GetEventList, 0)
 
 	for _, v := range resEvents {
 		locationId := v.LocationId
@@ -117,7 +116,13 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 			City:        resLocation.City,
 			District:    resLocation.District,
 		}
-		resLists.EventLists = append(resLists.EventLists, res)
+		eventLists = append(eventLists, res)
+	}
+
+	resLists := &st.GetEventListsResponse{
+		TotalPages: *totalPages,
+		TotalEvent: *totalEvents,
+		EventLists: eventLists,
 	}
 	return resLists, nil
 }
@@ -142,14 +147,14 @@ func (s *EventService) GetEventListsByStartDate(req *st.GetEventListsByStartDate
 			eventImage = *v.EventImage
 		}
 		res := st.GetEventListByStartDate{
-			EventId:     v.EventId,
-			OrganizerId: v.OrganizerId,
-			EventName:   v.EventName,
-			StartDate:   utils.GetDate(v.StartDate),
-			EndDate:     utils.GetDate(v.EndDate),
-			Description: v.Description,
-			Status:      v.Status,
-			EventImage:  eventImage,
+			EventId:      v.EventId,
+			OrganizerId:  v.OrganizerId,
+			EventName:    v.EventName,
+			StartDate:    utils.GetDate(v.StartDate),
+			EndDate:      utils.GetDate(v.EndDate),
+			Description:  v.Description,
+			Status:       v.Status,
+			EventImage:   eventImage,
 			LocationName: resLocation.LocationName,
 		}
 		resLists.EventLists = append(resLists.EventLists, res)
@@ -284,19 +289,19 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 	reqparticipate := &st.GetParticipantListsRequest{
 		EventId: req.EventId,
 	}
-	resparticipate,err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
+	resparticipate, err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
 	if err != nil {
 		return nil, err
 	}
 
-	for _,v := range resparticipate{
+	for _, v := range resparticipate {
 		reqcancelled := &st.SendCancelledEmailRequest{
-			UserId:      v.UserId,
-			EventId:	 resevent.EventId,	
-			EventName:   resevent.EventName,
-			EventDate:   resevent.StartDate.Format("2006-01-02"),
+			UserId:    v.UserId,
+			EventId:   resevent.EventId,
+			EventName: resevent.EventName,
+			EventDate: resevent.StartDate.Format("2006-01-02"),
 		}
-		if _,err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
+		if _, err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
 			log.Println("[Service: Call SendCancelledEmail]:", err)
 			return nil, err
 		}

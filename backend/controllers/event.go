@@ -97,6 +97,7 @@ func (c *EventController) DeleteEventById(ctx *gin.Context, req *st.DeleteEventR
 // @Param organizer_id query string false "For My events"
 // @Param filter query string false "Status query. i.e. Approved"
 // @Param sort query string false "Sort order. i.e. start_date ASC"
+// @Param search query string false "Search i.e. Hello"
 // @Param offset query int false "offset i.e. 0"
 // @Param limit query int false "Items per page i.e. 10"
 // @Success 200 {object} structure.GetEventListsResponse

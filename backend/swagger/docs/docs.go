@@ -198,6 +198,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Search i.e. Hello",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "offset i.e. 0",
                         "name": "offset",
@@ -1643,6 +1649,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.GetEventList"
                     }
+                },
+                "total_events": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },
