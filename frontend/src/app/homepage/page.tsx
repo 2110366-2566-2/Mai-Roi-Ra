@@ -1,41 +1,39 @@
-import Image from 'next/image';
 import EventItem from '@/components/EventItem';
+import SearchBar from '@/components/SearchBar';
 import getEvents from '@/libs/getEvents';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { Suspense } from 'react';
 
-export default async function UserHomepage() {
+export default async function Homepage(
+  {
+    searchParams,
+  } : {
+      searchParams: { offset : string | undefined , 
+        limit : string | undefined}
+  }
+) {
+  const page = Number(searchParams.offset ?? '1');
+  const limit = Number(searchParams.limit ?? '2');
 
-  const session = await getServerSession(authOptions)
-  const events = await getEvents();
+  const events = await getEvents({offset : page , limit : limit});
   const datas = events.event_lists;
-  console.log("successfully");
-  console.log(events);
-  console.log(session)
-  
+
   return (
-    <main className="bg-white text-black h-full">
-      {/* {session ? <a href="/api/auth/signout">signout</a> : <a href="/api/auth/signin">signin</a>} */}
-        <div className='lg:pt-8 pt-2 pl-10'>
-            <h1 className='font-bold lg:text-5xl text-3xl lg:mb-8 md:mb-7 mb-5'>Explore Event</h1>
-            <div className="flex flex-row justify-start w-full">
-                <input type="text" id="search-event" name="search-event" placeholder="Search" 
-                    className='border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[70%] md:w-[70%] w-[55%] mr-[20px] pl-2'
-                />
-                <button className='border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[80px] md:w-[80px] w-[65px] hover:scale-105 duration-300
-                lg:ml-[20px] md:ml-[15px] sm:ml-[10px] ml-[10px]'>
-                    Filter
-                </button>
-            </div>
-        </div>
-        <div className="my-8 px-4 lg:px-10">
-          {
-            datas.map((eventItem:any) => (
-              <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
-              description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image} page={0}/>
-            ))
-          }
-        </div>
+    <main className="text-black flex flex-col h-screen overflow-hidden">
+      <Suspense fallback={<div className="flex justify-center items-center w-full h-full text-[40px]">Loading...</div>}>
+
+          <div className='flex-shrink-0 pt-8 px-10'>
+              <h1 className='font-bold text-5xl lg:mb-8 mb-3'>Explore Event</h1>
+              <SearchBar page={page} limit={limit}/>
+          </div>
+
+          <div className='bg-white py-[5px] mt-[20px] overflow-y-auto'>
+           {datas.map((eventItem:any) => (
+            <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
+             description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image} page={0}/>
+           ))}
+          </div>
+
+      </Suspense> 
     </main>
   )
 }

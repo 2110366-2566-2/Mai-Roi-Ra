@@ -1,6 +1,6 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getEvents(id:string){
+export default async function getEvent(id:string){
     const response = await fetch(`${apiBackUrl}/events/${id}`, {
 		method: 'GET',
 		next: {tags: ['event']}

@@ -44,12 +44,12 @@ export default function EventItem ({id,name,startDate,endDate,description,city,d
 
   return (
     <div>
-      <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-105 duration-300"
-    onClick={(e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      router.push(`/events/${id}`);
-      }}>
+      <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-y-105 duration-300"
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        router.push(`/events/${id}`);
+        }}>
         <div className="flex-shrink-0 mr-4 h-full lg:w-[200px] md:w-[160px] w-[120px]">
             <Image src={imgSrc} 
                 alt={name} 
