@@ -109,6 +109,29 @@ func (c *ProblemController) UpdateProblem(ctx *gin.Context, req *st.UpdateProble
 	ctx.JSON(http.StatusOK, res)
 }
 
+// CreateOrUpdateProblemReply handles the creation or update of replies for a specific problem.
+// @Summary Create or Update Problem Reply
+// @Description Create or update a reply for a specific problem with the provided details.
+// @Tags problems
+// @Accept json
+// @Produce json
+// @Param problem_id path string true "Problem ID" example:"problem123"
+// @Param request body st.CreateOrUpdateProblemReplyRequest true "Create or Update Problem Reply Request"
+// @Success 200 {object} st.ProblemResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /problems/reply/{problem_id} [put]
+func (c *ProblemController) CreateOrUpdateProblemReply(ctx *gin.Context, req *st.CreateOrUpdateProblemReplyRequest) {
+	res, err := c.ServiceGateway.ProblemService.CreateOrUpdateProblemReply(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: CreateOrUpdateProblemReply] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
 // DeleteProblemById deletes a problem by its ID.
 // @Summary Delete problem by ID
 // @Description Delete a problem with the specified ID.

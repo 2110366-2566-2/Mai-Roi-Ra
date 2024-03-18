@@ -402,6 +402,16 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 			problemController.UpdateProblem(ctx, &req)
 		})
 
+		r.PUT("/api/v1/problems/reply/:id", func(ctx *gin.Context) {
+			var req st.CreateOrUpdateProblemReplyRequest
+			if err := ctx.BindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			req.ProblemId = ctx.Param("id")
+			problemController.CreateOrUpdateProblemReply(ctx, &req)
+		})
+
 		r.DELETE("/api/v1/problems/:id", func(ctx *gin.Context) {
 			req := st.DeleteProblemByIdRequest{
 				ProblemId: ctx.Param("id"),
