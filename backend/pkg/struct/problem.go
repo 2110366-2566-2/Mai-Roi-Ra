@@ -63,21 +63,4 @@ type ProblemResponse struct {
 	Response string `json:"response"`
 }
 
-type CreateOrUpdateProblemReplyRequest struct {
-	ProblemId     string    `json:"problem_id" binding:"required"`
-	AdminUsername string    `json:"admin_username" binding:"required"`
-	Reply         string    `json:"reply" binding:"required"`
-}
-
-type CreateOrUpdateProblemReplyResponse struct {
-	ProblemId string `json:"problem_id"`
-}
-
-type SendReplyEmailRequest struct {
-	ProblemId string `json:"problem_id"`
-}
-
-type SendReplyEmailResponse struct {
-	SendStatus string `json:"send_status"`
-}
 

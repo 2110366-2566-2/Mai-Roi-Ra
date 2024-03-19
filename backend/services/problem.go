@@ -20,8 +20,8 @@ type IProblemService interface {
 	GetProblemLists(req *st.GetProblemListsRequest) (*st.GetProblemListsResponse, error)
 	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
 	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
-	CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error)
-	SendReplyEmail(req *st.SendReplyEmailRequest) error
+	// CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error)
+	SendReplyEmail(problemId string) error
 	SendEmailToAdmin(problemType string, description string) error
 }
 
@@ -115,6 +115,14 @@ func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.Proble
 	if err != nil {
 		return nil, err
 	}
+
+	if(req.Status == "Replied") {
+		err := s.SendReplyEmail(req.ProblemId)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return res, nil
 }
 
@@ -127,27 +135,9 @@ func (s *ProblemService) DeleteProblemById(req *st.DeleteProblemByIdRequest) (*s
 	return res, nil
 }
 
-func (s *ProblemService) CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error) {
-	log.Println("[Service: CreateOrUpdateProblemReply]: Called")
-	res, err := s.RepositoryGateway.ProblemRepository.CreateOrUpdateProblemReply(req)
-	if err != nil {
-		log.Println("[Service: Call Repo Error]:", err)
-		return nil, err
-	}
-	reqEmail := &st.SendReplyEmailRequest{
-		ProblemId: req.ProblemId,
-	}
-	if err := s.SendReplyEmail(reqEmail); err != nil {
-		log.Println("[Service: Call SendReplyEmail Error]:", err)
-		return nil,err
-	}
-
-	return res, err
-}
-
-func (s *ProblemService) SendReplyEmail(req *st.SendReplyEmailRequest) error {
+func (s *ProblemService) SendReplyEmail(problemId string) error {
 	log.Println("[Service: SendReplyEmail]: Called")
-	resProblem , err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(req.ProblemId)
+	resProblem , err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(problemId)
 	if err != nil {
 		log.Println("[Service: Call Repo Error]:", err)
 		return err

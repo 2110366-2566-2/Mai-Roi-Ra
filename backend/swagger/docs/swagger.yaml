@@ -119,19 +119,6 @@ definitions:
       event_id:
         type: string
     type: object
-  structure.CreateOrUpdateProblemReplyRequest:
-    properties:
-      admin_username:
-        type: string
-      problem_id:
-        type: string
-      reply:
-        type: string
-    required:
-    - admin_username
-    - problem_id
-    - reply
-    type: object
   structure.CreateProblemRequest:
     properties:
       description:
