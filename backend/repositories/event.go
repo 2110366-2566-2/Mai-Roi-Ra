@@ -18,7 +18,7 @@ type EventRepository struct {
 
 type IEventRepository interface {
 	CreateEvent(req *models.Event) (*st.CreateEventResponse, error)
-	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
+	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, *int, *int, error)
 	GetEventListsByStartDate(endDate string) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
@@ -104,34 +104,58 @@ func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.Delet
 	}, nil
 }
 
-func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error) {
+func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, *int, *int, error) {
 	log.Println("[Repo: GetEventLists] Called")
 	var eventLists []*models.Event
-	query := r.db
+
+	query := r.db.Model(&models.Event{}).Where(`status = ?`, constant.APPROVED)
 
 	if req.OrganizerId != "" {
-		query = query.Where(`organizer_id=?`, req.OrganizerId)
+		query = query.Where(`organizer_id = ?`, req.OrganizerId)
 	}
-	// status
-	if req.Filter != "" {
-		query = query.Where(`status=?`, req.Filter)
+
+	if req.Search != "" {
+		search := "%" + req.Search + "%"
+		query = query.Where(`event_name ILIKE ? OR description ILIKE ?`, search, search)
 	}
 
 	if req.Sort != "" {
 		query = query.Order(req.Sort)
+	} else {
+		query = query.Order("start_date ASC")
 	}
 
-	query = query.Offset(req.Offset)
-
-	if req.Limit > 0 {
-		query = query.Limit(req.Limit)
+	// Pagination logic
+	offset := req.Offset
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 10 
 	}
+
+	totalEventsQuery := query
+	var totalEventsInt64 int64
+	if err := totalEventsQuery.Count(&totalEventsInt64).Error; err != nil {
+		log.Println("[Repo: GetEventLists]: cannot count the events:", err)
+		return nil, nil, nil, err
+	}
+
+	query = query.Offset(offset).Limit(limit)
+
 	if err := query.Find(&eventLists).Error; err != nil {
 		log.Println("[Repo: GetEventLists]: cannot query the events:", err)
-		return nil, err
+		return nil, nil, nil, err
 	}
-	return eventLists, nil
+
+	totalEvents := int(totalEventsInt64)
+	totalPages := int(totalEvents) / limit
+
+	if int(totalEvents) % limit > 0 {
+		totalPages++
+	}
+
+	return eventLists, &totalEvents, &totalPages, nil
 }
+
 
 func (r *EventRepository) GetEventListsByStartDate(startDate string) ([]*models.Event, error) {
 	log.Println("[Repo: GetEventListsByStartDate] Called")

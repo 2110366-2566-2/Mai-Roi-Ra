@@ -264,6 +264,10 @@ definitions:
         items:
           $ref: '#/definitions/structure.GetEventList'
         type: array
+      total_events:
+        type: integer
+      total_pages:
+        type: integer
     type: object
   structure.GetLocationByIdResponse:
     properties:
@@ -748,6 +752,10 @@ paths:
       - description: Sort order. i.e. start_date ASC
         in: query
         name: sort
+        type: string
+      - description: Search i.e. Hello
+        in: query
+        name: search
         type: string
       - description: offset i.e. 0
         in: query

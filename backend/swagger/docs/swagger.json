@@ -192,6 +192,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Search i.e. Hello",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "offset i.e. 0",
                         "name": "offset",
@@ -1944,6 +1950,12 @@
                     "items": {
                         "$ref": "#/definitions/structure.GetEventList"
                     }
+                },
+                "total_events": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },
