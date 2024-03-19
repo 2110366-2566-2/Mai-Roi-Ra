@@ -58,6 +58,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 				OrganizerId: ctx.Query("organizer_id"),
 				Filter:      ctx.Query("filter"),
 				Sort:        ctx.Query("sort"),
+				Search:      ctx.Query("search"),
 				Offset:      offset,
 				Limit:       limit,
 			}
