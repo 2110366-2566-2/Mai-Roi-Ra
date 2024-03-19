@@ -29,8 +29,13 @@ func NewAnnouncementController(
 // @Param request body st.SendAnnouncementRequest true "Send Announcement Request"
 // @Success 200 {object} st.SendAnnounceResponse "Announcement successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the announcement"
-// @Router /announcement [post]
-func (c *AnnouncementController) SendAnnouncement(ctx *gin.Context, req *st.SendAnnouncementRequest) {
+// @Router /announcements [post]
+func (c *AnnouncementController) SendAnnouncement(ctx *gin.Context) {
+	var req *st.SendAnnouncementRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	log.Println("[CTRL: SendAnnouncement]: Input:", req)
 	res, err := c.ServiceGateway.AnnouncementService.SendAnnouncement(req)
 	if err != nil {
@@ -49,8 +54,13 @@ func (c *AnnouncementController) SendAnnouncement(ctx *gin.Context, req *st.Send
 // @Param request body st.SendRegisteredEmailRequest true "Send RegisteredEmail Request"
 // @Success 200 {object} st.SendRegisteredEmailResponse "RegisteredEmail successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the RegisteredEmail"
-// @Router /registeredemail [post]
-func (c *AnnouncementController) SendRegisteredEmail(ctx *gin.Context, req *st.SendRegisteredEmailRequest) {
+// @Router /announcements/registered_email [post]
+func (c *AnnouncementController) SendRegisteredEmail(ctx *gin.Context) {
+	var req *st.SendRegisteredEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	log.Println("[CTRL: SendRegisteredEmail]: Input:", req)
 	res, err := c.ServiceGateway.AnnouncementService.SendRegisteredEmail(req)
 	if err != nil {
@@ -69,8 +79,13 @@ func (c *AnnouncementController) SendRegisteredEmail(ctx *gin.Context, req *st.S
 // @Param request body st.SendReminderEmailRequest true "Send ReminderEmail Request"
 // @Success 200 {object} st.SendReminderEmailResponse "ReminderEmail successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the ReminderEmail"
-// @Router /reminderemail [post]
-func (c *AnnouncementController) SendReminderEmail(ctx *gin.Context, req *st.SendReminderEmailRequest) {
+// @Router /announcements/reminder_email [post]
+func (c *AnnouncementController) SendReminderEmail(ctx *gin.Context) {
+	var req *st.SendReminderEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	log.Println("[CTRL: SendReminderEmail]: Input:", req)
 	res, err := c.ServiceGateway.AnnouncementService.SendReminderEmail(req)
 	if err != nil {
@@ -89,8 +104,13 @@ func (c *AnnouncementController) SendReminderEmail(ctx *gin.Context, req *st.Sen
 // @Param request body st.SendCancelledEmailRequest true "Send CancelledEmail Request"
 // @Success 200 {object} st.SendCancelledEmailRequest "CancelledEmail successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the CancelledEmail"
-// @Router /cancelledemail [post]
-func (c *AnnouncementController) SendCancelledEmail(ctx *gin.Context, req *st.SendCancelledEmailRequest) {
+// @Router /announcements/cancelled_email [post]
+func (c *AnnouncementController) SendCancelledEmail(ctx *gin.Context) {
+	var req *st.SendCancelledEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	log.Println("[CTRL: SendCancelledEmail]: Input:", req)
 	res, err := c.ServiceGateway.AnnouncementService.SendCancelledEmail(req)
 	if err != nil {
