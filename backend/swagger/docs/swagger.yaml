@@ -119,6 +119,19 @@ definitions:
       event_id:
         type: string
     type: object
+  structure.CreateOrUpdateProblemReplyRequest:
+    properties:
+      admin_username:
+        type: string
+      problem_id:
+        type: string
+      reply:
+        type: string
+    required:
+    - admin_username
+    - problem_id
+    - reply
+    type: object
   structure.CreateProblemRequest:
     properties:
       description:
@@ -1274,6 +1287,42 @@ paths:
           schema:
             type: object
       summary: Update existing problem
+      tags:
+      - problems
+  /problems/reply/{problem_id}:
+    put:
+      consumes:
+      - application/json
+      description: Create or update a reply for a specific problem with the provided
+        details.
+      parameters:
+      - description: Problem ID
+        in: path
+        name: problem_id
+        required: true
+        type: string
+      - description: Create or Update Problem Reply Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateOrUpdateProblemReplyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.ProblemResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create or Update Problem Reply
       tags:
       - problems
   /registeredemail:

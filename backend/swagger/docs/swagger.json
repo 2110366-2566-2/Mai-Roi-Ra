@@ -839,6 +839,59 @@
                 }
             }
         },
+        "/problems/reply/{problem_id}": {
+            "put": {
+                "description": "Create or update a reply for a specific problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Create or Update Problem Reply",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create or Update Problem Reply Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateOrUpdateProblemReplyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/problems/{problem_id}": {
             "get": {
                 "description": "Get the details of a specific problem by its ID.",
@@ -1731,6 +1784,25 @@
             "type": "object",
             "properties": {
                 "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateOrUpdateProblemReplyRequest": {
+            "type": "object",
+            "required": [
+                "admin_username",
+                "problem_id",
+                "reply"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
                     "type": "string"
                 }
             }
