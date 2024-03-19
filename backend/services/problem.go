@@ -8,6 +8,7 @@ import (
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
+	con "github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 )
 
 type ProblemService struct {
@@ -115,7 +116,7 @@ func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.Proble
 		return nil, err
 	}
 
-	if(req.Status == "Replied") {
+	if(req.Status == con.REPLIED) {
 		err := s.SendReplyEmail(req.ProblemId)
 		if err != nil {
 			return nil, err
