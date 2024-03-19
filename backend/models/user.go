@@ -22,7 +22,7 @@ type User struct {
 	Province                 string    `gorm:"column:province;not null" json:"province"`
 	BannerImage              string    `gorm:"column:banner_image" json:"banner_image"`
 	Role                     string    `gorm:"column:role;not null" json:"role"`
-	RegistrationMethod       string    `gorm:"column:registration_method;not null" json:"registration_method"`
+	RegisterType             string    `gorm:"column:register_type;not null" json:"register_type"`
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
 	Token                    string    `gorm:"column:token" json:"-"`

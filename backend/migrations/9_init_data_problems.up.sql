@@ -1,6 +1,7 @@
 DO $$ BEGIN
 INSERT INTO problems (
         problem_id,
+        user_id,
         admin_username,
         problem,
         description,
@@ -11,6 +12,7 @@ INSERT INTO problems (
     )
 VALUES (
         'f187c146-59f4-420e-b13d-b170fc0e8c8a',
+        '550e8400-e29b-41d4-a716-446655440100',
         'admin1',
         'Event',
         'Issue with event registration',
@@ -21,6 +23,7 @@ VALUES (
     ),
     (
         '963dd434-efc2-4435-80c9-aa431769fce3',
+        '550e8400-e29b-41d4-a716-446655440100',
         'admin2',
         'Payment',
         'Payment not processed',
@@ -31,6 +34,7 @@ VALUES (
     ),
     (
         'f71ff5df-cbe8-4ad2-ad78-1c7fd66109d3',
+        '550e8400-e29b-41d4-a716-446655440100',
         'admin3',
         'Others',
         'Query about service',
@@ -41,6 +45,7 @@ VALUES (
     ),
     (
         'b654a144-554d-4146-9f01-b3f0871fab2e',
+        '550e8400-e29b-41d4-a716-446655440100',
         'admin1',
         'Payment',
         'Double charge issue',
@@ -51,6 +56,7 @@ VALUES (
     ),
     (
         '3bfef83b-c4b4-4739-962c-cf968c043899',
+        '550e8400-e29b-41d4-a716-446655440100',
         'admin2',
         'Event',
         'Feedback on recent event',

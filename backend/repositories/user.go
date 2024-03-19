@@ -5,6 +5,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
@@ -30,6 +32,7 @@ type IUserRepository interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	IsEnableNotification(userId string) (*bool, *string, error)
 	GetRandomAdmin() (*models.User, error)
+	GetAllAdmins() ([]*models.User, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -79,11 +82,11 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
 
-	role := "USER"
+	role := constant.USER
 	if req.Role == "Organizer" {
-		role = "ORGANIZER"
+		role = constant.ORGANIZER
 	} else if req.Role == "Admin" {
-		role = "ADMIN"
+		role = constant.ADMIN
 	}
 	userModel := models.User{
 		UserID:                   utils.GenerateUUID(),
@@ -93,14 +96,16 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		FirstName:                req.FirstName,
 		LastName:                 req.LastName,
 		Password:                 req.Password,
+		IsEnableNotification:     false,
 		PaymentGatewayCustomerID: "", // NullString for other string fields
 		UserImage:                "",
 		Address:                  req.Address,
 		District:                 req.District,
 		Province:                 req.Province,
 		BannerImage:              "",
-		CreatedAt:                time.Time{},
 		Role:                     role,
+		RegisterType:             constant.NORMAL, // will change later
+		CreatedAt:                time.Time{},
 	}
 
 	trans := r.DB.Begin().Debug()
@@ -276,7 +281,7 @@ func (r *UserRepository) ToggleNotifications(req *st.GetUserByUserIdRequest) (*s
 func (r *UserRepository) GetRandomAdmin() (*models.User, error) {
 	log.Println("[Repo: GetRandomAdmin]: Called")
 	var admin models.User
-	if err := r.DB.Where(`role = ?`, "ADMIN").Order("RANDOM()").First(&admin).Error; err != nil {
+	if err := r.DB.Where(`role = ?`, constant.ADMIN).Order("RANDOM()").First(&admin).Error; err != nil {
 		log.Println("[Repo: GetRandomAdmin]: Error randomized the admin")
 		return nil, err
 	}
@@ -291,4 +296,14 @@ func (r *UserRepository) IsEnableNotification(userId string) (*bool, *string, er
 		return nil, nil, err
 	}
 	return &userModel.IsEnableNotification, userModel.Email, nil
+}
+
+func (r *UserRepository) GetAllAdmins() ([]*models.User, error) {
+	log.Println("[Repo: GetAllAdminsEmail] Called")
+	var userModels []*models.User
+	if err := r.DB.Where(`role = ?`, constant.ADMIN).Find(&userModels).Error; err != nil {
+		log.Println("[Repo: GetAllAdminsEmail]: cannot retrieve data from DB:", err)
+		return nil, err
+	}
+	return userModels, nil
 }

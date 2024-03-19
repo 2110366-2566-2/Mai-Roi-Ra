@@ -1,5 +1,29 @@
 basePath: /api/v1
 definitions:
+  models.Problem:
+    properties:
+      admin_username:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      problem:
+        type: string
+      problem_id:
+        type: string
+      reply:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    required:
+    - problem_id
+    - user_id
+    type: object
   models.User:
     properties:
       address:
@@ -26,7 +50,7 @@ definitions:
         type: string
       province:
         type: string
-      registration_method:
+      register_type:
         type: string
       role:
         type: string
@@ -93,6 +117,32 @@ definitions:
   structure.CreateEventResponse:
     properties:
       event_id:
+        type: string
+    type: object
+  structure.CreateProblemRequest:
+    properties:
+      description:
+        type: string
+      problem:
+        type: string
+      user_id:
+        type: string
+    required:
+    - description
+    - problem
+    - user_id
+    type: object
+  structure.CreateProblemResponse:
+    properties:
+      description:
+        type: string
+      problem:
+        type: string
+      problem_id:
+        type: string
+      status:
+        type: string
+      user_id:
         type: string
     type: object
   structure.CreateUserRequest:
@@ -214,6 +264,10 @@ definitions:
         items:
           $ref: '#/definitions/structure.GetEventList'
         type: array
+      total_events:
+        type: integer
+      total_pages:
+        type: integer
     type: object
   structure.GetLocationByIdResponse:
     properties:
@@ -238,6 +292,13 @@ definitions:
       event_list:
         items:
           $ref: '#/definitions/structure.ParticipatedEvent'
+        type: array
+    type: object
+  structure.GetProblemListsResponse:
+    properties:
+      problem_lists:
+        items:
+          $ref: '#/definitions/structure.ProblemList'
         type: array
     type: object
   structure.GetSearchHistoriesResponse:
@@ -354,6 +415,26 @@ definitions:
     - event_name
     - location_name
     - start_date
+    type: object
+  structure.ProblemList:
+    properties:
+      admin_username:
+        type: string
+      description:
+        type: string
+      problem:
+        type: string
+      problem_id:
+        type: string
+      reply:
+        type: string
+      status:
+        type: string
+    type: object
+  structure.ProblemResponse:
+    properties:
+      response:
+        type: string
     type: object
   structure.RegisterEventRequest:
     properties:
@@ -501,6 +582,23 @@ definitions:
       event_id:
         type: string
     type: object
+  structure.UpdateProblemRequest:
+    properties:
+      admin_username:
+        type: string
+      description:
+        type: string
+      problem:
+        type: string
+      problem_id:
+        type: string
+      reply:
+        type: string
+      status:
+        type: string
+    required:
+    - problem_id
+    type: object
   structure.UpdateUserInformationRequest:
     properties:
       address:
@@ -545,7 +643,7 @@ info:
   title: Mai-Roi-Ra Swagger API
   version: "1.0"
 paths:
-  /announcement:
+  /announcements:
     post:
       consumes:
       - application/json
@@ -569,6 +667,84 @@ paths:
           schema:
             type: object
       summary: Send Announcement
+      tags:
+      - announcements
+  /announcements/cancelled_email:
+    post:
+      consumes:
+      - application/json
+      description: Sends an Cancelled email to the specified recipients.
+      parameters:
+      - description: Send CancelledEmail Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendCancelledEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: CancelledEmail successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendCancelledEmailRequest'
+        "400":
+          description: Bad request - error in sending the CancelledEmail
+          schema:
+            type: object
+      summary: Send CancelledEmail
+      tags:
+      - announcements
+  /announcements/registered_email:
+    post:
+      consumes:
+      - application/json
+      description: Sends an Registered email to the specified recipients.
+      parameters:
+      - description: Send RegisteredEmail Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendRegisteredEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: RegisteredEmail successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendRegisteredEmailResponse'
+        "400":
+          description: Bad request - error in sending the RegisteredEmail
+          schema:
+            type: object
+      summary: Send RegisteredEmail
+      tags:
+      - announcements
+  /announcements/reminder_email:
+    post:
+      consumes:
+      - application/json
+      description: Sends an Reminder email to the specified recipients.
+      parameters:
+      - description: Send ReminderEmail Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendReminderEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ReminderEmail successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendReminderEmailResponse'
+        "400":
+          description: Bad request - error in sending the ReminderEmail
+          schema:
+            type: object
+      summary: Send ReminderEmail
       tags:
       - announcements
   /auth/users:
@@ -611,32 +787,6 @@ paths:
       summary: GetAllUsers
       tags:
       - users
-  /cancelledemail:
-    post:
-      consumes:
-      - application/json
-      description: Sends an Cancelled email to the specified recipients.
-      parameters:
-      - description: Send CancelledEmail Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendCancelledEmailRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: CancelledEmail successfully sent
-          schema:
-            $ref: '#/definitions/structure.SendCancelledEmailRequest'
-        "400":
-          description: Bad request - error in sending the CancelledEmail
-          schema:
-            type: object
-      summary: Send CancelledEmail
-      tags:
-      - announcements
   /events:
     get:
       consumes:
@@ -654,6 +804,10 @@ paths:
       - description: Sort order. i.e. start_date ASC
         in: query
         name: sort
+        type: string
+      - description: Search i.e. Hello
+        in: query
+        name: search
         type: string
       - description: offset i.e. 0
         in: query
@@ -838,40 +992,6 @@ paths:
       summary: GetParticipantLists
       tags:
       - events
-  /isregistered:
-    get:
-      consumes:
-      - application/json
-      description: Determine that whether the user has registered in this events
-      parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        required: true
-        type: string
-      - description: event_id
-        in: query
-        name: event_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/structure.IsRegisteredResponse'
-        "400":
-          description: Bad Request
-          schema:
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            type: object
-      summary: IsRegistered
-      tags:
-      - participate
   /locations/{location_id}:
     get:
       consumes:
@@ -930,7 +1050,7 @@ paths:
             type: object
       summary: Log in a user
       tags:
-      - user
+      - users
   /loginemail:
     post:
       consumes:
@@ -960,7 +1080,7 @@ paths:
             type: object
       summary: Log in a user with email
       tags:
-      - user
+      - users
   /loginphone:
     post:
       consumes:
@@ -990,7 +1110,7 @@ paths:
             type: object
       summary: Log in a user with phone
       tags:
-      - user
+      - users
   /logout:
     post:
       consumes:
@@ -1019,59 +1139,195 @@ paths:
             type: object
       summary: Log out a user
       tags:
-      - user
-  /registeredemail:
-    post:
+      - users
+  /participate/is_registered:
+    get:
       consumes:
       - application/json
-      description: Sends an Registered email to the specified recipients.
+      description: Determine that whether the user has registered in this events
       parameters:
-      - description: Send RegisteredEmail Request
-        in: body
-        name: request
+      - description: user_id
+        in: query
+        name: user_id
         required: true
-        schema:
-          $ref: '#/definitions/structure.SendRegisteredEmailRequest'
+        type: string
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: RegisteredEmail successfully sent
+          description: OK
           schema:
-            $ref: '#/definitions/structure.SendRegisteredEmailResponse'
+            $ref: '#/definitions/structure.IsRegisteredResponse'
         "400":
-          description: Bad request - error in sending the RegisteredEmail
+          description: Bad Request
           schema:
             type: object
-      summary: Send RegisteredEmail
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: IsRegistered
       tags:
-      - announcements
-  /reminderemail:
-    post:
+      - participates
+  /problems:
+    get:
       consumes:
       - application/json
-      description: Sends an Reminder email to the specified recipients.
+      description: Get a list of problems filtered by status (Replied or Pending).
       parameters:
-      - description: Send ReminderEmail Request
-        in: body
-        name: request
+      - description: user_id
+        in: query
+        name: user_id
         required: true
-        schema:
-          $ref: '#/definitions/structure.SendReminderEmailRequest'
+        type: string
+      - description: Problem Status (Replied or Pending)
+        in: query
+        name: status
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: ReminderEmail successfully sent
+          description: OK
           schema:
-            $ref: '#/definitions/structure.SendReminderEmailResponse'
+            $ref: '#/definitions/structure.GetProblemListsResponse'
         "400":
-          description: Bad request - error in sending the ReminderEmail
+          description: Bad Request
           schema:
             type: object
-      summary: Send ReminderEmail
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get list of problems
       tags:
-      - announcements
+      - problems
+    post:
+      consumes:
+      - application/json
+      description: Create a new problem with the provided details.
+      parameters:
+      - description: Create Problem Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateProblemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreateProblemResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create a new problem
+      tags:
+      - problems
+  /problems/{problem_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a problem with the specified ID.
+      parameters:
+      - description: Problem ID
+        in: path
+        name: problem_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.ProblemResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Delete problem by ID
+      tags:
+      - problems
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a specific problem by its ID.
+      parameters:
+      - description: Problem ID
+        in: path
+        name: problem_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Problem'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get problem detail
+      tags:
+      - problems
+    put:
+      consumes:
+      - application/json
+      description: Update an existing problem with the provided details.
+      parameters:
+      - description: Problem ID
+        in: path
+        name: problem_id
+        required: true
+        type: string
+      - description: Update Problem Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateProblemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.ProblemResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing problem
+      tags:
+      - problems
   /test:
     get:
       consumes:
@@ -1116,7 +1372,7 @@ paths:
             type: object
       summary: Create new user
       tags:
-      - user
+      - users
   /users/{event_id}:
     delete:
       consumes:
@@ -1150,7 +1406,7 @@ paths:
             type: object
       summary: Cancel Register an event
       tags:
-      - user
+      - users
   /users/{user_id}:
     get:
       consumes:
@@ -1179,7 +1435,7 @@ paths:
             type: object
       summary: GetUserByUserId
       tags:
-      - user
+      - users
     put:
       consumes:
       - application/json
@@ -1208,7 +1464,7 @@ paths:
             type: object
       summary: UpdateUserInformation
       tags:
-      - user
+      - users
   /users/{user_id}/searchevent:
     get:
       consumes:
@@ -1250,7 +1506,7 @@ paths:
             type: object
       summary: SearchEvent
       tags:
-      - user
+      - users
   /users/{user_id}/searchhistory:
     get:
       consumes:
@@ -1279,7 +1535,7 @@ paths:
             type: object
       summary: GetSearchHistories
       tags:
-      - user
+      - users
   /users/events:
     get:
       consumes:
@@ -1316,7 +1572,7 @@ paths:
             type: object
       summary: GetParticipatedEventLists
       tags:
-      - user
+      - users
   /users/notification:
     put:
       consumes:
@@ -1345,7 +1601,7 @@ paths:
             type: object
       summary: ToggleNotifications
       tags:
-      - user
+      - users
   /users/participate:
     post:
       consumes:
@@ -1375,7 +1631,7 @@ paths:
             type: object
       summary: Register an event
       tags:
-      - user
+      - users
   /validate-token:
     get:
       consumes:
@@ -1403,7 +1659,7 @@ paths:
             type: object
       summary: Validate user token
       tags:
-      - user
+      - users
 securityDefinitions:
   BasicAuth:
     type: basic

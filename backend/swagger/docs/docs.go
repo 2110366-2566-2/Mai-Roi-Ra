@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/announcement": {
+        "/announcements": {
             "post": {
                 "description": "Sends an announcement email to the specified recipients.",
                 "consumes": [
@@ -57,6 +57,126 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request - error in sending the announcement",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/cancelled_email": {
+            "post": {
+                "description": "Sends an Cancelled email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send CancelledEmail",
+                "parameters": [
+                    {
+                        "description": "Send CancelledEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CancelledEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the CancelledEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/registered_email": {
+            "post": {
+                "description": "Sends an Registered email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send RegisteredEmail",
+                "parameters": [
+                    {
+                        "description": "Send RegisteredEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRegisteredEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "RegisteredEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the RegisteredEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/reminder_email": {
+            "post": {
+                "description": "Sends an Reminder email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send ReminderEmail",
+                "parameters": [
+                    {
+                        "description": "Send ReminderEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ReminderEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the ReminderEmail",
                         "schema": {
                             "type": "object"
                         }
@@ -125,46 +245,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/cancelledemail": {
-            "post": {
-                "description": "Sends an Cancelled email to the specified recipients.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "announcements"
-                ],
-                "summary": "Send CancelledEmail",
-                "parameters": [
-                    {
-                        "description": "Send CancelledEmail Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "CancelledEmail successfully sent",
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request - error in sending the CancelledEmail",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
         "/events": {
             "get": {
                 "description": "Get list of events",
@@ -195,6 +275,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Sort order. i.e. start_date ASC",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search i.e. Hello",
+                        "name": "search",
                         "in": "query"
                     },
                     {
@@ -469,57 +555,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/isregistered": {
-            "get": {
-                "description": "Determine that whether the user has registered in this events",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "participate"
-                ],
-                "summary": "IsRegistered",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "user_id",
-                        "name": "user_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "event_id",
-                        "name": "event_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structure.IsRegisteredResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
         "/locations/{location_id}": {
             "get": {
                 "description": "Get location by id",
@@ -574,7 +609,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log in a user",
                 "parameters": [
@@ -620,7 +655,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log in a user with email",
                 "parameters": [
@@ -666,7 +701,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log in a user with phone",
                 "parameters": [
@@ -712,7 +747,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log out a user",
                 "parameters": [
@@ -744,9 +779,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/registeredemail": {
-            "post": {
-                "description": "Sends an Registered email to the specified recipients.",
+        "/participate/is_registered": {
+            "get": {
+                "description": "Determine that whether the user has registered in this events",
                 "consumes": [
                     "application/json"
                 ],
@@ -754,29 +789,40 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "announcements"
+                    "participates"
                 ],
-                "summary": "Send RegisteredEmail",
+                "summary": "IsRegistered",
                 "parameters": [
                     {
-                        "description": "Send RegisteredEmail Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendRegisteredEmailRequest"
-                        }
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "RegisteredEmail successfully sent",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                            "$ref": "#/definitions/structure.IsRegisteredResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad request - error in sending the RegisteredEmail",
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -784,9 +830,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/reminderemail": {
-            "post": {
-                "description": "Sends an Reminder email to the specified recipients.",
+        "/problems": {
+            "get": {
+                "description": "Get a list of problems filtered by status (Replied or Pending).",
                 "consumes": [
                     "application/json"
                 ],
@@ -794,29 +840,221 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "announcements"
+                    "problems"
                 ],
-                "summary": "Send ReminderEmail",
+                "summary": "Get list of problems",
                 "parameters": [
                     {
-                        "description": "Send ReminderEmail Request",
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Problem Status (Replied or Pending)",
+                        "name": "status",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetProblemListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Create a new problem",
+                "parameters": [
+                    {
+                        "description": "Create Problem Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/structure.SendReminderEmailRequest"
+                            "$ref": "#/definitions/structure.CreateProblemRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "ReminderEmail successfully sent",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                            "$ref": "#/definitions/structure.CreateProblemResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad request - error in sending the ReminderEmail",
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/problems/{problem_id}": {
+            "get": {
+                "description": "Get the details of a specific problem by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Get problem detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Problem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Update existing problem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Problem Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateProblemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a problem with the specified ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Delete problem by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -857,7 +1095,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Create new user",
                 "parameters": [
@@ -903,7 +1141,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetParticipatedEventLists",
                 "parameters": [
@@ -959,7 +1197,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "ToggleNotifications",
                 "parameters": [
@@ -1003,7 +1241,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Register an event",
                 "parameters": [
@@ -1049,7 +1287,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Cancel Register an event",
                 "parameters": [
@@ -1100,7 +1338,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetUserByUserId",
                 "parameters": [
@@ -1142,7 +1380,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "UpdateUserInformation",
                 "parameters": [
@@ -1188,7 +1426,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "SearchEvent",
                 "parameters": [
@@ -1251,7 +1489,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetSearchHistories",
                 "parameters": [
@@ -1295,7 +1533,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Validate user token",
                 "parameters": [
@@ -1328,6 +1566,42 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Problem": {
+            "type": "object",
+            "required": [
+                "problem_id",
+                "user_id"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -1367,7 +1641,7 @@ const docTemplate = `{
                 "province": {
                     "type": "string"
                 },
-                "registration_method": {
+                "register_type": {
                     "type": "string"
                 },
                 "role": {
@@ -1463,6 +1737,45 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateProblemRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "problem",
+                "user_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateProblemResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -1643,6 +1956,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.GetEventList"
                     }
+                },
+                "total_events": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },
@@ -1681,6 +2000,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/structure.ParticipatedEvent"
+                    }
+                }
+            }
+        },
+        "structure.GetProblemListsResponse": {
+            "type": "object",
+            "properties": {
+                "problem_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.ProblemList"
                     }
                 }
             }
@@ -1852,6 +2182,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "start_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ProblemList": {
+            "type": "object",
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ProblemResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }
@@ -2072,6 +2433,32 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UpdateProblemRequest": {
+            "type": "object",
+            "required": [
+                "problem_id"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
