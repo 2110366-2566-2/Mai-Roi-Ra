@@ -24,6 +24,7 @@ func setupCORS() gin.HandlerFunc {
 		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	})
 }
@@ -36,14 +37,16 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	// Swagger setup
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	groupRoutes := r.Group("api/v1")
+
 	err := c.Invoke(func(eventController *controllers.EventController, locationController *controllers.LocationController, userController *controllers.UserController, testController *controllers.TestController, announcementController *controllers.AnnouncementController, participateController *controllers.ParticipateController, problemController *controllers.ProblemController) {
-		setupEventRoutes(r, eventController)
-		setupLocationRoutes(r, locationController)
-		setupUserRoutes(r, userController)
-		setupTestRoutes(r, testController)
-		setupAnnouncementRoutes(r, announcementController)
-		setupParticipateRoutes(r, participateController)
-		setupProblemRoutes(r, problemController)
+		setupEventRoutes(groupRoutes, eventController)
+		setupLocationRoutes(groupRoutes, locationController)
+		setupUserRoutes(groupRoutes, userController)
+		setupTestRoutes(groupRoutes, testController)
+		setupAnnouncementRoutes(groupRoutes, announcementController)
+		setupParticipateRoutes(groupRoutes, participateController)
+		setupProblemRoutes(groupRoutes, problemController)
 	})
 
 	if err != nil {
@@ -54,26 +57,26 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	return r
 }
 
-func setupEventRoutes(r *gin.Engine, controller *controllers.EventController) {
-	eventRoutes := r.Group("/api/v1/events")
+func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventController) {
+	eventRoutes := r.Group("/events")
 	{
-		eventRoutes.POST("", controller.CreateEvent)
-		eventRoutes.GET("", controller.GetEventLists)
+		eventRoutes.POST("/", controller.CreateEvent)
+		eventRoutes.GET("/", controller.GetEventLists)
 		eventRoutes.GET("/:id", controller.GetEventDataById)
 		eventRoutes.PUT("/:id", controller.UpdateEvent)
 		eventRoutes.DELETE("/:id", controller.DeleteEventById)
 	}
 }
 
-func setupLocationRoutes(r *gin.Engine, controller *controllers.LocationController) {
-	locationRoutes := r.Group("/api/v1/locations")
+func setupLocationRoutes(r *gin.RouterGroup, controller *controllers.LocationController) {
+	locationRoutes := r.Group("/locations")
 	{
-		locationRoutes.GET("", controller.GetLocationById)
+		locationRoutes.GET("/:id", controller.GetLocationById)
 	}
 }
 
-func setupUserRoutes(r *gin.Engine, controller *controllers.UserController) {
-	userRoutes := r.Group("/api/v1/users")
+func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController) {
+	userRoutes := r.Group("/users")
 	{
 		userRoutes.POST("/", controller.CreateUser)
 		userRoutes.POST("/participate", controller.RegisterEvent)
@@ -85,28 +88,28 @@ func setupUserRoutes(r *gin.Engine, controller *controllers.UserController) {
 		userRoutes.PUT("/notification", controller.ToggleNotifications)
 		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)
 	}
-	loginRoutes := r.Group("/api/v1")
+	loginRoutes := r.Group("")
 	{
 		loginRoutes.POST("/login", controller.LoginUser)
 		loginRoutes.POST("/loginemail", controller.LoginUserEmail)
 		loginRoutes.POST("/loginphone", controller.LoginUserPhone)
 	}
-	authRoutes := r.Group("/api/v1", middleware.Authentication())
+	authRoutes := r.Group("", middleware.Authentication())
 	{
 		authRoutes.POST("/logout", controller.LogoutUser)
 		authRoutes.GET("/auth/users", controller.GetAllUsers)
 	}
 }
 
-func setupTestRoutes(r *gin.Engine, controller *controllers.TestController) {
-	testRoutes := r.Group("/api/v1/test")
+func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController) {
+	testRoutes := r.Group("/test")
 	{
-		testRoutes.GET("", controller.GetTest)
+		testRoutes.GET("/", controller.GetTest)
 	}
 }
 
-func setupAnnouncementRoutes(r *gin.Engine, controller *controllers.AnnouncementController) {
-	announcementRoutes := r.Group("/api/v1/announcements")
+func setupAnnouncementRoutes(r *gin.RouterGroup, controller *controllers.AnnouncementController) {
+	announcementRoutes := r.Group("/announcements")
 	{
 		announcementRoutes.POST("/", controller.SendAnnouncement)
 		announcementRoutes.POST("/registered_email", controller.SendRegisteredEmail)
@@ -115,19 +118,19 @@ func setupAnnouncementRoutes(r *gin.Engine, controller *controllers.Announcement
 	}
 }
 
-func setupParticipateRoutes(r *gin.Engine, controller *controllers.ParticipateController) {
-	participateRoutes := r.Group("/api/v1/participate")
+func setupParticipateRoutes(r *gin.RouterGroup, controller *controllers.ParticipateController) {
+	participateRoutes := r.Group("/participate")
 	{
 		participateRoutes.POST("/is_registered", controller.IsRegistered)
 	}
 }
 
-func setupProblemRoutes(r *gin.Engine, controller *controllers.ProblemController) {
-	problemRoutes := r.Group("/api/v1/problems")
+func setupProblemRoutes(r *gin.RouterGroup, controller *controllers.ProblemController) {
+	problemRoutes := r.Group("/problems")
 	{
-		problemRoutes.POST("", controller.CreateProblem)
+		problemRoutes.POST("/", controller.CreateProblem)
 		problemRoutes.GET("/:id", controller.GetProblemDetailById)
-		problemRoutes.GET("", controller.GetProblemLists)
+		problemRoutes.GET("/", controller.GetProblemLists)
 		problemRoutes.PUT("/:id", controller.UpdateProblem)
 		problemRoutes.DELETE("/:id", controller.DeleteProblemById)
 	}
