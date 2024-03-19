@@ -20,7 +20,6 @@ type IProblemService interface {
 	GetProblemLists(req *st.GetProblemListsRequest) (*st.GetProblemListsResponse, error)
 	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
 	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
-	// CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error)
 	SendReplyEmail(problemId string) error
 	SendEmailToAdmin(problemType string, description string) error
 }

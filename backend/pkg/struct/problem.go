@@ -53,7 +53,6 @@ type UpdateProblemRequest struct {
 	Reply         *string `json:"reply"`
 	Status        string  `json:"status"`
 }
-
 type DeleteProblemByIdRequest struct {
 	ProblemId string `json:"problem_id" binding:"required"`
 }
@@ -62,5 +61,3 @@ type DeleteProblemByIdRequest struct {
 type ProblemResponse struct {
 	Response string `json:"response"`
 }
-
-
