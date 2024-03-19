@@ -12,7 +12,6 @@ export default async function getEvents({
 	offset = 1,
 	limit = 10}
 	: EventQueryParams) {
-	// await new Promise((resolve) => setTimeout(resolve, 5000));
 
 	const url = new URL(`${apiBackUrl}/events`);
 
@@ -20,6 +19,7 @@ export default async function getEvents({
 		url.searchParams.append('organizer_id', organizer_id);
 	}
 	
+	offset = (offset-1)*limit;
 	url.searchParams.append('offset', offset.toString());
 	url.searchParams.append('limit', limit.toString());
 
