@@ -21,7 +21,7 @@ type IProblemService interface {
 	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
 	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
 	CreateOrUpdateProblemReply(req *st.CreateOrUpdateProblemReplyRequest) (*st.CreateOrUpdateProblemReplyResponse, error)
-	SendReplyEmail(req *st.SendReplyEmailRequest) (*st.SendReplyEmailResponse, error)
+	SendReplyEmail(req *st.SendReplyEmailRequest) error
 	SendEmailToAdmin(problemType string, description string) error
 }
 
@@ -137,20 +137,20 @@ func (s *ProblemService) CreateOrUpdateProblemReply(req *st.CreateOrUpdateProble
 	reqEmail := &st.SendReplyEmailRequest{
 		ProblemId: req.ProblemId,
 	}
-	if _, err := s.SendReplyEmail(reqEmail); err != nil {
+	if err := s.SendReplyEmail(reqEmail); err != nil {
 		log.Println("[Service: Call SendReplyEmail Error]:", err)
-		return nil, err
+		return nil,err
 	}
 
 	return res, err
 }
 
-func (s *ProblemService) SendReplyEmail(req *st.SendReplyEmailRequest) (*st.SendReplyEmailResponse, error) {
+func (s *ProblemService) SendReplyEmail(req *st.SendReplyEmailRequest) error {
 	log.Println("[Service: SendReplyEmail]: Called")
 	resProblem , err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(req.ProblemId)
 	if err != nil {
 		log.Println("[Service: Call Repo Error]:", err)
-		return nil, err
+		return err
 	}
 
 	cfg, err := config.NewConfig(func() string {
@@ -158,10 +158,11 @@ func (s *ProblemService) SendReplyEmail(req *st.SendReplyEmailRequest) (*st.Send
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		return err
 	}
 	log.Println("Config path from Gmail:", cfg)
 
+	subject := fmt.Sprintf(`Problem : %s Replied`, resProblem.ProblemId)
 	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
 	to := make([]string, 0)
 	cc := make([]string, 0)
@@ -173,13 +174,16 @@ func (s *ProblemService) SendReplyEmail(req *st.SendReplyEmailRequest) (*st.Send
 	}
 	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if(resUser.Email != nil) {
-		email := *resUser.Email
-		if email != "" {
-			to = append(to, email)
-		}
+	email := ""
+	if resUser.Email != nil {
+		email = *resUser.Email
+	}
+	if email != "" {
+		to = append(to, email)
+	} else {
+		return err
 	}
 
 	contentHTML := fmt.Sprintf(`
@@ -210,21 +214,18 @@ func (s *ProblemService) SendReplyEmail(req *st.SendReplyEmailRequest) (*st.Send
 		</style>
 	</head>
 	<body>
-		<h3>Problem ID : %s</h3>
+		<h3>Your Problem ID : %s has been replied</h3>
+		<p>Hello %s,</p>
 		<p>%s</p>
 		<p class="signature">Best regards,<br>%s (Admin),<br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`, resProblem.ProblemId, *resProblem.Reply, *resProblem.AdminUsername)
+	`, resProblem.ProblemId, resUser.Username, *resProblem.Reply, *resProblem.AdminUsername)
 
-	if err = sender.SendEmail("Ticket Replied", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-		return nil, err
+	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		return err
 	}
-	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
-	return &st.SendReplyEmailResponse{
-		SendStatus: res,
-	}, nil
-
+	return nil
 }
 
 func (s *ProblemService) SendEmailToAdmin(problemType string, description string) error {
