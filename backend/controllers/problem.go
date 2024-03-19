@@ -30,7 +30,12 @@ func NewProblemController(sg services.ServiceGateway) *ProblemController {
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems [post]
-func (c *ProblemController) CreateProblem(ctx *gin.Context, req *st.CreateProblemRequest) {
+func (c *ProblemController) CreateProblem(ctx *gin.Context) {
+	var req *st.CreateProblemRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	log.Println("[CTRL: CreateProblem] Input:", req)
 	res, err := c.ServiceGateway.ProblemService.CreateProblem(req)
 	if err != nil {
@@ -52,7 +57,10 @@ func (c *ProblemController) CreateProblem(ctx *gin.Context, req *st.CreateProble
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems/{problem_id} [get]
-func (c *ProblemController) GetProblemDetailById(ctx *gin.Context, req *st.GetProblemDetailByIdRequest) {
+func (c *ProblemController) GetProblemDetailById(ctx *gin.Context) {
+	req := &st.GetProblemDetailByIdRequest{
+		ProblemId: ctx.Param("id"),
+	}
 	log.Println("[CTRL: GetProblemDetail] Input:", req)
 	res, err := c.ServiceGateway.ProblemService.GetProblemDetailById(req)
 	if err != nil {
@@ -75,7 +83,11 @@ func (c *ProblemController) GetProblemDetailById(ctx *gin.Context, req *st.GetPr
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems [get]
-func (c *ProblemController) GetProblemLists(ctx *gin.Context, req *st.GetProblemListsRequest) {
+func (c *ProblemController) GetProblemLists(ctx *gin.Context) {
+	req := &st.GetProblemListsRequest{
+		UserId: ctx.Query("user_id"),
+		Status: ctx.Query("status"),
+	}
 	log.Println("[CTRL: GetProblemList] Input:", req)
 	res, err := c.ServiceGateway.ProblemService.GetProblemLists(req)
 	if err != nil {
@@ -98,7 +110,14 @@ func (c *ProblemController) GetProblemLists(ctx *gin.Context, req *st.GetProblem
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems/{problem_id} [put]
-func (c *ProblemController) UpdateProblem(ctx *gin.Context, req *st.UpdateProblemRequest) {
+func (c *ProblemController) UpdateProblem(ctx *gin.Context) {
+	var req *st.UpdateProblemRequest
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	req.ProblemId = ctx.Param("id")
+	log.Println("[CTRL: UpdateProblem] Input:", req)
 	res, err := c.ServiceGateway.ProblemService.UpdateProblem(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -143,7 +162,11 @@ func (c *ProblemController) CreateOrUpdateProblemReply(ctx *gin.Context, req *st
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems/{problem_id} [delete]
-func (c *ProblemController) DeleteProblemById(ctx *gin.Context, req *st.DeleteProblemByIdRequest) {
+func (c *ProblemController) DeleteProblemById(ctx *gin.Context) {
+	req := &st.DeleteProblemByIdRequest{
+		ProblemId: ctx.Param("id"),
+	}
+	log.Println("[CTRL: DeleteProblem] Input:", req)
 	deleteMessage, err := c.ServiceGateway.ProblemService.DeleteProblemById(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

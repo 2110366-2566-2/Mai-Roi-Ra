@@ -104,7 +104,7 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		Province:                 req.Province,
 		BannerImage:              "",
 		Role:                     role,
-		RegistrationMethod:       constant.NORMAL, // will change later
+		RegisterType:             constant.NORMAL, // will change later
 		CreatedAt:                time.Time{},
 	}
 
