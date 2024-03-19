@@ -6,55 +6,37 @@ const FAQlist = () => {
   return (
     <div>
 
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
-      </div>
-      
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
-      </div>
+      <div className="flex flex-wrap">
+        <div className="w-1/2 p-4 bg-white rounded-lg mt-6 px-10 font-actor">
+          <Accordion
+            title="How to register an event ?"
+            answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
+          />
+        </div>
 
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
-      </div>
+        <div className="w-1/2 p-4 bg-white rounded-lg mt-6 px-10">
+          <Accordion
+            title="How to register an event ?"
+            answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
+          />
+        </div>
 
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
-      </div>
+        <div className="w-1/2 p-4 bg-white rounded-lg mt-6 px-10">
+          <Accordion
+            title="How to register an event ?"
+            answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
+          />
+        </div>
 
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
-      </div>
+        <div className="w-1/2 p-4 bg-white rounded-lg mt-6 px-10">
+          <Accordion
+            title="How to register an event ?"
+            answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
+          />
+        </div>
 
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
       </div>
-
-      <div className="p-4 bg-gray-200 rounded-lg mt-6 px-10">
-        <Accordion
-          title="How to register an event ?"
-          answer="To register an event, define its purpose, date, time, and location, then choose a platform like Eventbrite. Customize the event details and registration form, promote the event, monitor registrations, and communicate with attendees."
-        />
-      </div>
-      
+  
     </div>
 
 

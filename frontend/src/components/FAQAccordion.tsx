@@ -2,61 +2,57 @@
 import React, {useState} from "react";
 import Image from 'next/image';
 
-const FAQAccordion = ({title,answer}) => {
-    const [accordionOpen, setAccordionOpen] = useState(false);
+const FAQAccordion = ({ title, answer }) => {
+  const [accordionOpen, setAccordionOpen] = useState(false);
 
-    return (
-        <div className="py-2 ">
-            
-            <button 
-            onClick={() => setAccordionOpen(!accordionOpen)} 
-            className="flex justify-between w-full">
-            <span className="font-base text-xl">{title}</span>
-                {/* {accordionOpen ? <span>-</span> : <span>+</span>} */}
-                <svg
-                className="fill-black shrink-0 ml-8"
-                width="16"
-                height="16"
-                xmlns="http://www.w3.org/2000/svg"
-                >
-                <rect
-                    y="7"
-                    width="16"
-                    height="2"
-                    rx="1"
-                    className={`transform origin-center transition duration-200 ease-out ${
-                    accordionOpen && "!rotate-180"
-                    }`}
-                />
-                <rect
-                    y="7"
-                    width="16"
-                    height="2"
-                    rx="1"
-                    className={`transform origin-center rotate-90 transition duration-200 ease-out ${
-                    accordionOpen && "!rotate-180"
-                    }`}
-                />
-                </svg>
-        
-            </button>
-
-            
-
-            <div className={`grid overflow-hidden transition-all duration-300 ease-in-out text-slate-6000 text-sm ${
-                accordionOpen 
-                ? "grid-row-[1fr] opacity-100"
-                : "grid-row-[fr] opacity-0"
-            }`}>
-                <div className="overflow-hidden">
-                    {answer}
-                </div>
-            </div>
-
+  return (
+    <div className="border rounded-lg shadow-md p-4 mb-4">
+      <div
+        className="flex justify-between items-center cursor-pointer"
+        style={{ cursor: "pointer" }} // Set cursor pointer as default
+        onClick={() => setAccordionOpen(!accordionOpen)}
+      >
+        <div className="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 mr-2 text-yellow-500" // Set yellow color for the question icon
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 16v-4M12 8h.01" />
+          </svg>
+          <h3 className="text-lg font-medium">{title}</h3>
         </div>
-
-    );
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`h-6 w-6 transition-transform ${accordionOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+      {accordionOpen && (
+        <div className="mt-4">
+          <p>{answer}</p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default FAQAccordion;
+
+
+
+
+
+
+
 
