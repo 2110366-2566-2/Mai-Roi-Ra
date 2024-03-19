@@ -744,6 +744,238 @@ const docTemplate = `{
                 }
             }
         },
+        "/problems": {
+            "get": {
+                "description": "Get a list of problems filtered by status (Replied or Pending).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Get list of problems",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Problem Status (Replied or Pending)",
+                        "name": "status",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetProblemListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Create a new problem",
+                "parameters": [
+                    {
+                        "description": "Create Problem Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateProblemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/problems/{problem_id}": {
+            "get": {
+                "description": "Get the details of a specific problem by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Get problem detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Problem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Update existing problem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Problem Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateProblemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a problem with the specified ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Delete problem by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/registeredemail": {
             "post": {
                 "description": "Sends an Registered email to the specified recipients.",
@@ -1328,6 +1560,42 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Problem": {
+            "type": "object",
+            "required": [
+                "problem_id",
+                "user_id"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -1463,6 +1731,45 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateProblemRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "problem",
+                "user_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateProblemResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -1685,6 +1992,17 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.GetProblemListsResponse": {
+            "type": "object",
+            "properties": {
+                "problem_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.ProblemList"
+                    }
+                }
+            }
+        },
         "structure.GetSearchHistoriesResponse": {
             "type": "object",
             "properties": {
@@ -1852,6 +2170,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "start_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ProblemList": {
+            "type": "object",
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ProblemResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }
@@ -2072,6 +2421,32 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "event_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UpdateProblemRequest": {
+            "type": "object",
+            "required": [
+                "problem_id"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

@@ -367,5 +367,53 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		return nil
 	}
 
+	err = c.Invoke(func(problemController *controllers.ProblemController) {
+		r.POST("/api/v1/problems", func(ctx *gin.Context) {
+			var req st.CreateProblemRequest
+			if err := ctx.ShouldBindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			problemController.CreateProblem(ctx, &req)
+		})
+
+		r.GET("/api/v1/problems/:id", func(ctx *gin.Context) {
+			req := &st.GetProblemDetailByIdRequest{
+				ProblemId: ctx.Param("id"),
+			}
+			problemController.GetProblemDetailById(ctx, req)
+		})
+
+		r.GET("/api/v1/problems", func(ctx *gin.Context) {
+			req := &st.GetProblemListsRequest{
+				UserId: ctx.Query("user_id"),
+				Status: ctx.Query("status"),
+			}
+			problemController.GetProblemLists(ctx, req)
+		})
+
+		r.PUT("/api/v1/problems/:id", func(ctx *gin.Context) {
+			var req st.UpdateProblemRequest
+			if err := ctx.BindJSON(&req); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			req.ProblemId = ctx.Param("id")
+			problemController.UpdateProblem(ctx, &req)
+		})
+
+		r.DELETE("/api/v1/problems/:id", func(ctx *gin.Context) {
+			req := st.DeleteProblemByIdRequest{
+				ProblemId: ctx.Param("id"),
+			}
+			problemController.DeleteProblemById(ctx, &req)
+		})
+	})
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
 	return r
 }
