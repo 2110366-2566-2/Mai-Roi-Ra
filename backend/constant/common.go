@@ -10,3 +10,6 @@ const GOOGLE = "GOOGLE"
 const APPROVED = "Approved"
 const WAITING = "Waiting"
 const REJECTED = "Rejected"
+
+const PENDING = "Pending"
+const REPLIED = "Replied"

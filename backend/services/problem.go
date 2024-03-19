@@ -8,6 +8,7 @@ import (
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
+	con "github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 )
 
 type ProblemService struct {
@@ -20,6 +21,7 @@ type IProblemService interface {
 	GetProblemLists(req *st.GetProblemListsRequest) (*st.GetProblemListsResponse, error)
 	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
 	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
+	SendReplyEmail(problemId string) error
 	SendEmailToAdmin(problemType string, description string) error
 }
 
@@ -113,6 +115,14 @@ func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.Proble
 	if err != nil {
 		return nil, err
 	}
+
+	if(req.Status == con.REPLIED) {
+		err := s.SendReplyEmail(req.ProblemId)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return res, nil
 }
 
@@ -123,6 +133,89 @@ func (s *ProblemService) DeleteProblemById(req *st.DeleteProblemByIdRequest) (*s
 		return nil, err
 	}
 	return res, nil
+}
+
+func (s *ProblemService) SendReplyEmail(problemId string) error {
+	log.Println("[Service: SendReplyEmail]: Called")
+	resProblem , err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(problemId)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return err
+	}
+
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return err
+	}
+	log.Println("Config path from Gmail:", cfg)
+
+	subject := fmt.Sprintf(`Problem : %s Replied`, resProblem.ProblemId)
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+	to := make([]string, 0)
+	cc := make([]string, 0)
+	bcc := make([]string, 0)
+	attachFiles := make([]string, 0)
+
+	reqUser := &st.GetUserByUserIdRequest{
+		UserId: resProblem.UserId,
+	}
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+	if err != nil {
+		return err
+	}
+	email := ""
+	if resUser.Email != nil {
+		email = *resUser.Email
+	}
+	if email != "" {
+		to = append(to, email)
+	} else {
+		return err
+	}
+
+	contentHTML := fmt.Sprintf(`
+	<html>
+	<head>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				font-size: 16px;
+				line-height: 1.6;
+				margin: 40px auto;
+				max-width: 600px;
+				color: #333333;
+			}
+			h3 {
+				font-size: 24px;
+				margin-bottom: 20px;
+				color: #333333;
+			}
+			p {
+				margin-bottom: 20px;
+				color: #666666;
+			}
+			.signature {
+				margin-top: 20px;
+				font-style: italic;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Your Problem ID : %s has been replied</h3>
+		<p>Hello %s,</p>
+		<p>%s</p>
+		<p class="signature">Best regards,<br>%s (Admin),<br>Mai-Roi-Ra team</p>
+	</body>
+	</html>
+	`, resProblem.ProblemId, resUser.Username, *resProblem.Reply, *resProblem.AdminUsername)
+
+	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *ProblemService) SendEmailToAdmin(problemType string, description string) error {
