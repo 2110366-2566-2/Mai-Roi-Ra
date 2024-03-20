@@ -108,7 +108,7 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	log.Println("[Repo: GetEventLists] Called")
 	var eventLists []*models.Event
 
-	query := r.db.Model(&models.Event{}).Where(`status = ?`, constant.APPROVED)
+	query := r.db.Model(&models.Event{})
 
 	if req.OrganizerId != "" {
 		query = query.Where(`organizer_id = ?`, req.OrganizerId)
