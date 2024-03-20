@@ -426,3 +426,70 @@ func (c *UserController) GetSearchHistories(ctx *gin.Context) {
 	log.Println("[CTRL: GetSearchHistories] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary LoginGoogle
+// @Description Get list of all participated events of the user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param provider path string true "provider"
+// @Success 200 {object} structure.CreateUserResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /auth/{provider}/login [get]
+func (c *UserController) LoginGoogle(ctx *gin.Context) {
+	log.Println("[CTRL: LoginGoogle] Called: ")
+	if err := c.ServiceGateway.UserService.LoginGoogle(ctx); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// This path might be redirected by the service layer if authentication is not complete, so no action is needed here.
+}
+
+// @Summary LoginGoogle
+// @Description Log out using
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param provider path string true "provider"
+// @Success 200 {object} string
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /logout/{provider} [get]
+func (c *UserController) LogoutGoogle(ctx *gin.Context) {
+	log.Println("[CTRL: LogoutGoogle] Called: ")
+	if err := c.ServiceGateway.UserService.LogoutGoogle(ctx); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// Redirect to the homepage or a specific page of your frontend application
+	ctx.JSON(http.StatusOK, gin.H{"message": "logout successful"})
+	ctx.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/auth/signin")
+}
+
+// @Summary CallbackGoogle
+// @Description Get info of user from Gmail
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param provider path string true "provider"
+// @Success 200 {object} st.SignInGoogleResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/auth/{provider}/callback [get]
+func (c *UserController) CallbackGoogle(ctx *gin.Context) {
+	log.Println("[CTRL: CallbackGoogle] Called: ")
+	_, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Construct the redirect URL with user information as query parameters
+	// redirectURL := fmt.Sprintf("http://localhost:3000/auth/register?email=%s&name=%s", url.QueryEscape(user.Email), url.QueryEscape(user.Name))
+	// Add any other user information you need as query parameters
+
+	// Redirect the user to the frontend with the constructed URL
+	// ctx.JSON(http.StatusOK, user)
+	ctx.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/homepage")
+}

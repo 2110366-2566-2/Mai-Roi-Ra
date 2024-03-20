@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"log"
 	"regexp"
@@ -9,7 +10,10 @@ import (
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -41,6 +45,9 @@ type IUserService interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
+	LoginGoogle(c *gin.Context) error
+	LogoutGoogle(c *gin.Context) error
+	CallbackGoogle(c *gin.Context) (*goth.User, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -550,4 +557,63 @@ func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistories
 		resLists.SearchHistoryList = append(resLists.SearchHistoryList, historyData)
 	}
 	return resLists, nil
+}
+
+func (s *UserService) LoginGoogle(c *gin.Context) error {
+	log.Println("[Service: LoginGoogle]: Called")
+	provider := c.Param("provider")
+
+	// Manually set the provider name in the request context
+	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
+	c.Request = c.Request.WithContext(ctx)
+
+	user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+	if err != nil {
+		// If an error occurs, it means the user is not authenticated, so we start the auth process.
+		log.Println("HELLO")
+		gothic.BeginAuthHandler(c.Writer, c.Request)
+		return nil
+	}
+	log.Println("Call from LoginGoogle", user)
+	// If no error, the user is already authenticated.
+	// You might want to handle this case differently, such as by redirecting the user to a dashboard or home page.
+	// Since actual redirection or handling should occur in the controller, just log the success here.
+	log.Println("User is already authenticated with Google.")
+	return nil
+}
+
+func (s *UserService) LogoutGoogle(c *gin.Context) error {
+	log.Println("[Service: LogoutGoogle]: Called")
+	provider := c.Param("provider")
+
+	// Manually set the provider name in the request context
+	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
+	c.Request = c.Request.WithContext(ctx)
+
+	if err := gothic.Logout(c.Writer, c.Request); err != nil {
+		log.Println("[Service: LogoutGoogle]: Gothic logout error:", err)
+		return err
+	}
+	return nil
+}
+
+func (s *UserService) CallbackGoogle(c *gin.Context) (*goth.User, error) {
+	log.Println("[Service: CallbackGoogle]: Called")
+	provider := c.Param("provider")
+
+	// Manually set the provider name in the request context
+	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
+	c.Request = c.Request.WithContext(ctx)
+
+	user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+	if err != nil {
+		log.Println("[Service: CallbackGoogle]: Gothic CallbackGoogle error:", err)
+		return nil, err
+	}
+	// Now that we have the user's details from Google, we might want to do additional processing here,
+	// such as creating a user in the database if they don't exist.
+	// Return the user details to the controller for further handling.
+	log.Println("Call from CallbackGoogle", user)
+
+	return &user, nil
 }

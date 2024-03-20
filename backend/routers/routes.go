@@ -99,6 +99,12 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		authRoutes.POST("/logout", controller.LogoutUser)
 		authRoutes.GET("/auth/users", controller.GetAllUsers)
 	}
+	gAuth := r.Group("", middleware.GoogleAuth())
+	{
+		gAuth.GET("/auth/:provider/login", controller.LoginGoogle)
+		gAuth.GET("/auth/logout/:provider", controller.LogoutGoogle)
+		gAuth.GET("/auth/:provider/callback", controller.CallbackGoogle)
+	}
 }
 
 func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController) {
