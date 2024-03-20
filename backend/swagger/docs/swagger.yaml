@@ -626,6 +626,11 @@ definitions:
     - province
     - user_id
     type: object
+  structure.VerifyEventResponse:
+    properties:
+      message:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -953,6 +958,40 @@ paths:
           schema:
             type: object
       summary: Update existing event
+      tags:
+      - events
+  /events/{event_id}/verify:
+    put:
+      consumes:
+      - application/json
+      description: Verify an Event
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Status
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.VerifyEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: VerifyEvent
       tags:
       - events
   /events/participant:

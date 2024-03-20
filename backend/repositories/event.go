@@ -25,6 +25,7 @@ type IEventRepository interface {
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
 	SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventRepository(
@@ -216,4 +217,19 @@ func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Eve
 		return nil, err
 	}
 	return eventLists, nil
+}
+
+func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+		Updates(map[string]interface{}{
+			"Status":    req.Status,
+			"UpdatedAt": time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
+	res := &st.VerifyEventResponse{
+		Message: "Verify Event Successful",
+	}
+	return res, nil
 }
