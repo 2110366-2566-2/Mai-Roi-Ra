@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 // Other imports...
 
-export default function AdminHomepage() {
-  const [activeTab, setActiveTab] = useState("Pending");
+export default function UserSupportAndService() {
+  const [activeTab, setActiveTab] = useState("FAQ");
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -13,7 +13,7 @@ export default function AdminHomepage() {
     <div className="bg-white text-black h-full">
       <div className="lg:mr-24 border-r border-b bg-white">
         <div className="w-full text-2xl pt-20">
-          {["Pending", "Approved", "Rejected"].map((tabName) => (
+          {["FAQ", "Problem"].map((tabName) => (
             <button
               key={tabName}
               className={`relative px-8 py-2 overflow-hidden`}
