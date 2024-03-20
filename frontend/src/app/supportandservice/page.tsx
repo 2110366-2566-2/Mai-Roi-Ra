@@ -10,10 +10,9 @@ import UserSupportAndService from "@/components/UserSupportAndService";
 
 export default async function Homepage() {
   const session = await getServerSession(authOptions);
-  const events = await getEvents();
-  const datas = events.event_lists;
-  console.log("successfully");
-  console.log(events);
+  // const events = await getEvents();
+  console.log("successfully loaded Support and Service Page");
+  // console.log(events);
   console.log(session);
 
   return (
