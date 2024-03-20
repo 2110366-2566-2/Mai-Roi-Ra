@@ -2,13 +2,16 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
+	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 )
 
 type EventService struct {
@@ -87,14 +90,13 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 
 func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error) {
 	log.Println("[Service: GetEventLists]: Called")
-	resEvents, err := s.RepositoryGateway.EventRepository.GetEventLists(req)
+	resEvents, totalEvents, totalPages, err := s.RepositoryGateway.EventRepository.GetEventLists(req)
 	if err != nil {
 		return nil, err
 	}
 	log.Println("[Service: GetEventLists]: resEvents:", resEvents)
-	resLists := &st.GetEventListsResponse{
-		EventLists: make([]st.GetEventList, 0),
-	}
+
+	eventLists := make([]st.GetEventList, 0)
 
 	for _, v := range resEvents {
 		locationId := v.LocationId
@@ -117,7 +119,13 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 			City:        resLocation.City,
 			District:    resLocation.District,
 		}
-		resLists.EventLists = append(resLists.EventLists, res)
+		eventLists = append(eventLists, res)
+	}
+
+	resLists := &st.GetEventListsResponse{
+		TotalPages: *totalPages,
+		TotalEvent: *totalEvents,
+		EventLists: eventLists,
 	}
 	return resLists, nil
 }
@@ -142,14 +150,14 @@ func (s *EventService) GetEventListsByStartDate(req *st.GetEventListsByStartDate
 			eventImage = *v.EventImage
 		}
 		res := st.GetEventListByStartDate{
-			EventId:     v.EventId,
-			OrganizerId: v.OrganizerId,
-			EventName:   v.EventName,
-			StartDate:   utils.GetDate(v.StartDate),
-			EndDate:     utils.GetDate(v.EndDate),
-			Description: v.Description,
-			Status:      v.Status,
-			EventImage:  eventImage,
+			EventId:      v.EventId,
+			OrganizerId:  v.OrganizerId,
+			EventName:    v.EventName,
+			StartDate:    utils.GetDate(v.StartDate),
+			EndDate:      utils.GetDate(v.EndDate),
+			Description:  v.Description,
+			Status:       v.Status,
+			EventImage:   eventImage,
 			LocationName: resLocation.LocationName,
 		}
 		resLists.EventLists = append(resLists.EventLists, res)
@@ -215,6 +223,30 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		return nil, err
 	}
 
+	// Check if the status is changing from "Waiting" to "Approved" or "Rejected"
+	if resEvent.Status == "Waiting" && (req.Status == "Approved" || req.Status == "Rejected") {
+		// Proceed with updating the event details
+		// Assuming the update logic is here and successful...
+
+		// After updating the event, check the new status and send the appropriate email
+		if req.Status == "Approved" {
+			err := s.SendApprovalEmail(req.EventId)
+			if err != nil {
+				log.Println("[Service: UpdateEvent] Error sending approval email:", err)
+				// Decide if you want to return an error or just log it
+				return nil, err
+			}
+		} else if req.Status == "Rejected" {
+			// Assuming you have a similar method for sending rejection emails
+			err := s.SendRejectionEmail(req.EventId)
+			if err != nil {
+				log.Println("[Service: UpdateEvent] Error sending rejection email:", err)
+				// Decide if you want to return an error or just log it
+				return nil, err
+			}
+		}
+	}
+
 	locationModel := models.Location{
 		LocationId:   resLocation.LocationId,
 		Country:      resLocation.Country,
@@ -269,8 +301,8 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
 
+	return res, nil
 }
 
 func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
@@ -284,19 +316,19 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 	reqparticipate := &st.GetParticipantListsRequest{
 		EventId: req.EventId,
 	}
-	resparticipate,err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
+	resparticipate, err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
 	if err != nil {
 		return nil, err
 	}
 
-	for _,v := range resparticipate{
+	for _, v := range resparticipate {
 		reqcancelled := &st.SendCancelledEmailRequest{
-			UserId:      v.UserId,
-			EventId:	 resevent.EventId,	
-			EventName:   resevent.EventName,
-			EventDate:   resevent.StartDate.Format("2006-01-02"),
+			UserId:    v.UserId,
+			EventId:   resevent.EventId,
+			EventName: resevent.EventName,
+			EventDate: resevent.StartDate.Format("2006-01-02"),
 		}
-		if _,err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
+		if _, err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
 			log.Println("[Service: Call SendCancelledEmail]:", err)
 			return nil, err
 		}
@@ -327,4 +359,172 @@ func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (
 	}
 
 	return resLists, nil
+}
+
+func (s *EventService) SendApprovalEmail(eventId string) error {
+	log.Println("[Service: SendApprovalEmail]: Called")
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(eventId)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return err
+	}
+
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return err
+	}
+	log.Println("Config path from Gmail:", cfg)
+
+	subject := fmt.Sprintf("Event Approval: %s", resEvent.EventName)
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+	to := make([]string, 0)
+	cc := make([]string, 0)
+	bcc := make([]string, 0)
+	attachFiles := make([]string, 0)
+
+	reqUser := &st.GetUserByUserIdRequest{
+		UserId: resEvent.OrganizerId,
+	}
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+	if err != nil {
+		return err
+	}
+	email := ""
+	if resUser.Email != nil {
+		email = *resUser.Email
+	}
+	if email != "" {
+		to = append(to, email)
+	} else {
+		return errors.New("organizer email not found")
+	}
+
+	contentHTML := fmt.Sprintf(`
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 600px;
+                color: #333333;
+            }
+            h3 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333333;
+            }
+            p {
+                margin-bottom: 20px;
+                color: #666666;
+            }
+            .signature {
+                margin-top: 20px;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Congratulations, your event "%s" has been approved!</h3>
+        <p>Hello %s,</p>
+        <p>We are pleased to inform you that your event has been successfully approved. You can now see your event listed on our platform.</p>
+        <p class="signature">Best regards,<br>The Mai-Roi-Ra Team</p>
+    </body>
+    </html>
+    `, resEvent.EventName, resUser.Username)
+
+	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		log.Println("[Service: SendApprovalEmail] Error sending email:", err)
+		return err
+	}
+	return nil
+}
+
+func (s *EventService) SendRejectionEmail(eventId string) error {
+	log.Println("[Service: SendRejectionEmail]: Called")
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(eventId)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return err
+	}
+
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return err
+	}
+	log.Println("Config path from Gmail:", cfg)
+
+	subject := fmt.Sprintf("Event Rejection: %s", resEvent.EventName)
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+	to := make([]string, 0)
+	cc := make([]string, 0)
+	bcc := make([]string, 0)
+	attachFiles := make([]string, 0)
+
+	reqUser := &st.GetUserByUserIdRequest{
+		UserId: resEvent.OrganizerId,
+	}
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+	if err != nil {
+		return err
+	}
+	email := ""
+	if resUser.Email != nil {
+		email = *resUser.Email
+	}
+	if email != "" {
+		to = append(to, email)
+	} else {
+		return errors.New("organizer email not found")
+	}
+
+	contentHTML := fmt.Sprintf(`
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 600px;
+                color: #333333;
+            }
+            h3 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333333;
+            }
+            p {
+                margin-bottom: 20px;
+                color: #666666;
+            }
+            .signature {
+                margin-top: 20px;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Notification of Event Rejection: "%s"</h3>
+        <p>Hello %s,</p>
+        <p>We regret to inform you that your event submission has been reviewed and not approved at this time. We appreciate your interest in hosting events with us and encourage you to review our event guidelines for future submissions.</p>
+        <p class="signature">Best regards,<br>The Mai-Roi-Ra Team</p>
+    </body>
+    </html>
+    `, resEvent.EventName, resUser.Username)
+
+	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		log.Println("[Service: SendRejectionEmail] Error sending email:", err)
+		return err
+	}
+	return nil
 }

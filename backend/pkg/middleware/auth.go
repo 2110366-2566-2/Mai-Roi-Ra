@@ -70,7 +70,6 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/dig"
 )
 
 const (
@@ -81,7 +80,7 @@ const (
 	KeyUserID = "userID"
 )
 
-func Authentication(con *dig.Container) gin.HandlerFunc {
+func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
@@ -120,7 +119,7 @@ func Authentication(con *dig.Container) gin.HandlerFunc {
 			c.Set(KeyUserID, userID)
 			fmt.Println("Authentication successful")
 		} else {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token_2" })
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token_2"})
 			return
 		}
 

@@ -32,4 +32,7 @@ func (c *Container) ControllerProvider() {
 	if err := c.Container.Provide(controllers.NewAnnouncementController); err != nil {
 		c.Error = err
 	}
+	if err := c.Container.Provide(controllers.NewProblemController); err != nil {
+		c.Error = err
+	}
 }

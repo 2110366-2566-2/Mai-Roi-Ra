@@ -31,7 +31,10 @@ func NewLocationController(
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /locations/{location_id} [get]
-func (c *LocationController) GetLocationById(ctx *gin.Context, req st.GetLocationByIdRequest) {
+func (c *LocationController) GetLocationById(ctx *gin.Context) {
+	req := st.GetLocationByIdRequest{
+		LocationId: ctx.Param("id"),
+	}
 	log.Println("[CTRL: GetLocationById] Input:", req)
 	res, err := c.ServiceGateway.LocationService.GetLocationById(req)
 	if err != nil {

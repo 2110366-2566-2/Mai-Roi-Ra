@@ -23,7 +23,7 @@ func NewParticipateController(
 
 // @Summary IsRegistered
 // @Description Determine that whether the user has registered in this events
-// @Tags participate
+// @Tags participates
 // @Accept json
 // @Produce json
 // @Param user_id query string true "user_id"
@@ -31,15 +31,18 @@ func NewParticipateController(
 // @Success 200 {object} structure.IsRegisteredResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
-// @Router /isregistered [get]
-func (c *ParticipateController) IsRegistered(ctx *gin.Context, req *st.IsRegisteredRequest) {
-	log.Println("[CTRL: ToggleNotifications] Input:", req)
-
+// @Router /participate/is_registered [get]
+func (c *ParticipateController) IsRegistered(ctx *gin.Context) {
+	req := &st.IsRegisteredRequest{
+		EventId: ctx.Query("event_id"),
+		UserId:  ctx.Query("user_id"),
+	}
+	log.Println("[CTRL: IsRegistered] Input:", req)
 	res, err := c.ServiceGateway.ParticipateService.IsRegistered(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: ToggleNotifications] Output:", res)
+	log.Println("[CTRL: IsRegistered] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
