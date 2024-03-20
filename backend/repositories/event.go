@@ -114,6 +114,10 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 		query = query.Where(`organizer_id = ?`, req.OrganizerId)
 	}
 
+	if req.Filter != "" {
+		query = query.Where(`status=?`, req.Filter)
+	}
+
 	if req.Search != "" {
 		search := "%" + req.Search + "%"
 		query = query.Where(`event_name ILIKE ? OR description ILIKE ?`, search, search)
@@ -129,7 +133,7 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	offset := req.Offset
 	limit := req.Limit
 	if limit <= 0 {
-		limit = 10 
+		limit = 10
 	}
 
 	totalEventsQuery := query
@@ -149,13 +153,12 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	totalEvents := int(totalEventsInt64)
 	totalPages := int(totalEvents) / limit
 
-	if int(totalEvents) % limit > 0 {
+	if int(totalEvents)%limit > 0 {
 		totalPages++
 	}
 
 	return eventLists, &totalEvents, &totalPages, nil
 }
-
 
 func (r *EventRepository) GetEventListsByStartDate(startDate string) ([]*models.Event, error) {
 	log.Println("[Repo: GetEventListsByStartDate] Called")
