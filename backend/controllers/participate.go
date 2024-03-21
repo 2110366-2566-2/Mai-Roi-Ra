@@ -37,12 +37,12 @@ func (c *ParticipateController) IsRegistered(ctx *gin.Context) {
 		EventId: ctx.Query("event_id"),
 		UserId:  ctx.Query("user_id"),
 	}
-	log.Println("[CTRL: IsRegistered] Input:", req)
+	log.Println("[CTRL: ToggleNotifications] Input:", req)
 	res, err := c.ServiceGateway.ParticipateService.IsRegistered(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: IsRegistered] Output:", res)
+	log.Println("[CTRL: ToggleNotifications] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

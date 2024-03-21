@@ -2,17 +2,13 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
-	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 )
 
 type EventService struct {
@@ -28,7 +24,6 @@ type IEventService interface {
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
-	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventService(
@@ -279,8 +274,8 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	if err != nil {
 		return nil, err
 	}
-
 	return res, nil
+
 }
 
 func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
@@ -337,213 +332,4 @@ func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (
 	}
 
 	return resLists, nil
-}
-
-func (s *EventService) SendApprovalEmail(eventId string) error {
-	log.Println("[Service: SendApprovalEmail]: Called")
-	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(eventId)
-	if err != nil {
-		log.Println("[Service: Call Repo Error]:", err)
-		return err
-	}
-
-	cfg, err := config.NewConfig(func() string {
-		return ".env"
-	}())
-	if err != nil {
-		log.Println("[Config]: Error initializing .env")
-		return err
-	}
-	log.Println("Config path from Gmail:", cfg)
-
-	subject := fmt.Sprintf("Event Approval: %s", resEvent.EventName)
-	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
-	to := make([]string, 0)
-	cc := make([]string, 0)
-	bcc := make([]string, 0)
-	attachFiles := make([]string, 0)
-
-	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
-	if err != nil {
-		return err
-	}
-
-	reqId := st.GetUserByUserIdRequest{
-		UserId: resUserId,
-	}
-
-	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
-	if err != nil {
-		return err
-	}
-	email := ""
-	if resUser.Email != nil {
-		email = *resUser.Email
-	}
-
-	if email == "" {
-		return errors.New("organizer email not found")
-	}
-
-	to = append(to, email)
-
-	contentHTML := fmt.Sprintf(`
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 16px;
-                line-height: 1.6;
-                margin: 40px auto;
-                max-width: 600px;
-                color: #333333;
-            }
-            h3 {
-                font-size: 24px;
-                margin-bottom: 20px;
-                color: #333333;
-            }
-            p {
-                margin-bottom: 20px;
-                color: #666666;
-            }
-            .signature {
-                margin-top: 20px;
-                font-style: italic;
-            }
-        </style>
-    </head>
-    <body>
-        <h3>Congratulations, your event "%s" has been approved!</h3>
-        <p>Hello %s,</p>
-        <p>We are pleased to inform you that your event has been successfully approved. You can now see your event listed on our platform.</p>
-        <p class="signature">Best regards,<br>The Mai-Roi-Ra Team</p>
-    </body>
-    </html>
-    `, resEvent.EventName, resUser.Username)
-
-	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-		log.Println("[Service: SendApprovalEmail] Error sending email:", err)
-		return err
-	}
-	return nil
-}
-
-func (s *EventService) SendRejectionEmail(eventId string) error {
-	log.Println("[Service: SendRejectionEmail]: Called")
-	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(eventId)
-	if err != nil {
-		log.Println("[Service: Call Repo Error]:", err)
-		return err
-	}
-
-	cfg, err := config.NewConfig(func() string {
-		return ".env"
-	}())
-	if err != nil {
-		log.Println("[Config]: Error initializing .env")
-		return err
-	}
-	log.Println("Config path from Gmail:", cfg)
-
-	subject := fmt.Sprintf("Event Rejection: %s", resEvent.EventName)
-	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
-	to := make([]string, 0)
-	cc := make([]string, 0)
-	bcc := make([]string, 0)
-	attachFiles := make([]string, 0)
-
-	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
-	if err != nil {
-		return err
-	}
-
-	reqId := st.GetUserByUserIdRequest{
-		UserId: resUserId,
-	}
-
-	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
-	if err != nil {
-		return err
-	}
-	email := ""
-	if resUser.Email != nil {
-		email = *resUser.Email
-	}
-
-	if email == "" {
-		return errors.New("organizer email not found")
-	}
-
-	to = append(to, email)
-	
-	contentHTML := fmt.Sprintf(`
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 16px;
-                line-height: 1.6;
-                margin: 40px auto;
-                max-width: 600px;
-                color: #333333;
-            }
-            h3 {
-                font-size: 24px;
-                margin-bottom: 20px;
-                color: #333333;
-            }
-            p {
-                margin-bottom: 20px;
-                color: #666666;
-            }
-            .signature {
-                margin-top: 20px;
-                font-style: italic;
-            }
-        </style>
-    </head>
-    <body>
-        <h3>Notification of Event Rejection: "%s"</h3>
-        <p>Hello %s,</p>
-        <p>We regret to inform you that your event submission has been reviewed and not approved at this time. We appreciate your interest in hosting events with us and encourage you to review our event guidelines for future submissions.</p>
-        <p class="signature">Best regards,<br>The Mai-Roi-Ra Team</p>
-    </body>
-    </html>
-    `, resEvent.EventName, resUser.Username)
-
-	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-		log.Println("[Service: SendRejectionEmail] Error sending email:", err)
-		return err
-	}
-	return nil
-}
-
-func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
-	log.Println("[Service: VerifyEvent]: Called")
-	if req.Status == constant.APPROVED {
-		err := s.SendApprovalEmail(req.EventId)
-		if err != nil {
-			log.Println("[Service: VerifyEvent] Error sending approval email:", err)
-			// Decide if you want to return an error or just log it
-			return nil, err
-		}
-	} else if req.Status == constant.REJECTED {
-		// Assuming you have a similar method for sending rejection emails
-		err := s.SendRejectionEmail(req.EventId)
-		if err != nil {
-			log.Println("[Service: VerifyEvent] Error sending rejection email:", err)
-			// Decide if you want to return an error or just log it
-			return nil, err
-		}
-	}
-
-	res, err := s.RepositoryGateway.EventRepository.VerifyEvent(req)
-	if err != nil {
-		log.Println("[Service: VerifyEvent]: Called Repo Error: ", err)
-		return nil, err
-	}
-	return res, nil
 }
