@@ -7,12 +7,12 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -45,9 +45,9 @@ type IUserService interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
-	LoginGoogle(c *gin.Context) error
+	LoginGoogle(c *gin.Context) (*models.User, error)
 	LogoutGoogle(c *gin.Context) error
-	CallbackGoogle(c *gin.Context) (*goth.User, error)
+	CallbackGoogle(c *gin.Context) (*models.User, *bool, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -97,7 +97,7 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	}
 	req.Password = string(hashedPassword)
 
-	res, err := s.RepositoryGateway.UserRepository.CreateUser(req)
+	res, err := s.RepositoryGateway.UserRepository.CreateUser(req, constant.NORMAL)
 	if err != nil {
 		log.Println("[Service: CreateUser]: Error creating user", err)
 		return nil, err
@@ -559,7 +559,7 @@ func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistories
 	return resLists, nil
 }
 
-func (s *UserService) LoginGoogle(c *gin.Context) error {
+func (s *UserService) LoginGoogle(c *gin.Context) (*models.User, error) {
 	log.Println("[Service: LoginGoogle]: Called")
 	provider := c.Param("provider")
 
@@ -571,15 +571,30 @@ func (s *UserService) LoginGoogle(c *gin.Context) error {
 	if err != nil {
 		// If an error occurs, it means the user is not authenticated, so we start the auth process.
 		log.Println("HELLO")
+		log.Println("Error:", err.Error())
 		gothic.BeginAuthHandler(c.Writer, c.Request)
-		return nil
+		return nil, nil
 	}
-	log.Println("Call from LoginGoogle", user)
-	// If no error, the user is already authenticated.
-	// You might want to handle this case differently, such as by redirecting the user to a dashboard or home page.
-	// Since actual redirection or handling should occur in the controller, just log the success here.
-	log.Println("User is already authenticated with Google.")
-	return nil
+	// Fetch the newly created user details
+	existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(user.Email)
+	if err != nil {
+		log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
+		return nil, nil
+	}
+
+	// At this point, existingUser is either fetched from the DB or newly created
+	// Generate a JWT token for the user
+	token, tokenErr := GenerateJWTToken(existingUser)
+	if tokenErr != nil {
+		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
+		return nil, nil
+	}
+
+	// Update token
+	if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
+		return nil, nil
+	}
+	return existingUser, nil
 }
 
 func (s *UserService) LogoutGoogle(c *gin.Context) error {
@@ -597,7 +612,7 @@ func (s *UserService) LogoutGoogle(c *gin.Context) error {
 	return nil
 }
 
-func (s *UserService) CallbackGoogle(c *gin.Context) (*goth.User, error) {
+func (s *UserService) CallbackGoogle(c *gin.Context) (*models.User, *bool, error) {
 	log.Println("[Service: CallbackGoogle]: Called")
 	provider := c.Param("provider")
 
@@ -605,15 +620,68 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*goth.User, error) {
 	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
 	c.Request = c.Request.WithContext(ctx)
 
-	user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+	gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 	if err != nil {
 		log.Println("[Service: CallbackGoogle]: Gothic CallbackGoogle error:", err)
-		return nil, err
+		return nil, nil, err
 	}
-	// Now that we have the user's details from Google, we might want to do additional processing here,
-	// such as creating a user in the database if they don't exist.
-	// Return the user details to the controller for further handling.
-	log.Println("Call from CallbackGoogle", user)
+	log.Println("Call from CallbackGoogle", gothUser)
 
-	return &user, nil
+	// Define the createUserRequest here, based on data from gothUser
+
+	email := ""
+	if gothUser.Email != "" {
+		email = gothUser.Email
+	}
+
+	createUserRequest := st.CreateUserRequest{
+		Username:  gothUser.NickName,
+		Email:     &email,
+		FirstName: gothUser.FirstName,
+		LastName:  gothUser.LastName,
+		Password:  "LOGINFROMGOOGLE",
+		Address:   "DefaultAddress",  // Placeholder values
+		District:  "DefaultDistrict", // Placeholder values
+		Province:  "DefaultProvince", // Placeholder values
+		Role:      constant.USER,     // / Will change later
+	}
+
+	var flag = true
+
+	_, err = s.RepositoryGateway.UserRepository.GetUserByEmail(*createUserRequest.Email)
+	if err != nil {
+		// User not found, proceed to create a new user
+		log.Println("I HAVE ENTERED HERE")
+		_, err := s.RepositoryGateway.UserRepository.CreateUser(&createUserRequest, constant.GOOGLE)
+		if err != nil {
+			return nil, nil, err
+		}
+		flag = false
+	}
+
+	// Fetch the newly created user details
+	existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
+	if err != nil {
+		log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
+		return nil, nil, err
+	}
+
+	// At this point, existingUser is either fetched from the DB or newly created
+	// Generate a JWT token for the user
+	token, tokenErr := GenerateJWTToken(existingUser)
+	if tokenErr != nil {
+		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
+		return nil, nil, tokenErr
+	}
+
+	// Update token
+	if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
+		return nil, nil, err
+	}
+
+	log.Println("Flag at the end:", flag)
+
+	log.Println("User token at the end:", token)
+
+	return existingUser, &flag, nil
 }

@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"log"
@@ -439,11 +441,13 @@ func (c *UserController) GetSearchHistories(ctx *gin.Context) {
 // @Router /auth/{provider}/login [get]
 func (c *UserController) LoginGoogle(ctx *gin.Context) {
 	log.Println("[CTRL: LoginGoogle] Called: ")
-	if err := c.ServiceGateway.UserService.LoginGoogle(ctx); err != nil {
+	user, err := c.ServiceGateway.UserService.LoginGoogle(ctx)
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
 	}
-	// This path might be redirected by the service layer if authentication is not complete, so no action is needed here.
+	// log.Println(*user)
+	ctx.JSON(http.StatusOK, user)
+
 }
 
 // @Summary LoginGoogle
@@ -479,17 +483,23 @@ func (c *UserController) LogoutGoogle(ctx *gin.Context) {
 // @Router /users/auth/{provider}/callback [get]
 func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 	log.Println("[CTRL: CallbackGoogle] Called: ")
-	_, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
+	user, flag, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Construct the redirect URL with user information as query parameters
-	// redirectURL := fmt.Sprintf("http://localhost:3000/auth/register?email=%s&name=%s", url.QueryEscape(user.Email), url.QueryEscape(user.Name))
-	// Add any other user information you need as query parameters
-
-	// Redirect the user to the frontend with the constructed URL
-	// ctx.JSON(http.StatusOK, user)
-	ctx.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/homepage")
+	hasAccount := false
+	if flag != nil {
+		hasAccount = *flag
+	}
+	frontendURL := "http://localhost:3000"
+	redirectURL := fmt.Sprintf("%s/auth/handle-login", frontendURL)
+	if !hasAccount {
+		// Redirect to the register page for a new user
+		redirectURL = fmt.Sprintf("%s/auth/signin", frontendURL)
+	}
+	ctx.SetCookie("session_token", user.Token, middleware.MaxAge, "/", "localhost", false, true)
+	location := url.URL{Path: redirectURL}
+	ctx.Redirect(http.StatusTemporaryRedirect, location.RequestURI())
 }

@@ -22,7 +22,7 @@ type UserRepository struct {
 type IUserRepository interface {
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByPhoneNumber(phoneNumber string) (*models.User, error)
-	CreateUser(*st.CreateUserRequest) (*string, error)
+	CreateUser(req *st.CreateUserRequest, registerType string) (*string, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 	GetUserByToken(token string) (*models.User, error)
 	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
@@ -79,7 +79,7 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 }
 
 // CreateUser adds a new user to the database.
-func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
+func (r *UserRepository) CreateUser(req *st.CreateUserRequest, registerType string) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
 
 	role := constant.USER
@@ -104,7 +104,7 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		Province:                 req.Province,
 		BannerImage:              "",
 		Role:                     role,
-		RegisterType:             constant.NORMAL, // will change later
+		RegisterType:             registerType, // will change later
 		CreatedAt:                time.Time{},
 	}
 

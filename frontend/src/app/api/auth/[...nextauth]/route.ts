@@ -1,58 +1,91 @@
-// const handler = NextAuth(authOptions)
-// export {handler as GET, handler as POST}
 import NextAuth from "next-auth/next";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import userLogin from "@/libs/userLogin";
+import { parse } from 'cookie'; // Import the parse method from cookie library
+import { apiBackUrl, provider } from "@/constants";
+import GoogleProvider from "next-auth/providers/google";
 
-export const authOptions:AuthOptions = {
+export const authOptions: AuthOptions = {
     providers: [
-        // Authentication Provider, use Credentials Provider
         CredentialsProvider({
-            // The name to display on the sign in form (e.g. "Sign in with...")
             name: "Credentials",
-            // `credentials` is used to generate a form on the sign in page.
-            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-            // e.g. domain, username, password, 2FA token, etc.
-            // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-              email: { label: "Email", type: "text", placeholder: "email" },
-              password: { label: "Password", type: "password" }
+                email: { label: "Email", type: "text", placeholder: "email" },
+                password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
+                if (!credentials) return null;
+                if (credentials.email && credentials.password) {
+                    const user = await userLogin(credentials.email, credentials.password);
+                    if (user) {
+                        return user; // Any object returned will be saved in `user` property of the JWT
+                    } else {
+                        return null; // If you return null then an error will be displayed advising the user to check their details.
+                    }
+                } else {
+                    const cookies = parse(req.headers?.cookie || "");
+                    const token = cookies["token"];
 
-              if (!credentials) return null
+                    console.log("COOKIES:", cookies)
 
-              const user = await userLogin(credentials.email, credentials.password)
-              // const user = {id:"1",name:"J",email:"j@gmail.com"}
+                    if (token) {
+                        // Retrieve user information using Fetch API
+                        try {
+                            const response = await fetch(`${apiBackUrl}/auth/${provider}/login`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                            });
 
-              if (user) {
-                // Any object returned will be saved in `user` property of the JWT
-                return user
-              } else {
-                // If you return null then an error will be displayed advising the user to check their details.
-                return null
+                            // console.log(response)
 
-                // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
-              }
+                            if (!response.ok) {
+                                throw new Error('Failed to fetch from google');
+                            }
+
+                            const userProfile = await response.json();
+                            return userProfile
+                                ? { ...userProfile, session_token: token }
+                                : null;
+                        } catch (error) {
+                            console.error(error);
+                            return null;
+                        }
+                    }
+                }
             }
-          })
+        }),
+        GoogleProvider({
+          clientId: "16976095195-iprvvmo7ghi1v9uea3ikk79gbk5b3rq1.apps.googleusercontent.com",
+          clientSecret: "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",
+          // Optionally, you can customize the authorization URL if you need to pass specific parameters
+          authorization: {
+              params: {
+                  prompt: "consent", // This ensures that the consent screen is displayed every time
+                  access_type: "offline", // This requests a refresh token to be sent along with the access token
+                  scope: "openid email profile", // Define the scope of the authentication
+              },
+          },
+      }),
     ],
     pages: {
-      signIn: "/api/auth/signin",
-      signOut: "/auth/signout"
+        signIn: "/auth/signin",
+        signOut: "/auth/signout"
     },
-    session: {strategy: "jwt"},
+    session: { strategy: "jwt" },
     callbacks: {
-      async jwt({token, user}) {
-        return {...token, ...user}
-      },
-      async session({session, token, user}) {
-        session.user = token as any
-        return session
-      }
+        async jwt({ token, user }) {
+            return { ...token, ...user }; // Merge token and user information
+        },
+        async session({ session, token }) {
+            session.user = token;
+            return session; // Return the session with user information
+        }
     }
-}
+};
 
-const handler = NextAuth(authOptions)
-export {handler as GET, handler as POST}
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

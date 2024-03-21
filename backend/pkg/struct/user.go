@@ -155,3 +155,24 @@ type SearchHistory struct {
 type GetSearchHistoriesResponse struct {
 	SearchHistoryList []SearchHistory `json:"search_history"`
 }
+
+type SignInGoogleRequest struct {
+}
+
+type SignInGoogleResponse struct {
+    Provider          string `json:"provider"`
+    Email             string `json:"email"`
+    Name              string `json:"name"`
+    FirstName         string `json:"first_name"`
+    LastName          string `json:"last_name"`
+    NickName          string `json:"nickname"`
+    Description       string `json:"description"`
+    UserID            string `json:"user_id"`
+    AvatarURL         string `json:"avatar_url"`
+    Location          string `json:"location"`
+    AccessToken       string `json:"access_token"`
+    AccessTokenSecret string `json:"access_token_secret"`
+    RefreshToken      string `json:"refresh_token"`
+    IDToken           string `json:"id_token"`
+}
+
