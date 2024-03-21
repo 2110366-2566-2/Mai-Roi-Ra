@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
@@ -27,6 +28,7 @@ type IEventService interface {
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventService(
@@ -223,30 +225,6 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		return nil, err
 	}
 
-	// Check if the status is changing from "Waiting" to "Approved" or "Rejected"
-	if resEvent.Status == "Waiting" && (req.Status == "Approved" || req.Status == "Rejected") {
-		// Proceed with updating the event details
-		// Assuming the update logic is here and successful...
-
-		// After updating the event, check the new status and send the appropriate email
-		if req.Status == "Approved" {
-			err := s.SendApprovalEmail(req.EventId)
-			if err != nil {
-				log.Println("[Service: UpdateEvent] Error sending approval email:", err)
-				// Decide if you want to return an error or just log it
-				return nil, err
-			}
-		} else if req.Status == "Rejected" {
-			// Assuming you have a similar method for sending rejection emails
-			err := s.SendRejectionEmail(req.EventId)
-			if err != nil {
-				log.Println("[Service: UpdateEvent] Error sending rejection email:", err)
-				// Decide if you want to return an error or just log it
-				return nil, err
-			}
-		}
-	}
-
 	locationModel := models.Location{
 		LocationId:   resLocation.LocationId,
 		Country:      resLocation.Country,
@@ -385,10 +363,16 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 	bcc := make([]string, 0)
 	attachFiles := make([]string, 0)
 
-	reqUser := &st.GetUserByUserIdRequest{
-		UserId: resEvent.OrganizerId,
+	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return err
 	}
-	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+
+	reqId := st.GetUserByUserIdRequest{
+		UserId: resUserId,
+	}
+
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
 	if err != nil {
 		return err
 	}
@@ -396,11 +380,12 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 	if resUser.Email != nil {
 		email = *resUser.Email
 	}
-	if email != "" {
-		to = append(to, email)
-	} else {
+
+	if email == "" {
 		return errors.New("organizer email not found")
 	}
+
+	to = append(to, email)
 
 	contentHTML := fmt.Sprintf(`
     <html>
@@ -469,10 +454,16 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	bcc := make([]string, 0)
 	attachFiles := make([]string, 0)
 
-	reqUser := &st.GetUserByUserIdRequest{
-		UserId: resEvent.OrganizerId,
+	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return err
 	}
-	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+
+	reqId := st.GetUserByUserIdRequest{
+		UserId: resUserId,
+	}
+
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
 	if err != nil {
 		return err
 	}
@@ -480,12 +471,13 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	if resUser.Email != nil {
 		email = *resUser.Email
 	}
-	if email != "" {
-		to = append(to, email)
-	} else {
+
+	if email == "" {
 		return errors.New("organizer email not found")
 	}
 
+	to = append(to, email)
+	
 	contentHTML := fmt.Sprintf(`
     <html>
     <head>
@@ -527,4 +519,31 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	log.Println("[Service: VerifyEvent]: Called")
+	if req.Status == constant.APPROVED {
+		err := s.SendApprovalEmail(req.EventId)
+		if err != nil {
+			log.Println("[Service: VerifyEvent] Error sending approval email:", err)
+			// Decide if you want to return an error or just log it
+			return nil, err
+		}
+	} else if req.Status == constant.REJECTED {
+		// Assuming you have a similar method for sending rejection emails
+		err := s.SendRejectionEmail(req.EventId)
+		if err != nil {
+			log.Println("[Service: VerifyEvent] Error sending rejection email:", err)
+			// Decide if you want to return an error or just log it
+			return nil, err
+		}
+	}
+
+	res, err := s.RepositoryGateway.EventRepository.VerifyEvent(req)
+	if err != nil {
+		log.Println("[Service: VerifyEvent]: Called Repo Error: ", err)
+		return nil, err
+	}
+	return res, nil
 }
