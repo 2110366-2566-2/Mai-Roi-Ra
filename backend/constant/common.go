@@ -13,3 +13,6 @@ const REJECTED = "Rejected"
 
 const PENDING = "Pending"
 const REPLIED = "Replied"
+
+const PROFILE = "profile"
+const EVENT = "event"

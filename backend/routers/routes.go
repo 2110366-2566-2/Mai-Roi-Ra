@@ -64,7 +64,9 @@ func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventControlle
 		eventRoutes.GET("/", controller.GetEventLists)
 		eventRoutes.GET("/:id", controller.GetEventDataById)
 		eventRoutes.PUT("/:id", controller.UpdateEvent)
+		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)
 		eventRoutes.DELETE("/:id", controller.DeleteEventById)
+		eventRoutes.GET("/participant", controller.GetParticipantLists)
 	}
 }
 
@@ -102,8 +104,9 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 }
 
 func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController) {
-	testRoutes := r.Group("/test")
+	testRoutes := r
 	{
+		testRoutes.POST("/upload", controller.TestUpload)
 		testRoutes.GET("/", controller.GetTest)
 	}
 }
@@ -121,7 +124,7 @@ func setupAnnouncementRoutes(r *gin.RouterGroup, controller *controllers.Announc
 func setupParticipateRoutes(r *gin.RouterGroup, controller *controllers.ParticipateController) {
 	participateRoutes := r.Group("/participate")
 	{
-		participateRoutes.POST("/is_registered", controller.IsRegistered)
+		participateRoutes.GET("/is_registered", controller.IsRegistered)
 	}
 }
 
