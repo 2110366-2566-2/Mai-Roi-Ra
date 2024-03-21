@@ -25,6 +25,7 @@ type IEventRepository interface {
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
 	SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventRepository(
@@ -108,10 +109,14 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	log.Println("[Repo: GetEventLists] Called")
 	var eventLists []*models.Event
 
-	query := r.db.Model(&models.Event{}).Where(`status = ?`, constant.APPROVED)
+	query := r.db.Model(&models.Event{})
 
 	if req.OrganizerId != "" {
 		query = query.Where(`organizer_id = ?`, req.OrganizerId)
+	}
+
+	if req.Filter != "" {
+		query = query.Where(`status=?`, req.Filter)
 	}
 
 	if req.Search != "" {
@@ -129,7 +134,7 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	offset := req.Offset
 	limit := req.Limit
 	if limit <= 0 {
-		limit = 10 
+		limit = 10
 	}
 
 	totalEventsQuery := query
@@ -149,13 +154,12 @@ func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models
 	totalEvents := int(totalEventsInt64)
 	totalPages := int(totalEvents) / limit
 
-	if int(totalEvents) % limit > 0 {
+	if int(totalEvents)%limit > 0 {
 		totalPages++
 	}
 
 	return eventLists, &totalEvents, &totalPages, nil
 }
-
 
 func (r *EventRepository) GetEventListsByStartDate(startDate string) ([]*models.Event, error) {
 	log.Println("[Repo: GetEventListsByStartDate] Called")
@@ -213,4 +217,20 @@ func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Eve
 		return nil, err
 	}
 	return eventLists, nil
+}
+
+func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	log.Println("[Repo: VerifyEvent]: Called")
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+		Updates(map[string]interface{}{
+			"Status":    req.Status,
+			"UpdatedAt": time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
+	res := &st.VerifyEventResponse{
+		Message: "Verify Event Successful",
+	}
+	return res, nil
 }
