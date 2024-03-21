@@ -2,13 +2,17 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
+	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -41,6 +45,8 @@ type IUserService interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
+	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) // New function to send OTP email
+	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -550,4 +556,60 @@ func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistories
 		resLists.SearchHistoryList = append(resLists.SearchHistoryList, historyData)
 	}
 	return resLists, nil
+}
+
+func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) {
+	log.Println("[Service: SendOTPEmail]: Called")
+
+	// Generate OTP
+	otp := utils.GenerateOTP()
+
+	// Configuration and email sender initialization
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return nil, err
+	}
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+
+	// Email content
+	subject := "Your OTP for Mai-Roi-Ra"
+	contentHTML := fmt.Sprintf(`
+	<html>
+	<body>
+		<h3>Your OTP for Mai-Roi-Ra</h3>
+		<p>Your OTP is: <strong>%s</strong></p>
+		<p>Please use this OTP to complete your action in the Mai-Roi-Ra platform.</p>
+	</body>
+	</html>
+	`, otp)
+
+	// Sending email
+	if err := sender.SendEmail(subject, "", contentHTML, []string{req.Email}, nil, nil, nil); err != nil {
+		return nil, err
+	}
+
+	// Save the OTP to the database or cache for later verification
+	// (You need to implement this part based on your application's requirements)
+
+	return &st.SendOTPEmailResponse{
+		Message: "OTP email sent successfully",
+	}, nil
+}
+
+func (s *UserService) VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error) {
+	log.Println("[Service: VerifyOTP]: Called")
+
+	// Retrieve the expected OTP from the database or cache
+	expectedOTP := "Your OTP from database/cache" // Replace this with the actual retrieval logic
+
+	// Compare the provided OTP with the expected OTP
+	isVerified := req.OTP == expectedOTP
+
+	return &st.VerifyOTPResponse{
+		Verified: isVerified,
+		Message:  "OTP verification result",
+	}, nil
 }

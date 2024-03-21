@@ -23,6 +23,7 @@ type User struct {
 	BannerImage              string    `gorm:"column:banner_image" json:"banner_image"`
 	Role                     string    `gorm:"column:role;not null" json:"role"`
 	RegisterType             string    `gorm:"column:register_type;not null" json:"register_type"`
+	IsVerified               bool      `gorm:"column:is_verified;not null" json:"is_verified"`
 	CreatedAt                time.Time `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
 	UpdatedAt                time.Time `gorm:"column:updated_at" json:"updated_at"`
 	Token                    string    `gorm:"column:token" json:"-"`

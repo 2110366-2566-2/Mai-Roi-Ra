@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS users (
     role account_type NOT NULL,
     register_type registration_method NOT NULL,
     token VARCHAR(1024) DEFAULT '' NOT NULL,
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (user_id)

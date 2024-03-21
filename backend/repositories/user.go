@@ -33,6 +33,8 @@ type IUserRepository interface {
 	IsEnableNotification(userId string) (*bool, *string, error)
 	GetRandomAdmin() (*models.User, error)
 	GetAllAdmins() ([]*models.User, error)
+	// SendOTPEmail(req *st.SendOTPEmailRequest) error            
+	// VerifyOTP(req *st.VerifyOTPRequest) (bool, error) 
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -307,3 +309,23 @@ func (r *UserRepository) GetAllAdmins() ([]*models.User, error) {
 	}
 	return userModels, nil
 }
+
+// // SendOTPEmail sends an OTP email to the user's email address.
+// func (r *UserRepository) SendOTPEmail(req *st.SendOTPEmailRequest) error {
+// 	log.Println("[Repo: SendOTPEmail]: Called")
+
+// 	// Logic to send the OTP email goes here.
+// 	// For example, you might use an email service to send the email.
+
+// 	return nil
+// }
+
+// // VerifyOTP verifies the OTP entered by the user.
+// func (r *UserRepository) VerifyOTP(req *st.VerifyOTPRequest) (bool, error) {
+// 	log.Println("[Repo: VerifyOTP]: Called")
+
+// 	// Logic to verify the OTP goes here.
+// 	// For example, you might check the OTP against a stored value in the database.
+
+// 	return true, nil
+// }
