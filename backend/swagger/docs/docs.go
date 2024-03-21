@@ -1468,7 +1468,7 @@ const docTemplate = `{
             }
         },
         "/users/{user_id}/searchevent": {
-            "get": {
+            "post": {
                 "description": "Search the Event",
                 "consumes": [
                     "application/json"
@@ -1494,18 +1494,6 @@ const docTemplate = `{
                         "name": "search",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "offset i.e. 0",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Items per page i.e. 10",
-                        "name": "limit",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2298,11 +2286,8 @@ const docTemplate = `{
         "structure.SearchEventResponse": {
             "type": "object",
             "properties": {
-                "event_list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/structure.ParticipatedEvent"
-                    }
+                "message": {
+                    "type": "string"
                 }
             }
         },

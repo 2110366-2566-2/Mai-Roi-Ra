@@ -371,29 +371,14 @@ func (c *UserController) ToggleNotifications(ctx *gin.Context) {
 // @Produce json
 // @Param user_id path string true "user_id"
 // @Param search query string true "search"
-// @Param offset query string false "offset i.e. 0"
-// @Param limit query string false "Items per page i.e. 10"
 // @Success 200 {object} structure.SearchEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
-// @Router /users/{user_id}/searchevent [get]
+// @Router /users/{user_id}/searchevent [post]
 func (c *UserController) SearchEvent(ctx *gin.Context) {
-	offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
-		return
-	}
-
-	limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
-		return
-	}
 	req := &st.SearchEventRequest{
 		UserId: ctx.Param("id"),
 		Search: ctx.Query("search"),
-		Offset: offset,
-		Limit:  limit,
 	}
 	log.Println("[CTRL: SearchEvent] Input:", req)
 	res, err := c.ServiceGateway.UserService.SearchEvent(req)
