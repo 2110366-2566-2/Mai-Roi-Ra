@@ -5,7 +5,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 
@@ -24,7 +23,6 @@ type IEventRepository interface {
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
-	SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error)
 	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
@@ -192,31 +190,6 @@ func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string
 		return nil, nil, err
 	}
 	return &eventModel.UserId, &eventModel.OrganizerId, nil
-}
-
-func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error) {
-	log.Println("[Repo: SearchEvent] Called")
-	var eventLists []*models.Event
-	query := r.db
-
-	query = query.Where(`status=?`, constant.APPROVED)
-
-	if req.Search != "" {
-		search := "%" + req.Search + "%"
-		query = query.Where(`event_name ILIKE ? OR description ILIKE ? `, search, search)
-	}
-
-	query = query.Offset(req.Offset)
-
-	if req.Limit > 0 {
-		query = query.Limit(req.Limit)
-	}
-
-	if err := query.Find(&eventLists).Error; err != nil {
-		log.Println("[Repo: SearchEvent]: cannot query the events:", err)
-		return nil, err
-	}
-	return eventLists, nil
 }
 
 func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
