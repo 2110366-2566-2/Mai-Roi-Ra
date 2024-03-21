@@ -538,6 +538,14 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 	// Generate OTP
 	otp := utils.GenerateOTP()
 
+	// Set OTP expiration time (e.g., 5 minutes from now)
+	otpExpiresAt := time.Now().Add(5 * time.Minute)
+
+	// Update the user's OTP and expiration time in the database
+	if err := s.RepositoryGateway.UserRepository.UpdateUserOTP(req.Email, otp, otpExpiresAt); err != nil {
+		return nil, fmt.Errorf("failed to update user OTP: %w", err)
+	}
+
 	// Configuration and email sender initialization
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
@@ -551,22 +559,19 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 	// Email content
 	subject := "Your OTP for Mai-Roi-Ra"
 	contentHTML := fmt.Sprintf(`
-	<html>
-	<body>
-		<h3>Your OTP for Mai-Roi-Ra</h3>
-		<p>Your OTP is: <strong>%s</strong></p>
-		<p>Please use this OTP to complete your action in the Mai-Roi-Ra platform.</p>
-	</body>
-	</html>
-	`, otp)
+    <html>
+    <body>
+        <h3>Your OTP for Mai-Roi-Ra</h3>
+        <p>Your OTP is: <strong>%s</strong></p>
+        <p>Please use this OTP to complete your action in the Mai-Roi-Ra platform.</p>
+    </body>
+    </html>
+    `, otp)
 
 	// Sending email
 	if err := sender.SendEmail(subject, "", contentHTML, []string{req.Email}, nil, nil, nil); err != nil {
 		return nil, err
 	}
-
-	// Save the OTP to the database or cache for later verification
-	// (You need to implement this part based on your application's requirements)
 
 	return &st.SendOTPEmailResponse{
 		Message: "OTP email sent successfully",
@@ -576,11 +581,14 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 func (s *UserService) VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error) {
 	log.Println("[Service: VerifyOTP]: Called")
 
-	// Retrieve the expected OTP from the database or cache
-	expectedOTP := "Your OTP from database/cache" // Replace this with the actual retrieval logic
+	// Retrieve the user's OTP and expiration time from the database
+	user, err := s.RepositoryGateway.UserRepository.GetUserByEmail(req.Email)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve user: %w", err)
+	}
 
-	// Compare the provided OTP with the expected OTP
-	isVerified := req.OTP == expectedOTP
+	// Check if the OTP is correct and not expired
+	isVerified := user.OTP == req.OTP && time.Now().Before(user.OTPExpiresAt)
 
 	return &st.VerifyOTPResponse{
 		Verified: isVerified,

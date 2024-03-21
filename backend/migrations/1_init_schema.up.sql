@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS users (
     register_type registration_method NOT NULL,
     token VARCHAR(1024) DEFAULT '' NOT NULL,
     is_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    otp VARCHAR(6),
+    otp_expires_at TIMESTAMP WITHOUT TIME ZONE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (user_id)

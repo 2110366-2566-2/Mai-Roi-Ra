@@ -25,3 +25,4 @@ func GenerateOTP() string {
 	otp := rng.Intn(1000000)        // Generates a number between 0 - 999999
 	return fmt.Sprintf("%06d", otp) // Ensures the OTP is 6 digits, padding with zeros if necessary
 }
+

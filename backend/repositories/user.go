@@ -20,21 +20,20 @@ type UserRepository struct {
 }
 
 type IUserRepository interface {
-	GetUserByEmail(email string) (*models.User, error)
-	GetUserByPhoneNumber(phoneNumber string) (*models.User, error)
-	CreateUser(*st.CreateUserRequest) (*string, error)
-	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
-	GetUserByToken(token string) (*models.User, error)
-	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
-	UpdateUserToken(userID string, token string) error
-	GetAllUsers() ([]models.User, error)
-	GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error)
-	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
-	IsEnableNotification(userId string) (*bool, *string, error)
-	GetRandomAdmin() (*models.User, error)
-	GetAllAdmins() ([]*models.User, error)
-	// SendOTPEmail(req *st.SendOTPEmailRequest) error            
-	// VerifyOTP(req *st.VerifyOTPRequest) (bool, error) 
+    GetUserByEmail(email string) (*models.User, error)
+    GetUserByPhoneNumber(phoneNumber string) (*models.User, error)
+    CreateUser(*st.CreateUserRequest) (*string, error)
+    UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
+    GetUserByToken(token string) (*models.User, error)
+    GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
+    UpdateUserToken(userID string, token string) error
+    GetAllUsers() ([]models.User, error)
+    GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error)
+    ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
+    IsEnableNotification(userId string) (*bool, *string, error)
+    GetRandomAdmin() (*models.User, error)
+    GetAllAdmins() ([]*models.User, error)
+    UpdateUserOTP(email, otp string, otpExpiresAt time.Time) error
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -310,22 +309,11 @@ func (r *UserRepository) GetAllAdmins() ([]*models.User, error) {
 	return userModels, nil
 }
 
-// // SendOTPEmail sends an OTP email to the user's email address.
-// func (r *UserRepository) SendOTPEmail(req *st.SendOTPEmailRequest) error {
-// 	log.Println("[Repo: SendOTPEmail]: Called")
-
-// 	// Logic to send the OTP email goes here.
-// 	// For example, you might use an email service to send the email.
-
-// 	return nil
-// }
-
-// // VerifyOTP verifies the OTP entered by the user.
-// func (r *UserRepository) VerifyOTP(req *st.VerifyOTPRequest) (bool, error) {
-// 	log.Println("[Repo: VerifyOTP]: Called")
-
-// 	// Logic to verify the OTP goes here.
-// 	// For example, you might check the OTP against a stored value in the database.
-
-// 	return true, nil
-// }
+func (r *UserRepository) UpdateUserOTP(email, otp string, otpExpiresAt time.Time) error {
+	return r.DB.Model(&models.User{}).
+		Where("email = ?", email).
+		Updates(map[string]interface{}{
+			"otp":            otp,
+			"otp_expires_at": otpExpiresAt,
+		}).Error
+}
