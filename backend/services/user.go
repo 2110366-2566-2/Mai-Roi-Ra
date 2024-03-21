@@ -47,7 +47,7 @@ type IUserService interface {
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
 	LoginGoogle(c *gin.Context) (*models.User, error)
 	LogoutGoogle(c *gin.Context) error
-	CallbackGoogle(c *gin.Context) (*models.User, *bool, error)
+	CallbackGoogle(c *gin.Context) (*string, *bool, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -612,7 +612,7 @@ func (s *UserService) LogoutGoogle(c *gin.Context) error {
 	return nil
 }
 
-func (s *UserService) CallbackGoogle(c *gin.Context) (*models.User, *bool, error) {
+func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 	log.Println("[Service: CallbackGoogle]: Called")
 	provider := c.Param("provider")
 
@@ -681,7 +681,5 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*models.User, *bool, error
 
 	log.Println("Flag at the end:", flag)
 
-	log.Println("User token at the end:", token)
-
-	return existingUser, &flag, nil
+	return &token, &flag, nil
 }

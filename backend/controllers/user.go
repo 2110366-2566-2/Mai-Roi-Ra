@@ -483,7 +483,7 @@ func (c *UserController) LogoutGoogle(ctx *gin.Context) {
 // @Router /users/auth/{provider}/callback [get]
 func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 	log.Println("[CTRL: CallbackGoogle] Called: ")
-	user, flag, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
+	token, flag, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -499,7 +499,9 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 		// Redirect to the register page for a new user
 		redirectURL = fmt.Sprintf("%s/auth/signin", frontendURL)
 	}
-	ctx.SetCookie("session_token", user.Token, middleware.MaxAge, "/", "localhost", false, true)
+	log.Println("User token at the end:", *token)
+	
+	ctx.SetCookie("token", *token, middleware.MaxAge, "/", "localhost", false, true)
 	location := url.URL{Path: redirectURL}
 	ctx.Redirect(http.StatusTemporaryRedirect, location.RequestURI())
 }
