@@ -1,9 +1,6 @@
 package container
 
-import (
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
-	services "github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
-)
+import services "github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 
 // ServiceProvider Inject Service
 func (c *Container) ServiceProvider() {
@@ -35,9 +32,6 @@ func (c *Container) ServiceProvider() {
 		c.Error = err
 	}
 	if err := c.Container.Provide(services.NewProblemService); err != nil {
-		c.Error = err
-	}
-	if err := c.Container.Provide(cloud.NewAWSCloudService); err != nil {
 		c.Error = err
 	}
 }

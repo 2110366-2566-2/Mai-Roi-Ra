@@ -549,57 +549,6 @@
                 }
             }
         },
-        "/events/{event_id}/verify": {
-            "put": {
-                "description": "Verify an Event",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "events"
-                ],
-                "summary": "VerifyEvent",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Event ID",
-                        "name": "event_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Status",
-                        "name": "status",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structure.VerifyEventResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
         "/locations/{location_id}": {
             "get": {
                 "description": "Get location by id",
@@ -2542,14 +2491,6 @@
                     "type": "string"
                 },
                 "user_image": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.VerifyEventResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
                     "type": "string"
                 }
             }
