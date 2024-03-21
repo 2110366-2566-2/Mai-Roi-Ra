@@ -2,7 +2,7 @@ import { apiBackUrl } from "../constants";
 
 export default async function getUserSearchHistory(user_id : string) {
 
-	const response = await fetch(`${apiBackUrl}/user/${user_id}/searchhistory`, {
+	const response = await fetch(`${apiBackUrl}/users/${user_id}/searchhistory`, {
 		method: "GET",
 		headers: {
 		'Accept': 'application/json', 

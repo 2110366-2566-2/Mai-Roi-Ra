@@ -10,12 +10,13 @@ import SearchHistoryItem from './SearchHistoryItem';
 import { useSession } from "next-auth/react";
 
 interface Props {
-    last_page: number
-    page: number
-    search : string
+    last_page: number;
+    page: number;
+    search : string;
+    history : string[];
 }
 
-const SearchBar = ({page,last_page,search} : Props) => {
+const SearchBar = ({page,last_page,search,history} : Props) => {
     const [nextHover,setNextHover] = useState(false);
     const [previousHover,setPreviousHover] = useState(false);
     const [firstHover,setFirstHover] = useState(false);
@@ -24,7 +25,7 @@ const SearchBar = ({page,last_page,search} : Props) => {
     const [searching,setSearching] = useState("");
     const [focus,setFocus] = useState(false);
     const [searchHover,setSearchHover] = useState(false);
-    const [searchHistory, setSearchHistory] = useState(['Example 1', 'Example 2','Example 1', 'Example 2','Example 1', 'Example 2']);
+    const [searchHistory, setSearchHistory] = useState(history);
     const session = useSession();
     const user = session?.data?.user;
 
@@ -61,10 +62,11 @@ const SearchBar = ({page,last_page,search} : Props) => {
                         </div>
 
                         <input type="text" id="search-event" name="search-event" placeholder="Search event" maxLength={100} value={searching} 
-                            className={`bg-slate-100  
-                            ${focus? 'outline-none bg-white scale-y-105 scale-r-105 border-0 border-b-[1px] border-gray-500 rounded-tr-3xl' : 'border-y-[1px] border-r-[1px] border-slate-400 rounded-r-full'} 
+                            className={`bg-slate-100 outline-none
+                            ${focus? 'bg-white scale-y-105 scale-r-105 border-0 border-b-[1px] border-gray-500 rounded-tr-3xl' : 'border-y-[1px] border-r-[1px] border-slate-400 rounded-r-full'} 
                             lg:h-[40px] md:h-[30px] h-[23px] w-[92%] pl-2 lg:text-[20px] md:text-[15px] sm:text-[13px] text-[13px]`}
-                            onFocus={() => setFocus(true)}
+                            onFocus={() => {
+                                history.length > 0 && setFocus(true)}}
                             onBlur={() => setFocus(false)}
                             onChange={(e) => setSearching(e.target.value)}
                             onKeyDown={(e) => {
@@ -74,13 +76,13 @@ const SearchBar = ({page,last_page,search} : Props) => {
                             }}/>
                     </div>
 
-                    {focus && (
+                    {focus ? (
                         <div className="absolute top-full w-full bg-white shadow-lg max-h-60 overflow-auto z-10">
                             {searchHistory.map((item, index) => (
                                 <SearchHistoryItem index={index} item={item} setFocus={setFocus} setSearch={setSearching}/>
                             ))}
                         </div>
-                    )} 
+                    ) : null} 
                 </div>                  
 
                 <div className="md:w-[40%] w-full flex md:justify-end justify-start flex-row flex-wrap items-center lg:space-x-2 md:space-x-1 space-x-0">
