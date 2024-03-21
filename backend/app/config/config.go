@@ -39,10 +39,11 @@ type Email struct {
 }
 
 type S3 struct {
-	AwsRegion      string
-	AwsAccessKeyID string
-	AwsSecretKey   string
-	AwsBucketName  string
+	AwsRegion            string
+	AwsAccessKeyID       string
+	AwsSecretKey         string
+	AwsBucketProfileName string
+	AwsBucketEventName   string
 }
 
 func NewConfig(path string) (*Config, error) {
@@ -71,10 +72,11 @@ func NewConfig(path string) (*Config, error) {
 			Password: os.Getenv("EMAIL_SENDER_PASSWORD"),
 		},
 		S3: &S3{
-			AwsRegion:      os.Getenv("AWS_REGION"),
-			AwsAccessKeyID: os.Getenv("AWS_ACCESS_KEY_ID"),
-			AwsSecretKey:   os.Getenv("AWS_SECRET_ACCESS_KEY"),
-			AwsBucketName:  os.Getenv("AWS_BUCKET_NAME"),
+			AwsRegion:            os.Getenv("AWS_REGION"),
+			AwsAccessKeyID:       os.Getenv("AWS_ACCESS_KEY_ID"),
+			AwsSecretKey:         os.Getenv("AWS_SECRET_ACCESS_KEY"),
+			AwsBucketProfileName: os.Getenv("AWS_BUCKET_PROFILE_NAME"),
+			AwsBucketEventName:   os.Getenv("AWS_BUCKET_EVENT_NAME"),
 		},
 	}, nil
 }

@@ -30,7 +30,7 @@ type CloudService interface {
 	GetFileUrl(ctx context.Context, uploadID string) (string, error)
 }
 
-func NewAWSCloudService() *awsService {
+func NewAWSCloudService(bucket string) *awsService {
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
@@ -48,10 +48,19 @@ func NewAWSCloudService() *awsService {
 
 	service := s3.New(session)
 
-	return &awsService{
-		service:    service,
-		bucketName: cfg.S3.AwsBucketName,
+	res := &awsService{
+		service: service,
 	}
+
+	if bucket == "profile" {
+		res.bucketName = cfg.S3.AwsBucketProfileName
+	} else if bucket == "event" {
+		res.bucketName = cfg.S3.AwsBucketEventName
+	} else {
+		log.Println("[Config]: Error wrong bucket name")
+	}
+
+	return res
 }
 
 func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader) (string, error) {
