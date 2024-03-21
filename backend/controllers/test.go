@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
@@ -68,7 +69,7 @@ func (c *TestController) TestUpload(ctx *gin.Context) {
 		log.Println("HELLO YEYEY: filHeader is nil or filHeader.Header is nil")
 		return
 	}
-	Cloud := cloud.NewAWSCloudService()
+	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
 	uploadId, err := Cloud.SaveFile(ctx, fileHeader)
 
