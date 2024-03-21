@@ -213,30 +213,3 @@ func (c *EventController) GetParticipantLists(ctx *gin.Context) {
 	log.Println("[CTRL: GetParticipantLists] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
-
-// UpdateEvent verify an event.
-// @Summary VerifyEvent
-// @Description Verify an Event
-// @Tags events
-// @Accept json
-// @Produce json
-// @Param event_id path string true "Event ID" example:"event123"
-// @Param status query string true "Status" example:"Approved or Rejected"
-// @Success 200 {object} structure.VerifyEventResponse
-// @Failure 400 {object} object "Bad Request"
-// @Failure 500 {object} object "Internal Server Error"
-// @Router /events/{event_id}/verify [put]
-func (c *EventController) VerifyEvent(ctx *gin.Context) {
-	req := &st.VerifyEventRequest{
-		EventId: ctx.Param("id"),
-		Status:  ctx.Query("status"),
-	}
-	log.Println("[CTRL: VerifyEvent] Input:", req)
-	res, err := c.ServiceGateway.EventService.VerifyEvent(req)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	log.Println("[CTRL: GetEventLists] Output:", res)
-	ctx.JSON(http.StatusOK, res)
-}
