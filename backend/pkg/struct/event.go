@@ -143,3 +143,12 @@ type GetParticipantListsRequest struct {
 type GetParticipantListsResponse struct {
 	ParticipantList []Participant `json:"participant_list"`
 }
+
+type VerifyEventRequest struct {
+	EventId string `json:"event_id" binding:"required"`
+	Status  string `json:"status" binding:"required"`
+}
+
+type VerifyEventResponse struct {
+	Message string `json:"message"`
+}
