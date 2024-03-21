@@ -1,6 +1,5 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
-import CampaignIcon from '@mui/icons-material/Campaign';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
 import { HandleCreateAnnouncement } from "./organizer/HandleCreateAnnouncement";

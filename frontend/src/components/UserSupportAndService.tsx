@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import FAQlist from "./FAQlist";
+import ReportProblemPage from "./ReportProblemPage";
 // Other imports...
 
 export default function UserSupportAndService() {
@@ -42,6 +43,7 @@ export default function UserSupportAndService() {
         </div>
       </div>
       {activeTab == "FAQ" && <FAQlist></FAQlist> }
+      {activeTab == "Problem" && <ReportProblemPage></ReportProblemPage>}
     </div>
   );
 }

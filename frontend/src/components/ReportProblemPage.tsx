@@ -1,8 +1,6 @@
 'use client'
 import React, { useState } from 'react';
 import styles from "@/styles/FontPage.module.css"
-import CreateProblemForm from "@/components/CreateProblemForm";
-import MenuReport from '@/components/MenuReport';
 import ReportPopup from "@/components/ReportPopup";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
@@ -14,7 +12,6 @@ const ReportProblemPage = () => {
     return (
         <div className='lg:pt-20 pt-5 px-20 text-black'>
             {/* Topic */}
-            <MenuReport />
 
 
             {/* Form */}
