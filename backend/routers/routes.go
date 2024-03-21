@@ -84,7 +84,7 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		userRoutes.POST("/participate", controller.RegisterEvent)
 		userRoutes.GET("/:id", controller.GetUserByUserId)
 		userRoutes.GET("/events", controller.GetParticipatedEventLists)
-		userRoutes.GET("/:id/searchevent", controller.SearchEvent)
+		userRoutes.POST("/:id/searchevent", controller.SearchEvent)
 		userRoutes.GET("/:id/searchhistory", controller.GetSearchHistories)
 		userRoutes.PUT("/:id", controller.UpdateUserInformation)
 		userRoutes.PUT("/notification", controller.ToggleNotifications)
@@ -104,8 +104,9 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 }
 
 func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController) {
-	testRoutes := r.Group("/test")
+	testRoutes := r
 	{
+		testRoutes.POST("/upload", controller.TestUpload)
 		testRoutes.GET("/", controller.GetTest)
 	}
 }

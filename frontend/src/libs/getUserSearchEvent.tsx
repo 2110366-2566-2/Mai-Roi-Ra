@@ -1,29 +1,24 @@
 import { apiBackUrl } from "../constants";
 
 interface EventQueryParams {
-  organizer_id?: string;
   offset?: number;
   limit?: number;
-  search?: string;
+  search: string;
+  user_id: string;
 }
 
-export default async function getEvents({
-	organizer_id,
+export default async function getUserSearchEvent({
+    user_id,
 	search = "",
 	offset = 1,
-	limit = 2}
+	limit = 2,}
 	: EventQueryParams) {
 
-	const url = new URL(`${apiBackUrl}/events`);
-
-	if (organizer_id) {
-		url.searchParams.append('organizer_id', organizer_id);
-	}
+	const url = new URL(`${apiBackUrl}/users/${user_id}/searchevent`);
 	
 	offset = (offset-1)*limit;
-	if (search) {
-		url.searchParams.append('search',search);
-	} url.searchParams.append('offset', offset.toString());
+	url.searchParams.append('search',search);
+	url.searchParams.append('offset', offset.toString());
 	url.searchParams.append('limit', limit.toString());
 
 	const response = await fetch(url.toString(), {
@@ -34,7 +29,7 @@ export default async function getEvents({
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to fetch events");
+		throw new Error("Failed to fetch search event");
 	}
 	console.log(`success`);
 	return await response.json();

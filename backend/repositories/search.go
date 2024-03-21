@@ -49,7 +49,7 @@ func (r *SearchRepository) SaveSearchEvent(req *st.SearchEventRequest) (*string,
 		return nil, err
 	}
 
-	message := "Registered Successful"
+	message := "Save Search Successful"
 
 	return &message, nil
 }

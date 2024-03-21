@@ -1,8 +1,31 @@
 "use client";
 import React, { useState } from "react";
+import EventItem from "@/components/EventItem";
 // Other imports...
 
-export default function AdminHomepage() {
+interface EventItem {
+  event_id: string;
+  event_name: string;
+  start_date: string;
+  end_date: string;
+  description: string;
+  city: string;
+  district: string;
+  event_image: string;
+  // Add other fields as necessary
+}
+
+interface AdminSupportAndServiceProps {
+  waitingEventsDatas: EventItem[];
+  approvedEventsDatas: EventItem[];
+  rejectedEventsDatas: EventItem[];
+}
+
+const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
+  waitingEventsDatas,
+  approvedEventsDatas,
+  rejectedEventsDatas,
+}) => {
   const [activeTab, setActiveTab] = useState("Pending");
 
   const handleTabClick = (tab: string) => {
@@ -40,6 +63,62 @@ export default function AdminHomepage() {
           ))}
         </div>
       </div>
+      {activeTab == "Pending" && (
+        <div className="my-8 px-4 lg:px-10">
+          {waitingEventsDatas.map((eventItem: any) => (
+            <EventItem
+              key={eventItem.event_id}
+              id={eventItem.event_id}
+              name={eventItem.event_name}
+              startDate={eventItem.start_date}
+              endDate={eventItem.end_date}
+              description={eventItem.description}
+              city={eventItem.city}
+              district={eventItem.district}
+              imgSrc={eventItem.event_image}
+              page={1}
+            />
+          ))}
+        </div>
+      )}
+      {activeTab == "Approved" && (
+        <div className="my-8 px-4 lg:px-10">
+          {approvedEventsDatas.map((eventItem: any) => (
+            <EventItem
+              key={eventItem.event_id}
+              id={eventItem.event_id}
+              name={eventItem.event_name}
+              startDate={eventItem.start_date}
+              endDate={eventItem.end_date}
+              description={eventItem.description}
+              city={eventItem.city}
+              district={eventItem.district}
+              imgSrc={eventItem.event_image}
+              page={1}
+            />
+          ))}
+        </div>
+      )}
+      {activeTab == "Rejected" && (
+        <div className="my-8 px-4 lg:px-10">
+          {rejectedEventsDatas.map((eventItem: any) => (
+            <EventItem
+              key={eventItem.event_id}
+              id={eventItem.event_id}
+              name={eventItem.event_name}
+              startDate={eventItem.start_date}
+              endDate={eventItem.end_date}
+              description={eventItem.description}
+              city={eventItem.city}
+              district={eventItem.district}
+              imgSrc={eventItem.event_image}
+              page={1}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default AdminSupportAndService;

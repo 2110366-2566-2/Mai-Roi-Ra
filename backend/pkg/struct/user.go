@@ -139,12 +139,10 @@ type GetParticipatedEventListsResponse struct {
 type SearchEventRequest struct {
 	UserId string `json:"user_id" binding:"required"`
 	Search string `json:"search"`
-	Offset int    `json:"offset"`
-	Limit  int    `json:"limit"`
 }
 
 type SearchEventResponse struct {
-	EventsList []ParticipatedEvent `json:"event_list"`
+	Message string `json:"message"`
 }
 
 type SearchHistory struct {

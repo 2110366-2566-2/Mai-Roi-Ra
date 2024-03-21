@@ -12,6 +12,7 @@ type Config struct {
 	MongoDB *MongoDB
 	PgDB    *PgDB
 	Email   *Email
+	S3      *S3
 }
 
 type App struct {
@@ -35,6 +36,14 @@ type Email struct {
 	Name     string
 	Address  string
 	Password string
+}
+
+type S3 struct {
+	AwsRegion            string
+	AwsAccessKeyID       string
+	AwsSecretKey         string
+	AwsBucketProfileName string
+	AwsBucketEventName   string
 }
 
 func NewConfig(path string) (*Config, error) {
@@ -61,6 +70,13 @@ func NewConfig(path string) (*Config, error) {
 			Name:     os.Getenv("EMAIL_SENDER_NAME"),
 			Address:  os.Getenv("EMAIL_SENDER_ADDRESS"),
 			Password: os.Getenv("EMAIL_SENDER_PASSWORD"),
+		},
+		S3: &S3{
+			AwsRegion:            os.Getenv("AWS_REGION"),
+			AwsAccessKeyID:       os.Getenv("AWS_ACCESS_KEY_ID"),
+			AwsSecretKey:         os.Getenv("AWS_SECRET_ACCESS_KEY"),
+			AwsBucketProfileName: os.Getenv("AWS_BUCKET_PROFILE_NAME"),
+			AwsBucketEventName:   os.Getenv("AWS_BUCKET_EVENT_NAME"),
 		},
 	}, nil
 }

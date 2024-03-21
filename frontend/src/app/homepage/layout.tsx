@@ -1,5 +1,3 @@
-import { Inter } from 'next/font/google'
-import '../globals.css'
 import MenuBar from '@/components/MenuBar'
 import Menu from '@/components/Menu';
 
