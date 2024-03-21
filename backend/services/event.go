@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
@@ -362,10 +363,16 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 	bcc := make([]string, 0)
 	attachFiles := make([]string, 0)
 
-	reqUser := &st.GetUserByUserIdRequest{
-		UserId: resEvent.UserId,
+	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return err
 	}
-	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+
+	reqId := st.GetUserByUserIdRequest{
+		UserId: resUserId,
+	}
+
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
 	if err != nil {
 		return err
 	}
@@ -373,11 +380,12 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 	if resUser.Email != nil {
 		email = *resUser.Email
 	}
-	if email != "" {
-		to = append(to, email)
-	} else {
+
+	if email == "" {
 		return errors.New("organizer email not found")
 	}
+
+	to = append(to, email)
 
 	contentHTML := fmt.Sprintf(`
     <html>
@@ -446,10 +454,16 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	bcc := make([]string, 0)
 	attachFiles := make([]string, 0)
 
-	reqUser := &st.GetUserByUserIdRequest{
-		UserId: resEvent.UserId,
+	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return err
 	}
-	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
+
+	reqId := st.GetUserByUserIdRequest{
+		UserId: resUserId,
+	}
+
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
 	if err != nil {
 		return err
 	}
@@ -457,12 +471,13 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	if resUser.Email != nil {
 		email = *resUser.Email
 	}
-	if email != "" {
-		to = append(to, email)
-	} else {
+
+	if email == "" {
 		return errors.New("organizer email not found")
 	}
 
+	to = append(to, email)
+	
 	contentHTML := fmt.Sprintf(`
     <html>
     <head>
@@ -508,14 +523,14 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 
 func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
 	log.Println("[Service: VerifyEvent]: Called")
-	if req.Status == "Approved" {
+	if req.Status == constant.APPROVED {
 		err := s.SendApprovalEmail(req.EventId)
 		if err != nil {
 			log.Println("[Service: VerifyEvent] Error sending approval email:", err)
 			// Decide if you want to return an error or just log it
 			return nil, err
 		}
-	} else if req.Status == "Rejected" {
+	} else if req.Status == constant.REJECTED {
 		// Assuming you have a similar method for sending rejection emails
 		err := s.SendRejectionEmail(req.EventId)
 		if err != nil {

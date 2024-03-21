@@ -220,6 +220,7 @@ func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Eve
 }
 
 func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	log.Println("[Repo: VerifyEvent]: Called")
 	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
 		Updates(map[string]interface{}{
 			"Status":    req.Status,
