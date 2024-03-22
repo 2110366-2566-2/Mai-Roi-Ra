@@ -2,7 +2,7 @@
 import styles from "@/styles/FontPage.module.css"
 import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
-import { HandleCreateAnnouncement } from "./organizer/HandleCreateAnnouncement";
+import { HandleCreateProblem } from "./user/HandleCreateProblem";
 import {
     Checkbox,
     Card,
@@ -10,23 +10,23 @@ import {
     ListItem,
     ListItemPrefix,
     Typography,
-  } from "@material-tailwind/react";
+} from "@material-tailwind/react";
 
 
 interface Props {
-    id: string
-    name: string
+  
     isVisible: boolean
     onClose: Function
+    
 }
 
-const ReportPopup = ({ id, name, isVisible, onClose }: Props) => {
+const ReportPopup = ({ isVisible, onClose }: Props) => {
     const [subject, setSubject] = useState("");
     const [content, setContent] = useState("");
     const [error, setError] = useState(0);
     const [iconSize, setIconSize] = useState('100px');
 
-    const updateSize = () => {
+    const updateSize = () => {``
         const screenWidth = window.innerWidth;
         if (screenWidth < 768) { // For small devices
             setIconSize('40px');
@@ -63,7 +63,7 @@ const ReportPopup = ({ id, name, isVisible, onClose }: Props) => {
         }
         setError(0);
         handleClose();
-        await HandleCreateAnnouncement(id, name, subject, content);
+        await HandleCreateProblem(subject, content);
     }
 
     if (!isVisible) return null;
@@ -86,70 +86,41 @@ const ReportPopup = ({ id, name, isVisible, onClose }: Props) => {
                     </div>
 
                     <form action={handleSubmit}>
-                        <Card className="w-full max-w-[45rem]">
-                            <List className="flex-row">
-                                <ListItem className="p-0">
-                                    <label
-                                        htmlFor="horizontal-list-react"
-                                        className="flex w-full cursor-pointer items-center px-3 py-2"
-                                    >
-                                        <ListItemPrefix className="mr-3">
-                                            <Checkbox
-                                                id="horizontal-list-react"
-                                                ripple={false}
-                                                className="hover:before:opacity-0"
-                                                containerProps={{
-                                                    className: "p-0",
-                                                }}
-                                            />
-                                        </ListItemPrefix>
-                                        <Typography color="black" className="font-small">
-                                            Event problem
-                                        </Typography>
-                                    </label>
-                                </ListItem>
-                                <ListItem className="p-0">
-                                    <label
-                                        htmlFor="horizontal-list-vue"
-                                        className="flex w-full cursor-pointer items-center px-3 py-2"
-                                    >
-                                        <ListItemPrefix className="mr-3">
-                                            <Checkbox
-                                                id="horizontal-list-vue"
-                                                ripple={false}
-                                                className="hover:before:opacity-0"
-                                                containerProps={{
-                                                    className: "p-0",
-                                                }}
-                                            />
-                                        </ListItemPrefix>
-                                        <Typography color="black" className="font-small">
-                                            Payment problem
-                                        </Typography>
-                                    </label>
-                                </ListItem>
-                                <ListItem className="p-0">
-                                    <label
-                                        htmlFor="horizontal-list-svelte"
-                                        className="flex w-full cursor-pointer items-center px-3 py-2"
-                                    >
-                                        <ListItemPrefix className="mr-3">
-                                            <Checkbox
-                                                id="horizontal-list-svelte"
-                                                ripple={false}
-                                                className="hover:before:opacity-0"
-                                                containerProps={{
-                                                    className: "p-0",
-                                                }}
-                                            />
-                                        </ListItemPrefix>
-                                        <Typography color="black" className="font-small">
-                                            Other
-                                        </Typography>
-                                    </label>
-                                </ListItem>
-                            </List>
-                        </Card>
+
+                        <div className="pl-8 mt-1">
+                            <label className="inline-flex items-center">
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="Event"
+                                    className="form-radio h-6 w-6"
+                                    onChange={() => setSubject("Event")}
+                                />
+                                <span className="text-base text-black ml-2">Event problem</span>
+                                <label className="ml-6 inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="role"
+                                        value="Payment problem"
+                                        className="form-checkbox h-6 w-6"
+                                        onChange={() => setSubject("Payment")}
+                                    // style={{ accentColor: "#F2D22E" }}
+                                    />
+                                    <span className="text-base text-black ml-2">Payment problem</span>
+                                </label>
+                                <label className="ml-6 inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="role"
+                                        value="Other"
+                                        className="form-checkbox h-6 w-6"
+                                        onChange={() => setSubject("Others")}
+                                    // style={{ accentColor: "#F2D22E" }}
+                                    />
+                                    <span className="text-base text-black ml-2">Other</span>
+                                </label>
+                            </label>
+                        </div>
 
                         <div className="w-full relative md:mt-[20px] mt-[15px]">
                             <textarea className={`border-[1px] ${error == 2 ? "border-red-600" : "border-black"} w-full lg:py-[10px] md:py-[8px] py-[7px]
