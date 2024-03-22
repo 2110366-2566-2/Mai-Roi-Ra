@@ -567,14 +567,35 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 	// Email content
 	subject := "Your OTP for Mai-Roi-Ra"
 	contentHTML := fmt.Sprintf(`
-    <html>
-    <body>
-        <h3>Your OTP for Mai-Roi-Ra</h3>
-        <p>Your OTP is: <strong>%s</strong></p>
-        <p>Please use this OTP to complete your action in the Mai-Roi-Ra platform.</p>
-    </body>
-    </html>
-    `, otp)
+	<html>
+	<head>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				font-size: 16px;
+				line-height: 1.6;
+				margin: 40px auto;
+				max-width: 600px;
+				color: #333333;
+			}
+			h3 {
+				font-size: 24px;
+				margin-bottom: 20px;
+				color: #333333;
+			}
+			p {
+				margin-bottom: 20px;
+				color: #666666;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Your OTP for Mai-Roi-Ra</h3>
+		<p>Your OTP is: <strong>%s</strong></p>
+		<p>Please use this OTP to complete your action in the Mai-Roi-Ra platform.</p>
+	</body>
+	</html>
+	`, otp)
 
 	// Sending email
 	if err := sender.SendEmail(subject, "", contentHTML, []string{req.Email}, nil, nil, nil); err != nil {
