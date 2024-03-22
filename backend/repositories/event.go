@@ -60,7 +60,7 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
 	// Find the event by event_id
     var modelEvent models.Event
     if err := r.db.Where("event_id = ?", req.EventId).First(&modelEvent).Error; err != nil {
-        log.Println("[Repo: UpdateEventInformation] event_id not found")
+        log.Println("[Repo: UpdateEvent] event_id not found")
         return nil, err
     }
 
@@ -100,6 +100,8 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
     if req.EventImage != nil {
         modelEvent.EventImage = req.EventImage
     }
+
+	modelEvent.UpdatedAt = time.Now()
 
     // Save the updated version
     if err := r.db.Save(&modelEvent).Error; err != nil {
