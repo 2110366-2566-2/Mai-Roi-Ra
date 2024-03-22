@@ -1,4 +1,6 @@
+'use client'
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import FAQlist from "./FAQlist";
 import ProblemList from "./ProblemList";
@@ -6,7 +8,7 @@ import ReportProblemPage from "./ReportProblemButton";
 // Other imports...
 
 export default function UserSupportAndService() {
-
+  const pathname = usePathname();
   return (
     <div className="bg-white text-black h-full">
       <div className="lg:mr-24 border-r border-b bg-white">
@@ -17,12 +19,18 @@ export default function UserSupportAndService() {
               className={`relative px-8 py-2 overflow-hidden`}
             >
               <span
-                className={`transition duration-500 ease-in-out`}
+                className={`transition duration-500 ease-in-out ${
+                  pathname == `/supportandservice/${tabName.toLowerCase()}` ?
+                    "text-yellow-500"
+                    : "text-gray-800 hover:text-gray-500"
+                }`}
               >
                 {tabName}
               </span>
               <span
-                className={`absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500 transition-all duration-500 ease-out`}
+                 className={`absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500 transition-all duration-500 ease-out ${
+                  pathname == `/supportandservice/${tabName.toLowerCase()}` ? "scale-x-100" : "scale-x-0"
+                }`}
                 style={{
                   transformOrigin: "center",
                 }}
