@@ -7,7 +7,7 @@ import ProblemList from './ProblemList';
 
 
 
-const ReportProblemPage = () => {
+const ReportProblemButton = () => {
     const [showModal, setShowModal] = useState(false);
 
     return (
@@ -40,4 +40,4 @@ const ReportProblemPage = () => {
     )
 }
 
-export default ReportProblemPage;
+export default ReportProblemButton;

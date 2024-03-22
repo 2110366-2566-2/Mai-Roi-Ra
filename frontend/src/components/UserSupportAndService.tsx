@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import FAQlist from "./FAQlist";
 import ProblemList from "./ProblemList";
-import ReportProblemPage from "./ReportProblemPage";
+import ReportProblemPage from "./ReportProblemButton";
 // Other imports...
 
 export default function UserSupportAndService() {
@@ -17,13 +17,12 @@ export default function UserSupportAndService() {
               className={`relative px-8 py-2 overflow-hidden`}
             >
               <span
-                className={`transition duration-500 ease-in-out
-                `}
+                className={`transition duration-500 ease-in-out`}
               >
                 {tabName}
               </span>
               <span
-                className={`absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500 transition-all duration-500 ease-out`}
+                className={`absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500 transition-all duration-500 ease-outs`}
                 style={{
                   transformOrigin: "center",
                 }}
