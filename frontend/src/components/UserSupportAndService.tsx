@@ -22,7 +22,7 @@ export default function UserSupportAndService() {
                 {tabName}
               </span>
               <span
-                className={`absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500 transition-all duration-500 ease-outs`}
+                className={`absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500 transition-all duration-500 ease-out`}
                 style={{
                   transformOrigin: "center",
                 }}
