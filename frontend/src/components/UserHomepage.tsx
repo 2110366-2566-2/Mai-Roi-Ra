@@ -60,6 +60,7 @@ const UserHomepage: React.FC<UserHomepageProps> = ({ datas }) => {
             district={eventItem.district}
             imgSrc={eventItem.event_image}
             page={0}
+            role="USER"
           />
         ))}
       </div>

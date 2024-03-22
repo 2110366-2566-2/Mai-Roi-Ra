@@ -77,6 +77,7 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
               district={eventItem.district}
               imgSrc={eventItem.event_image}
               page={1}
+              role="ADMIN"
             />
           ))}
         </div>
@@ -95,6 +96,7 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
               district={eventItem.district}
               imgSrc={eventItem.event_image}
               page={1}
+              role="ADMIN"
             />
           ))}
         </div>
@@ -113,6 +115,7 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
               district={eventItem.district}
               imgSrc={eventItem.event_image}
               page={1}
+              role="ADMIN"
             />
           ))}
         </div>
