@@ -1,7 +1,10 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getProblems(){
-    const response = await fetch(`${apiBackUrl}/problems`, {
+export default async function getProblems(user_id:string){
+    const url = new URL(`${apiBackUrl}/problems`);
+    url.searchParams.append('user_id', user_id);
+
+    const response = await fetch(url, {
 		method: 'GET',
 		next: {tags: ['problems']}
 	})

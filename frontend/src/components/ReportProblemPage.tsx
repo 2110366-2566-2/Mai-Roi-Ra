@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styles from "@/styles/FontPage.module.css"
 import ReportPopup from "@/components/ReportPopup";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ProblemList from './ProblemList';
 
 
 
@@ -12,6 +13,7 @@ const ReportProblemPage = () => {
     return (
         <div className='lg:pt-20 pt-5 px-20 text-black'>
             {/* Topic */}
+
 
 
             {/* Form */}

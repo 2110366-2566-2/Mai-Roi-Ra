@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import FAQlist from "./FAQlist";
 import ReportProblemPage from "./ReportProblemPage";
