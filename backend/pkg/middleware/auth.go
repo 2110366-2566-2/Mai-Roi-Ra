@@ -79,6 +79,7 @@ const (
 	SecretKey = "YourSecretKey"
 	KeyToken  = "token"
 	KeyUserID = "userID"
+	KeyRole = "role"
 )
 
 func Authentication() gin.HandlerFunc {
@@ -129,7 +130,7 @@ func Authentication() gin.HandlerFunc {
 	}
 }
 
-func Authorization(roles ...string) gin.HandlerFunc {
+func Authorization() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract token from Authorization header
 		const BearerSchema = "Bearer "
@@ -161,17 +162,13 @@ func Authorization(roles ...string) gin.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			userID, ok := claims["user_id"].(string)
+			user_role, ok := claims["role"].(string)
 			if !ok {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 				return
 			}
 
-			// Store user ID in the context
-			c.Set(KeyUserID, userID)
-
-
-			CasbinEnforcer := casbin.NewEnforcer("model.conf", "policy.csv")
+			CasbinEnforcer, _ := casbin.NewEnforcer("model.conf","policy.csv")
 			// Check authorization using Casbin
 			// If CasbinEnforcer is not initialized, you'll need to initialize it first
 			if CasbinEnforcer == nil {
@@ -180,28 +177,25 @@ func Authorization(roles ...string) gin.HandlerFunc {
 			}
 
 			// Get user's role from Casbin
-			role, err := CasbinEnforcer.GetRoleForUser(userID)
+			roles, err := CasbinEnforcer.GetRolesForUser(user_role)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user's role"})
 				return
 			}
-
-			// Check if the user's role is allowed
-			allowed := false
-			for _, allowedRole := range roles {
-				if role == allowedRole {
-					allowed = true
-					break
-				}
-			}
-
-			if !allowed {
-				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
-				return
-			}
+			role := roles[0]
 
 			// Store user's role in the context
 			c.Set(KeyRole, role)
+
+			path := c.Request.URL.Path
+			request := c.Request
+
+			// Check if the user's role is allowed
+			if res, _ := CasbinEnforcer.Enforce(role, path, request); !res {
+				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+				return
+			} 
+
 			fmt.Println("Authorization successful")
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})

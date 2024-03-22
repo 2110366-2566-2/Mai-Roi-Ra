@@ -378,6 +378,7 @@ func GenerateJWTToken(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id":  user.UserID,                           // Include the user's ID
 		"username": user.Username,                         // Include the username
+		"role"	:	user.Role,							   // Include user's role
 		"email":    user.Email,                            // Include the email
 		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
 	}
