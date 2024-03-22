@@ -17,7 +17,7 @@ export async function HandleCreateProblem(problem:string, description:string){
     } catch (err) {
         console.log("Error during creating problem: ", err)
     }
-    //revalidateTag(`problems`);
+    revalidateTag(`problems`);
     redirect(`/supportandservice`);
 }
 
