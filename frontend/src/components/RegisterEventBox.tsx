@@ -4,10 +4,11 @@ import MinusIcon from "@mui/icons-material/RemoveCircleOutline";
 import LocationIcon from "@mui/icons-material/Place";
 import CalendarIcon from "@mui/icons-material/CalendarMonth";
 import AddGuestIcon from "@mui/icons-material/GroupAdd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import participateEvent from "@/libs/participateEvent";
 import Modal from "./Modal";
+import isRegisteredEvent from '@/libs/isRegisteredEvent';
 
 interface Event {
   activities: string;
@@ -31,13 +32,11 @@ interface Event {
 
 export default function RegisterEventBox({
   event,
-  isRegisterable,
 }: {
   event: Event;
-  isRegisterable: boolean;
 }) {
   const { data: session } = useSession();
-  console.log(session);
+  const [isRegisterable, setIsRegisterable] = useState(false);
 
   const handleRegisterEventButton = async () => {
     try {
@@ -56,6 +55,23 @@ export default function RegisterEventBox({
       console.error("Registration failed:", error.message);
     }
   };
+
+  useEffect(() => {
+    const fetchIsRegisterable = async () => {
+      try {
+        const response = await isRegisteredEvent(session?.user?.user_id,event.event_id);
+        setIsRegisterable(!response.is_registered)
+        console.log("isRegisterable:", response.is_registered);
+        setIsRegisterable(false)
+      } catch (error) {
+        // Handle the error
+        console.log("Error fetching isRegisterable:", error.message);
+      }
+    };
+
+    fetchIsRegisterable();
+
+  }, []);
 
   const [numberOfGuest, setNumberOfGuest] = useState(1);
 
@@ -99,10 +115,9 @@ export default function RegisterEventBox({
     setIsModalOpen(false);
     setShowQRCode(false);
   };
-  console.log(`${endyear}-${endmonth}-${endday}`, "date");
 
   const [showQRCode, setShowQRCode] = useState(false);
-  console.log(isRegisterable)
+  console.log(isRegisterable ,"here")
 
 
   return (
@@ -138,6 +153,7 @@ export default function RegisterEventBox({
             onClick={() => {
             //   closeModal();
               handleRegisterEventButton();
+              // window.location.reload();
             }}
             className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] w-[82px]"
           >
@@ -224,14 +240,17 @@ export default function RegisterEventBox({
         {session && !session.user.organizer_id && !isRegistrationClosed ? (
           isRegisterable ? (
             <button
-              className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4"
+              className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4 hover:bg-yellow-500"
               onClick={() => {
                 setIsModalOpen(true);
               }}
             >
               Register
             </button>
-          ) : null
+          ) :
+          <button className="rounded-lg text-center w-full h-full bg-white text-red-500 p-4 cursor-not-allowed border-red-500 border-2">
+            You are already registered
+          </button>
         ) : (
           <button className="rounded-lg text-center w-full h-full bg-gray-300 text-white p-4 cursor-not-allowed">
             {session

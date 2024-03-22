@@ -32,24 +32,21 @@ export default function ParticipantListModal({
   console.log(participants);
 
   useEffect(() => {
-    console.log("mounted");
     const fetchProfile = async () => {
       try {
+        if(clickedParticipant == "") return;
         const response = await getProfile(clickedParticipant);
 
         // Handle the response and update the state or perform any other necessary actions
         setProfile(response);
-        console.log(profile, "kuay");
       } catch (error) {
         // Handle the error
-        console.log("error is");
         console.error("Error fetching profile:", error.message);
       }
     };
 
     fetchProfile();
 
-    return () => console.log("unmounted");
   }, [clickedParticipant]);
   console.log(clickedParticipant, "c");
 

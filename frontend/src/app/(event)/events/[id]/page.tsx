@@ -16,17 +16,6 @@ interface Props {
 
 export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
-
-    let isRegisterable = false;
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.token){
-        console.log(isRegisterable , "isregisnull")
-    }else{
-        isRegisterable = await isRegisteredEvent(session?.user?.user_id,event.event_id);
-        console.log(isRegisterable , "isregis")
-    }
-
-
     const participants = await getEventParticipants(params.id);
     let numParticipants = 0;
 
@@ -76,7 +65,7 @@ export default async function EventDetailPage({ params }: Props) {
                         </div>
                     </div>
                     <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
-                        <RegisterEventBox event={event} isRegisterable={isRegisterable}/>
+                        <RegisterEventBox event={event} />
                         <ParticipantListModal participants={participants} numParticipants={numParticipants} />
                     </div>
                 </div>
