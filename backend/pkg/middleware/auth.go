@@ -68,6 +68,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casbin/casbin/v2"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -127,3 +128,89 @@ func Authentication() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func Authorization(roles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract token from Authorization header
+		const BearerSchema = "Bearer "
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
+			return
+		}
+
+		if !strings.HasPrefix(authHeader, BearerSchema) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+			return
+		}
+
+		tokenString := authHeader[len(BearerSchema):]
+
+		// Parse JWT token
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			// Make sure token's algorithm is what you expect
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(SecretKey), nil
+		})
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token " + err.Error()})
+			return
+		}
+
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			userID, ok := claims["user_id"].(string)
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+				return
+			}
+
+			// Store user ID in the context
+			c.Set(KeyUserID, userID)
+
+
+			CasbinEnforcer := casbin.NewEnforcer("model.conf", "policy.csv")
+			// Check authorization using Casbin
+			// If CasbinEnforcer is not initialized, you'll need to initialize it first
+			if CasbinEnforcer == nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "CasbinEnforcer is not initialized"})
+				return
+			}
+
+			// Get user's role from Casbin
+			role, err := CasbinEnforcer.GetRoleForUser(userID)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user's role"})
+				return
+			}
+
+			// Check if the user's role is allowed
+			allowed := false
+			for _, allowedRole := range roles {
+				if role == allowedRole {
+					allowed = true
+					break
+				}
+			}
+
+			if !allowed {
+				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+				return
+			}
+
+			// Store user's role in the context
+			c.Set(KeyRole, role)
+			fmt.Println("Authorization successful")
+		} else {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			return
+		}
+
+		// Process request
+		c.Next()
+	}
+}
+
+
