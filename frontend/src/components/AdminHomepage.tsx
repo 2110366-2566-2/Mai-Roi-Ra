@@ -84,7 +84,7 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
       )}
       {activeTab == "Approved" && (
         <div className="my-8 px-4 lg:px-10">
-          {waitingEventsDatas.map((eventItem: any) => (
+          {approvedEventsDatas.map((eventItem: any) => (
             <div key={eventItem.event_id} className="relative">
               <EventItem
                 id={eventItem.event_id}
