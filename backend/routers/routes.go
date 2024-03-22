@@ -89,6 +89,8 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		userRoutes.PUT("/:id", controller.UpdateUserInformation)
 		userRoutes.PUT("/notification", controller.ToggleNotifications)
 		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)
+		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)
+		userRoutes.PUT("/verify_otp", controller.VerifyOTP)
 	}
 	loginRoutes := r.Group("")
 	{

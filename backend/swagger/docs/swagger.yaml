@@ -42,6 +42,8 @@ definitions:
         type: string
       is_enable_notification:
         type: boolean
+      is_verified:
+        type: boolean
       last_name:
         type: string
       payment_gateway_customer_id:
@@ -496,6 +498,18 @@ definitions:
       user_id:
         type: string
     type: object
+  structure.SendOTPEmailRequest:
+    properties:
+      email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.SendOTPEmailResponse:
+    properties:
+      message:
+        type: string
+    type: object
   structure.SendRegisteredEmailRequest:
     properties:
       event_id:
@@ -628,6 +642,18 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  structure.VerifyOTPRequest:
+    properties:
+      otp:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.VerifyOTPResponse:
+    properties:
+      verified:
+        type: boolean
     type: object
 externalDocs:
   description: OpenAPI
@@ -1659,6 +1685,62 @@ paths:
           schema:
             type: object
       summary: Register an event
+      tags:
+      - users
+  /users/send_otp_email:
+    put:
+      consumes:
+      - application/json
+      description: Sends an OTP email to the specified recipients.
+      parameters:
+      - description: Send OTP Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendOTPEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP email successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendOTPEmailResponse'
+        "400":
+          description: Bad request - error in sending the OTP email
+          schema:
+            type: object
+      summary: Send OTP Email
+      tags:
+      - users
+  /users/verify_otp:
+    put:
+      consumes:
+      - application/json
+      description: Verifies the OTP entered by the user.
+      parameters:
+      - description: Verify OTP Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP successfully verified
+          schema:
+            $ref: '#/definitions/structure.VerifyOTPResponse'
+        "400":
+          description: Bad request - error in verifying the OTP
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Verify OTP
       tags:
       - users
   /validate-token:

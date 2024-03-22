@@ -33,6 +33,7 @@ type IUserRepository interface {
 	IsEnableNotification(userId string) (*bool, *string, error)
 	GetRandomAdmin() (*models.User, error)
 	GetAllAdmins() ([]*models.User, error)
+	UpdateVerified(userId *string) error
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -306,4 +307,25 @@ func (r *UserRepository) GetAllAdmins() ([]*models.User, error) {
 		return nil, err
 	}
 	return userModels, nil
+}
+
+func (r *UserRepository) UpdateVerified(userId *string) error {
+	log.Println("[Repo: UpdateVerified] Called")
+
+	// find the user by user_id
+	var modelUser models.User
+	if err := r.DB.Where(`user_id=?`, userId).Find(&modelUser).Error; err != nil {
+		log.Print("[Repo: UpdateVerified] user_id not found")
+		return err
+	}
+
+	modelUser.IsVerified = true
+
+	// Save the updated version
+	if err := r.DB.Save(&modelUser).Error; err != nil {
+		log.Println("[Repo: UpdateVerified] Error updating in the database:", err)
+		return err
+	}
+
+	return nil
 }
