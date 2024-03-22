@@ -47,6 +47,7 @@ type IUserService interface {
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
 	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) // New function to send OTP email
 	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
+	GetUserOTP(userId *string) (*string, *time.Time, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -100,6 +101,12 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	if err != nil {
 		log.Println("[Service: CreateUser]: Error creating user", err)
 		return nil, err
+	}
+
+	otpError := s.RepositoryGateway.OtpRepository.CreateOTP(res)
+	if otpError != nil {
+		log.Println("[Service: CreateUser]: Error creating user in OTP table]", otpError)
+		return nil, otpError
 	}
 
 	resService := &st.CreateUserResponse{
@@ -537,12 +544,13 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 
 	// Generate OTP
 	otp := utils.GenerateOTP()
+	log.Println("The User OTP is ", otp)
 
 	// Set OTP expiration time (e.g., 5 minutes from now)
-	otpExpiresAt := time.Now().Add(5 * time.Minute)
+	otpExpiresAt := time.Now().Add(2 * time.Minute)
 
 	// Update the user's OTP and expiration time in the database
-	if err := s.RepositoryGateway.UserRepository.UpdateUserOTP(req.Email, otp, otpExpiresAt); err != nil {
+	if err := s.RepositoryGateway.OtpRepository.UpdateUserOTP(req.UserId, otp, otpExpiresAt); err != nil {
 		return nil, fmt.Errorf("failed to update user OTP: %w", err)
 	}
 
@@ -581,17 +589,33 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 func (s *UserService) VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error) {
 	log.Println("[Service: VerifyOTP]: Called")
 
-	// Retrieve the user's OTP and expiration time from the database
-	user, err := s.RepositoryGateway.UserRepository.GetUserByEmail(req.Email)
+	otp, expired, err := s.GetUserOTP(&req.UserId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve user: %w", err)
+		log.Println("[Service: VerifyOTP]: Call GetUserOTP error", err)
+		return nil, err
 	}
 
 	// Check if the OTP is correct and not expired
-	isVerified := user.OTP == req.OTP && time.Now().Before(user.OTPExpiresAt)
+	isVerified := *otp == req.OTP && time.Now().Before(*expired)
+
+	if isVerified {
+		err := s.RepositoryGateway.UserRepository.UpdateVerified(&req.UserId)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &st.VerifyOTPResponse{
 		Verified: isVerified,
-		Message:  "OTP verification result",
 	}, nil
+}
+
+func (s *UserService) GetUserOTP(userId *string) (*string, *time.Time, error) {
+	log.Println("[Service: GetUserOTP]: Called")
+	otp, expired, err := s.RepositoryGateway.OtpRepository.GetUserOTP(userId)
+	if err != nil {
+		log.Println("[Service: GetUserOTP]: Called repo and error: ", err)
+		return nil, nil, err
+	}
+	return otp, expired, nil
 }

@@ -155,8 +155,8 @@ type GetSearchHistoriesResponse struct {
 }
 
 type SendOTPEmailRequest struct {
-	UserId    string `json:"user_id"`
-	Email     string `json:"email"`
+	UserId string `json:"user_id"`
+	Email  string `json:"email"`
 }
 
 type SendOTPEmailResponse struct {
@@ -164,12 +164,10 @@ type SendOTPEmailResponse struct {
 }
 
 type VerifyOTPRequest struct {
-	UserId    string `json:"user_id"`
-	Email     string `json:"email"`
-	OTP       string `json:"otp"`
+	UserId string `json:"user_id"`
+	OTP    string `json:"otp"`
 }
 
 type VerifyOTPResponse struct {
-	Verified bool   `json:"verified"`
-	Message  string `json:"message"`
+	Verified bool `json:"verified"`
 }

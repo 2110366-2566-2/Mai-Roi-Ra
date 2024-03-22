@@ -420,7 +420,7 @@ func (c *UserController) GetSearchHistories(ctx *gin.Context) {
 // @Param request body st.SendOTPEmailRequest true "Send OTP Email Request"
 // @Success 200 {object} st.SendOTPEmailResponse "OTP email successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the OTP email"
-// @Router /users/send_otp_email [post]
+// @Router /users/send_otp_email [put]
 func (c *UserController) SendOTPEmail(ctx *gin.Context) {
 	var req *st.SendOTPEmailRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -446,7 +446,7 @@ func (c *UserController) SendOTPEmail(ctx *gin.Context) {
 // @Success 200 {object} st.VerifyOTPResponse "OTP successfully verified"
 // @Failure 400 {object} object "Bad request - error in verifying the OTP"
 // @Failure 500 {object} object "Internal Server Error"
-// @Router /users/verify_otp [post]
+// @Router /users/verify_otp [put]
 func (c *UserController) VerifyOTP(ctx *gin.Context) {
 	var req *st.VerifyOTPRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
