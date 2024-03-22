@@ -50,6 +50,7 @@ export default function RegisterEventBox({
       );
       // Handle successful registration
       console.log("Registration successful:", registrationResult);
+      setShowQRCode(true);
     } catch (error: any) {
       // Handle registration error
       console.error("Registration failed:", error.message);
@@ -96,8 +97,13 @@ export default function RegisterEventBox({
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setShowQRCode(false);
   };
   console.log(`${endyear}-${endmonth}-${endday}`, "date");
+
+  const [showQRCode, setShowQRCode] = useState(false);
+  console.log(isRegisterable)
+
 
   return (
     <div>
@@ -106,9 +112,20 @@ export default function RegisterEventBox({
         closeModal={closeModal}
         title="Are you sure to register to this event?"
         style={null}
+        allowOuterclose={true}
       >
         <p>The Registeration cannot be cancel in the future.</p>
-        <div className="w-full flex justify-between">
+        <div>
+        { showQRCode ? (
+            <div className="w-full h-[200px] flex justify-center items-center">
+            <img
+                src="/img/qrcode.png"
+                alt="QR Code"
+                className="w-[150px] h-[150px] object-cover"
+            />
+            </div>
+        ):(
+            <div className="w-full flex justify-between">
           <button
             onClick={() => {
               closeModal();
@@ -119,13 +136,17 @@ export default function RegisterEventBox({
           </button>
           <button
             onClick={() => {
-              closeModal();
+            //   closeModal();
               handleRegisterEventButton();
             }}
             className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] w-[82px]"
           >
             Yes
           </button>
+        </div>
+        )
+            
+        }
         </div>
       </Modal>
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">

@@ -20,10 +20,10 @@ export default async function EventDetailPage({ params }: Props) {
     let isRegisterable = false;
     const session = await getServerSession(authOptions);
     if (!session || !session.user || !session.user.token){
-        
+        console.log(isRegisterable , "isregisnull")
     }else{
         isRegisterable = await isRegisteredEvent(session?.user?.user_id,event.event_id);
-        console.log(isRegisterable)
+        console.log(isRegisterable , "isregis")
     }
 
 
