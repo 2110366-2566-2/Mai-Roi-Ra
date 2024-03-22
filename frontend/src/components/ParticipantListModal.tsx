@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ParticipantProfileModal from "./ParticipantProfileModal";
-import getProfile from "@/libs/getProfile";
 
 export default function ParticipantListModal({
   participants,
@@ -15,8 +14,7 @@ export default function ParticipantListModal({
 }) {
   const [showModal, setShowModal] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [clickedParticipant, setClikedParticipant] = useState("");
-  const [profile, setProfile] = useState({});
+  const [clickedParticipant, setClikedParticipant] = useState({});
   const openModal = () => {
     setShowModal(true);
   };
@@ -29,26 +27,7 @@ export default function ParticipantListModal({
   const closeProfileModal = () => {
     setIsProfileModalOpen(false);
   };
-  console.log(participants);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        if(clickedParticipant == "") return;
-        const response = await getProfile(clickedParticipant);
-
-        // Handle the response and update the state or perform any other necessary actions
-        setProfile(response);
-      } catch (error) {
-        // Handle the error
-        console.error("Error fetching profile:", error.message);
-      }
-    };
-
-    fetchProfile();
-
-  }, [clickedParticipant]);
-  console.log(clickedParticipant, "c");
 
   return (
     <div className="flex flex-col justify-center items-center pt-8">
@@ -95,12 +74,13 @@ export default function ParticipantListModal({
               onClick={() => {
                 setIsProfileModalOpen(true);
                 setClikedParticipant(item);
+                console.log(clickedParticipant, "clickedParticipant")
               }}
             >
               <div className="flex items-center w-full">
                 <img
                   className="w-12 h-12 rounded-full object-cover"
-                  src={item.user_image}
+                  src={item.user_image || "/img/profile_picture.png"}
                   alt={`${item.first_name} ${item.last_name}`}
                 />
                 <div className="flex flex-col ml-3">
