@@ -21,7 +21,7 @@ const ImageUploadForm: React.FC = () => {
 
     const formData = new FormData();
     formData.append('image', selectedImage);
-
+    
     // Example: POST request to your server endpoint
     const response = await fetch('/api/upload', {
       method: 'POST',
@@ -41,8 +41,14 @@ const ImageUploadForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
       {preview && (
-        <div className="w-full h-64 flex justify-center items-center">
-          <img src={preview} alt="Preview" className="max-h-full" />
+        <div>
+          <div className="w-full h-64 flex justify-center items-center">
+            <img src={preview} alt="Preview" className="max-h-full" />
+          </div>
+
+          <div className="text-center w-full mt-[10px]">
+            {preview}
+          </div>
         </div>
       )}
       <input

@@ -1,7 +1,7 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useRef } from 'react';
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
@@ -10,6 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Image from "next/image";
+import BackupIcon from '@mui/icons-material/Backup';
 
 const CreateEventForm = () => {
     const isMobile = useMediaQuery('(max-width:768px)');
@@ -31,15 +32,21 @@ const CreateEventForm = () => {
     const [imageSrc,setImageSrc] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
-  
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files ? event.target.files[0] : null;
-      if (file) {
-        setSelectedImage(file);
-        setPreview(URL.createObjectURL(file));
-      }
+    const fileInputRef = useRef(null);
+    
+    const triggerFileInput = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
     };
-  
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files ? event.target.files[0] : null;
+        if (file) {
+          setSelectedImage(file);
+          setPreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmit = async () => {
         try {
@@ -66,7 +73,7 @@ const CreateEventForm = () => {
             } if (imageSrc == "") {
                 setError("Image Source Required");
                 return;
-            } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
+            } if (!selectedImage) {
                 setError("Invalid Picture URI");
                 return;
             } 
@@ -238,27 +245,59 @@ const CreateEventForm = () => {
 
                     {/* Right Form */}
                     <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
-                     border-gray-300 rounded-md flex justify-center items-center relative">
-                       {preview && (
-                            <div className="w-full h-64 flex justify-center items-center">
-                            <img src={preview} alt="Preview" className="max-h-full" />
+                     border-gray-300 rounded-md flex justify-center items-center relative border-dashed">
+
+                       {preview ? 
+                            <div className="w-full h-full relative">
+                                <Image className="h-full w-full absolute top-0 left-0 opacity-60" width={1000} height={1000} src={preview} alt="Preview"
+                                onClick={triggerFileInput}/>
+                            
+                                <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center absolute">
+                                    <input
+                                        type="file"
+                                        name="image"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                    />
+                            
+                                    <div className="cursor-pointer text-gray-400 rounded-full w-[150px] h-[150px] bg-gray-200
+                                    hover:text-black hover:border-black flex flex-col items-center justify-center absolute" onClick={triggerFileInput}>
+                                        <div className="w-fit">
+                                            <BackupIcon style={{ fontSize: "60px", color: "yelllow"}}/>
+                                        </div>
+
+                                        <div className="text-[15px]">
+                                            Edit Image
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> : 
+
+                            <div className="w-full h-full">
+                                <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center">
+                                    <input
+                                        type="file"
+                                        name="image"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                    />
+
+                                    <div className="cursor-pointer text-gray-400 w-[150px] h-[150px]
+                                    hover:text-black flex flex-col items-center justify-center"  onClick={triggerFileInput}>
+                                        <BackupIcon style={{ fontSize: "60px" }}/>
+                                        <div className="text-[15px]">
+                                            Upload Image
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        )}
-                        <input
-                            type="file"
-                            name="image"
-                            accept="image/*"
-                            onChange={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                handleFileChange}}
-                            className="block w-full text-sm text-gray-500
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-violet-50 file:text-violet-700
-                            hover:file:bg-violet-100"
-                        />
+                            
+                        }
+                        
                         {/* <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px] lg:text-[17px] md:text-[15px] text-[13px]"
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
                          {imageSrc.length != 0 && (
