@@ -157,21 +157,6 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		return nil, errors.New("email or phone number must be provided")
 	}
 
-	// Check if the user was found
-	if err != nil {
-		return nil, errors.New("invalid login credentials")
-	}
-
-	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
-	if err != nil {
-		return nil, errors.New("failed to generate token")
-	}
-	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
-	if err != nil {
-		return nil, errors.New("failed to update token")
-	}
-
 	organizerId := ""
 
 	if user.Role == "ORGANIZER" {
@@ -181,6 +166,11 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 			log.Println("[Service: LoginUser]: Error when querying organizer_id")
 			return nil, err
 		}
+	}
+
+	// Check if the user was found
+	if err != nil {
+		return nil, errors.New("invalid login credentials")
 	}
 
 	// Check the password
@@ -195,6 +185,25 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 		log.Println("Invalid login credentials [PASSWORD ERROR]:")
 		log.Println(err)
 		return nil, err
+	}
+
+	// if err := bcrypt.CompareHashAndPassword(byteHash, bytepwd); err != nil {
+	// 	log.Println([]byte(byteHash))
+	// 	log.Println([]byte(bytepwd))
+	// 	log.Println(byteHash)
+	// 	log.Println(bytepwd)
+	// 	log.Println("Invalid login credentials [PASSWORD ERROR]:")
+	// 	return nil, err
+	// }
+
+	// Generate a JWT token (or any other form of token/session identifier)
+	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	if err != nil {
+		return nil, errors.New("failed to generate token")
+	}
+	err = s.RepositoryGateway.UserRepository.UpdateUserToken(user.UserID, token)
+	if err != nil {
+		return nil, errors.New("failed to update token")
 	}
 
 	var email = ""
