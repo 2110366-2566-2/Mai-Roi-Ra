@@ -8,6 +8,7 @@ import (
 
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
@@ -214,13 +215,14 @@ func (c *UserController) LoginUserPhone(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user_id path string true "User ID"
-// @Success 200 {object} map[string]interface{} "Confirms the user has been logged out."
+// @Success 200 {object} st.UserResponse "Confirms the user has been logged out."
 // @Failure 400 {object} map[string]string "Returns an error if logout fails."
 // @Router /logout [post]
 func (c *UserController) LogoutUser(ctx *gin.Context) {
-	var req *st.LogoutUserRequest
-	req.UserID = ctx.GetString(middleware.KeyUserID)
+	userId := ctx.GetString(middleware.KeyUserID)
+	req := &st.LogoutUserRequest{
+		UserID: userId,
+	}
 	log.Println("[CTRL: LogoutUser] Input:", req)
 	res, err := c.ServiceGateway.UserService.LogoutUser(req)
 	if err != nil {
@@ -435,34 +437,13 @@ func (c *UserController) LoginGoogle(ctx *gin.Context) {
 
 }
 
-// @Summary LoginGoogle
-// @Description Log out using
-// @Tags user
-// @Accept json
-// @Produce json
-// @Param provider path string true "provider"
-// @Success 200 {object} string
-// @Failure 400 {object} object "Bad Request"
-// @Failure 500 {object} object "Internal Server Error"
-// @Router /logout/{provider} [get]
-func (c *UserController) LogoutGoogle(ctx *gin.Context) {
-	log.Println("[CTRL: LogoutGoogle] Called: ")
-	if err := c.ServiceGateway.UserService.LogoutGoogle(ctx); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	// Redirect to the homepage or a specific page of your frontend application
-	ctx.JSON(http.StatusOK, gin.H{"message": "logout successful"})
-	ctx.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/auth/signin")
-}
-
 // @Summary CallbackGoogle
 // @Description Get info of user from Gmail
 // @Tags user
 // @Accept json
 // @Produce json
 // @Param provider path string true "provider"
-// @Success 200 {object} st.SignInGoogleResponse
+// @Success 200 {object} object "OK"
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/auth/{provider}/callback [get]
@@ -477,11 +458,10 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 	if flag != nil {
 		hasAccount = *flag
 	}
-	frontendURL := "http://localhost:3000"
-	redirectURL := fmt.Sprintf("%s/auth/handle-login", frontendURL)
+	redirectURL := fmt.Sprintf("%s/auth/handle-login", constant.FRONT_END_URL)
 	if !hasAccount {
 		// Redirect to the register page for a new user
-		redirectURL = fmt.Sprintf("%s/auth/signin", frontendURL)
+		redirectURL = fmt.Sprintf("%s/auth/signin", constant.FRONT_END_URL)
 	}
 	log.Println("User token at the end:", *token)
 
@@ -538,5 +518,30 @@ func (c *UserController) VerifyOTP(ctx *gin.Context) {
 		return
 	}
 	log.Println("[CTRL: VerifyOTP] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Update User Role
+// @Description Updates the role of a user based on the provided request.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body st.UpdateUserRoleRequest true "Update User Role Request"
+// @Success 200 {object} st.UserResponse "User successfully updated"
+// @Failure 400 {object} object "Bad request - error in updating user role"
+// @Router /users/update_user_role [put]
+func (c *UserController) UpdateUserRole(ctx *gin.Context) {
+	var req *st.UpdateUserRoleRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: UpdateUserRole]: Input:", req)
+	res, err := c.ServiceGateway.UserService.UpdateUserRole(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: UpdateUserRole]: Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

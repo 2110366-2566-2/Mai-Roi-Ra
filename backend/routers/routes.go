@@ -90,6 +90,7 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)
 		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)
 		userRoutes.PUT("/verify_otp", controller.VerifyOTP)
+		userRoutes.PUT("/update_user_role", controller.UpdateUserRole)
 	}
 	loginRoutes := r.Group("")
 	{
@@ -105,7 +106,6 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 	gAuth := r.Group("", middleware.GoogleAuth())
 	{
 		gAuth.GET("/auth/:provider/login", controller.LoginGoogle)
-		gAuth.GET("/auth/logout/:provider", controller.LogoutGoogle)
 		gAuth.GET("/auth/:provider/callback", controller.CallbackGoogle)
 	}
 }

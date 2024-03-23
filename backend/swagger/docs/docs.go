@@ -845,21 +845,11 @@ const docTemplate = `{
                     "users"
                 ],
                 "summary": "Log out a user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Confirms the user has been logged out.",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/structure.UserResponse"
                         }
                     },
                     "400": {
@@ -869,50 +859,6 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
-                        }
-                    }
-                }
-            }
-        },
-        "/logout/{provider}": {
-            "get": {
-                "description": "Log out using",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "LoginGoogle",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "provider",
-                        "name": "provider",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
                         }
                     }
                 }
@@ -1421,7 +1367,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SignInGoogleResponse"
+                            "type": "object"
                         }
                     },
                     "400": {
@@ -1618,6 +1564,46 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request - error in sending the OTP email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/update_user_role": {
+            "put": {
+                "description": "Updates the role of a user based on the provided request.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update User Role",
+                "parameters": [
+                    {
+                        "description": "Update User Role Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateUserRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User successfully updated",
+                        "schema": {
+                            "$ref": "#/definitions/structure.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in updating user role",
                         "schema": {
                             "type": "object"
                         }
@@ -2808,53 +2794,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.SignInGoogleResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "access_token_secret": {
-                    "type": "string"
-                },
-                "avatar_url": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id_token": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.TestResponse": {
             "type": "object",
             "properties": {
@@ -2992,6 +2931,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UpdateUserRoleRequest": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UserResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }

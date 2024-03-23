@@ -2,9 +2,7 @@ import NextAuth from "next-auth/next";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import userLogin from "@/libs/userLogin";
-import { parse } from 'cookie'; // Import the parse method from cookie library
-import { apiBackUrl, provider } from "@/constants";
-import GoogleProvider from "next-auth/providers/google";
+import { parse } from 'cookie';
 
 export const authOptions: AuthOptions = {
     providers: [
@@ -19,20 +17,38 @@ export const authOptions: AuthOptions = {
                 if (credentials.email && credentials.password) {
                     const user = await userLogin(credentials.email, credentials.password);
                     if (user) {
-                        return user; // Any object returned will be saved in `user` property of the JWT
+                        return user;
                     } else {
-                        return null; // If you return null then an error will be displayed advising the user to check their details.
+                        return null;
                     }
                 } else {
                     const cookies = parse(req.headers?.cookie || "");
                     const token = cookies["token"];
-
-                    console.log("COOKIES:", cookies)
-
-                    if (token) {
-                      return token
-                    } else {
-                      return null
+                    try {
+                        const parts = token.split('.');
+                        if (parts.length !== 3) {
+                            throw new Error('The token is invalid');
+                        }
+                        
+                        // Decode the payload
+                        const payload = parts[1];
+                        const decodedPayload = atob(payload.replace(/_/g, '/').replace(/-/g, '+'));
+                        const jsonParsed = JSON.parse(decodedPayload);
+                
+                        const sessionUser = {
+                            organizer_id: jsonParsed.organizer_id,
+                            user_id: jsonParsed.user_id,
+                            name: jsonParsed.username || "",
+                            email: jsonParsed.email,
+                            role: jsonParsed.role,
+                            token: token
+                        };
+                        
+                        console.log("SESSION:", sessionUser)
+                        return sessionUser;
+                    } catch (error) {
+                        console.error('Failed to decode JWT:', error);
+                        return null;
                     }
                 }
             }

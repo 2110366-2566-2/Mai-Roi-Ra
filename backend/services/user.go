@@ -17,6 +17,7 @@ import (
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -37,7 +38,7 @@ type IUserService interface {
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 	GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.User, error)
 	LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error)
-	LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error)
+	LogoutUser(req *st.LogoutUserRequest) (*st.UserResponse, error)
 	ValidateToken(token string) (*models.User, error)
 	LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error)
 	LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUserPhoneResponse, error)
@@ -49,12 +50,12 @@ type IUserService interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
-	LoginGoogle(c *gin.Context) (*models.User, error)
-	LogoutGoogle(c *gin.Context) error
+	LoginGoogle(c *gin.Context) (*goth.User, error)
 	CallbackGoogle(c *gin.Context) (*string, *bool, error)
 	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) // New function to send OTP email
 	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
 	GetUserOTP(userId *string) (*string, *time.Time, error)
+	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -104,7 +105,7 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	}
 	req.Password = string(hashedPassword)
 
-	res, err := s.RepositoryGateway.UserRepository.CreateUser(req, constant.NORMAL)
+	res, err := s.RepositoryGateway.UserRepository.CreateUser(req, constant.NORMAL, false)
 	if err != nil {
 		log.Println("[Service: CreateUser]: Error creating user", err)
 		return nil, err
@@ -217,7 +218,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 	// }
 
 	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	token, err := GenerateJWTToken(user, organizerId) // Replace with actual JWT token generation logic
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -272,7 +273,7 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 	// }
 
 	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	token, err := GenerateJWTToken(user, "") // Replace with actual JWT token generation logic
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -325,7 +326,7 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 	// }
 
 	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	token, err := GenerateJWTToken(user, "") // Replace with actual JWT token generation logic
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -354,7 +355,7 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 }
 
 // LogoutUser implements IUserService.
-func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error) {
+func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.UserResponse, error) {
 	log.Printf("[Service: LogoutUser]: Attempting to remove token for UserID: %s", req.UserID)
 	err := s.RepositoryGateway.UserRepository.UpdateUserToken(req.UserID, "") // Attempt to remove token
 	if err != nil {
@@ -363,7 +364,9 @@ func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserRespo
 	}
 
 	log.Printf("[Service: LogoutUser]: Token removed successfully for UserID: %s", req.UserID)
-	res := &st.LogoutUserResponse{}
+	res := &st.UserResponse{
+		Response: "Logout successful",
+	}
 	return res, nil
 }
 
@@ -379,27 +382,17 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 }
 
 // GenerateJWTToken generates a new JWT token for authenticated users
-func GenerateJWTToken(user *models.User) (string, error) {
+func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
 	var secretKey = []byte("YourSecretKey")
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-	// 	"user_id":  user.UserID,                           // Include the user's ID
-	// 	"username": user.Username,                         // Include the username
-	// 	"email":    user.Email,                            // Include the email
-	// 	"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
-	// })
 
-	// tokenString, err := token.SignedString(secretKey)
-	// if err != nil {
-	// 	return "", err
-	// }
-
-	// return tokenString, nil
 	claims := jwt.MapClaims{
-		"user_id":  user.UserID,                           // Include the user's ID
-		"username": user.Username,                         // Include the username
-		"email":    user.Email,                            // Include the email
-		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
+		"user_id":      user.UserID,
+		"organizer_id": orgId,
+		"username":     user.Username,
+		"email":        user.Email,
+		"role":         user.Role,
+		"exp":          time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secretKey))
@@ -546,7 +539,7 @@ func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistories
 	return resLists, nil
 }
 
-func (s *UserService) LoginGoogle(c *gin.Context) (*models.User, error) {
+func (s *UserService) LoginGoogle(c *gin.Context) (*goth.User, error) {
 	log.Println("[Service: LoginGoogle]: Called")
 	provider := c.Param("provider")
 
@@ -562,41 +555,26 @@ func (s *UserService) LoginGoogle(c *gin.Context) (*models.User, error) {
 		gothic.BeginAuthHandler(c.Writer, c.Request)
 		return nil, nil
 	}
-	// Fetch the newly created user details
-	existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(user.Email)
-	if err != nil {
-		log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
-		return nil, nil
-	}
+	// // Fetch the newly created user details
+	// existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(user.Email)
+	// if err != nil {
+	// 	log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
+	// 	return nil, nil
+	// }
 
-	// At this point, existingUser is either fetched from the DB or newly created
-	// Generate a JWT token for the user
-	token, tokenErr := GenerateJWTToken(existingUser)
-	if tokenErr != nil {
-		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
-		return nil, nil
-	}
+	// // At this point, existingUser is either fetched from the DB or newly created
+	// // Generate a JWT token for the user
+	// token, tokenErr := GenerateJWTToken(existingUser)
+	// if tokenErr != nil {
+	// 	log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
+	// 	return nil, nil
+	// }
 
-	// Update token
-	if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
-		return nil, nil
-	}
-	return existingUser, nil
-}
-
-func (s *UserService) LogoutGoogle(c *gin.Context) error {
-	log.Println("[Service: LogoutGoogle]: Called")
-	provider := c.Param("provider")
-
-	// Manually set the provider name in the request context
-	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
-	c.Request = c.Request.WithContext(ctx)
-
-	if err := gothic.Logout(c.Writer, c.Request); err != nil {
-		log.Println("[Service: LogoutGoogle]: Gothic logout error:", err)
-		return err
-	}
-	return nil
+	// // Update token
+	// if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
+	// 	return nil, nil
+	// }
+	return &user, nil
 }
 
 func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
@@ -626,11 +604,11 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 		Email:     &email,
 		FirstName: gothUser.FirstName,
 		LastName:  gothUser.LastName,
-		Password:  "LOGINFROMGOOGLE",
-		Address:   "DefaultAddress",  // Placeholder values
-		District:  "DefaultDistrict", // Placeholder values
-		Province:  "DefaultProvince", // Placeholder values
-		Role:      constant.USER,     // / Will change later
+		Password:  "",
+		Address:   gothUser.Location,
+		District:  "",
+		Province:  "",
+		Role:      constant.USER,
 	}
 
 	var flag = true
@@ -639,7 +617,7 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 	if err != nil {
 		// User not found, proceed to create a new user
 		log.Println("I HAVE ENTERED HERE")
-		_, err := s.RepositoryGateway.UserRepository.CreateUser(&createUserRequest, constant.GOOGLE)
+		_, err := s.RepositoryGateway.UserRepository.CreateUser(&createUserRequest, constant.GOOGLE, true)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -653,9 +631,12 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 		return nil, nil, err
 	}
 
+	// check if user is org
+	orgRes, _ := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(existingUser.UserID)
+
 	// At this point, existingUser is either fetched from the DB or newly created
 	// Generate a JWT token for the user
-	token, tokenErr := GenerateJWTToken(existingUser)
+	token, tokenErr := GenerateJWTToken(existingUser, orgRes)
 	if tokenErr != nil {
 		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
 		return nil, nil, tokenErr
@@ -771,4 +752,27 @@ func (s *UserService) GetUserOTP(userId *string) (*string, *time.Time, error) {
 		return nil, nil, err
 	}
 	return otp, expired, nil
+}
+
+func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error) {
+	log.Println("[Service: UpdateUserRole]: Called")
+	checkOrg, err := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("CHECKORG:", checkOrg)
+	if checkOrg == "" {
+		if req.Role == "Organizer" {
+			orgId, err := s.RepositoryGateway.OrganizerRepository.CreateOrganizerWithUserId(req.UserId)
+			log.Println("OrgId:", &orgId)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	res, err := s.RepositoryGateway.UserRepository.UpdateUserRole(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }

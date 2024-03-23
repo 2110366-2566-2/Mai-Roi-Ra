@@ -572,37 +572,6 @@ definitions:
       announce_status:
         type: string
     type: object
-  structure.SignInGoogleResponse:
-    properties:
-      access_token:
-        type: string
-      access_token_secret:
-        type: string
-      avatar_url:
-        type: string
-      description:
-        type: string
-      email:
-        type: string
-      first_name:
-        type: string
-      id_token:
-        type: string
-      last_name:
-        type: string
-      location:
-        type: string
-      name:
-        type: string
-      nickname:
-        type: string
-      provider:
-        type: string
-      refresh_token:
-        type: string
-      user_id:
-        type: string
-    type: object
   structure.TestResponse:
     properties:
       message:
@@ -699,6 +668,18 @@ definitions:
     - last_name
     - province
     - user_id
+    type: object
+  structure.UpdateUserRoleRequest:
+    properties:
+      role:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.UserResponse:
+    properties:
+      response:
+        type: string
     type: object
   structure.VerifyEventResponse:
     properties:
@@ -1271,20 +1252,13 @@ paths:
       - application/json
       description: Logs out a user by invalidating the session token associated with
         the uid.
-      parameters:
-      - description: User ID
-        in: path
-        name: user_id
-        required: true
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: Confirms the user has been logged out.
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/structure.UserResponse'
         "400":
           description: Returns an error if logout fails.
           schema:
@@ -1294,35 +1268,6 @@ paths:
       summary: Log out a user
       tags:
       - users
-  /logout/{provider}:
-    get:
-      consumes:
-      - application/json
-      description: Log out using
-      parameters:
-      - description: provider
-        in: path
-        name: provider
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            type: object
-      summary: LoginGoogle
-      tags:
-      - user
   /participate/is_registered:
     get:
       consumes:
@@ -1810,7 +1755,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.SignInGoogleResponse'
+            type: object
         "400":
           description: Bad Request
           schema:
@@ -1942,6 +1887,32 @@ paths:
           schema:
             type: object
       summary: Send OTP Email
+      tags:
+      - users
+  /users/update_user_role:
+    put:
+      consumes:
+      - application/json
+      description: Updates the role of a user based on the provided request.
+      parameters:
+      - description: Update User Role Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.UpdateUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully updated
+          schema:
+            $ref: '#/definitions/structure.UserResponse'
+        "400":
+          description: Bad request - error in updating user role
+          schema:
+            type: object
+      summary: Update User Role
       tags:
       - users
   /users/verify_otp:
