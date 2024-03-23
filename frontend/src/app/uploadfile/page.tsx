@@ -1,12 +1,9 @@
-import type { NextPage } from 'next';
-import ImageUploadForm from '@/components/UploadImage';
+import ImageUploadForm from "@/components/UploadFile";
 
-const Home: NextPage = () => {
+export default function Home() {
   return (
-    <div className="container mx-auto p-4">
-      <ImageUploadForm />
-    </div>
+    <main>
+        <ImageUploadForm/>
+    </main>
   );
-};
-
-export default Home;
+}

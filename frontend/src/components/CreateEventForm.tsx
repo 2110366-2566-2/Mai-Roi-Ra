@@ -1,7 +1,7 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from 'react';
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const CreateEventForm = () => {
     const isMobile = useMediaQuery('(max-width:768px)');
@@ -29,6 +29,17 @@ const CreateEventForm = () => {
     const [province,setProvince] = useState("");
     const [description,setDescription] = useState("");
     const [imageSrc,setImageSrc] = useState("");
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string>('');
+  
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files ? event.target.files[0] : null;
+      if (file) {
+        setSelectedImage(file);
+        setPreview(URL.createObjectURL(file));
+      }
+    };
+  
 
     const handleSubmit = async () => {
         try {
@@ -84,7 +95,7 @@ const CreateEventForm = () => {
 
     return (
         <div className={`${styles.Roboto} w-full text-black`}>
-            <form action={handleSubmit} className="w-full h-full">
+            <form action={handleSubmit} className="w-full h-full" encType="multipart/form-data">
                 {/* Form */}
                 <div className="lg:flex lg:flex-row lg:flex-wrap lg:justify-between w-full">
 
@@ -228,13 +239,33 @@ const CreateEventForm = () => {
                     {/* Right Form */}
                     <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
                      border-gray-300 rounded-md flex justify-center items-center relative">
-                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px] lg:text-[17px] md:text-[15px] text-[13px]"
+                       {preview && (
+                            <div className="w-full h-64 flex justify-center items-center">
+                            <img src={preview} alt="Preview" className="max-h-full" />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            onChange={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                handleFileChange}}
+                            className="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-violet-50 file:text-violet-700
+                            hover:file:bg-violet-100"
+                        />
+                        {/* <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px] lg:text-[17px] md:text-[15px] text-[13px]"
                         placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
                          {imageSrc.length != 0 && (
                                 <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                     Image Src
                                 </div>
-                            )}
+                            )} */}
                     </div>
 
                 </div>
