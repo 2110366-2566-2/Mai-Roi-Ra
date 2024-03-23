@@ -29,7 +29,6 @@ func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
-		log.Println("HELLO MY NIBBA")
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
 			return
@@ -41,8 +40,6 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		tokenString := authHeader[len(BearerSchema):] // Remove "Bearer " from the header value
-
-		log.Println("TOKEN:", tokenString)
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Make sure token's algorithm is what you expect
@@ -59,7 +56,6 @@ func Authentication() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userID, ok := claims["user_id"].(string)
-			log.Println("USERID:", userID)
 			if !ok {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 				return
@@ -71,8 +67,6 @@ func Authentication() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token_2"})
 			return
 		}
-
-		// Process request
 		c.Next()
 	}
 }

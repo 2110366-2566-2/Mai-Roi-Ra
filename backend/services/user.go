@@ -555,25 +555,6 @@ func (s *UserService) LoginGoogle(c *gin.Context) (*goth.User, error) {
 		gothic.BeginAuthHandler(c.Writer, c.Request)
 		return nil, nil
 	}
-	// // Fetch the newly created user details
-	// existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(user.Email)
-	// if err != nil {
-	// 	log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
-	// 	return nil, nil
-	// }
-
-	// // At this point, existingUser is either fetched from the DB or newly created
-	// // Generate a JWT token for the user
-	// token, tokenErr := GenerateJWTToken(existingUser)
-	// if tokenErr != nil {
-	// 	log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
-	// 	return nil, nil
-	// }
-
-	// // Update token
-	// if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
-	// 	return nil, nil
-	// }
 	return &user, nil
 }
 
@@ -615,8 +596,6 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 
 	_, err = s.RepositoryGateway.UserRepository.GetUserByEmail(*createUserRequest.Email)
 	if err != nil {
-		// User not found, proceed to create a new user
-		log.Println("I HAVE ENTERED HERE")
 		_, err := s.RepositoryGateway.UserRepository.CreateUser(&createUserRequest, constant.GOOGLE, true)
 		if err != nil {
 			return nil, nil, err
@@ -624,18 +603,14 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 		flag = false
 	}
 
-	// Fetch the newly created user details
 	existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
 	if err != nil {
 		log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
 		return nil, nil, err
 	}
 
-	// check if user is org
 	orgRes, _ := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(existingUser.UserID)
 
-	// At this point, existingUser is either fetched from the DB or newly created
-	// Generate a JWT token for the user
 	token, tokenErr := GenerateJWTToken(existingUser, orgRes)
 	if tokenErr != nil {
 		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
@@ -646,8 +621,6 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 	if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
 		return nil, nil, err
 	}
-
-	log.Println("Flag at the end:", flag)
 
 	return &token, &flag, nil
 }

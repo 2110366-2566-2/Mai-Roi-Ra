@@ -428,13 +428,10 @@ func (c *UserController) GetSearchHistories(ctx *gin.Context) {
 // @Router /auth/{provider}/login [get]
 func (c *UserController) LoginGoogle(ctx *gin.Context) {
 	log.Println("[CTRL: LoginGoogle] Called: ")
-	user, err := c.ServiceGateway.UserService.LoginGoogle(ctx)
+	_, err := c.ServiceGateway.UserService.LoginGoogle(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	// log.Println(*user)
-	ctx.JSON(http.StatusOK, user)
-
 }
 
 // @Summary CallbackGoogle
