@@ -6,7 +6,6 @@ replace github.com/2110366-2566-2/Mai-Roi-Ra/backend => ./backend
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
@@ -23,11 +22,15 @@ require (
 
 require (
 	github.com/aead/chacha20poly1305 v0.0.0-20170617001512-233f39982aeb
+	github.com/aws/aws-sdk-go v1.51.4
 	github.com/gin-contrib/cors v1.7.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gorilla/sessions v1.2.2
 	github.com/markbates/goth v1.79.0
 	github.com/o1egl/paseto v1.0.0
+	github.com/omise/omise-go v1.3.0
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/stripe/stripe-go/v76 v76.22.0
 )
 
 require (
@@ -39,6 +42,7 @@ require (
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/mux v1.6.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/oauth2 v0.17.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect

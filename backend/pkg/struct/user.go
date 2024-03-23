@@ -105,6 +105,7 @@ type RegisterEventRequest struct {
 	UserId         string `json:"user_id" binding:"required"`
 	EventId        string `json:"event_id" binding:"required"`
 	NumParticipant int    `json:"num_participant" binding:"required"`
+	Amount         int    `json:"amount" binding:"required"`
 }
 
 type CancelRegisterEventRequest struct {
@@ -113,7 +114,7 @@ type CancelRegisterEventRequest struct {
 }
 
 type RegisterEventResponse struct {
-	Message string `json:"message"`
+	Message      string `json:"message"`
 }
 
 type ParticipatedEvent struct {
@@ -139,12 +140,10 @@ type GetParticipatedEventListsResponse struct {
 type SearchEventRequest struct {
 	UserId string `json:"user_id" binding:"required"`
 	Search string `json:"search"`
-	Offset int    `json:"offset"`
-	Limit  int    `json:"limit"`
 }
 
 type SearchEventResponse struct {
-	EventsList []ParticipatedEvent `json:"event_list"`
+	Message string `json:"message"`
 }
 
 type SearchHistory struct {
@@ -176,3 +175,20 @@ type SignInGoogleResponse struct {
     IDToken           string `json:"id_token"`
 }
 
+type SendOTPEmailRequest struct {
+	UserId string `json:"user_id"`
+	Email  string `json:"email"`
+}
+
+type SendOTPEmailResponse struct {
+	Message string `json:"message"`
+}
+
+type VerifyOTPRequest struct {
+	UserId string `json:"user_id"`
+	OTP    string `json:"otp"`
+}
+
+type VerifyOTPResponse struct {
+	Verified bool `json:"verified"`
+}

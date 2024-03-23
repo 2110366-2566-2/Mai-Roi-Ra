@@ -42,6 +42,8 @@ definitions:
         type: string
       is_enable_notification:
         type: boolean
+      is_verified:
+        type: boolean
       last_name:
         type: string
       payment_gateway_customer_id:
@@ -144,6 +146,16 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  structure.CreateQRPromptPayRequest:
+    properties:
+      transaction_amount:
+        type: number
+      user_id:
+        type: string
+    required:
+    - transaction_amount
+    - user_id
     type: object
   structure.CreateUserRequest:
     properties:
@@ -294,6 +306,19 @@ definitions:
           $ref: '#/definitions/structure.ParticipatedEvent'
         type: array
     type: object
+  structure.GetPaymentIntentByIdResponse:
+    properties:
+      currency:
+        type: string
+      paymentClientSecret:
+        type: string
+      paymentIntentId:
+        type: string
+      status:
+        type: string
+      transactionAmount:
+        type: number
+    type: object
   structure.GetProblemListsResponse:
     properties:
       problem_lists:
@@ -438,6 +463,8 @@ definitions:
     type: object
   structure.RegisterEventRequest:
     properties:
+      amount:
+        type: integer
       event_id:
         type: string
       num_participant:
@@ -445,6 +472,7 @@ definitions:
       user_id:
         type: string
     required:
+    - amount
     - event_id
     - num_participant
     - user_id
@@ -456,10 +484,8 @@ definitions:
     type: object
   structure.SearchEventResponse:
     properties:
-      event_list:
-        items:
-          $ref: '#/definitions/structure.ParticipatedEvent'
-        type: array
+      message:
+        type: string
     type: object
   structure.SearchHistory:
     properties:
@@ -496,6 +522,18 @@ definitions:
       event_name:
         type: string
       user_id:
+        type: string
+    type: object
+  structure.SendOTPEmailRequest:
+    properties:
+      email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.SendOTPEmailResponse:
+    properties:
+      message:
         type: string
     type: object
   structure.SendRegisteredEmailRequest:
@@ -568,6 +606,11 @@ definitions:
   structure.TestResponse:
     properties:
       message:
+        type: string
+    type: object
+  structure.TransactionResponse:
+    properties:
+      response:
         type: string
     type: object
   structure.UpdateEventRequest:
@@ -656,6 +699,23 @@ definitions:
     - last_name
     - province
     - user_id
+    type: object
+  structure.VerifyEventResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  structure.VerifyOTPRequest:
+    properties:
+      otp:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.VerifyOTPResponse:
+    properties:
+      verified:
+        type: boolean
     type: object
 externalDocs:
   description: OpenAPI
@@ -1013,6 +1073,40 @@ paths:
           schema:
             type: object
       summary: Update existing event
+      tags:
+      - events
+  /events/{event_id}/verify:
+    put:
+      consumes:
+      - application/json
+      description: Verify an Event
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Status
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.VerifyEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: VerifyEvent
       tags:
       - events
   /events/participant:
@@ -1432,6 +1526,88 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /test/qr:
+    get:
+      consumes:
+      - application/json
+      description: Get a test message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: TestCreatePromptPayPayment
+      tags:
+      - Test
+  /transactions/payment-intent/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of a payment intent by its ID
+      parameters:
+      - description: Payment Intent ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Retrieve Payment Intent by ID
+      tags:
+      - transactions
+  /transactions/qr:
+    post:
+      consumes:
+      - application/json
+      description: CreateQRPromptPay for user to pay
+      parameters:
+      - description: Get PromptPay
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateQRPromptPayRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: CreateQRPromptPay
+      tags:
+      - transactions
   /users:
     post:
       consumes:
@@ -1555,7 +1731,7 @@ paths:
       tags:
       - users
   /users/{user_id}/searchevent:
-    get:
+    post:
       consumes:
       - application/json
       description: Search the Event
@@ -1569,14 +1745,6 @@ paths:
         in: query
         name: search
         required: true
-        type: string
-      - description: offset i.e. 0
-        in: query
-        name: offset
-        type: string
-      - description: Items per page i.e. 10
-        in: query
-        name: limit
         type: string
       produces:
       - application/json
@@ -1748,6 +1916,62 @@ paths:
           schema:
             type: object
       summary: Register an event
+      tags:
+      - users
+  /users/send_otp_email:
+    put:
+      consumes:
+      - application/json
+      description: Sends an OTP email to the specified recipients.
+      parameters:
+      - description: Send OTP Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendOTPEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP email successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendOTPEmailResponse'
+        "400":
+          description: Bad request - error in sending the OTP email
+          schema:
+            type: object
+      summary: Send OTP Email
+      tags:
+      - users
+  /users/verify_otp:
+    put:
+      consumes:
+      - application/json
+      description: Verifies the OTP entered by the user.
+      parameters:
+      - description: Verify OTP Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP successfully verified
+          schema:
+            $ref: '#/definitions/structure.VerifyOTPResponse'
+        "400":
+          description: Bad request - error in verifying the OTP
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Verify OTP
       tags:
       - users
   /validate-token:
