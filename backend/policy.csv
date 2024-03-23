@@ -1,3 +1,7 @@
+p, VISITOR,/api/v1/users/, POST
+p, VISITOR,/api/v1/login, POST
+p, VISITOR,/api/v1/loginemail, POST
+p, VISITOR,/api/v1/loginphone, POST
 p, USER,/api/v1/events/, GET
 p, USER,/api/v1/events/:id, GET
 p, USER,/api/v1/events/participant, GET
@@ -8,9 +12,6 @@ p, USER,/api/v1/users/:id/searchevent, GET
 p, USER,/api/v1/users/:id/searchhistory, GET
 p, USER,/api/v1/users/notification, PUT
 p, USER,/api/v1/users/:event_id, DELETE
-p, USER,/api/v1/login, POST
-p, USER,/api/v1/loginemail, POST
-p, USER,/api/v1/loginphone, POST
 p, USER,/api/v1/logout, POST
 p, USER,/api/v1/auth/users,GET
 p, USER,/api/v1/upload, POST
@@ -28,9 +29,6 @@ p, ORGANIZER,/api/v1/users/:id/searchevent, GET
 p, ORGANIZER,/api/v1/users/:id/searchhistory, GET
 p, ORGANIZER,/api/v1/users/notification, PUT
 p, ORGANIZER,/api/v1/users/:event_id, DELETE
-p, ORGANIZER,/api/v1/login, POST
-p, ORGANIZER,/api/v1/loginemail, POST
-p, ORGANIZER,/api/v1/loginphone, POST
 p, ORGANIZER,/api/v1/logout, POST
 p, ORGANIZER,/api/v1/auth/users,GET
 p, ORGANIZER,/api/v1/upload, POST
@@ -39,6 +37,7 @@ p, ORGANIZER,/api/v1/participate/is_registered, GET
 p, ORGANIZER,/api/v1/problems/, (GET)|(POST)
 p, ORGANIZER,/api/v1/problems/:id, (GET)|(DELETE)
 p, ADMIN,/api/v1/*, *
+g, VISITOR,VISITOR
 g, USER,USER
 g, ORGANIZER,ORGANIZER
 g, ADMIN,ADMIN

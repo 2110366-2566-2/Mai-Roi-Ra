@@ -130,80 +130,88 @@ func Authentication() gin.HandlerFunc {
 	}
 }
 
-func Authorization() gin.HandlerFunc {
+func TestAuthorization() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Extract token from Authorization header
-		const BearerSchema = "Bearer "
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
-			return
-		}
-
-		if !strings.HasPrefix(authHeader, BearerSchema) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
-			return
-		}
-
-		tokenString := authHeader[len(BearerSchema):]
-
-		// Parse JWT token
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Make sure token's algorithm is what you expect
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
-			return []byte(SecretKey), nil
-		})
-
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token " + err.Error()})
-			return
-		}
-
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			user_role, ok := claims["role"].(string)
-			if !ok {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-				return
-			}
-
-			CasbinEnforcer, _ := casbin.NewEnforcer("model.conf","policy.csv")
+		CasbinEnforcer, _ := casbin.NewEnforcer("model.conf","policy.csv")
 			// Check authorization using Casbin
 			// If CasbinEnforcer is not initialized, you'll need to initialize it first
 			if CasbinEnforcer == nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "CasbinEnforcer is not initialized"})
 				return
 			}
+		c.Next();
+	}
+}
 
-			// Get user's role from Casbin
-			roles, err := CasbinEnforcer.GetRolesForUser(user_role)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user's role"})
-				return
-			}
-			role := roles[0]
-
-			// Store user's role in the context
-			c.Set(KeyRole, role)
-
-			path := c.Request.URL.Path
-			request := c.Request
-
-			// Check if the user's role is allowed
-			if res, _ := CasbinEnforcer.Enforce(role, path, request); !res {
-				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
-				return
-			} 
-
-			fmt.Println("Authorization successful")
-		} else {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+func Authorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract token from Authorization header
+		CasbinEnforcer, _ := casbin.NewEnforcer("model.conf","policy.csv")
+		// Check authorization using Casbin
+		// If CasbinEnforcer is not initialized, you'll need to initialize it first
+		if CasbinEnforcer == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "CasbinEnforcer is not initialized"})
 			return
 		}
+		user_role := ""
+		const BearerSchema = "Bearer "
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" || !strings.HasPrefix(authHeader, BearerSchema){
+			user_role = "VISITOR"
+		} else {
+			tokenString := authHeader[len(BearerSchema):]
+		
+			if(tokenString == "") {
+				user_role = "VISITOR"
+			} else {
+				// Parse JWT token
+				token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+				// Make sure token's algorithm is what you expect
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+				}
+				return []byte(SecretKey), nil
+				})
 
+				if err != nil {
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token " + err.Error()})
+					return
+				}
+
+				if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+					user_role, ok = claims["role"].(string)
+					if !ok {
+						c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+						return
+					}
+
+				} else {
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+					return
+				}
+			}
+		}
+
+		// Store user's role in the context
+		c.Set(KeyRole, user_role)
+
+		path := c.Request.URL.Path
+		request := c.Request.Method
+
+		fmt.Println(user_role)
+		fmt.Println(path)
+		fmt.Println(request)
+
+		// Check if the user's role is allowed
+		if res, _ := CasbinEnforcer.Enforce(user_role, path, request); !res {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+			return
+		} 
+
+		fmt.Println("Authorization successful")
 		// Process request
 		c.Next()
+
 	}
 }
 
