@@ -11,5 +11,13 @@ const APPROVED = "Approved"
 const WAITING = "Waiting"
 const REJECTED = "Rejected"
 
+const COMPLETED = "Completed"
 const PENDING = "Pending"
 const REPLIED = "Replied"
+const CANCELLED = "Cancelled"
+
+const PROFILE = "profile"
+const EVENT = "event"
+
+const THB = "thb"
+

@@ -18,6 +18,8 @@ type Gateway struct {
 	ParticipateController  *ParticipateController
 	AnnouncementController *AnnouncementController
 	ProblemController      *ProblemController
+	UserController         *UserController
+	TransactionController  *TransactionController
 }
 
 // NewController ...

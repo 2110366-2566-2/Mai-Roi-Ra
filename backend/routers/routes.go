@@ -3,8 +3,6 @@ package routers
 import (
 	"log"
 
-	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
-
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/token"
@@ -39,14 +37,15 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 
 	groupRoutes := r.Group("api/v1")
 
-	err := c.Invoke(func(eventController *controllers.EventController, locationController *controllers.LocationController, userController *controllers.UserController, testController *controllers.TestController, announcementController *controllers.AnnouncementController, participateController *controllers.ParticipateController, problemController *controllers.ProblemController) {
-		setupEventRoutes(groupRoutes, eventController)
-		setupLocationRoutes(groupRoutes, locationController)
-		setupUserRoutes(groupRoutes, userController)
-		setupTestRoutes(groupRoutes, testController)
-		setupAnnouncementRoutes(groupRoutes, announcementController)
-		setupParticipateRoutes(groupRoutes, participateController)
-		setupProblemRoutes(groupRoutes, problemController)
+	err := c.Invoke(func(controller *controllers.Controller) {
+		setupEventRoutes(groupRoutes, controller.Gateway.EventController)
+		setupLocationRoutes(groupRoutes, controller.Gateway.LocationController)
+		setupUserRoutes(groupRoutes, controller.Gateway.UserController)
+		setupTestRoutes(groupRoutes, controller.Gateway.TestController)
+		setupAnnouncementRoutes(groupRoutes, controller.Gateway.AnnouncementController)
+		setupParticipateRoutes(groupRoutes, controller.Gateway.ParticipateController)
+		setupProblemRoutes(groupRoutes, controller.Gateway.ProblemController)
+		setupTransactionRoutes(groupRoutes, controller.Gateway.TransactionController)
 	})
 
 	if err != nil {
@@ -64,6 +63,7 @@ func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventControlle
 		eventRoutes.GET("/", controller.GetEventLists)
 		eventRoutes.GET("/:id", controller.GetEventDataById)
 		eventRoutes.PUT("/:id", controller.UpdateEvent)
+		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)
 		eventRoutes.DELETE("/:id", controller.DeleteEventById)
 		eventRoutes.GET("/participant", controller.GetParticipantLists)
 	}
@@ -83,11 +83,13 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		userRoutes.POST("/participate", controller.RegisterEvent)
 		userRoutes.GET("/:id", controller.GetUserByUserId)
 		userRoutes.GET("/events", controller.GetParticipatedEventLists)
-		userRoutes.GET("/:id/searchevent", controller.SearchEvent)
+		userRoutes.POST("/:id/searchevent", controller.SearchEvent)
 		userRoutes.GET("/:id/searchhistory", controller.GetSearchHistories)
 		userRoutes.PUT("/:id", controller.UpdateUserInformation)
 		userRoutes.PUT("/notification", controller.ToggleNotifications)
 		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)
+		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)
+		userRoutes.PUT("/verify_otp", controller.VerifyOTP)
 	}
 	loginRoutes := r.Group("")
 	{
@@ -103,9 +105,11 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 }
 
 func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController) {
-	testRoutes := r.Group("/test")
+	testRoutes := r
 	{
+		testRoutes.POST("/upload", controller.TestUpload)
 		testRoutes.GET("/", controller.GetTest)
+		testRoutes.GET("/test/qr", controller.TestCreatePromptPayPayment)
 	}
 }
 
@@ -120,10 +124,10 @@ func setupAnnouncementRoutes(r *gin.RouterGroup, controller *controllers.Announc
 }
 
 func setupParticipateRoutes(r *gin.RouterGroup, controller *controllers.ParticipateController) {
-    participateRoutes := r.Group("/participate")
-    {
-        participateRoutes.GET("/is_registered", controller.IsRegistered)
-    }
+	participateRoutes := r.Group("/participate")
+	{
+		participateRoutes.GET("/is_registered", controller.IsRegistered)
+	}
 }
 
 func setupProblemRoutes(r *gin.RouterGroup, controller *controllers.ProblemController) {
@@ -134,5 +138,13 @@ func setupProblemRoutes(r *gin.RouterGroup, controller *controllers.ProblemContr
 		problemRoutes.GET("/", controller.GetProblemLists)
 		problemRoutes.PUT("/:id", controller.UpdateProblem)
 		problemRoutes.DELETE("/:id", controller.DeleteProblemById)
+	}
+}
+
+func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.TransactionController) {
+	transactionRoutes := r.Group("/transactions")
+	{
+		transactionRoutes.POST("/qr", controller.CreateQRPromptPay)
+		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
 	}
 }

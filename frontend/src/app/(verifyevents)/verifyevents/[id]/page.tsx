@@ -23,10 +23,10 @@ export default async function EventDetailPage({ params }: Props) {
   const participants = await getEventParticipants(params.id);
   let numParticipants = 0;
 
-  // participants.participant_list.forEach((participant: any) => {
-  //   numParticipants += participant.num_participant;
-  //   // Perform any desired operations with numParticipants
-  // });
+  participants.participant_list.forEach((participant: any) => {
+    numParticipants += participant.num_participant;
+    // Perform any desired operations with numParticipants
+  });
 
   return (
     <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
@@ -80,10 +80,10 @@ export default async function EventDetailPage({ params }: Props) {
           </div>
           <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
             <RegisterEventBox event={event} isRegisterable={isRegisterable} />
-            {/* <ParticipantListModal
+            <ParticipantListModal
               participants={participants}
               numParticipants={numParticipants}
-            /> */}
+            />
           </div>
         </div>
       </div>

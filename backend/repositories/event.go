@@ -5,7 +5,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 
@@ -24,7 +23,7 @@ type IEventRepository interface {
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
-	SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventRepository(
@@ -56,22 +55,57 @@ func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventRespons
 func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error) {
 	log.Println("[Repo: UpdateEvent]: Called")
 
-	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
-		Updates(map[string]interface{}{
-			"StartDate":      req.StartDate,
-			"EndDate":        req.EndDate,
-			"Status":         req.Status,
-			"ParticipantFee": req.ParticipantFee,
-			"Description":    req.Description,
-			"EventName":      req.EventName,
-			"Deadline":       req.Deadline,
-			"Activities":     req.Activities,
-			"EventImage":     req.EventImage,
-			"UpdatedAt":      time.Now(),
-		}).Error; err != nil {
-		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
-		return nil, err
+	// Find the event by event_id
+    var modelEvent models.Event
+    if err := r.db.Where("event_id = ?", req.EventId).First(&modelEvent).Error; err != nil {
+        log.Println("[Repo: UpdateEvent] event_id not found")
+        return nil, err
+    }
+
+    // Update the fields
+    if !req.StartDate.IsZero() {
+        modelEvent.StartDate = req.StartDate
+    }
+
+    if !req.EndDate.IsZero() {
+        modelEvent.EndDate = req.EndDate
+    }
+
+    if req.Status != "" {
+        modelEvent.Status = req.Status
+    }
+
+    if req.ParticipantFee != 0.0 {
+		modelEvent.ParticipantFee = req.ParticipantFee
 	}
+
+    if req.Description != "" {
+        modelEvent.Description = req.Description
+    }
+
+    if req.EventName != "" {
+        modelEvent.EventName = req.EventName
+    }
+
+    if !req.Deadline.IsZero() {
+        modelEvent.Deadline = req.Deadline
+    }
+
+    if req.Activities != "" {
+        modelEvent.Activities = req.Activities
+    }
+
+    if req.EventImage != nil {
+        modelEvent.EventImage = req.EventImage
+    }
+
+	modelEvent.UpdatedAt = time.Now()
+
+    // Save the updated version
+    if err := r.db.Save(&modelEvent).Error; err != nil {
+        log.Println("[Repo: UpdateEventInformation] Error updating event in the database:", err)
+        return nil, err
+    }
 
 	return &st.UpdateEventResponse{
 		EventId: req.EventId,
@@ -193,27 +227,18 @@ func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string
 	return &eventModel.UserId, &eventModel.OrganizerId, nil
 }
 
-func (r *EventRepository) SearchEvent(req *st.SearchEventRequest) ([]*models.Event, error) {
-	log.Println("[Repo: SearchEvent] Called")
-	var eventLists []*models.Event
-	query := r.db
-
-	query = query.Where(`status=?`, constant.APPROVED)
-
-	if req.Search != "" {
-		search := "%" + req.Search + "%"
-		query = query.Where(`event_name ILIKE ? OR description ILIKE ? `, search, search)
-	}
-
-	query = query.Offset(req.Offset)
-
-	if req.Limit > 0 {
-		query = query.Limit(req.Limit)
-	}
-
-	if err := query.Find(&eventLists).Error; err != nil {
-		log.Println("[Repo: SearchEvent]: cannot query the events:", err)
+func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	log.Println("[Repo: VerifyEvent]: Called")
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+		Updates(map[string]interface{}{
+			"Status":    req.Status,
+			"UpdatedAt": time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
 		return nil, err
 	}
-	return eventLists, nil
+	res := &st.VerifyEventResponse{
+		Message: "Verify Event Successful",
+	}
+	return res, nil
 }
