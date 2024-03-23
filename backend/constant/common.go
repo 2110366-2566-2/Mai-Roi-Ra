@@ -14,7 +14,7 @@ const REJECTED = "Rejected"
 const COMPLETED = "Completed"
 const PENDING = "Pending"
 const REPLIED = "Replied"
-const CANCELED = "Canceled"
+const CANCELLED = "Cancelled"
 
 const PROFILE = "profile"
 const EVENT = "event"
