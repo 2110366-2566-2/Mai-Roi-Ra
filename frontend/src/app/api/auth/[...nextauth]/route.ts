@@ -1,58 +1,74 @@
-// const handler = NextAuth(authOptions)
-// export {handler as GET, handler as POST}
 import NextAuth from "next-auth/next";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import userLogin from "@/libs/userLogin";
+import { parse } from 'cookie';
 
-export const authOptions:AuthOptions = {
+export const authOptions: AuthOptions = {
     providers: [
-        // Authentication Provider, use Credentials Provider
         CredentialsProvider({
-            // The name to display on the sign in form (e.g. "Sign in with...")
             name: "Credentials",
-            // `credentials` is used to generate a form on the sign in page.
-            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-            // e.g. domain, username, password, 2FA token, etc.
-            // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-              email: { label: "Email", type: "text", placeholder: "email" },
-              password: { label: "Password", type: "password" }
+                email: { label: "Email", type: "text", placeholder: "email" },
+                password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-
-              if (!credentials) return null
-
-              const user = await userLogin(credentials.email, credentials.password)
-              // const user = {id:"1",name:"J",email:"j@gmail.com"}
-
-              if (user) {
-                // Any object returned will be saved in `user` property of the JWT
-                return user
-              } else {
-                // If you return null then an error will be displayed advising the user to check their details.
-                return null
-
-                // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
-              }
+                if (!credentials) return null;
+                if (credentials.email && credentials.password) {
+                    const user = await userLogin(credentials.email, credentials.password);
+                    if (user) {
+                        return user;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    const cookies = parse(req.headers?.cookie || "");
+                    const token = cookies["token"];
+                    try {
+                        const parts = token.split('.');
+                        if (parts.length !== 3) {
+                            throw new Error('The token is invalid');
+                        }
+                        
+                        // Decode the payload
+                        const payload = parts[1];
+                        const decodedPayload = atob(payload.replace(/_/g, '/').replace(/-/g, '+'));
+                        const jsonParsed = JSON.parse(decodedPayload);
+                
+                        const sessionUser = {
+                            organizer_id: jsonParsed.organizer_id,
+                            user_id: jsonParsed.user_id,
+                            name: jsonParsed.username || "",
+                            email: jsonParsed.email,
+                            role: jsonParsed.role,
+                            token: token
+                        };
+                        
+                        console.log("SESSION:", sessionUser)
+                        return sessionUser;
+                    } catch (error) {
+                        console.error('Failed to decode JWT:', error);
+                        return null;
+                    }
+                }
             }
-          })
+        }),
     ],
     pages: {
-      signIn: "/api/auth/signin",
-      signOut: "/auth/signout"
+        signIn: "/auth/signin",
+        signOut: "/auth/signout"
     },
-    session: {strategy: "jwt"},
+    session: { strategy: "jwt" },
     callbacks: {
-      async jwt({token, user}) {
-        return {...token, ...user}
-      },
-      async session({session, token, user}) {
-        session.user = token as any
-        return session
-      }
+        async jwt({ token, user }) {
+            return { ...token, ...user }; // Merge token and user information
+        },
+        async session({ session, token }) {
+            session.user = token;
+            return session; // Return the session with user information
+        }
     }
-}
+};
 
-const handler = NextAuth(authOptions)
-export {handler as GET, handler as POST}
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

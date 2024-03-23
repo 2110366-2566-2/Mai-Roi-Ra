@@ -20,7 +20,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id VARCHAR(255) NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
-    username VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) NOT NULL,
     phone_number CHAR(10) UNIQUE,
     email VARCHAR(64) UNIQUE,
     first_name VARCHAR(64) NOT NULL,

@@ -21,3 +21,5 @@ const EVENT = "event"
 
 const THB = "thb"
 
+const FRONT_END_URL = "http://localhost:3000"
+

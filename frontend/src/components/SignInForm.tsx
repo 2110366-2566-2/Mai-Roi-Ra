@@ -45,6 +45,10 @@ const SignInForm = () => {
     );
   };
 
+  const handleLoginGoogle = () => {
+    window.location.href = 'http://localhost:8080/api/v1/auth/google/login';
+  }
+
   return (
     <div className="text-black bg-white w-screen h-screen flex justify-center items-center">
       <div
@@ -143,6 +147,11 @@ const SignInForm = () => {
             Sign up
           </Link>
         </div>
+        <span className="ml-[3px]">
+            <button onClick={handleLoginGoogle}>
+              Click me
+            </button>
+          </span>
       </div>
     </div>
   );
