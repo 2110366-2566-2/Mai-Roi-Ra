@@ -13,6 +13,8 @@ type Config struct {
 	PgDB    *PgDB
 	Email   *Email
 	S3      *S3
+	Omise   *Omise
+	Stripe  *Stripe
 }
 
 type App struct {
@@ -46,6 +48,16 @@ type S3 struct {
 	AwsBucketEventName   string
 }
 
+type Omise struct {
+	PublicKey string
+	SecretKey string
+}
+
+type Stripe struct {
+	PublicKey string
+	SecretKey string
+}
+
 func NewConfig(path string) (*Config, error) {
 	if err := godotenv.Load(path); err != nil {
 		log.Println("Error loading .env file: ", err)
@@ -77,6 +89,14 @@ func NewConfig(path string) (*Config, error) {
 			AwsSecretKey:         os.Getenv("AWS_SECRET_ACCESS_KEY"),
 			AwsBucketProfileName: os.Getenv("AWS_BUCKET_PROFILE_NAME"),
 			AwsBucketEventName:   os.Getenv("AWS_BUCKET_EVENT_NAME"),
+		},
+		Omise: &Omise{
+			PublicKey: os.Getenv("OMISE_PUBLIC_KEY"),
+			SecretKey: os.Getenv("OMISE_SECRET_KEY"),
+		},
+		Stripe: &Stripe{
+			PublicKey: os.Getenv("STRIPE_PUBLIC_KEY"),
+			SecretKey: os.Getenv("STRIPE_SECRET_KEY"),
 		},
 	}, nil
 }

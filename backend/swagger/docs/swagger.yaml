@@ -147,6 +147,16 @@ definitions:
       user_id:
         type: string
     type: object
+  structure.CreateQRPromptPayRequest:
+    properties:
+      transaction_amount:
+        type: number
+      user_id:
+        type: string
+    required:
+    - transaction_amount
+    - user_id
+    type: object
   structure.CreateUserRequest:
     properties:
       address:
@@ -296,6 +306,19 @@ definitions:
           $ref: '#/definitions/structure.ParticipatedEvent'
         type: array
     type: object
+  structure.GetPaymentIntentByIdResponse:
+    properties:
+      currency:
+        type: string
+      paymentClientSecret:
+        type: string
+      paymentIntentId:
+        type: string
+      status:
+        type: string
+      transactionAmount:
+        type: number
+    type: object
   structure.GetProblemListsResponse:
     properties:
       problem_lists:
@@ -440,6 +463,8 @@ definitions:
     type: object
   structure.RegisterEventRequest:
     properties:
+      amount:
+        type: integer
       event_id:
         type: string
       num_participant:
@@ -447,6 +472,7 @@ definitions:
       user_id:
         type: string
     required:
+    - amount
     - event_id
     - num_participant
     - user_id
@@ -549,6 +575,11 @@ definitions:
   structure.TestResponse:
     properties:
       message:
+        type: string
+    type: object
+  structure.TransactionResponse:
+    properties:
+      response:
         type: string
     type: object
   structure.UpdateEventRequest:
@@ -1406,6 +1437,88 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /test/qr:
+    get:
+      consumes:
+      - application/json
+      description: Get a test message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: TestCreatePromptPayPayment
+      tags:
+      - Test
+  /transactions/payment-intent/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of a payment intent by its ID
+      parameters:
+      - description: Payment Intent ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Retrieve Payment Intent by ID
+      tags:
+      - transactions
+  /transactions/qr:
+    post:
+      consumes:
+      - application/json
+      description: CreateQRPromptPay for user to pay
+      parameters:
+      - description: Get PromptPay
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateQRPromptPayRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: CreateQRPromptPay
+      tags:
+      - transactions
   /users:
     post:
       consumes:
