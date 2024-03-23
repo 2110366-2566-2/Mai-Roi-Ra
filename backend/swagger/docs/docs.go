@@ -803,13 +803,11 @@ const docTemplate = `{
                 "summary": "Log out a user",
                 "parameters": [
                     {
-                        "description": "Log out a user",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.LogoutUserRequest"
-                        }
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2387,17 +2385,6 @@ const docTemplate = `{
                 "token": {
                     "type": "string"
                 },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.LogoutUserRequest": {
-            "type": "object",
-            "required": [
-                "user_id"
-            ],
-            "properties": {
                 "user_id": {
                     "type": "string"
                 }
