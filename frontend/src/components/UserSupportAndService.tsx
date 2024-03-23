@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import FAQlist from "./FAQlist";
+import ProblemList from "./ProblemList";
 // Other imports...
 
 export default function UserSupportAndService() {
@@ -39,6 +41,8 @@ export default function UserSupportAndService() {
             </button>
           ))}
         </div>
+        {activeTab == "FAQ" && <FAQlist></FAQlist>}
+        {activeTab == "Problem" && <ProblemList></ProblemList>}
       </div>
     </div>
   );
