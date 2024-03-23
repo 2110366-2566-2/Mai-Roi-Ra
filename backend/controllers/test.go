@@ -7,6 +7,7 @@ import (
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
@@ -86,4 +87,26 @@ func (c *TestController) TestUpload(ctx *gin.Context) {
 		return
 	}
 	log.Println(url)
+}
+
+// @Summary TestCreatePromptPayPayment
+// @Description Get a test message
+// @Tags Test
+// @Accept json
+// @Produce json
+// @Success 200 {object} object "OK"
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /test/qr [get]
+func (c *TestController) TestCreatePromptPayPayment(ctx *gin.Context) {
+	log.Println("[CTRL: TestCreatePromptPayPayment]: Called ")
+	Stripe := payment.NewStripeService()
+	resURL, err := Stripe.CreatePromptPayPayment(1000000, constant.THB)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		ctx.Abort()
+		return
+	}
+	log.Println("[CTRL: TestCreatePromptPayPayment] Output:", resURL)
+	ctx.JSON(http.StatusOK, resURL)
 }
