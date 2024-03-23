@@ -70,11 +70,8 @@ const CreateEventForm = () => {
             } if (province == "" ){
                 setError("Province Required");
                 return;
-            } if (imageSrc == "") {
-                setError("Image Source Required");
-                return;
             } if (!selectedImage) {
-                setError("Invalid Picture URI");
+                setError("Image Required");
                 return;
             } 
             const currentDate = dayjs();

@@ -7,7 +7,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 
 export async function HandleCreateEvent(name:string,activity:string, startdate:string, endDate:string, price:number, location:string, district:string, 
-    province:string, description:string, imageSrc:string){
+    province:string, description:string, imageSrc:File){
     const session = await getServerSession(authOptions);
     const user = session?.user;
 

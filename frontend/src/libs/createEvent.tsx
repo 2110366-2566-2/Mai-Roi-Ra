@@ -9,7 +9,7 @@ export default async function createEvent(
     province: string,
     price: number,
     description: string,
-    imageSrc: string,
+    imageSrc: File,
     start_date: string,
     end_date: string,
     token:string

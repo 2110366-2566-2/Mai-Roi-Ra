@@ -17,7 +17,7 @@ interface Props {
     district:string
     province:string
     description:string
-    imageSrc:string
+    imageSrc:File
     topic:string
     isVisible:boolean
 }
