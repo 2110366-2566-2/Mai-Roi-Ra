@@ -2,9 +2,11 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import EventItem from '@/components/EventItem';
 import SearchBar from '@/components/SearchBar';
 import getEvents from '@/libs/getEvents';
+import getUserProfile from '@/libs/getUserProfile';
 import getUserSearchHistory from '@/libs/getUserSearchHistory';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 import { Suspense } from 'react';
 
 interface Props {
@@ -20,10 +22,10 @@ export default async function UserHomepage({page,limit,search} : Props) {
   const user = session?.user;
   console.log(events);
   console.log(user);
-  // const history = (user == undefined) ? [] : ['Example 1', 'Example 2','Example 1', 'Example 2','Example 1', 'Example 2'];
   const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id);
   console.log(history.search_history);
 
+  revalidatePath('profile');
   return (
     <main className="text-black flex flex-col h-screen overflow-hidden">
       <Suspense fallback={<div className="flex justify-center items-center w-full h-full text-[40px]">Loading...</div>}>

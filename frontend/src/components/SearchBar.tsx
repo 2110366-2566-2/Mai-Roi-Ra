@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import SearchIcon from '@mui/icons-material/Search';
 import SearchHistoryItem from './SearchHistoryItem';
 import { useSession } from "next-auth/react";
+import { HandleCreateUserSearchHistory } from "./admin/handler/HandleCreateUserSearchHistory";
+import Link from "next/link";
 
 interface Props {
     last_page: number;
@@ -25,19 +27,25 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
     const [searching,setSearching] = useState("");
     const [focus,setFocus] = useState(false);
     const [searchHover,setSearchHover] = useState(false);
-    const [searchHistory, setSearchHistory] = useState(history);
+    const searchHistory = history;
     const session = useSession();
     const user = session?.data?.user;
-
-    const handleSubmit = () => {
+    
+    const handleSubmit = async () => {
         if (searching == "") {
             return;
         } else {
+            const temp = searching;
             setSearching("");
-            router.push(`/homepage?search=${searching}`);
+            setFocus(false);
+            if (user != undefined) {
+                await HandleCreateUserSearchHistory(user?.user_id,temp,user?.token);
+            } else {
+                router.push(`/homepage?search=${temp}`);
+            }
         }
     }
-
+    
     console.log(user);
 
     return (
@@ -78,9 +86,13 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
 
                     {focus ? (
                         <div className="absolute top-full w-full bg-white shadow-lg max-h-60 overflow-auto z-10">
-                            {searchHistory.map((item, index) => (
-                                <SearchHistoryItem index={index} item={item} setFocus={setFocus} setSearch={setSearching}/>
-                            ))}
+                            
+                                {searchHistory.map((item, index) => (
+                                    <Link href={`/homepage?search=${item.search_name}`}>
+                                        <SearchHistoryItem index={index} item={item.search_name}/>
+                                    </Link>
+                                ))}
+
                         </div>
                     ) : null} 
                 </div>                  

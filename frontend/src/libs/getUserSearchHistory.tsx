@@ -6,7 +6,9 @@ export default async function getUserSearchHistory(user_id : string) {
 		method: "GET",
 		headers: {
 		'Accept': 'application/json', 
-		},
+		}, next: {
+            tags: ['searchhistory']
+        }
 	});
 
 	if (!response.ok) {
