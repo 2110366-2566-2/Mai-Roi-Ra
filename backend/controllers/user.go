@@ -371,29 +371,14 @@ func (c *UserController) ToggleNotifications(ctx *gin.Context) {
 // @Produce json
 // @Param user_id path string true "user_id"
 // @Param search query string true "search"
-// @Param offset query string false "offset i.e. 0"
-// @Param limit query string false "Items per page i.e. 10"
 // @Success 200 {object} structure.SearchEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
-// @Router /users/{user_id}/searchevent [get]
+// @Router /users/{user_id}/searchevent [post]
 func (c *UserController) SearchEvent(ctx *gin.Context) {
-	offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
-		return
-	}
-
-	limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
-		return
-	}
 	req := &st.SearchEventRequest{
 		UserId: ctx.Param("id"),
 		Search: ctx.Query("search"),
-		Offset: offset,
-		Limit:  limit,
 	}
 	log.Println("[CTRL: SearchEvent] Input:", req)
 	res, err := c.ServiceGateway.UserService.SearchEvent(req)
@@ -424,5 +409,56 @@ func (c *UserController) GetSearchHistories(ctx *gin.Context) {
 		return
 	}
 	log.Println("[CTRL: GetSearchHistories] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Send OTP Email
+// @Description Sends an OTP email to the specified recipients.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body st.SendOTPEmailRequest true "Send OTP Email Request"
+// @Success 200 {object} st.SendOTPEmailResponse "OTP email successfully sent"
+// @Failure 400 {object} object "Bad request - error in sending the OTP email"
+// @Router /users/send_otp_email [put]
+func (c *UserController) SendOTPEmail(ctx *gin.Context) {
+	var req *st.SendOTPEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: SendOTPEmail]: Input:", req)
+	res, err := c.ServiceGateway.UserService.SendOTPEmail(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: SendOTPEmail]: Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Verify OTP
+// @Description Verifies the OTP entered by the user.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body st.VerifyOTPRequest true "Verify OTP Request"
+// @Success 200 {object} st.VerifyOTPResponse "OTP successfully verified"
+// @Failure 400 {object} object "Bad request - error in verifying the OTP"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/verify_otp [put]
+func (c *UserController) VerifyOTP(ctx *gin.Context) {
+	var req *st.VerifyOTPRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: VerifyOTP] Input:", req)
+	res, err := c.ServiceGateway.UserService.VerifyOTP(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: VerifyOTP] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

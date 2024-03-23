@@ -139,12 +139,10 @@ type GetParticipatedEventListsResponse struct {
 type SearchEventRequest struct {
 	UserId string `json:"user_id" binding:"required"`
 	Search string `json:"search"`
-	Offset int    `json:"offset"`
-	Limit  int    `json:"limit"`
 }
 
 type SearchEventResponse struct {
-	EventsList []ParticipatedEvent `json:"event_list"`
+	Message string `json:"message"`
 }
 
 type SearchHistory struct {
@@ -154,4 +152,22 @@ type SearchHistory struct {
 
 type GetSearchHistoriesResponse struct {
 	SearchHistoryList []SearchHistory `json:"search_history"`
+}
+
+type SendOTPEmailRequest struct {
+	UserId string `json:"user_id"`
+	Email  string `json:"email"`
+}
+
+type SendOTPEmailResponse struct {
+	Message string `json:"message"`
+}
+
+type VerifyOTPRequest struct {
+	UserId string `json:"user_id"`
+	OTP    string `json:"otp"`
+}
+
+type VerifyOTPResponse struct {
+	Verified bool `json:"verified"`
 }

@@ -1,71 +1,74 @@
-"use client";
-import React from "react";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import DeletePopUp from "@/components/DeletePopUp";
-import { useState } from "react";
-import Image from "next/image";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import EventItem from "@/components/EventItem";
+import SearchBar from "@/components/SearchBar";
 import getEvents from "@/libs/getEvents";
-import AdminHomepage from "@/components/AdminHomepage";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+import { getServerSession } from "next-auth";
+import { Suspense } from "react";
 
-interface EventItem {
-  event_id: string;
-  event_name: string;
-  start_date: string;
-  end_date: string;
-  description: string;
-  city: string;
-  district: string;
-  event_image: string;
-  // Add other fields as necessary
+interface Props {
+  page: number;
+  limit: number;
+  search: string;
 }
 
-interface UserHomepageProps {
-  datas: EventItem[];
-}
+export default async function UserHomepage({ page, limit, search }: Props) {
+  const events = await getEvents({
+    offset: page,
+    limit: limit,
+    search: search,
+  });
+  const datas = events.event_lists;
+  const session = getServerSession(authOptions);
 
-const UserHomepage: React.FC<UserHomepageProps> = ({ datas }) => {
+  console.log(events);
   return (
-    <div className="text-black">
-      <div className="lg:pt-8 pt-2 pl-10">
-        <h1 className="font-bold lg:text-5xl text-3xl lg:mb-8 md:mb-7 mb-5">
-          Explore Event
-        </h1>
-        <div className="flex flex-row justify-start w-full">
-          <input
-            type="text"
-            id="search-event"
-            name="search-event"
-            placeholder="Search"
-            className="border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[70%] md:w-[70%] w-[55%] mr-[20px] pl-2"
+    <main className="text-black flex flex-col h-screen overflow-hidden">
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center w-full h-full text-[40px]">
+            Loading...
+          </div>
+        }
+      >
+        <div className="flex-shrink-0 pt-8 px-10">
+          <h1 className="font-bold lg:text-5xl md:text-4xl text-3xl lg:mb-8 mb-5">
+            Explore Event
+          </h1>
+          <SearchBar
+            page={events.total_pages > 0 ? page : 0}
+            last_page={events.total_pages}
+            search={search}
           />
-          <button
-            className="border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[80px] md:w-[80px] w-[65px] hover:scale-105 duration-300
-                lg:ml-[20px] md:ml-[15px] sm:ml-[10px] ml-[10px]"
-          >
-            Filter
-          </button>
         </div>
-      </div>
-      <div className="my-8 px-4 lg:px-10">
-        {datas.map((eventItem: any) => (
-          <EventItem
-            key={eventItem.event_id}
-            id={eventItem.event_id}
-            name={eventItem.event_name}
-            startDate={eventItem.start_date}
-            endDate={eventItem.end_date}
-            description={eventItem.description}
-            city={eventItem.city}
-            district={eventItem.district}
-            imgSrc={eventItem.event_image}
-            page={0}
-            role="USER"
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
 
-export default UserHomepage;
+        {events.total_events > 0 ? (
+          <div className="bg-white py-[5px] mt-[20px] overflow-y-auto">
+            {datas.map((eventItem: any) => (
+              <EventItem
+                key={eventItem.event_id}
+                id={eventItem.event_id}
+                name={eventItem.event_name}
+                startDate={eventItem.start_date}
+                endDate={eventItem.end_date}
+                description={eventItem.description}
+                city={eventItem.city}
+                district={eventItem.district}
+                imgSrc={eventItem.event_image}
+                page={0}
+                role="USER"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="h-[50%] items-center flex justify-center flex-row w-full text-[25px] text-gray-500">
+            <div className="w-full text-center space-y-[20px]">
+              <SearchOffIcon className="text-[100px]" />
+              <div>No Search Result</div>
+            </div>
+          </div>
+        )}
+      </Suspense>
+    </main>
+  );
+}

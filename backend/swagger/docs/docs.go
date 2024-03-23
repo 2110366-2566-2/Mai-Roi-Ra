@@ -1328,6 +1328,92 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/send_otp_email": {
+            "put": {
+                "description": "Sends an OTP email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Send OTP Email",
+                "parameters": [
+                    {
+                        "description": "Send OTP Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendOTPEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP email successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendOTPEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the OTP email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/verify_otp": {
+            "put": {
+                "description": "Verifies the OTP entered by the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Verify OTP",
+                "parameters": [
+                    {
+                        "description": "Verify OTP Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.VerifyOTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP successfully verified",
+                        "schema": {
+                            "$ref": "#/definitions/structure.VerifyOTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in verifying the OTP",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{event_id}": {
             "delete": {
                 "description": "Cancel Register an event based on user_id and event_id",
@@ -1468,7 +1554,7 @@ const docTemplate = `{
             }
         },
         "/users/{user_id}/searchevent": {
-            "get": {
+            "post": {
                 "description": "Search the Event",
                 "consumes": [
                     "application/json"
@@ -1494,18 +1580,6 @@ const docTemplate = `{
                         "name": "search",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "offset i.e. 0",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Items per page i.e. 10",
-                        "name": "limit",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1678,6 +1752,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "is_enable_notification": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "last_name": {
@@ -2298,11 +2375,8 @@ const docTemplate = `{
         "structure.SearchEventResponse": {
             "type": "object",
             "properties": {
-                "event_list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/structure.ParticipatedEvent"
-                    }
+                "message": {
+                    "type": "string"
                 }
             }
         },
@@ -2359,6 +2433,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendOTPEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendOTPEmailResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -2557,6 +2650,25 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.VerifyOTPRequest": {
+            "type": "object",
+            "properties": {
+                "otp": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.VerifyOTPResponse": {
+            "type": "object",
+            "properties": {
+                "verified": {
+                    "type": "boolean"
                 }
             }
         }

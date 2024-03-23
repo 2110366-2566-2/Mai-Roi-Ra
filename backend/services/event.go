@@ -382,7 +382,7 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 	}
 
 	if email == "" {
-		return errors.New("organizer email not found")
+		return nil
 	}
 
 	to = append(to, email)
@@ -473,7 +473,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	}
 
 	if email == "" {
-		return errors.New("organizer email not found")
+		return nil
 	}
 
 	to = append(to, email)
