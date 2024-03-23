@@ -382,6 +382,13 @@ definitions:
     required:
     - first_name
     type: object
+  structure.LogoutUserRequest:
+    properties:
+      user_id:
+        type: string
+    required:
+    - user_id
+    type: object
   structure.Participant:
     properties:
       address:
@@ -1212,11 +1219,12 @@ paths:
       description: Logs out a user by invalidating the session token associated with
         the uid.
       parameters:
-      - description: User ID
-        in: path
-        name: user_id
+      - description: Log out a user
+        in: body
+        name: request
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/structure.LogoutUserRequest'
       produces:
       - application/json
       responses:

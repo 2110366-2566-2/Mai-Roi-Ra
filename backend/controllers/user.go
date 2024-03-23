@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	"github.com/gin-gonic/gin"
@@ -212,13 +211,19 @@ func (c *UserController) LoginUserPhone(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user_id path string true "User ID"
+// @Param request body structure.LogoutUserRequest true "Log out a user"
 // @Success 200 {object} map[string]interface{} "Confirms the user has been logged out."
 // @Failure 400 {object} map[string]string "Returns an error if logout fails."
 // @Router /logout [post]
 func (c *UserController) LogoutUser(ctx *gin.Context) {
 	var req *st.LogoutUserRequest
-	req.UserID = ctx.GetString(middleware.KeyUserID)
+	// log.Println(middleware.KeyUserID)
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		log.Println("hi you are here")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// req.UserID = ctx.GetString(middleware.KeyUserID)
 	log.Println("[CTRL: LogoutUser] Input:", req)
 	res, err := c.ServiceGateway.UserService.LogoutUser(req)
 	if err != nil {
