@@ -105,6 +105,7 @@ type RegisterEventRequest struct {
 	UserId         string `json:"user_id" binding:"required"`
 	EventId        string `json:"event_id" binding:"required"`
 	NumParticipant int    `json:"num_participant" binding:"required"`
+	Amount         int    `json:"amount" binding:"required"`
 }
 
 type CancelRegisterEventRequest struct {
@@ -113,7 +114,7 @@ type CancelRegisterEventRequest struct {
 }
 
 type RegisterEventResponse struct {
-	Message string `json:"message"`
+	Message      string `json:"message"`
 }
 
 type ParticipatedEvent struct {

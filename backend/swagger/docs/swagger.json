@@ -1130,6 +1130,131 @@
                 }
             }
         },
+        "/test/qr": {
+            "get": {
+                "description": "Get a test message",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "TestCreatePromptPayPayment",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/qr": {
+            "post": {
+                "description": "CreateQRPromptPay for user to pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "CreateQRPromptPay",
+                "parameters": [
+                    {
+                        "description": "Get PromptPay",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateQRPromptPayRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Create a new user with the provided details.",
@@ -1902,6 +2027,21 @@
                 }
             }
         },
+        "structure.CreateQRPromptPayRequest": {
+            "type": "object",
+            "required": [
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -2126,6 +2266,26 @@
                 }
             }
         },
+        "structure.GetPaymentIntentByIdResponse": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "paymentClientSecret": {
+                    "type": "string"
+                },
+                "paymentIntentId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transactionAmount": {
+                    "type": "number"
+                }
+            }
+        },
         "structure.GetProblemListsResponse": {
             "type": "object",
             "properties": {
@@ -2342,11 +2502,15 @@
         "structure.RegisterEventRequest": {
             "type": "object",
             "required": [
+                "amount",
                 "event_id",
                 "num_participant",
                 "user_id"
             ],
             "properties": {
+                "amount": {
+                    "type": "integer"
+                },
                 "event_id": {
                     "type": "string"
                 },
@@ -2510,6 +2674,14 @@
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }
