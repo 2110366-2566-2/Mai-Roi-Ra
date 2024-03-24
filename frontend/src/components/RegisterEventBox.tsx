@@ -10,6 +10,7 @@ import participateEvent from "@/libs/participateEvent";
 import Modal from "./Modal";
 import verifyEvent from "@/libs/VerifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
+import { useRouter } from "next/navigation";
 
 interface Event {
   activities: string;
@@ -41,6 +42,8 @@ export default function RegisterEventBox({
   const { data: session } = useSession();
   console.log(session);
 
+  const router = useRouter();
+
   const handleRegisterEventButton = async () => {
     try {
       // Call the userRegister function to register the user for the event
@@ -63,6 +66,7 @@ export default function RegisterEventBox({
       const verificationResult = await verifyEvent(event.event_id);
       // Handle successful registration
       console.log("Verify successful:", verificationResult);
+      router.push("/homepage");
     } catch (error: any) {
       // Handle registration error
       console.error("Verify failed:", error.message);
