@@ -1147,6 +1147,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/refunds": {
+            "post": {
+                "description": "CreateRefund for user to initiate refund process",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "CreateRefund",
+                "parameters": [
+                    {
+                        "description": "Refund Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateRefundRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateRefundResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -2166,6 +2212,35 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.CreateRefundRequest": {
+            "type": "object",
+            "required": [
+                "refund_reason",
+                "transaction_id"
+            ],
+            "properties": {
+                "refund_amount": {
+                    "type": "number"
+                },
+                "refund_reason": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateRefundResponse": {
+            "type": "object",
+            "properties": {
+                "refund_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -2937,11 +3012,19 @@ const docTemplate = `{
         },
         "structure.UpdateUserRoleRequest": {
             "type": "object",
+            "required": [
+                "role",
+                "user_id",
+                "username"
+            ],
             "properties": {
                 "role": {
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
