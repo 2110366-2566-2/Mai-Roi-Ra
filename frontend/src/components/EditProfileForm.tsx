@@ -122,6 +122,11 @@ export default function EditProfileForm({
     }
   };
 
+  const handleCancleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    router.push("/profile");
+  };
+
   return (
     <div className="w-full">
       <form className="space-y-6" onSubmit={handleEditProfileSubmit}>
@@ -274,11 +279,17 @@ export default function EditProfileForm({
             {allInputsFilled ? "" : "All fields must be filled correctly !"}
           </div>
         </div>
-        <div className="pt-8">
+        <div className="pt-8 flex items-center justify-center">
+          <button
+            type="button"
+            className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4 xl:mr-6 mr-6 rounded-full bg-gray-300 hover:bg-gray-400"
+            onClick={handleCancleClick}
+          >
+            Cancel
+          </button>
           <button
             type="submit"
-            className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
-            style={{ backgroundColor: "#F2D22E" }}
+            className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4  xl:ml-8 ml-6 rounded-full bg-[#F2D22E] hover:bg-yellow-500"
           >
             Done
           </button>

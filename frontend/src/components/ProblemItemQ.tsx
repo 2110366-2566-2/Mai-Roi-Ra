@@ -17,7 +17,7 @@ import AnnouncementPopup from "./AnnouncementPopup";
 //   role: string;
 // }
 
-export default function ProblemItem() {
+export default function ProblemItemQ() {
   return (
     <div className="text-black">
       <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-105 duration-300"></div>
