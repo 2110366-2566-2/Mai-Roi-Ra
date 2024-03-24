@@ -234,6 +234,10 @@ definitions:
         type: string
       event_name:
         type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
       location_id:
         type: string
       location_name:
@@ -675,6 +679,12 @@ definitions:
         type: string
       user_id:
         type: string
+      username:
+        type: string
+    required:
+    - role
+    - user_id
+    - username
     type: object
   structure.UserResponse:
     properties:
@@ -1072,6 +1082,10 @@ paths:
         name: status
         required: true
         type: string
+      - description: Admin ID
+        in: query
+        name: admin_id
+        type: string
       produces:
       - application/json
       responses:
@@ -1316,7 +1330,6 @@ paths:
       - description: Problem Status (Replied or Pending)
         in: query
         name: status
-        required: true
         type: string
       produces:
       - application/json

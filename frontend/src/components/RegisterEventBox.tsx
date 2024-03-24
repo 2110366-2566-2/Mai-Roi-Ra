@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import participateEvent from "@/libs/participateEvent";
 import Modal from "./Modal";
+import verifyEvent from "@/libs/VerifyEvent";
+import rejectEvent from "@/libs/rejectEvent";
 
 interface Event {
   activities: string;
@@ -56,6 +58,28 @@ export default function RegisterEventBox({
     }
   };
 
+  const handleVerifyEventButton = async () => {
+    try {
+      const verificationResult = await verifyEvent(event.event_id);
+      // Handle successful registration
+      console.log("Verify successful:", verificationResult);
+    } catch (error: any) {
+      // Handle registration error
+      console.error("Verify failed:", error.message);
+    }
+  };
+
+  const handleRejectEventButton = async () => {
+    try {
+      const rejectedResult = await rejectEvent(event.event_id);
+      // Handle successful registration
+      console.log("Reject successful:", rejectedResult);
+    } catch (error: any) {
+      // Handle registration error
+      console.error("Reject failed:", error.message);
+    }
+  };
+
   const [numberOfGuest, setNumberOfGuest] = useState(1);
 
   const startyear = event.start_date.substring(0, 4);
@@ -93,9 +117,19 @@ export default function RegisterEventBox({
   const isRegistrationClosed = currentDate > enddateCompare;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdminVerifyModalOpen, setIsAdminVerifyModalOpen] = useState(false);
+  const [isAdminRejectModalOpen, setIsAdminRejectModalOpen] = useState(false);
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const closeAdminVerifyModal = () => {
+    setIsAdminVerifyModalOpen(false);
+  };
+
+  const closeAdminRejectModal = () => {
+    setIsAdminRejectModalOpen(false);
   };
   console.log(`${endyear}-${endmonth}-${endday}`, "date");
 
@@ -113,7 +147,7 @@ export default function RegisterEventBox({
             onClick={() => {
               closeModal();
             }}
-            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 w-[82px]"
+            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 hover:bg-gray-400 w-[82px]"
           >
             Cancel
           </button>
@@ -122,7 +156,61 @@ export default function RegisterEventBox({
               closeModal();
               handleRegisterEventButton();
             }}
-            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] w-[82px]"
+            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
+          >
+            Yes
+          </button>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isAdminVerifyModalOpen}
+        closeModal={closeAdminVerifyModal}
+        title="Are you sure to verify to this event?"
+        style={null}
+      >
+        <p>The event cannot be rejected in the future.</p>
+        <div className="w-full flex justify-between">
+          <button
+            onClick={() => {
+              closeAdminVerifyModal();
+            }}
+            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 hover:bg-gray-400 w-[82px]"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              closeAdminVerifyModal();
+              handleVerifyEventButton();
+            }}
+            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
+          >
+            Yes
+          </button>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isAdminRejectModalOpen}
+        closeModal={closeAdminRejectModal}
+        title="Are you sure to reject to this event?"
+        style={null}
+      >
+        <p>The event cannot be verified in the future.</p>
+        <div className="w-full flex justify-between">
+          <button
+            onClick={() => {
+              closeAdminRejectModal();
+            }}
+            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 hover:bg-gray-400 w-[82px]"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              closeAdminRejectModal();
+              handleRejectEventButton();
+            }}
+            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
           >
             Yes
           </button>
@@ -192,11 +280,21 @@ export default function RegisterEventBox({
         </div>
         {session && session?.user.role == "ADMIN" && (
           <div className="flex justify-center items-center">
-            <button className="text-center bg-[#F2D22E] hover:bg-yellow-500 rounded-lg py-4 px-12 mx-2">
-              Verify
-            </button>
-            <button className="text-center bg-[#F2D22E] hover:bg-yellow-500 rounded-lg py-4 px-12 mx-2">
+            <button
+              className="text-center bg-gray-300 text-white hover:bg-gray-400 rounded-lg py-4 px-12 mx-2"
+              onClick={() => {
+                setIsAdminRejectModalOpen(true);
+              }}
+            >
               Reject
+            </button>
+            <button
+              className="text-center bg-[#F2D22E] text-white hover:bg-yellow-500 rounded-lg py-4 px-12 mx-2"
+              onClick={() => {
+                setIsAdminVerifyModalOpen(true);
+              }}
+            >
+              Verify
             </button>
           </div>
         )}

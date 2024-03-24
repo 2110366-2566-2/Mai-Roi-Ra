@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import ProblemItem from "./ProblemItem";
 // Other imports...
 
 export default function AdminSupportAndService() {
@@ -39,6 +40,9 @@ export default function AdminSupportAndService() {
             </button>
           ))}
         </div>
+      </div>
+      <div className="my-8 px-4 lg:px-10">
+        <ProblemItem></ProblemItem>
       </div>
     </div>
   );

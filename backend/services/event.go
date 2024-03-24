@@ -45,10 +45,6 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	if err != nil {
 		return nil, err
 	}
-	resAdmin, err := s.RepositoryGateway.UserRepository.GetRandomAdmin()
-	if err != nil {
-		return nil, err
-	}
 	startDate, err := utils.StringToTime(req.StartDate)
 	if err != nil {
 		log.Println("[Service: CreateEvent] Error parsing StartDate to time.Time format:", err)
@@ -70,7 +66,6 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	eventModel := models.Event{
 		EventId:        utils.GenerateUUID(),
 		OrganizerId:    req.OrganizerId,
-		UserId:         resAdmin.UserID,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -188,11 +183,23 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if err != nil {
 		return nil, err
 	}
+	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return nil, err
+	}
+	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+		UserId: orgUserId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	res := &st.GetEventDataByIdResponse{
 		EventId:          resEvent.EventId,
 		OrganizerId:      resEvent.OrganizerId,
-		UserId:           resEvent.UserId,
+		UserId:           resEvent.AdminId,
 		LocationId:       resLocation.LocationId,
+		FirstName:        orgUserInfo.FirstName,
+		LastName:         orgUserInfo.LastName,
 		StartDate:        utils.GetDate(resEvent.StartDate),
 		EndDate:          utils.GetDate(resEvent.EndDate),
 		Status:           resEvent.Status,
@@ -262,7 +269,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
-		UserId:         resEvent.UserId,
+		AdminId:        resEvent.AdminId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -477,7 +484,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	}
 
 	to = append(to, email)
-	
+
 	contentHTML := fmt.Sprintf(`
     <html>
     <head>
