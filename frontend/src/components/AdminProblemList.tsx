@@ -7,7 +7,7 @@ interface Props {
   datas: any[];
 }
 
-export default function ProblemList({ datas }: Props) {
+export default function AdminProblemList({ datas }: Props) {
   console.log(datas);
   return (
     <main className="text-black flex flex-col h-screen overflow-hidden">
@@ -21,7 +21,6 @@ export default function ProblemList({ datas }: Props) {
           />
         ))}
       </div>
-      <ReportProblemButton></ReportProblemButton>
     </main>
   );
 }

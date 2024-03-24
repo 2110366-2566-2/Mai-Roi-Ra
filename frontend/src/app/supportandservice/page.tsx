@@ -11,25 +11,27 @@ import getProblems from "@/libs/getProblems";
 
 export default async function Homepage() {
   const session = await getServerSession(authOptions);
-  // const events = await getEvents();
   console.log("successfully loaded Support and Service Page");
-  // console.log(events);
-
 
   if (!session || !session.user || !session.user.token) return null;
-  const problems = session ? await getProblems(session.user.user_id) : null;
+
+  // ชั่วคราว
+  // const problems = session ? await getProblems(session.user.user_id) : null;
+  // ชั่วคราว
+  const problems = session
+    ? await getProblems("39a8389f-4869-4442-b0eb-d5cf519e54aa")
+    : null; // ชั่วคราว
+  // ชั่วคราว
 
   let datas;
   datas = problems.problem_lists;
 
-
   return (
     <main className="bg-white text-black h-full">
       {session?.user.role == "ADMIN" ? (
-        <AdminSupportAndService></AdminSupportAndService>
+        <AdminSupportAndService datas={datas}></AdminSupportAndService>
       ) : (
-        <UserSupportAndService datas={datas} >
-        </UserSupportAndService>
+        <UserSupportAndService datas={datas}></UserSupportAndService>
       )}
     </main>
   );

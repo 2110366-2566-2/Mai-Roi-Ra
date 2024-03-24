@@ -1,8 +1,13 @@
 "use client";
 import React, { useState } from "react";
-// Other imports...
+import AdminProblemList from "./AdminProblemList";
+import ProblemList from "./ProblemList";
 
-export default function AdminSupportAndService() {
+interface Props {
+  datas: any[];
+}
+
+export default function AdminSupportAndService({ datas }: Props) {
   const [activeTab, setActiveTab] = useState("Problem");
 
   const handleTabClick = (tab: string) => {
@@ -40,7 +45,11 @@ export default function AdminSupportAndService() {
           ))}
         </div>
       </div>
-      <div className="my-8 px-4 lg:px-10"></div>
+      {activeTab == "Problem" && (
+        <div className="my-8 px-4 lg:px-10">
+          <AdminProblemList datas={datas}></AdminProblemList>
+        </div>
+      )}
     </div>
   );
 }
