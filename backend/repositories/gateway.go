@@ -22,6 +22,8 @@ type RepositoryGateway struct {
 	AnnouncementRepository IAnnouncementRepository
 	ProblemRepository      IProblemRepository
 	SearchRepository       ISearchRepository
+	OtpRepository          IOtpRepository
+	TransactionRepository  ITransactionRepository
 }
 
 // NewRepository ...

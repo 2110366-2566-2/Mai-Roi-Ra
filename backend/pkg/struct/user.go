@@ -57,8 +57,6 @@ type LogoutUserRequest struct {
 	//Token  string
 
 }
-type LogoutUserResponse struct {
-}
 
 // email login
 type LoginUserEmailRequest struct {
@@ -105,6 +103,7 @@ type RegisterEventRequest struct {
 	UserId         string `json:"user_id" binding:"required"`
 	EventId        string `json:"event_id" binding:"required"`
 	NumParticipant int    `json:"num_participant" binding:"required"`
+	Amount         int    `json:"amount" binding:"required"`
 }
 
 type CancelRegisterEventRequest struct {
@@ -139,12 +138,10 @@ type GetParticipatedEventListsResponse struct {
 type SearchEventRequest struct {
 	UserId string `json:"user_id" binding:"required"`
 	Search string `json:"search"`
-	Offset int    `json:"offset"`
-	Limit  int    `json:"limit"`
 }
 
 type SearchEventResponse struct {
-	EventsList []ParticipatedEvent `json:"event_list"`
+	Message string `json:"message"`
 }
 
 type SearchHistory struct {
@@ -154,4 +151,32 @@ type SearchHistory struct {
 
 type GetSearchHistoriesResponse struct {
 	SearchHistoryList []SearchHistory `json:"search_history"`
+}
+
+type SendOTPEmailRequest struct {
+	UserId string `json:"user_id"`
+	Email  string `json:"email"`
+}
+
+type SendOTPEmailResponse struct {
+	Message string `json:"message"`
+}
+
+type VerifyOTPRequest struct {
+	UserId string `json:"user_id"`
+	OTP    string `json:"otp"`
+}
+
+type VerifyOTPResponse struct {
+	Verified bool `json:"verified"`
+}
+
+type UpdateUserRoleRequest struct {
+	UserId   string `json:"user_id" binding:"required"`
+	Username string `json:"username" binding:"required"`
+	Role     string `json:"role" binding:"required"`
+}
+
+type UserResponse struct {
+	Response string `json:"response"`
 }

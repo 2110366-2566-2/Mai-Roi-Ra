@@ -8,11 +8,14 @@ import (
 )
 
 type Config struct {
-	App     *App
-	MongoDB *MongoDB
-	PgDB    *PgDB
-	Email   *Email
-	S3      *S3
+	App        *App
+	MongoDB    *MongoDB
+	PgDB       *PgDB
+	Email      *Email
+	GoogleAuth *GoogleAuth
+	S3         *S3
+	Omise      *Omise
+	Stripe     *Stripe
 }
 
 type App struct {
@@ -38,12 +41,28 @@ type Email struct {
 	Password string
 }
 
+type GoogleAuth struct {
+	ClientId     string
+	ClientSecret string
+	CallbackURL  string
+}
+
 type S3 struct {
 	AwsRegion            string
 	AwsAccessKeyID       string
 	AwsSecretKey         string
 	AwsBucketProfileName string
 	AwsBucketEventName   string
+}
+
+type Omise struct {
+	PublicKey string
+	SecretKey string
+}
+
+type Stripe struct {
+	PublicKey string
+	SecretKey string
 }
 
 func NewConfig(path string) (*Config, error) {
@@ -71,12 +90,26 @@ func NewConfig(path string) (*Config, error) {
 			Address:  os.Getenv("EMAIL_SENDER_ADDRESS"),
 			Password: os.Getenv("EMAIL_SENDER_PASSWORD"),
 		},
+
+		GoogleAuth: &GoogleAuth{
+			ClientId:     os.Getenv("GOOGLE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			CallbackURL:  os.Getenv("GOOGLE_CALLBACK_URL"),
+		},
 		S3: &S3{
 			AwsRegion:            os.Getenv("AWS_REGION"),
 			AwsAccessKeyID:       os.Getenv("AWS_ACCESS_KEY_ID"),
 			AwsSecretKey:         os.Getenv("AWS_SECRET_ACCESS_KEY"),
 			AwsBucketProfileName: os.Getenv("AWS_BUCKET_PROFILE_NAME"),
 			AwsBucketEventName:   os.Getenv("AWS_BUCKET_EVENT_NAME"),
+		},
+		Omise: &Omise{
+			PublicKey: os.Getenv("OMISE_PUBLIC_KEY"),
+			SecretKey: os.Getenv("OMISE_SECRET_KEY"),
+		},
+		Stripe: &Stripe{
+			PublicKey: os.Getenv("STRIPE_PUBLIC_KEY"),
+			SecretKey: os.Getenv("STRIPE_SECRET_KEY"),
 		},
 	}, nil
 }

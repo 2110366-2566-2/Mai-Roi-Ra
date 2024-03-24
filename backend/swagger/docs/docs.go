@@ -245,6 +245,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/{provider}/login": {
+            "get": {
+                "description": "Get list of all participated events of the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "LoginGoogle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "provider",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/events": {
             "get": {
                 "description": "Get list of events",
@@ -801,21 +845,11 @@ const docTemplate = `{
                     "users"
                 ],
                 "summary": "Log out a user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Confirms the user has been logged out.",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/structure.UserResponse"
                         }
                     },
                     "400": {
@@ -1136,6 +1170,131 @@ const docTemplate = `{
                 }
             }
         },
+        "/test/qr": {
+            "get": {
+                "description": "Get a test message",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "TestCreatePromptPayPayment",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/qr": {
+            "post": {
+                "description": "CreateQRPromptPay for user to pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "CreateQRPromptPay",
+                "parameters": [
+                    {
+                        "description": "Get PromptPay",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateQRPromptPayRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Create a new user with the provided details.",
@@ -1165,6 +1324,50 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/auth/{provider}/callback": {
+            "get": {
+                "description": "Get info of user from Gmail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "CallbackGoogle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "provider",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
                         }
                     },
                     "400": {
@@ -1328,6 +1531,132 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/send_otp_email": {
+            "put": {
+                "description": "Sends an OTP email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Send OTP Email",
+                "parameters": [
+                    {
+                        "description": "Send OTP Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendOTPEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP email successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendOTPEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the OTP email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/update_user_role": {
+            "put": {
+                "description": "Updates the role of a user based on the provided request.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update User Role",
+                "parameters": [
+                    {
+                        "description": "Update User Role Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateUserRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User successfully updated",
+                        "schema": {
+                            "$ref": "#/definitions/structure.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in updating user role",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/verify_otp": {
+            "put": {
+                "description": "Verifies the OTP entered by the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Verify OTP",
+                "parameters": [
+                    {
+                        "description": "Verify OTP Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.VerifyOTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP successfully verified",
+                        "schema": {
+                            "$ref": "#/definitions/structure.VerifyOTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in verifying the OTP",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{event_id}": {
             "delete": {
                 "description": "Cancel Register an event based on user_id and event_id",
@@ -1468,7 +1797,7 @@ const docTemplate = `{
             }
         },
         "/users/{user_id}/searchevent": {
-            "get": {
+            "post": {
                 "description": "Search the Event",
                 "consumes": [
                     "application/json"
@@ -1494,18 +1823,6 @@ const docTemplate = `{
                         "name": "search",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "offset i.e. 0",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Items per page i.e. 10",
-                        "name": "limit",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1680,6 +1997,9 @@ const docTemplate = `{
                 "is_enable_notification": {
                     "type": "boolean"
                 },
+                "is_verified": {
+                    "type": "boolean"
+                },
                 "last_name": {
                     "type": "string"
                 },
@@ -1825,6 +2145,21 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateQRPromptPayRequest": {
+            "type": "object",
+            "required": [
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "transaction_amount": {
+                    "type": "number"
                 },
                 "user_id": {
                     "type": "string"
@@ -2055,6 +2390,26 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.GetPaymentIntentByIdResponse": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "paymentClientSecret": {
+                    "type": "string"
+                },
+                "paymentIntentId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transactionAmount": {
+                    "type": "number"
+                }
+            }
+        },
         "structure.GetProblemListsResponse": {
             "type": "object",
             "properties": {
@@ -2271,11 +2626,15 @@ const docTemplate = `{
         "structure.RegisterEventRequest": {
             "type": "object",
             "required": [
+                "amount",
                 "event_id",
                 "num_participant",
                 "user_id"
             ],
             "properties": {
+                "amount": {
+                    "type": "integer"
+                },
                 "event_id": {
                     "type": "string"
                 },
@@ -2298,11 +2657,8 @@ const docTemplate = `{
         "structure.SearchEventResponse": {
             "type": "object",
             "properties": {
-                "event_list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/structure.ParticipatedEvent"
-                    }
+                "message": {
+                    "type": "string"
                 }
             }
         },
@@ -2359,6 +2715,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendOTPEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendOTPEmailResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -2423,6 +2798,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }
@@ -2552,11 +2935,49 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.UpdateUserRoleRequest": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UserResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.VerifyEventResponse": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.VerifyOTPRequest": {
+            "type": "object",
+            "properties": {
+                "otp": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.VerifyOTPResponse": {
+            "type": "object",
+            "properties": {
+                "verified": {
+                    "type": "boolean"
                 }
             }
         }

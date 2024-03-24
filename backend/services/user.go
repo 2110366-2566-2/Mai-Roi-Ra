@@ -1,15 +1,24 @@
 package services
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
+	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,7 +38,7 @@ type IUserService interface {
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 	GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.User, error)
 	LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error)
-	LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error)
+	LogoutUser(req *st.LogoutUserRequest) (*st.UserResponse, error)
 	ValidateToken(token string) (*models.User, error)
 	LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error)
 	LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUserPhoneResponse, error)
@@ -41,6 +50,12 @@ type IUserService interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
+	LoginGoogle(c *gin.Context) (*goth.User, error)
+	CallbackGoogle(c *gin.Context) (*string, *bool, error)
+	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) // New function to send OTP email
+	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
+	GetUserOTP(userId *string) (*string, *time.Time, error)
+	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -90,10 +105,16 @@ func (s *UserService) CreateUser(req *st.CreateUserRequest) (*st.CreateUserRespo
 	}
 	req.Password = string(hashedPassword)
 
-	res, err := s.RepositoryGateway.UserRepository.CreateUser(req)
+	res, err := s.RepositoryGateway.UserRepository.CreateUser(req, constant.NORMAL, false)
 	if err != nil {
 		log.Println("[Service: CreateUser]: Error creating user", err)
 		return nil, err
+	}
+
+	otpError := s.RepositoryGateway.OtpRepository.CreateOTP(res)
+	if otpError != nil {
+		log.Println("[Service: CreateUser]: Error creating user in OTP table]", otpError)
+		return nil, otpError
 	}
 
 	resService := &st.CreateUserResponse{
@@ -197,7 +218,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 	// }
 
 	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	token, err := GenerateJWTToken(user, organizerId) // Replace with actual JWT token generation logic
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -252,7 +273,7 @@ func (s *UserService) LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUs
 	// }
 
 	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	token, err := GenerateJWTToken(user, "") // Replace with actual JWT token generation logic
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -305,7 +326,7 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 	// }
 
 	// Generate a JWT token (or any other form of token/session identifier)
-	token, err := GenerateJWTToken(user) // Replace with actual JWT token generation logic
+	token, err := GenerateJWTToken(user, "") // Replace with actual JWT token generation logic
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -334,7 +355,7 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 }
 
 // LogoutUser implements IUserService.
-func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserResponse, error) {
+func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.UserResponse, error) {
 	log.Printf("[Service: LogoutUser]: Attempting to remove token for UserID: %s", req.UserID)
 	err := s.RepositoryGateway.UserRepository.UpdateUserToken(req.UserID, "") // Attempt to remove token
 	if err != nil {
@@ -343,7 +364,9 @@ func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.LogoutUserRespo
 	}
 
 	log.Printf("[Service: LogoutUser]: Token removed successfully for UserID: %s", req.UserID)
-	res := &st.LogoutUserResponse{}
+	res := &st.UserResponse{
+		Response: "Logout successful",
+	}
 	return res, nil
 }
 
@@ -359,28 +382,17 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 }
 
 // GenerateJWTToken generates a new JWT token for authenticated users
-func GenerateJWTToken(user *models.User) (string, error) {
+func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
 	var secretKey = []byte("YourSecretKey")
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-	// 	"user_id":  user.UserID,                           // Include the user's ID
-	// 	"username": user.Username,                         // Include the username
-	// 	"email":    user.Email,                            // Include the email
-	// 	"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
-	// })
 
-	// tokenString, err := token.SignedString(secretKey)
-	// if err != nil {
-	// 	return "", err
-	// }
-
-	// return tokenString, nil
 	claims := jwt.MapClaims{
-		"user_id":  user.UserID,                           // Include the user's ID
-		"username": user.Username,                         // Include the username
-		"role":     user.Role,                             // Include user's role
-		"email":    user.Email,                            // Include the email
-		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
+		"user_id":      user.UserID,                           // Include the user's ID
+		"username":     user.Username,                         // Include the username
+		"role":         user.Role,                             // Include user's role
+		"email":        user.Email,                            // Include the email
+		"exp":          time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
+		"organizer_id": orgId,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secretKey))
@@ -496,40 +508,14 @@ func (s *UserService) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.R
 
 func (s *UserService) SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error) {
 	log.Println("[Service: SearchEvent]: Called")
-	_, err := s.RepositoryGateway.SearchRepository.SaveSearchEvent(req)
+	res, err := s.RepositoryGateway.SearchRepository.SaveSearchEvent(req)
 	if err != nil {
 		log.Println("[Service: Call repo SaveSearchEvent error]:", err)
 	}
-	res, err := s.RepositoryGateway.EventRepository.SearchEvent(req)
-	if err != nil {
-		log.Println("[Service: Call repo SearchEvent error]:", err)
-		return nil, err
-	}
 
-	resLists := &st.SearchEventResponse{
-		EventsList: make([]st.ParticipatedEvent, 0),
-	}
-
-	for _, v := range res {
-		locName, err := s.RepositoryGateway.LocationRepository.GetLocationById(v.LocationId)
-		if err != nil {
-			log.Println("[Service: SearchEvent] called repo location error", err)
-			return nil, err
-		}
-
-		eventData := st.ParticipatedEvent{
-			EventId:      v.EventId,
-			EventName:    v.EventName,
-			StartDate:    v.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
-			EndDate:      v.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
-			EventImage:   v.EventImage,
-			LocationName: locName.LocationName,
-			Description:  v.Description,
-		}
-		resLists.EventsList = append(resLists.EventsList, eventData)
-	}
-
-	return resLists, nil
+	return &st.SearchEventResponse{
+		Message: *res,
+	}, nil
 }
 
 func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error) {
@@ -551,4 +537,215 @@ func (s *UserService) GetSearchHistories(userId *string) (*st.GetSearchHistories
 		resLists.SearchHistoryList = append(resLists.SearchHistoryList, historyData)
 	}
 	return resLists, nil
+}
+
+func (s *UserService) LoginGoogle(c *gin.Context) (*goth.User, error) {
+	log.Println("[Service: LoginGoogle]: Called")
+	provider := c.Param("provider")
+
+	// Manually set the provider name in the request context
+	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
+	c.Request = c.Request.WithContext(ctx)
+
+	user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+	if err != nil {
+		// If an error occurs, it means the user is not authenticated, so we start the auth process.
+		log.Println("HELLO")
+		log.Println("Error:", err.Error())
+		gothic.BeginAuthHandler(c.Writer, c.Request)
+		return nil, nil
+	}
+	return &user, nil
+}
+
+func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
+	log.Println("[Service: CallbackGoogle]: Called")
+	provider := c.Param("provider")
+
+	// Manually set the provider name in the request context
+	ctx := context.WithValue(c.Request.Context(), gothic.ProviderParamKey, provider)
+	c.Request = c.Request.WithContext(ctx)
+
+	gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+	if err != nil {
+		log.Println("[Service: CallbackGoogle]: Gothic CallbackGoogle error:", err)
+		return nil, nil, err
+	}
+	log.Println("Call from CallbackGoogle", gothUser)
+
+	// Define the createUserRequest here, based on data from gothUser
+
+	email := ""
+	if gothUser.Email != "" {
+		email = gothUser.Email
+	}
+
+	createUserRequest := st.CreateUserRequest{
+		Username:  gothUser.NickName,
+		Email:     &email,
+		FirstName: gothUser.FirstName,
+		LastName:  gothUser.LastName,
+		Password:  "",
+		Address:   gothUser.Location,
+		District:  "",
+		Province:  "",
+		Role:      constant.USER,
+	}
+
+	var flag = true
+
+	_, err = s.RepositoryGateway.UserRepository.GetUserByEmail(*createUserRequest.Email)
+	if err != nil {
+		_, err := s.RepositoryGateway.UserRepository.CreateUser(&createUserRequest, constant.GOOGLE, true)
+		if err != nil {
+			return nil, nil, err
+		}
+		flag = false
+	}
+
+	existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
+	if err != nil {
+		log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
+		return nil, nil, err
+	}
+
+	orgRes, _ := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(existingUser.UserID)
+
+	token, tokenErr := GenerateJWTToken(existingUser, orgRes)
+	if tokenErr != nil {
+		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
+		return nil, nil, tokenErr
+	}
+
+	// Update token
+	if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
+		return nil, nil, err
+	}
+
+	return &token, &flag, nil
+}
+
+func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) {
+	log.Println("[Service: SendOTPEmail]: Called")
+
+	// Generate OTP
+	otp := utils.GenerateOTP()
+	log.Println("The User OTP is ", otp)
+
+	// Set OTP expiration time (e.g., 5 minutes from now)
+	otpExpiresAt := time.Now().Add(2 * time.Minute)
+
+	// Update the user's OTP and expiration time in the database
+	if err := s.RepositoryGateway.OtpRepository.UpdateUserOTP(req.UserId, otp, otpExpiresAt); err != nil {
+		return nil, fmt.Errorf("failed to update user OTP: %w", err)
+	}
+
+	// Configuration and email sender initialization
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return nil, err
+	}
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+
+	// Email content
+	subject := "Your OTP for Mai-Roi-Ra"
+	contentHTML := fmt.Sprintf(`
+	<html>
+	<head>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				font-size: 16px;
+				line-height: 1.6;
+				margin: 40px auto;
+				max-width: 600px;
+				color: #333333;
+			}
+			h3 {
+				font-size: 24px;
+				margin-bottom: 20px;
+				color: #333333;
+			}
+			p {
+				margin-bottom: 20px;
+				color: #666666;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Your OTP for Mai-Roi-Ra</h3>
+		<p>Your OTP is: <strong>%s</strong></p>
+		<p>Please use this OTP to complete your action in the Mai-Roi-Ra platform.</p>
+	</body>
+	</html>
+	`, otp)
+
+	// Sending email
+	if err := sender.SendEmail(subject, "", contentHTML, []string{req.Email}, nil, nil, nil); err != nil {
+		return nil, err
+	}
+
+	return &st.SendOTPEmailResponse{
+		Message: "OTP email sent successfully",
+	}, nil
+}
+
+func (s *UserService) VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error) {
+	log.Println("[Service: VerifyOTP]: Called")
+
+	otp, expired, err := s.GetUserOTP(&req.UserId)
+	if err != nil {
+		log.Println("[Service: VerifyOTP]: Call GetUserOTP error", err)
+		return nil, err
+	}
+
+	// Check if the OTP is correct and not expired
+	isVerified := *otp == req.OTP && time.Now().Before(*expired)
+
+	if isVerified {
+		err := s.RepositoryGateway.UserRepository.UpdateVerified(&req.UserId)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &st.VerifyOTPResponse{
+		Verified: isVerified,
+	}, nil
+}
+
+func (s *UserService) GetUserOTP(userId *string) (*string, *time.Time, error) {
+	log.Println("[Service: GetUserOTP]: Called")
+	otp, expired, err := s.RepositoryGateway.OtpRepository.GetUserOTP(userId)
+	if err != nil {
+		log.Println("[Service: GetUserOTP]: Called repo and error: ", err)
+		return nil, nil, err
+	}
+	return otp, expired, nil
+}
+
+func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error) {
+	log.Println("[Service: UpdateUserRole]: Called")
+	checkOrg, err := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("CHECKORG:", checkOrg)
+	if checkOrg == "" {
+		if req.Role == "Organizer" {
+			orgId, err := s.RepositoryGateway.OrganizerRepository.CreateOrganizerWithUserId(req.UserId)
+			log.Println("OrgId:", &orgId)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	res, err := s.RepositoryGateway.UserRepository.UpdateUserRole(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
