@@ -14,7 +14,7 @@ export default function ProblemList({ datas }: Props) {
     <main className="text-black flex flex-col h-screen overflow-hidden">
       <div className='py-[20px] md:mt-[20px] mt-[5px] overflow-y-auto'>
         {datas.map((problemItem:any) => (
-          <ProblemItem id={problemItem.problem_id} problem={problemItem.problem} description={problemItem.description}/>
+          <ProblemItem id={problemItem.problem_id} problem={problemItem.problem} description={problemItem.description} status={problemItem.status}/>
         ))}
       </div> 
       <ReportProblemButton></ReportProblemButton>
