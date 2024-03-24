@@ -3,7 +3,7 @@ import React, { useState, FormEvent } from "react";
 import styles from "@/styles/FontPage.module.css";
 import { useRouter } from "next/navigation";
 import updateProfile from "@/libs/updateProfile";
-import updateProfileAction from "@/action/updateProfileAction";
+import updateProfileAction from "@/action/UpdateProfileAction";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -11,8 +11,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { TextField } from "@mui/material";
+import ChooseRoleForm from "./ChooseRoleForm";
+import { redirect } from "next/navigation";
+import updateRole from "@/libs/updateUserRole";
+
 
 interface Props {
+  firstRegister: boolean;
   firstNameProp: string;
   lastNameProp: string;
   addressProp: string;
@@ -22,9 +27,11 @@ interface Props {
   emailProp: string;
   birthDateProp: string;
   userId: string;
+  token: string;
 }
 
 export default function EditProfileForm({
+  firstRegister,
   firstNameProp,
   lastNameProp,
   addressProp,
@@ -34,6 +41,7 @@ export default function EditProfileForm({
   emailProp,
   birthDateProp,
   userId,
+  token
 }: Props) {
   const isMobile = useMediaQuery("(max-width:768px)");
 
@@ -48,6 +56,7 @@ export default function EditProfileForm({
   // const [birthDate, setBirthDate] = useState(birthDateProp);
   const initialBirthDate = dayjs(birthDateProp);
   const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
+  const [role, setRole] = useState("USER");
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
 
@@ -113,6 +122,11 @@ export default function EditProfileForm({
         //   setSuccessModal(false);
         //   router.push("/profile");
         // }, 4000);
+        if(firstRegister){
+          setOpenChooseRoleForm(true);
+        }else{
+          redirect("/profile");
+        }
       } catch (err) {
         setError("Update error. Server Failed ?");
         console.log("Err: ", err);
@@ -122,9 +136,23 @@ export default function EditProfileForm({
     }
   };
 
+  const handleUpdateRole = async (role: string) => {
+    try {
+      await updateRole(role, userId,username, token);
+      // handle success, e.g. show a success message or redirect
+    } catch (error) {
+      // handle error, e.g. show an error message
+      console.error(`Error updating role: ${error}`);
+    }
+  };
+  
+  const [username, setUsername] = useState("");
+  const [openChoosRoleForm, setOpenChooseRoleForm] = useState(false);
+  console.log(openChoosRoleForm)
+
   return (
-    <div className="w-full">
-      <form className="space-y-6" onSubmit={handleEditProfileSubmit}>
+    <div className={`w-full ${openChoosRoleForm ? "" : "mt-6"}`}>
+      { !openChoosRoleForm ? <form className="space-y-6" onSubmit={handleEditProfileSubmit}>
         <div className="flex">
           <div className="relative w-full mr-2">
             <input
@@ -283,7 +311,10 @@ export default function EditProfileForm({
             Done
           </button>
         </div>
-      </form>
+      </form> 
+      : 
+      <ChooseRoleForm role={role} setRole={setRole} setOpenChooseRoleForm={setOpenChooseRoleForm} handleUpdateRole={handleUpdateRole} username={username} setUsername={setUsername}/>
+      }
       {/* {successModal && (
         <div className="fixed inset-0 z-50">
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
