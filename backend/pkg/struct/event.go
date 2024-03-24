@@ -102,6 +102,8 @@ type GetEventDataByIdResponse struct {
 	OrganizerId      string         `json:"organizer_id"`
 	UserId           string         `json:"admin_id"`
 	LocationId       string         `json:"location_id"`
+	FirstName        string         `json:"first_name"`
+	LastName         string         `json:"last_name"`
 	StartDate        string         `json:"start_date"`
 	EndDate          string         `json:"end_date"`
 	Status           string         `json:"status"`

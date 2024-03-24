@@ -188,11 +188,23 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if err != nil {
 		return nil, err
 	}
+	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return nil, err
+	}
+	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+		UserId: orgUserId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	res := &st.GetEventDataByIdResponse{
 		EventId:          resEvent.EventId,
 		OrganizerId:      resEvent.OrganizerId,
 		UserId:           resEvent.UserId,
 		LocationId:       resLocation.LocationId,
+		FirstName:        orgUserInfo.FirstName,
+		LastName:         orgUserInfo.LastName,
 		StartDate:        utils.GetDate(resEvent.StartDate),
 		EndDate:          utils.GetDate(resEvent.EndDate),
 		Status:           resEvent.Status,
@@ -477,7 +489,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	}
 
 	to = append(to, email)
-	
+
 	contentHTML := fmt.Sprintf(`
     <html>
     <head>
