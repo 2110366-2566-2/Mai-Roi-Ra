@@ -2,10 +2,15 @@
 import React, { useState } from "react";
 import FAQlist from "./FAQlist";
 import ProblemList from "./ProblemList";
+import ReportProblemButton from "./ReportProblemButton";
 // Other imports...
+interface Props {
+  datas: any[];
+}
 
-export default function UserSupportAndService() {
+export default function UserSupportAndService({ datas }: Props) {
   const [activeTab, setActiveTab] = useState("FAQ");
+  
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -42,7 +47,7 @@ export default function UserSupportAndService() {
           ))}
         </div>
         {activeTab == "FAQ" && <FAQlist></FAQlist>}
-        {activeTab == "Problem" && <ProblemList></ProblemList>}
+        {activeTab == "Problem" && <ProblemList datas={datas}></ProblemList>}
       </div>
     </div>
   );

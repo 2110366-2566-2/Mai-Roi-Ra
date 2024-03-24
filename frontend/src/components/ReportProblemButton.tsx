@@ -1,4 +1,3 @@
-'use client'
 import React, { useState } from 'react';
 import styles from "@/styles/FontPage.module.css"
 import ReportPopup from "@/components/ReportPopup";
@@ -12,11 +11,6 @@ const ReportProblemButton = () => {
 
     return (
         <div className='lg:pt-20 pt-5 px-20 text-black'>
-            {/* Topic */}
-
-
-
-            {/* Form */}
             <div className="flex flex-row justify-center w-full mt-[30px] mb-[50px]" >
                 <button className=" border-slate-400 flex justify-center flex-row items-center rounded-full 
                 lg:h-[40px] md:h-[35px] h-[35px] 
