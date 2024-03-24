@@ -56,56 +56,56 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
 	log.Println("[Repo: UpdateEvent]: Called")
 
 	// Find the event by event_id
-    var modelEvent models.Event
-    if err := r.db.Where("event_id = ?", req.EventId).First(&modelEvent).Error; err != nil {
-        log.Println("[Repo: UpdateEvent] event_id not found")
-        return nil, err
-    }
+	var modelEvent models.Event
+	if err := r.db.Where("event_id = ?", req.EventId).First(&modelEvent).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] event_id not found")
+		return nil, err
+	}
 
-    // Update the fields
-    if !req.StartDate.IsZero() {
-        modelEvent.StartDate = req.StartDate
-    }
+	// Update the fields
+	if !req.StartDate.IsZero() {
+		modelEvent.StartDate = req.StartDate
+	}
 
-    if !req.EndDate.IsZero() {
-        modelEvent.EndDate = req.EndDate
-    }
+	if !req.EndDate.IsZero() {
+		modelEvent.EndDate = req.EndDate
+	}
 
-    if req.Status != "" {
-        modelEvent.Status = req.Status
-    }
+	if req.Status != "" {
+		modelEvent.Status = req.Status
+	}
 
-    if req.ParticipantFee != 0.0 {
+	if req.ParticipantFee != 0.0 {
 		modelEvent.ParticipantFee = req.ParticipantFee
 	}
 
-    if req.Description != "" {
-        modelEvent.Description = req.Description
-    }
+	if req.Description != "" {
+		modelEvent.Description = req.Description
+	}
 
-    if req.EventName != "" {
-        modelEvent.EventName = req.EventName
-    }
+	if req.EventName != "" {
+		modelEvent.EventName = req.EventName
+	}
 
-    if !req.Deadline.IsZero() {
-        modelEvent.Deadline = req.Deadline
-    }
+	if !req.Deadline.IsZero() {
+		modelEvent.Deadline = req.Deadline
+	}
 
-    if req.Activities != "" {
-        modelEvent.Activities = req.Activities
-    }
+	if req.Activities != "" {
+		modelEvent.Activities = req.Activities
+	}
 
-    if req.EventImage != nil {
-        modelEvent.EventImage = req.EventImage
-    }
+	if req.EventImage != nil {
+		modelEvent.EventImage = req.EventImage
+	}
 
 	modelEvent.UpdatedAt = time.Now()
 
-    // Save the updated version
-    if err := r.db.Save(&modelEvent).Error; err != nil {
-        log.Println("[Repo: UpdateEventInformation] Error updating event in the database:", err)
-        return nil, err
-    }
+	// Save the updated version
+	if err := r.db.Save(&modelEvent).Error; err != nil {
+		log.Println("[Repo: UpdateEventInformation] Error updating event in the database:", err)
+		return nil, err
+	}
 
 	return &st.UpdateEventResponse{
 		EventId: req.EventId,
@@ -224,13 +224,14 @@ func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string
 		log.Println("[Repo: GetAdminAndOrganizerEventById]: cannot find event_id:", err)
 		return nil, nil, err
 	}
-	return &eventModel.UserId, &eventModel.OrganizerId, nil
+	return &eventModel.AdminId, &eventModel.OrganizerId, nil
 }
 
 func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
 	log.Println("[Repo: VerifyEvent]: Called")
 	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
 		Updates(map[string]interface{}{
+			"AdminId":   req.AdminId,
 			"Status":    req.Status,
 			"UpdatedAt": time.Now(),
 		}).Error; err != nil {

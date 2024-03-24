@@ -1082,6 +1082,10 @@ paths:
         name: status
         required: true
         type: string
+      - description: Admin ID
+        in: query
+        name: admin_id
+        type: string
       produces:
       - application/json
       responses:

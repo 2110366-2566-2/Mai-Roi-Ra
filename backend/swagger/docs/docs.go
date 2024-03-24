@@ -626,6 +626,12 @@ const docTemplate = `{
                         "name": "status",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Admin ID",
+                        "name": "admin_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
