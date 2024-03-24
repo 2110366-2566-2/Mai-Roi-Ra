@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import ProblemItemQ from "./ProblemItemQ";
 // Other imports...
 
 export default function AdminSupportAndService() {
@@ -41,9 +40,7 @@ export default function AdminSupportAndService() {
           ))}
         </div>
       </div>
-      <div className="my-8 px-4 lg:px-10">
-        <ProblemItemQ></ProblemItemQ>
-      </div>
+      <div className="my-8 px-4 lg:px-10"></div>
     </div>
   );
 }
