@@ -136,10 +136,13 @@ export default function EditProfileForm({
     }
   };
 
-  const handleUpdateRole = async (role: string) => {
+  const handleUpdateRole = async () => {
+    console.log(role,userId,username)
+
     try {
-      await updateRole(role, userId,username, token);
+      await updateRole(role, userId,username);
       // handle success, e.g. show a success message or redirect
+      router.push("/profile");
     } catch (error) {
       // handle error, e.g. show an error message
       console.error(`Error updating role: ${error}`);

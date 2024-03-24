@@ -1,6 +1,6 @@
 import { apiBackUrl } from "../constants";
 
-export default async function updateRole(role: string, user_id: string, token: string, username: string) {
+export default async function updateRole(role: string, user_id: string, username: string) {
     try {
       const jsonBody = JSON.stringify({
         role: role,
@@ -11,7 +11,7 @@ export default async function updateRole(role: string, user_id: string, token: s
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+        //   Authorization: `Bearer ${token}`,
         },
         body: jsonBody,
       });
