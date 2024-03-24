@@ -76,7 +76,8 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
               city={eventItem.city}
               district={eventItem.district}
               imgSrc={eventItem.event_image}
-              page={1}
+              page={0}
+              role="ADMIN"
             />
           ))}
         </div>
@@ -84,36 +85,50 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
       {activeTab == "Approved" && (
         <div className="my-8 px-4 lg:px-10">
           {approvedEventsDatas.map((eventItem: any) => (
-            <EventItem
-              key={eventItem.event_id}
-              id={eventItem.event_id}
-              name={eventItem.event_name}
-              startDate={eventItem.start_date}
-              endDate={eventItem.end_date}
-              description={eventItem.description}
-              city={eventItem.city}
-              district={eventItem.district}
-              imgSrc={eventItem.event_image}
-              page={1}
-            />
+            <div key={eventItem.event_id} className="relative">
+              <EventItem
+                id={eventItem.event_id}
+                name={eventItem.event_name}
+                startDate={eventItem.start_date}
+                endDate={eventItem.end_date}
+                description={eventItem.description}
+                city={eventItem.city}
+                district={eventItem.district}
+                imgSrc={eventItem.event_image}
+                page={0}
+                role="ADMIN"
+                // Add other props if necessary
+              />
+              <div
+                className="absolute top-0 right-0 bottom-0 left-0"
+                style={{ zIndex: 10 }}
+              ></div>
+            </div>
           ))}
         </div>
       )}
       {activeTab == "Rejected" && (
         <div className="my-8 px-4 lg:px-10">
           {rejectedEventsDatas.map((eventItem: any) => (
-            <EventItem
-              key={eventItem.event_id}
-              id={eventItem.event_id}
-              name={eventItem.event_name}
-              startDate={eventItem.start_date}
-              endDate={eventItem.end_date}
-              description={eventItem.description}
-              city={eventItem.city}
-              district={eventItem.district}
-              imgSrc={eventItem.event_image}
-              page={1}
-            />
+            <div key={eventItem.event_id} className="relative">
+              <EventItem
+                id={eventItem.event_id}
+                name={eventItem.event_name}
+                startDate={eventItem.start_date}
+                endDate={eventItem.end_date}
+                description={eventItem.description}
+                city={eventItem.city}
+                district={eventItem.district}
+                imgSrc={eventItem.event_image}
+                page={0}
+                role="ADMIN"
+                // Add other props if necessary
+              />
+              <div
+                className="absolute top-0 right-0 bottom-0 left-0"
+                style={{ zIndex: 10 }}
+              ></div>
+            </div>
           ))}
         </div>
       )}

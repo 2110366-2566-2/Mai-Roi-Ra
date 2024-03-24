@@ -22,7 +22,7 @@ type UserRepository struct {
 type IUserRepository interface {
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByPhoneNumber(phoneNumber string) (*models.User, error)
-	CreateUser(*st.CreateUserRequest) (*string, error)
+	CreateUser(req *st.CreateUserRequest, registerType string, isVerified bool) (*string, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 	GetUserByToken(token string) (*models.User, error)
 	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
@@ -34,6 +34,7 @@ type IUserRepository interface {
 	GetRandomAdmin() (*models.User, error)
 	GetAllAdmins() ([]*models.User, error)
 	UpdateVerified(userId *string) error
+	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -80,7 +81,7 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 }
 
 // CreateUser adds a new user to the database.
-func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
+func (r *UserRepository) CreateUser(req *st.CreateUserRequest, registerType string, isVerified bool) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
 
 	role := constant.USER
@@ -105,7 +106,8 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		Province:                 req.Province,
 		BannerImage:              "",
 		Role:                     role,
-		RegisterType:             constant.NORMAL, // will change later
+		RegisterType:             registerType, // will change later
+		IsVerified:               isVerified,
 		CreatedAt:                time.Time{},
 	}
 
@@ -328,4 +330,34 @@ func (r *UserRepository) UpdateVerified(userId *string) error {
 	}
 
 	return nil
+}
+
+func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error) {
+	log.Println("[Repo: UpdateUserRole] Called")
+
+	var modelUser models.User
+	if err := r.DB.Where(`user_id=?`, req.UserId).Find(&modelUser).Error; err != nil {
+		log.Print("[Repo: UpdateUserRole] user_id not found")
+		return nil, err
+	}
+	role := modelUser.Role
+	if req.Role == "Organizer" {
+		role = constant.ORGANIZER
+	} else if req.Role == "Admin" {
+		role = constant.ADMIN
+	}
+	modelUser.Role = role
+
+	if req.Username != "" {
+		modelUser.Username = req.Username
+	}
+	
+	if err := r.DB.Save(&modelUser).Error; err != nil {
+		log.Println("[Repo: UpdateUserRole] Error updating in the database:", err)
+		return nil, err
+	}
+
+	return &st.UserResponse{
+		Response: "Update role successful",
+	}, nil
 }

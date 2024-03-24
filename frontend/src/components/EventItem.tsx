@@ -14,6 +14,7 @@ interface Props {
   district: string;
   imgSrc: string;
   page: number;
+  role: string;
 }
 
 export default function EventItem({
@@ -26,7 +27,9 @@ export default function EventItem({
   district,
   imgSrc,
   page,
+  role,
 }: Props) {
+  const eventPath = role == "ADMIN" ? "verifyevents" : "events";
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
@@ -59,7 +62,7 @@ export default function EventItem({
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          router.push(`/verifyevents/${id}`);
+          router.push(`/${eventPath}/${id}`);
         }}
       >
         <div className="flex-shrink-0 mr-4 h-full lg:w-[200px] md:w-[160px] w-[120px]">

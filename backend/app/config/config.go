@@ -8,13 +8,14 @@ import (
 )
 
 type Config struct {
-	App     *App
-	MongoDB *MongoDB
-	PgDB    *PgDB
-	Email   *Email
-	S3      *S3
-	Omise   *Omise
-	Stripe  *Stripe
+	App        *App
+	MongoDB    *MongoDB
+	PgDB       *PgDB
+	Email      *Email
+	GoogleAuth *GoogleAuth
+	S3         *S3
+	Omise      *Omise
+	Stripe     *Stripe
 }
 
 type App struct {
@@ -38,6 +39,12 @@ type Email struct {
 	Name     string
 	Address  string
 	Password string
+}
+
+type GoogleAuth struct {
+	ClientId     string
+	ClientSecret string
+	CallbackURL  string
 }
 
 type S3 struct {
@@ -82,6 +89,12 @@ func NewConfig(path string) (*Config, error) {
 			Name:     os.Getenv("EMAIL_SENDER_NAME"),
 			Address:  os.Getenv("EMAIL_SENDER_ADDRESS"),
 			Password: os.Getenv("EMAIL_SENDER_PASSWORD"),
+		},
+
+		GoogleAuth: &GoogleAuth{
+			ClientId:     os.Getenv("GOOGLE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			CallbackURL:  os.Getenv("GOOGLE_CALLBACK_URL"),
 		},
 		S3: &S3{
 			AwsRegion:            os.Getenv("AWS_REGION"),

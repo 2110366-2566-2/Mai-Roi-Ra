@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
@@ -212,13 +215,14 @@ func (c *UserController) LoginUserPhone(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user_id path string true "User ID"
-// @Success 200 {object} map[string]interface{} "Confirms the user has been logged out."
+// @Success 200 {object} st.UserResponse "Confirms the user has been logged out."
 // @Failure 400 {object} map[string]string "Returns an error if logout fails."
 // @Router /logout [post]
 func (c *UserController) LogoutUser(ctx *gin.Context) {
-	var req *st.LogoutUserRequest
-	req.UserID = ctx.GetString(middleware.KeyUserID)
+	userId := ctx.GetString(middleware.KeyUserID)
+	req := &st.LogoutUserRequest{
+		UserID: userId,
+	}
 	log.Println("[CTRL: LogoutUser] Input:", req)
 	res, err := c.ServiceGateway.UserService.LogoutUser(req)
 	if err != nil {
@@ -412,6 +416,57 @@ func (c *UserController) GetSearchHistories(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// @Summary LoginGoogle
+// @Description Get list of all participated events of the user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param provider path string true "provider"
+// @Success 200 {object} structure.CreateUserResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /auth/{provider}/login [get]
+func (c *UserController) LoginGoogle(ctx *gin.Context) {
+	log.Println("[CTRL: LoginGoogle] Called: ")
+	_, err := c.ServiceGateway.UserService.LoginGoogle(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+}
+
+// @Summary CallbackGoogle
+// @Description Get info of user from Gmail
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param provider path string true "provider"
+// @Success 200 {object} object "OK"
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/auth/{provider}/callback [get]
+func (c *UserController) CallbackGoogle(ctx *gin.Context) {
+	log.Println("[CTRL: CallbackGoogle] Called: ")
+	token, flag, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	hasAccount := false
+	if flag != nil {
+		hasAccount = *flag
+	}
+	redirectURL := fmt.Sprintf("%s/auth/handle-login", constant.FRONT_END_URL)
+	if !hasAccount {
+		// Redirect to the register page for a new user
+		redirectURL = fmt.Sprintf("%s/auth/signin", constant.FRONT_END_URL)
+	}
+	log.Println("User token at the end:", *token)
+
+	ctx.SetCookie("token", *token, middleware.MaxAge, "/", "localhost", false, true)
+	location := url.URL{Path: redirectURL}
+	ctx.Redirect(http.StatusTemporaryRedirect, location.RequestURI())
+}
+
 // @Summary Send OTP Email
 // @Description Sends an OTP email to the specified recipients.
 // @Tags users
@@ -460,5 +515,30 @@ func (c *UserController) VerifyOTP(ctx *gin.Context) {
 		return
 	}
 	log.Println("[CTRL: VerifyOTP] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Update User Role
+// @Description Updates the role of a user based on the provided request.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body st.UpdateUserRoleRequest true "Update User Role Request"
+// @Success 200 {object} st.UserResponse "User successfully updated"
+// @Failure 400 {object} object "Bad request - error in updating user role"
+// @Router /users/update_user_role [put]
+func (c *UserController) UpdateUserRole(ctx *gin.Context) {
+	var req *st.UpdateUserRoleRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: UpdateUserRole]: Input:", req)
+	res, err := c.ServiceGateway.UserService.UpdateUserRole(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: UpdateUserRole]: Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }

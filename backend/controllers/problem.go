@@ -78,7 +78,7 @@ func (c *ProblemController) GetProblemDetailById(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id query string true "user_id"
-// @Param status query string true "Problem Status (Replied or Pending)"
+// @Param status query string false "Problem Status (Replied or Pending)"
 // @Success 200 {object} st.GetProblemListsResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"

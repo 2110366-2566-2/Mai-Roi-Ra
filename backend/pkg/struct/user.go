@@ -57,8 +57,6 @@ type LogoutUserRequest struct {
 	//Token  string
 
 }
-type LogoutUserResponse struct {
-}
 
 // email login
 type LoginUserEmailRequest struct {
@@ -114,7 +112,7 @@ type CancelRegisterEventRequest struct {
 }
 
 type RegisterEventResponse struct {
-	Message      string `json:"message"`
+	Message string `json:"message"`
 }
 
 type ParticipatedEvent struct {
@@ -171,4 +169,14 @@ type VerifyOTPRequest struct {
 
 type VerifyOTPResponse struct {
 	Verified bool `json:"verified"`
+}
+
+type UpdateUserRoleRequest struct {
+	UserId   string `json:"user_id" binding:"required"`
+	Username string `json:"username" binding:"required"`
+	Role     string `json:"role" binding:"required"`
+}
+
+type UserResponse struct {
+	Response string `json:"response"`
 }
