@@ -15,6 +15,7 @@ type TransactionRepository struct {
 }
 
 type ITransactionRepository interface {
+	GetTransactionDataById(transactionId string) (*models.Transaction, error)
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
 }
@@ -25,6 +26,16 @@ func NewTransactionRepository(
 	return &TransactionRepository{
 		db: db,
 	}
+}
+
+func (r *TransactionRepository) GetTransactionDataById(transactionId string) (*models.Transaction, error) {
+	log.Println("[Repo: GetTransactionDataById]: Called")
+	var transaction models.Transaction
+	if err := r.db.Where(`transaction_id=?`, transactionId).Find(&transaction).Error; err != nil {
+		log.Println("[Repo: GetTransactionDataById]: cannot find transaction_id:", err)
+		return nil, err
+	}
+	return &transaction, nil
 }
 
 func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error) {
