@@ -7,31 +7,45 @@ export default async function createEvent(
     location_name: string,
     district: string,
     province: string,
-    price: number,
+    price: string,
     description: string,
-    imageSrc: File,
+    image: File,
     start_date: string,
     end_date: string,
     token:string
 ) {
     try {
-        console.log(organizer_id, name, activity, location_name, district, province, description, imageSrc, start_date, end_date);
-        const jsonBody = JSON.stringify({
-            "activities": activity,
-            "city": province,
-            "description": description,
-            "district": district,
-            "end_date": end_date,
-            "event_image": imageSrc,
-            "event_name": name,
-            "location_name": location_name,
-            "organizer_id": organizer_id,
-            "participant_fee": Number(price),
-            "start_date": start_date,
-            "status": "Waiting"
-        });
+        console.log(organizer_id, name, activity, location_name, district,price, province, description, start_date, end_date);
 
-        console.log(jsonBody);
+        const formData = new FormData();
+        formData.append('activities', activity);
+        formData.append('city', image);
+        formData.append('description', description);
+        formData.append('district', district);
+        formData.append('end_date', end_date);
+        formData.append('event_image', image);
+        formData.append('event_name', name);
+        formData.append('location_name', location_name);
+        formData.append('organizer_id', organizer_id);
+        formData.append('participant_fee', price);
+        formData.append('start_date', start_date);
+        formData.append('status', "Waiting");
+        // const jsonBody = JSON.stringify({
+        //     "activities": activity,
+        //     "city": province,
+        //     "description": description,
+        //     "district": district,
+        //     "end_date": end_date,
+        //     "event_image": image,
+        //     "event_name": name,
+        //     "location_name": location_name,
+        //     "organizer_id": organizer_id,
+        //     "participant_fee": Number(price),
+        //     "start_date": start_date,
+        //     "status": "Waiting"
+        // });
+
+        console.log(formData);
 
         const response = await fetch(`${apiBackUrl}/events`, {
             method: "POST",
@@ -39,10 +53,10 @@ export default async function createEvent(
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: jsonBody,
+            body: formData,
         });
 
-        console.log(jsonBody);
+        console.log(formData);
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(

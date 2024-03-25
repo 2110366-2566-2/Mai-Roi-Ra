@@ -6,13 +6,13 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 
-export async function HandleCreateEvent(name:string,activity:string, startdate:string, endDate:string, price:number, location:string, district:string, 
-    province:string, description:string, imageSrc:File){
+export async function HandleCreateEvent(name:string,activity:string, startdate:string, endDate:string, price:string, location:string, district:string, 
+    province:string, description:string, image:File){
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
     try {
-        const res = await createEvent(user?.organizer_id,name,activity,location,district,province,price,description,imageSrc,startdate,endDate,user.token);
+        const res = await createEvent(user?.organizer_id,name,activity,location,district,province,price,description,image,startdate,endDate,user.token);
         console.log(res);
         console.log("Create Event successful");
     } catch (err) {

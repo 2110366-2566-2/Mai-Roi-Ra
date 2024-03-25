@@ -17,21 +17,21 @@ interface Props {
     district:string
     province:string
     description:string
-    imageSrc:File
+    image:File
     topic:string
     isVisible:boolean
 }
 
 const SuccessModal = ({id,name,activity,startDate,endDate,price,location,district,province,description,
-    imageSrc,topic,isVisible} : Props) => {
+    image,topic,isVisible} : Props) => {
     if (!isVisible) return null;
     const session = useSession();
     console.log(session);
     const handlerClose = async () => {
         if (topic == "Event Created"){
-            await HandleCreateEvent(name, activity, startDate, endDate, price? price : 0, location, district, province, description, imageSrc);
+            await HandleCreateEvent(name, activity, startDate, endDate, price.toString(), location, district, province, description, image);
         } else {
-            await HandleUpdateEvent(id,name, activity, startDate, endDate, price, location, district, province, description, imageSrc);
+            await HandleUpdateEvent(id,name, activity, startDate, endDate, price, location, district, province, description, image);
         }
     }
 
