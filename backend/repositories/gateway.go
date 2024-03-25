@@ -16,7 +16,6 @@ type RepositoryGateway struct {
 	EventRepository        IEventRepository
 	UserRepository         IUserRepository
 	LocationRepository     ILocationRepository
-	AdminRepository        IAdminRepository
 	OrganizerRepository    IOrganizerRepository
 	ParticipateRepository  IParticipateRepository
 	AnnouncementRepository IAnnouncementRepository

@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS events (
     event_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
     organizer_id VARCHAR(36) NOT NULL,
     location_id VARCHAR(36) NOT NULL,
+    admin_id VARCHAR(36) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('Approved', 'Rejected', 'Waiting')),
