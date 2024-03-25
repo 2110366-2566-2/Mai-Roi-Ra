@@ -549,7 +549,7 @@ func (c *UserController) UpdateUserRole(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param email query string true "User Email"
-// @Success 200 {object} map[string]bool "Returns the verification status of the user."
+// @Success 200 {boolean} bool "Returns the verification status of the user."
 // @Failure 400 {object} object "Bad Request"
 // @Failure 404 {object} object "User Not Found"
 // @Failure 500 {object} object "Internal Server Error"
@@ -569,5 +569,5 @@ func (c *UserController) GetUserVerificationStatus(ctx *gin.Context) {
 	}
 
 	log.Println("[CTRL: GetUserVerificationStatus] Output:", user.IsVerified)
-	ctx.JSON(http.StatusOK, gin.H{"isVerified": user.IsVerified})
+	ctx.JSON(http.StatusOK, user.IsVerified)
 }
