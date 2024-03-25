@@ -45,7 +45,7 @@ type LoginUserRequest struct {
 
 type LoginUserResponse struct {
 	UserId      string `json:"user_id"`
-	FirstName   string `json:"first_name" binding:"required"`
+	Username    string `json:"username"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	Token       string `json:"token"`
