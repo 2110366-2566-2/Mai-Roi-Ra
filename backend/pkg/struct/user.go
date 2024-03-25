@@ -180,3 +180,7 @@ type UpdateUserRoleRequest struct {
 type UserResponse struct {
 	Response string `json:"response"`
 }
+
+type GetUserVerificationStatusResponse struct {
+	IsVerified bool `json:"isVerified"`
+}

@@ -1641,10 +1641,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Returns the verification status of the user.",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "boolean"
-                            }
+                            "type": "boolean"
                         }
                     },
                     "400": {

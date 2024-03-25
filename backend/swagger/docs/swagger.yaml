@@ -1942,9 +1942,7 @@ paths:
         "200":
           description: Returns the verification status of the user.
           schema:
-            additionalProperties:
-              type: boolean
-            type: object
+            type: boolean
         "400":
           description: Bad Request
           schema:
