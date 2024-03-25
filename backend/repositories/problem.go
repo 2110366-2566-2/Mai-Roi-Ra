@@ -78,7 +78,10 @@ func (repo *ProblemRepository) GetProblemLists(req *st.GetProblemListsRequest) (
 	log.Println("[Repo: GetProblemsByStatus] Called")
 
 	var problems []models.Problem
-	query := repo.DB.Where(`user_id = ?`, req.UserId)
+	query := repo.DB
+	if req.UserId != "" {
+		query = query.Where(`user_id = ?`, req.UserId)
+	}
 	if req.Status != "" {
 		query = query.Where(`status = ?`, req.Status)
 	}

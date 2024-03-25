@@ -933,8 +933,7 @@
                         "type": "string",
                         "description": "user_id",
                         "name": "user_id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -2486,14 +2485,8 @@
         },
         "structure.LoginUserResponse": {
             "type": "object",
-            "required": [
-                "first_name"
-            ],
             "properties": {
                 "email": {
-                    "type": "string"
-                },
-                "first_name": {
                     "type": "string"
                 },
                 "organizer_id": {
@@ -2509,6 +2502,9 @@
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

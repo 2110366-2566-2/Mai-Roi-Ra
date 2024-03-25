@@ -77,7 +77,7 @@ func (c *ProblemController) GetProblemDetailById(ctx *gin.Context) {
 // @Tags problems
 // @Accept json
 // @Produce json
-// @Param user_id query string true "user_id"
+// @Param user_id query string false "user_id"
 // @Param status query string false "Problem Status (Replied or Pending)"
 // @Success 200 {object} st.GetProblemListsResponse
 // @Failure 400 {object} object "Bad Request"
