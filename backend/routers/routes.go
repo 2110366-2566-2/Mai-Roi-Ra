@@ -31,7 +31,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(setupCORS())
-	r.Use(middleware.Authorization())
+	//r.Use(middleware.Authorization())
 
 	// Swagger setup
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
