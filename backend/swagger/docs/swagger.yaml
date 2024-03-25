@@ -76,46 +76,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  structure.CreateEventRequest:
-    properties:
-      activities:
-        type: string
-      city:
-        type: string
-      description:
-        type: string
-      district:
-        type: string
-      end_date:
-        type: string
-      event_image:
-        type: string
-      event_name:
-        type: string
-      location_name:
-        type: string
-      organizer_id:
-        type: string
-      participant_fee:
-        type: number
-      start_date:
-        type: string
-      status:
-        type: string
-    required:
-    - activities
-    - city
-    - description
-    - district
-    - end_date
-    - event_image
-    - event_name
-    - location_name
-    - organizer_id
-    - participant_fee
-    - start_date
-    - status
-    type: object
   structure.CreateEventResponse:
     properties:
       event_id:
@@ -866,15 +826,64 @@ paths:
       - events
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Create a new event with the provided details.
       parameters:
-      - description: Create Event Request
-        in: body
-        name: request
+      - description: Name of the event
+        in: formData
+        name: event_name
         required: true
-        schema:
-          $ref: '#/definitions/structure.CreateEventRequest'
+        type: string
+      - description: Activity of the event
+        in: formData
+        name: activities
+        required: true
+        type: string
+      - description: City of the event
+        in: formData
+        name: city
+        required: true
+        type: string
+      - description: description for the event
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: district of the event
+        in: formData
+        name: district
+        required: true
+        type: string
+      - description: start_date
+        in: formData
+        name: start_date
+        required: true
+        type: string
+      - description: end date
+        in: formData
+        name: end_date
+        required: true
+        type: string
+      - description: Event image
+        in: formData
+        name: event_image
+        required: true
+        type: file
+      - description: location name
+        in: formData
+        name: location_name
+        required: true
+        type: string
+      - description: organizer_id
+        in: formData
+        name: organizer_id
+        required: true
+        type: string
+      - description: participant fee
+        in: formData
+        name: participant_fee
+        required: true
+        type: string
       produces:
       - application/json
       responses:

@@ -29,22 +29,53 @@ func NewEventController(
 // @Summary Create new event
 // @Description Create a new event with the provided details.
 // @Tags events
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param request body structure.CreateEventRequest true "Create Event Request"
+// @Param event_name formData string true "Name of the event"
+// @Param activities formData string true "Activity of the event" Enum ("Entertainment", "Exercise", "Volunteer", "Meditation", "Cooking")
+// @Param city formData string true "City of the event"
+// @Param description formData string true "description for the event"
+// @Param district formData string true "district of the event"
+// @Param start_date formData string true "start_date"
+// @Param end_date formData string true "end date"
+// @Param event_image formData file true "Event image"
+// @Param location_name formData string true "location name"
+// @Param organizer_id formData string true "organizer_id"
+// @Param participant_fee formData string true "participant fee"
 // @Success 200 {object} structure.CreateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events [post]
 func (c *EventController) CreateEvent(ctx *gin.Context) {
-	var req *st.CreateEventRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	// var req *st.CreateEventRequest
+	// if err := ctx.ShouldBindJSON(&req); err != nil {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	fee, _ := strconv.Atoi(ctx.Request.FormValue("participant_fee"))
+
+	req := &st.CreateEventRequest{
+		OrganizerId:    ctx.Request.FormValue("organizer_id"),
+		Activities:     ctx.Request.FormValue("activities"),
+		City:           ctx.Request.FormValue("city"),
+		District:       ctx.Request.FormValue("district"),
+		StartDate:      ctx.Request.FormValue("start_date"),
+		EndDate:        ctx.Request.FormValue("end_date"),
+		EventName:      ctx.Request.FormValue("even_name"),
+		Description:    ctx.Request.FormValue("description"),
+		LocationName:   ctx.Request.FormValue("location_name"),
+		ParticipantFee: float64(fee),
+		Status:         "Waiting",
+	}
+
 	// S3
-	fileHeader, err := ctx.FormFile("image")
+	fileHeader, err := ctx.FormFile("event_image")
 	if err != nil {
 		log.Println("[CTRL: CreateEvent] Called and read header failed: ", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
