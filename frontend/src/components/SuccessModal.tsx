@@ -2,37 +2,19 @@
 import styles from "@/styles/FontPage.module.css"
 import Image from "next/image"
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
-import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Props {
-    id:string
-    name:string
-    activity:string
-    startDate:string
-    endDate:string
-    price:number
-    location:string
-    district:string
-    province:string
-    description:string
-    image:File
     topic:string
     isVisible:boolean
 }
 
-const SuccessModal = ({id,name,activity,startDate,endDate,price,location,district,province,description,
-    image,topic,isVisible} : Props) => {
+const SuccessModal = ({topic,isVisible} : Props) => {
+    const router = useRouter();
     if (!isVisible) return null;
-    const session = useSession();
-    console.log(session);
+
     const handlerClose = async () => {
-        if (topic == "Event Created"){
-            await HandleCreateEvent(name, activity, startDate, endDate, price.toString(), location, district, province, description, image);
-        } else {
-            await HandleUpdateEvent(id,name, activity, startDate, endDate, price, location, district, province, description, image);
-        }
+        router.push('/profile');
     }
 
     return (

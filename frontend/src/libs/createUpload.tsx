@@ -1,21 +1,13 @@
 import { apiBackUrl } from "../constants";
 
-export default async function createEvent(formData:FormData, token:string) {
+export default async function createEvent(formData:FormData) {
     try {
         console.log(formData);
-        console.log(formData.get('event_name'));
-        console.log(formData.get('event_image'));
+        console.log(formData.get('image'));
         
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-        
-        const response = await fetch(`${apiBackUrl}/events`, {
+        const response = await fetch(`${apiBackUrl}/upload`, {
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            body: formData,
+            body: formData
         });
 
         if (!response.ok) {

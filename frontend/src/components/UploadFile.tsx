@@ -1,5 +1,6 @@
 'use client'
 import { apiBackUrl } from '@/constants';
+import createUpload from '@/libs/createUpload';
 import { useState, ChangeEvent, FormEvent } from 'react';
 
 const ImageUploadForm: React.FC = () => {
@@ -22,20 +23,12 @@ const ImageUploadForm: React.FC = () => {
 
     const formData = new FormData();
     formData.append('image', selectedImage);
-    console.log(formData);
     // Example: POST request to your server endpoint
-    const response = await fetch(`${apiBackUrl}/upload`, {
-      method: 'POST',
-      body: formData,
-    });
+    await createUpload(formData);
 
     // Clear the form
     setSelectedImage(null);
     setPreview('');
-
-    // Handle the server response
-    const data = await response;
-    console.log(data);
   };
 
   return (

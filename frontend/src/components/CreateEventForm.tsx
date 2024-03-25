@@ -1,7 +1,7 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useState, ChangeEvent, FormEvent, useRef, useEffect } from 'react';
+import { useState, ChangeEvent, useRef, useEffect } from 'react';
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
@@ -36,33 +36,35 @@ const CreateEventForm = () => {
     const [description,setDescription] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
-    const [sendForm,setSendForm] = useState(false);
+    // const [sendForm,setSendForm] = useState(false);
     const fileInputRef = useRef(null);
     
-    useEffect(() => {
-        const createEvent = async () => {
-            if (sendForm && user) {
-                try {
-                    // const formData = new FormData();
-                    // formData.append('event_name', name);
-                    // formData.append('activities', activity);
-                    // formData.append('city', province);
-                    // formData.append('description', description);
-                    // formData.append('district', district);
-                    // formData.append('start_date', start);
-                    // formData.append('end_date', end);
-                    // if (selectedImage) formData.append('event_image', selectedImage);
-                    // formData.append('location_name', location);
-                    // formData.append('organizer_id', user.organizer_id);
-                    // formData.append('participant_fee', price !== null ? price.toString() : '');
-                    await HandleCreateEvent(formData,user.token);
-                } catch (err) {
-                    console.log(err)
-                }
-            } 
-        }
-        createEvent();
-    },[sendForm])
+    // useEffect(() => {
+    //     const createEvent = async () => {
+    //         if (sendForm && user) {
+    //             try {
+    //                 if (!selectedImage || !price) return;
+    //                 const formData = new FormData();
+    //                 formData.append('event_name', name);
+    //                 formData.append('activities', activity);
+    //                 formData.append('city', province);
+    //                 formData.append('description', description);
+    //                 formData.append('district', district);
+    //                 formData.append('start_date', start);
+    //                 formData.append('end_date', end);
+    //                 formData.append('event_image', selectedImage);
+    //                 formData.append('location_name', location);
+    //                 formData.append('organizer_id', user.organizer_id);
+    //                 formData.append('participant_fee', price.toString());
+    //                 console.log(formData);
+    //                 await HandleCreateEvent(formData,user.token);
+    //             } catch (err) {
+    //                 console.log(err)
+    //             }
+    //         } 
+    //     }
+    //     createEvent();
+    // },[sendForm])
 
     const triggerFileInput = () => {
         if (fileInputRef.current) {
@@ -117,8 +119,29 @@ const CreateEventForm = () => {
 
             setStart(startTmp.format('YYYY/MM/DD'));
             setEnd(endTmp.format('YYYY/MM/DD'));
+            
+            if (user) {
+                try {
+                    if (!selectedImage || !price) return;
+                    const formData = new FormData();
+                    formData.append('event_name', name);
+                    formData.append('activities', activity);
+                    formData.append('city', province);
+                    formData.append('description', description);
+                    formData.append('district', district);
+                    formData.append('start_date', start);
+                    formData.append('end_date', end);
+                    formData.append('event_image', selectedImage);
+                    formData.append('location_name', location);
+                    formData.append('organizer_id', user.organizer_id);
+                    formData.append('participant_fee', price.toString());
+                    console.log(formData);
+                    await HandleCreateEvent(formData,user.token);
+                } catch (err) {
+                    console.log(err)
+                }
+            } 
             setShowModal(true);
-            setSendForm(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -137,7 +160,7 @@ const CreateEventForm = () => {
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
-                                type="text" placeholder="Event Name"
+                                type="text" name="event_name" placeholder="Event Name"
                                 value={name} onChange={(e) => setName(e.target.value)} maxLength={20}/>
 
                                 {name.length != 0 && (
@@ -213,7 +236,7 @@ const CreateEventForm = () => {
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
-                                type="text" placeholder="Location Name"
+                                type="text" name="location" placeholder="Location Name"
                                 value={location} onChange={(e) => setLocation(e.target.value)} maxLength={20}/>
 
                                 {location.length != 0 && (

@@ -2,10 +2,10 @@
 import { revalidatePath, revalidateTag } from "next/cache"
 import createEvent from "@/libs/createEvent"
 
-export async function HandleCreateEvent(formData:FormData,token:string){
+export async function HandleCreateEvent(formData:FormData){
 
     try {
-        const res = await createEvent(formData,token);
+        const res = await createEvent(formData);
         console.log(res);
         console.log("Create Event successful");
     } catch (err) {
