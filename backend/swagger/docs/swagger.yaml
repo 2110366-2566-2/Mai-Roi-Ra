@@ -1925,6 +1925,41 @@ paths:
       summary: Update User Role
       tags:
       - users
+  /users/verification_status:
+    get:
+      consumes:
+      - application/json
+      description: Get the verification status of a user by their email.
+      parameters:
+      - description: User Email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the verification status of the user.
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get User Verification Status
+      tags:
+      - users
   /users/verify_otp:
     put:
       consumes:
