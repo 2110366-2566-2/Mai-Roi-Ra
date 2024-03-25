@@ -74,6 +74,7 @@ export default async function Profile() {
               emailProp={profile.email}
               birthDateProp={profile.birth_date}
               usernameProp={profile.username}
+              user_id={session.user.user_id}
             ></ProfileUserInformation>
             <EditProfileButton
               isEnableNotificationProp={profile.is_enable_notification}
