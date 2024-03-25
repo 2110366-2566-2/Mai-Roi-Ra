@@ -1,62 +1,34 @@
 import { apiBackUrl } from "../constants";
 
-export default async function createEvent(
-    organizer_id: string,
-    name: string,
-    activity: string,
-    location_name: string,
-    district: string,
-    province: string,
-    price: string,
-    description: string,
-    image: File,
-    start_date: string,
-    end_date: string,
-    token:string
-) {
+export default async function createEvent(formData:FormData, token:string) {
     try {
-        console.log(organizer_id, name, activity, location_name, district,price, province, description, start_date, end_date);
-
-        const formData = new FormData();
-        formData.append('activities', activity);
-        formData.append('city', image);
-        formData.append('description', description);
-        formData.append('district', district);
-        formData.append('end_date', end_date);
-        formData.append('event_image', image);
-        formData.append('event_name', name);
-        formData.append('location_name', location_name);
-        formData.append('organizer_id', organizer_id);
-        formData.append('participant_fee', price);
-        formData.append('start_date', start_date);
-        formData.append('status', "Waiting");
-        // const jsonBody = JSON.stringify({
-        //     "activities": activity,
-        //     "city": province,
-        //     "description": description,
-        //     "district": district,
-        //     "end_date": end_date,
-        //     "event_image": image,
-        //     "event_name": name,
-        //     "location_name": location_name,
-        //     "organizer_id": organizer_id,
-        //     "participant_fee": Number(price),
-        //     "start_date": start_date,
-        //     "status": "Waiting"
-        // });
-
         console.log(formData);
-
+        console.log(formData.get('event_name'));
+        console.log(formData.get('event_image'));
+        for (let [key, value] of formData.entries()) {
+            // Using typeof to check for primitive types
+            console.log(`${key}: ${value}, Type: ${typeof value}`);
+            // // Since both text fields and files are objects, use instanceof to differentiate
+            // if (value instanceof File) {
+            //     console.log(`${key} is a file.`);
+            // } else if (value instanceof Blob) {
+            //     // This will include File since File inherits from Blob, but in most cases, you'll encounter File directly for file inputs.
+            //     console.log(`${key} is a Blob.`);
+            // } else {
+            //     // This is likely a string for text fields
+            //     console.log(`${key} is likely a string.`);
+            // }
+        }
+        
         const response = await fetch(`${apiBackUrl}/events`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${token}`
             },
             body: formData,
         });
 
-        console.log(formData);
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(

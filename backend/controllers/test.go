@@ -86,4 +86,10 @@ func (c *TestController) TestUpload(ctx *gin.Context) {
 		return
 	}
 	log.Println(url)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"filename": fileHeader.Filename,
+		"size":     fileHeader.Size,
+		"url":      url,
+	})
 }

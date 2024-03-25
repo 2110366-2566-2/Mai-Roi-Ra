@@ -22,7 +22,7 @@ const ImageUploadForm: React.FC = () => {
 
     const formData = new FormData();
     formData.append('image', selectedImage);
-
+    console.log(formData);
     // Example: POST request to your server endpoint
     const response = await fetch(`${apiBackUrl}/upload`, {
       method: 'POST',
@@ -32,10 +32,9 @@ const ImageUploadForm: React.FC = () => {
     // Clear the form
     setSelectedImage(null);
     setPreview('');
-    event.currentTarget.reset();
 
     // Handle the server response
-    const data = await response.json();
+    const data = await response;
     console.log(data);
   };
 

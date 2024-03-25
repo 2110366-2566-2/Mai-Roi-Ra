@@ -1,7 +1,7 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useState, ChangeEvent, FormEvent, useRef } from 'react';
+import { useState, ChangeEvent, FormEvent, useRef, useEffect } from 'react';
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
@@ -11,8 +11,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Image from "next/image";
 import BackupIcon from '@mui/icons-material/Backup';
+import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
+import { useSession } from "next-auth/react";
 
 const CreateEventForm = () => {
+    const session = useSession()
+    const user = session.data?.user;
+    console.log(user);
     const isMobile = useMediaQuery('(max-width:768px)');
     
     const [start,setStart] = useState("");
@@ -23,17 +28,42 @@ const CreateEventForm = () => {
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState("");
     const [activity, setActivity] = useState(""); 
-    const [price, setPrice] = useState(null);
+    const [price, setPrice] = useState<number | null>(null);
     const [error,setError] = useState("");
     const [location,setLocation] = useState("");
     const [district,setDistrict] = useState("");
     const [province,setProvince] = useState("");
     const [description,setDescription] = useState("");
-    const [imageSrc,setImageSrc] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
+    const [sendForm,setSendForm] = useState(false);
     const fileInputRef = useRef(null);
     
+    useEffect(() => {
+        const createEvent = async () => {
+            if (sendForm && user) {
+                try {
+                    // const formData = new FormData();
+                    // formData.append('event_name', name);
+                    // formData.append('activities', activity);
+                    // formData.append('city', province);
+                    // formData.append('description', description);
+                    // formData.append('district', district);
+                    // formData.append('start_date', start);
+                    // formData.append('end_date', end);
+                    // if (selectedImage) formData.append('event_image', selectedImage);
+                    // formData.append('location_name', location);
+                    // formData.append('organizer_id', user.organizer_id);
+                    // formData.append('participant_fee', price !== null ? price.toString() : '');
+                    await HandleCreateEvent(formData,user.token);
+                } catch (err) {
+                    console.log(err)
+                }
+            } 
+        }
+        createEvent();
+    },[sendForm])
+
     const triggerFileInput = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -43,8 +73,8 @@ const CreateEventForm = () => {
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
-          setSelectedImage(file);
-          setPreview(URL.createObjectURL(file));
+            setSelectedImage(file); 
+            setPreview(URL.createObjectURL(file));
         }
     };
 
@@ -88,6 +118,7 @@ const CreateEventForm = () => {
             setStart(startTmp.format('YYYY/MM/DD'));
             setEnd(endTmp.format('YYYY/MM/DD'));
             setShowModal(true);
+            setSendForm(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -124,7 +155,7 @@ const CreateEventForm = () => {
                                         onChange={(e) => setActivity(e.target.value)} >
                                         <MenuItem value="Entertainment">Entertainment</MenuItem>
                                         <MenuItem value="Exercise">Exercise</MenuItem>
-                                        <MenuItem value="Volunteer">Volunteen</MenuItem>
+                                        <MenuItem value="Volunteer">Volunteer</MenuItem>
                                         <MenuItem value="Meditation">Meditation</MenuItem>
                                         <MenuItem value="Cooking">Cooking</MenuItem>
                                     </Select>
@@ -249,7 +280,7 @@ const CreateEventForm = () => {
                                 <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center absolute">
                                     <input
                                         type="file"
-                                        name="image"
+                                        name="event_image"
                                         accept="image/*"
                                         onChange={handleFileChange}
                                         ref={fileInputRef}
@@ -341,10 +372,7 @@ const CreateEventForm = () => {
                         </button>
                     </div>
                 </div>
-                <SuccessModal id={""} name={name} activity={activity} startDate={start} endDate={end}
-                price={price?price:0} location={location} 
-                district={district} province={province} description={description} image={selectedImage}
-                topic="Event Created" isVisible={showModal}/>
+                <SuccessModal topic="Event Created" isVisible={showModal}/>
             </form>
         </div>
     )
