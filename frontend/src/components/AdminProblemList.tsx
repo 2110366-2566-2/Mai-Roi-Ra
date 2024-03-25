@@ -18,6 +18,8 @@ export default function AdminProblemList({ datas }: Props) {
             problem={problemItem.problem}
             description={problemItem.description}
             status={problemItem.status}
+            reply=""
+            role="ADMIN"
           />
         ))}
       </div>

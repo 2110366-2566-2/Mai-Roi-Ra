@@ -18,6 +18,8 @@ export default function ProblemList({ datas }: Props) {
             problem={problemItem.problem}
             description={problemItem.description}
             status={problemItem.status}
+            reply={problemItem.reply}
+            role="USER"
           />
         ))}
       </div>
