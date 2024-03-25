@@ -319,6 +319,19 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 		}
 	}
 
+	restransaction , err := s.RepositoryGateway.TransactionRepository.GetTransactionListByEventId(req.EventId)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range restransaction {
+		reqrefund := &st.CreateRefundRequest{
+			TransactionId: v.TransactionID,
+			RefundReason: "Event Canceled",
+		}
+		s.RepositoryGateway.RefundRepository.CreateRefund(reqrefund)
+	}
+
 	// Delete the event using the repository
 	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
 	if err != nil {
