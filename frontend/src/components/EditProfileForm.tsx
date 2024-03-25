@@ -14,6 +14,8 @@ import { TextField } from "@mui/material";
 import ChooseRoleForm from "./ChooseRoleForm";
 import { redirect } from "next/navigation";
 import updateRole from "@/libs/updateUserRole";
+import { signOut } from "next-auth/react";
+
 
 
 interface Props {
@@ -56,7 +58,7 @@ export default function EditProfileForm({
   // const [birthDate, setBirthDate] = useState(birthDateProp);
   const initialBirthDate = dayjs(birthDateProp);
   const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
-  const [role, setRole] = useState("USER");
+  const [role, setRole] = useState("User");
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
 
@@ -142,7 +144,9 @@ export default function EditProfileForm({
     try {
       await updateRole(role, userId,username);
       // handle success, e.g. show a success message or redirect
-      router.push("/profile");
+      await signOut({ redirect: false });
+      alert("Please login again");
+      router.push("/auth/signin");
     } catch (error) {
       // handle error, e.g. show an error message
       console.error(`Error updating role: ${error}`);

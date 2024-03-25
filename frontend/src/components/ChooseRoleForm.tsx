@@ -31,8 +31,8 @@ export default function ChooseRoleForm({ role, setRole, setOpenChooseRoleForm, h
             <div className="flex flex-col items-center justify-center gap-3 bg-gray-100 p-10 mb-10 mt-5 rounded-lg">
                 <div className="flex items-center justify-center gap-8">
                     <div
-                        className={`text-center w-[150px] h-[150px] bg-white cursor-pointer flex items-center justify-center text-black hover:bg-yellow-200 rounded-lg shadow-xl ${role == "USER" ? "!bg-[#FFAE27] !text-white" : ""}`}
-                        onClick={() => setRole("USER")}
+                        className={`text-center w-[150px] h-[150px] bg-white cursor-pointer flex items-center justify-center text-black hover:bg-yellow-200 rounded-lg shadow-xl ${role == "User" ? "!bg-[#FFAE27] !text-white" : ""}`}
+                        onClick={() => setRole("User")}
                     >   
                         <div className="flex flex-col items-center justify-between">
                         <UserIcon className="text-6xl"/>
@@ -40,8 +40,8 @@ export default function ChooseRoleForm({ role, setRole, setOpenChooseRoleForm, h
                         </div>
                     </div>
                     <div
-                        className={`text-center w-[150px] h-[150px] bg-white cursor-pointer flex items-center justify-center text-black hover:bg-yellow-200 rounded-lg shadow-xl ${role == "ORGANIZER" ? "!bg-[#FFAE27] !text-white" : ""}`}
-                        onClick={() => setRole("ORGANIZER")}
+                        className={`text-center w-[150px] h-[150px] bg-white cursor-pointer flex items-center justify-center text-black hover:bg-yellow-200 rounded-lg shadow-xl ${role == "Organizer" ? "!bg-[#FFAE27] !text-white" : ""}`}
+                        onClick={() => setRole("Organizer")}
                     >
                         <div className="flex flex-col items-center justify-between">
                         <OrganizerIcon className="text-6xl"/>
