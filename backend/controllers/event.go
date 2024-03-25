@@ -47,11 +47,6 @@ func NewEventController(
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events [post]
 func (c *EventController) CreateEvent(ctx *gin.Context) {
-	// var req *st.CreateEventRequest
-	// if err := ctx.ShouldBindJSON(&req); err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
 	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
