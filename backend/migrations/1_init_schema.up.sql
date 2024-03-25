@@ -20,7 +20,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id VARCHAR(255) NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
-    username VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) NOT NULL,
     phone_number CHAR(10) UNIQUE,
     email VARCHAR(64) UNIQUE,
     first_name VARCHAR(64) NOT NULL,
@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS users (
     role account_type NOT NULL,
     register_type registration_method NOT NULL,
     token VARCHAR(1024) DEFAULT '' NOT NULL,
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (user_id)
@@ -93,8 +94,8 @@ END $$;
 CREATE TABLE IF NOT EXISTS events (
     event_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
     organizer_id VARCHAR(36) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
     location_id VARCHAR(36) NOT NULL,
+    admin_id VARCHAR(36) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('Approved', 'Rejected', 'Waiting')),
@@ -109,7 +110,6 @@ CREATE TABLE IF NOT EXISTS events (
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (event_id),
     CONSTRAINT fk_organizer FOREIGN KEY (organizer_id) REFERENCES organizers(organizer_id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE
 );
 

@@ -34,6 +34,7 @@ export default function EventsList({ datas, role }: Props) {
             district={eventItem.district}
             imgSrc={eventItem.event_image}
             page={roleToNumber}
+            role="USER"
           />
         ))}
       </div>

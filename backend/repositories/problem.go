@@ -78,11 +78,17 @@ func (repo *ProblemRepository) GetProblemLists(req *st.GetProblemListsRequest) (
 	log.Println("[Repo: GetProblemsByStatus] Called")
 
 	var problems []models.Problem
-	if err := repo.DB.Where("status = ? AND user_id = ?", req.Status, req.UserId).Find(&problems).Error; err != nil {
+	query := repo.DB
+	if req.UserId != "" {
+		query = query.Where(`user_id = ?`, req.UserId)
+	}
+	if req.Status != "" {
+		query = query.Where(`status = ?`, req.Status)
+	}
+	if err := query.Find(&problems).Error; err != nil {
 		log.Println("[Repo: GetProblemsByStatus] Error finding problems:", err)
 		return nil, err
 	}
-
 	return problems, nil
 }
 
