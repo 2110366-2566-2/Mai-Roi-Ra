@@ -67,7 +67,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 		District:       ctx.Request.FormValue("district"),
 		StartDate:      ctx.Request.FormValue("start_date"),
 		EndDate:        ctx.Request.FormValue("end_date"),
-		EventName:      ctx.Request.FormValue("even_name"),
+		EventName:      ctx.Request.FormValue("event_name"),
 		Description:    ctx.Request.FormValue("description"),
 		LocationName:   ctx.Request.FormValue("location_name"),
 		ParticipantFee: float64(fee),
