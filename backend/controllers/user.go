@@ -567,10 +567,6 @@ func (c *UserController) GetUserVerificationStatus(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if user == nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
 
 	log.Println("[CTRL: GetUserVerificationStatus] Output:", user.IsVerified)
 	ctx.JSON(http.StatusOK, gin.H{"isVerified": user.IsVerified})
