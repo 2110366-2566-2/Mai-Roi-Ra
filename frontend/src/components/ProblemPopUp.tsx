@@ -50,19 +50,33 @@ const ProblemPopUp = ({ isVisible, onClose, id, problem , description,reply}) =>
                         <CloseIcon className="cursor-pointer" onClick={handleClose} />
                     </div>
                 </div>
-                <div className="px-[25px]">
-                    <div className="lg:text-[40px] md:text-[30px] sm:text-[30px] text-[20px] font-medium w-fit flex items-center rounded-3xl px-[20px] lg:py-[7px] md:py-[5px] sm:py-[3px] py-[3px] relative flex-row">
+                <div className="px-5">
+                    <div className="text-5xl md:text-4xl sm:text-3xl text-lg font-medium w-fit flex items-center rounded-3xl px-4 py-2 relative flex-row">
                         {problem}
                     </div>
-                    <div className="lg:text-[40px] md:text-[30px] sm:text-[30px] text-[20px] font-medium w-fit flex items-center rounded-3xl px-[20px] lg:py-[7px] md:py-[5px] sm:py-[3px] py-[3px] relative flex-row">
+                    <hr className="w-1/2 border-black my-2 ml-5"></hr>
+                    <div className="text-xl md:text-xl sm:text-xl text-base w-fit flex items-center rounded-3xl px-4 py-2 relative flex-row">
                         {description}
                     </div>
-                    <div className="lg:text-[40px] md:text-[30px] sm:text-[30px] text-[20px] font-medium w-fit flex items-center rounded-3xl px-[20px] lg:py-[7px] md:py-[5px] sm:py-[3px] py-[3px] relative flex-row">
-                        {reply}
+                    <div className="flex justify-end">
+                        <div className="bg-yellow-200 rounded-xl p-4 mb-2" style={{ backgroundColor: '#F2D22E' }}>
+                            <span className="text-xl text-black">Reply from Admin</span>
+                        </div>
+                    </div>
+                    <div className="text-xl md:text-xl sm:text-xl text-base flex flex-col flex-grow">
+                        <div className="border border-gray-300 rounded-xl p-4 mb-2 flex-grow">
+                        Temporary Reply
+                        {/* {reply} */}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+
+
+                </div>
+
+                </div>
+
+            
     );
 };
 
