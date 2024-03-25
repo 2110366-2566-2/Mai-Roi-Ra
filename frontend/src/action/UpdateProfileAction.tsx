@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import updateProfile from "@/libs/updateProfile";
 
 export default async function UpdateProfileAction(
@@ -33,5 +34,5 @@ export default async function UpdateProfileAction(
   revalidateTag(`profile`);
   revalidatePath("/profile");
 
-  
+  redirect("/profile");
 }

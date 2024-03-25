@@ -340,14 +340,7 @@ func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.User
 		log.Print("[Repo: UpdateUserRole] user_id not found")
 		return nil, err
 	}
-	response := &st.UserResponse{
-		Response: "Update role successful",
-	}
-	if (modelUser.Username != "") {
-		response.Response = "Role has already been updated. The change won't be saved"
-		return response, nil
-	}
-	role := constant.USER
+	role := modelUser.Role
 	if req.Role == "Organizer" {
 		role = constant.ORGANIZER
 	} else if req.Role == "Admin" {
@@ -363,5 +356,8 @@ func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.User
 		log.Println("[Repo: UpdateUserRole] Error updating in the database:", err)
 		return nil, err
 	}
-	return response, nil
+
+	return &st.UserResponse{
+		Response: "Update role successful",
+	}, nil
 }

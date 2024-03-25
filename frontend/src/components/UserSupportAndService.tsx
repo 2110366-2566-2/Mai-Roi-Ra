@@ -1,16 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import FAQlist from "./FAQlist";
-import ProblemList from "./ProblemList";
-import ReportProblemButton from "./ReportProblemButton";
 // Other imports...
-interface Props {
-  datas: any[];
-}
 
-export default function UserSupportAndService({ datas }: Props) {
+export default function UserSupportAndService() {
   const [activeTab, setActiveTab] = useState("FAQ");
-  
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -46,8 +39,6 @@ export default function UserSupportAndService({ datas }: Props) {
             </button>
           ))}
         </div>
-        {activeTab == "FAQ" && <FAQlist></FAQlist>}
-        {activeTab == "Problem" && <ProblemList datas={datas}></ProblemList>}
       </div>
     </div>
   );

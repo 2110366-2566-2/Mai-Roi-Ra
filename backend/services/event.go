@@ -45,6 +45,10 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	if err != nil {
 		return nil, err
 	}
+	resAdmin, err := s.RepositoryGateway.UserRepository.GetRandomAdmin()
+	if err != nil {
+		return nil, err
+	}
 	startDate, err := utils.StringToTime(req.StartDate)
 	if err != nil {
 		log.Println("[Service: CreateEvent] Error parsing StartDate to time.Time format:", err)
@@ -66,6 +70,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	eventModel := models.Event{
 		EventId:        utils.GenerateUUID(),
 		OrganizerId:    req.OrganizerId,
+		UserId:         resAdmin.UserID,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -196,7 +201,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	res := &st.GetEventDataByIdResponse{
 		EventId:          resEvent.EventId,
 		OrganizerId:      resEvent.OrganizerId,
-		UserId:           resEvent.AdminId,
+		UserId:           resEvent.UserId,
 		LocationId:       resLocation.LocationId,
 		FirstName:        orgUserInfo.FirstName,
 		LastName:         orgUserInfo.LastName,
@@ -269,7 +274,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
-		AdminId:        resEvent.AdminId,
+		UserId:         resEvent.UserId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,

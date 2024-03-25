@@ -137,21 +137,21 @@ const SignInForm = () => {
         </form>
 
         <div
-          className="flex justify-between w-full text-sky-500 mt-[30px] 
-                    lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px] items-center"
+          className="flex justify-end w-full text-sky-500 mt-[30px] 
+                    lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]"
         >
-          <button className="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150" onClick={handleLoginGoogle}>
-        <img className="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
-        <span className="lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]">Login with Google</span>
-        </button>
           <Link
             href="/auth/register"
             className="hover:text-sky-600 hover:underline"
           >
             Sign up
           </Link>
-
         </div>
+        <span className="ml-[3px]">
+            <button onClick={handleLoginGoogle}>
+              Click me
+            </button>
+          </span>
       </div>
     </div>
   );
