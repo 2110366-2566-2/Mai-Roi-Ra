@@ -17,7 +17,7 @@ export default function AdminSupportAndService({ datas }: Props) {
   return (
     <div className="bg-white text-black h-full">
       <div className="lg:mr-24 border-r border-b bg-white">
-        <div className="w-full text-2xl pt-20">
+        <div className="w-full text-2xl pt-20 border-b">
           {["Problem", "Replied"].map((tabName) => (
             <button
               key={tabName}
@@ -44,12 +44,10 @@ export default function AdminSupportAndService({ datas }: Props) {
             </button>
           ))}
         </div>
-      </div>
-      {activeTab == "Problem" && (
-        <div className="my-8 px-4 lg:px-10">
+        {activeTab == "Problem" && (
           <AdminProblemList datas={datas}></AdminProblemList>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

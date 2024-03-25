@@ -7,6 +7,7 @@ import { PiBalloonBold } from "react-icons/pi";
 import { SlLocationPin } from "react-icons/sl";
 import { useSession } from "next-auth/react";
 import getProfile from "@/libs/getProfile";
+import { MdVerified } from "react-icons/md";
 
 interface Props {
   firstNameProp: string;
@@ -63,8 +64,12 @@ export default function ProfileUserInformation({
         <div className="text-xl ml-8">{firstName}</div>
         <div className="text-xl ml-2">{lastName}</div>
       </div>
-      <div className="ml-10">
+      <div className="ml-10 flex">
         <div className="text-sm text-gray-500">@{username}</div>
+
+        <div className="flex justify-center items-center ml-1">
+          <MdVerified className="text-gray-300" />
+        </div>
       </div>
       <div className="mt-2 ml-16 space-y-2">
         {phoneNumber ? (
@@ -73,9 +78,12 @@ export default function ProfileUserInformation({
             <div className="text-sm text-gray-500">{phoneNumber}</div>
           </div>
         ) : (
-          <div className="flex items-center">
+          <div className="flex items-center flex">
             <MdEmail className="text-gray-500 text-sm mr-1" />
             <div className="text-sm text-gray-500">{email}</div>
+            <button className="text-sm text-gray-500 ml-2 hover:underline">
+              (click here to verify)
+            </button>
           </div>
         )}
         <div className="flex items-center">

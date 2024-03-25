@@ -28,7 +28,7 @@ export default function ProblemItem({
     <div className="relative">
       {" "}
       {/* Container with relative positioning */}
-      <div className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-10 w-full hover:scale-105 duration-300">
+      <div className="bg-white flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-10 w-full hover:scale-105 duration-300">
         {role == "USER" && (
           <div
             className="h-full flex flex-col justify-start w-full space-y-[7px] mx-10"
