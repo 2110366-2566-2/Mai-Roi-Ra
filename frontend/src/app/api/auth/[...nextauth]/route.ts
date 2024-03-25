@@ -38,13 +38,13 @@ export const authOptions: AuthOptions = {
                         const sessionUser = {
                             organizer_id: jsonParsed.organizer_id,
                             user_id: jsonParsed.user_id,
-                            name: jsonParsed.username || "",
+                            username: jsonParsed.username || "",
                             email: jsonParsed.email,
                             role: jsonParsed.role,
                             token: token
                         };
                         
-                        console.log("SESSION:", sessionUser)
+                        // console.log("SESSION:", sessionUser)
                         return sessionUser;
                     } catch (error) {
                         console.error('Failed to decode JWT:', error);

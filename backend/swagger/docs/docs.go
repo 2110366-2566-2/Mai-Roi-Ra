@@ -626,6 +626,12 @@ const docTemplate = `{
                         "name": "status",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Admin ID",
+                        "name": "admin_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -933,8 +939,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "user_id",
                         "name": "user_id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -2486,14 +2491,8 @@ const docTemplate = `{
         },
         "structure.LoginUserResponse": {
             "type": "object",
-            "required": [
-                "first_name"
-            ],
             "properties": {
                 "email": {
-                    "type": "string"
-                },
-                "first_name": {
                     "type": "string"
                 },
                 "organizer_id": {
@@ -2509,6 +2508,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
