@@ -56,6 +56,7 @@ type IUserService interface {
 	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
 	GetUserOTP(userId *string) (*string, *time.Time, error)
 	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -747,4 +748,14 @@ func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserRes
 		return nil, err
 	}
 	return res, nil
+}
+
+func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
+	log.Println("[Service: GetUserByEmail]: Called")
+	user, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
+	if err != nil {
+		log.Println("[Service: GetUserByEmail]: Error retrieving user by email", err)
+		return nil, err
+	}
+	return user, nil
 }

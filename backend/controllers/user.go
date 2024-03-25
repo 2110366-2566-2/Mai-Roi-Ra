@@ -542,3 +542,36 @@ func (c *UserController) UpdateUserRole(ctx *gin.Context) {
 	log.Println("[CTRL: UpdateUserRole]: Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary Get User Verification Status
+// @Description Get the verification status of a user by their email.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param email query string true "User Email"
+// @Success 200 {object} map[string]bool "Returns the verification status of the user."
+// @Failure 400 {object} object "Bad Request"
+// @Failure 404 {object} object "User Not Found"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/verification_status [get]
+func (c *UserController) GetUserVerificationStatus(ctx *gin.Context) {
+	email := ctx.Query("email")
+	if email == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
+		return
+	}
+
+	log.Println("[CTRL: GetUserVerificationStatus] Input:", email)
+	user, err := c.ServiceGateway.UserService.GetUserByEmail(email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if user == nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	log.Println("[CTRL: GetUserVerificationStatus] Output:", user.IsVerified)
+	ctx.JSON(http.StatusOK, gin.H{"isVerified": user.IsVerified})
+}
