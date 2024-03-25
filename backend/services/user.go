@@ -238,7 +238,7 @@ func (s *UserService) LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse
 
 	res := &st.LoginUserResponse{
 		UserId:      user.UserID,
-		FirstName:   user.FirstName,
+		Username:    user.Username,
 		Email:       email,
 		PhoneNumber: phoneNumber,
 		Token:       token,

@@ -37,7 +37,7 @@ type ProblemList struct {
 }
 
 type GetProblemListsRequest struct {
-	UserId string `json:"user_id" binding:"required"`
+	UserId string `json:"user_id"`
 	Status string `json:"status"`
 }
 
