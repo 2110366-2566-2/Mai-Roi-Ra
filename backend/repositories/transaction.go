@@ -17,6 +17,7 @@ type TransactionRepository struct {
 type ITransactionRepository interface {
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
+	CreateOrganizerTransferRecord(organizerId string, stripeTransferId string, amount float64) (string, error)
 }
 
 func NewTransactionRepository(
@@ -77,4 +78,31 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 	return &st.TransactionResponse{
 		Response: "Update Transaction Successful",
 	}, nil
+}
+
+func (r *TransactionRepository) CreateOrganizerTransferRecord(organizerId, stripeTransferId string, amount float64) (string, error) {
+	log.Println("[Repo: CreateOrganizerTransferRecord] Called")
+	transactionModel := models.Transaction{
+		TransactionID:     utils.GenerateUUID(),
+		UserID:            organizerId,
+		PaymentIntentID:   stripeTransferId,
+		TransactionAmount: amount,
+		TransactionDate:   time.Now(),
+		Status:            "Completed",
+	}
+
+	trans := r.db.Begin().Debug()
+	if err := trans.Create(&transactionModel).Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateOrganizerTransferRecord] Insert data in transactions table error:", err)
+		return "", err
+	}
+
+	if err := trans.Commit().Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateOrganizerTransferRecord] Call orm DB Commit error:", err)
+		return "", err
+	}
+
+	return transactionModel.TransactionID, nil
 }

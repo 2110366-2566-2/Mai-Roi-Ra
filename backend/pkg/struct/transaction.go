@@ -39,6 +39,18 @@ type GetTransactionByPaymentIdResponse struct {
 	TransactionAmount float64 `json:"transaction_amount"`
 }
 
+type TransferToOrganizerRequest struct {
+	OrganizerId             string  `json:"organizer_id" binding:"required"` // This is the system user ID of the organizer
+	OrganizerStripeAccountId string  `json:"organizer_stripe_account_id" binding:"required"` // This is the Stripe account ID of the organizer
+	TransactionAmount        float64 `json:"transaction_amount" binding:"required"`
+	//EventID                  string  `json:"event_id"` // Optional: Event associated with the transaction
+}
+
+type TransferToOrganizerResponse struct {
+	TransactionId string `json:"transaction_id"`
+	Status        string `json:"status"`
+}
+
 // ? Use for ...
 /*
 	UpdateTransactionResponse, CreateQRPromptPayResponse
