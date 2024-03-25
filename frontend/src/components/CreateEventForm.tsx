@@ -55,9 +55,6 @@ const CreateEventForm = () => {
                 return;
             } if (activity == ""){
                 setError("Activity Required")
-            } if (imageSrc == "") {
-                setError("Image Source Required");
-                return;
             } if (price == null) {
                 setError("Price Required");
                 return;

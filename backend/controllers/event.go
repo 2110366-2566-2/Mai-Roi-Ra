@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,6 +42,29 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// S3
+	fileHeader, err := ctx.FormFile("image")
+	if err != nil {
+		log.Println("[CTRL: CreateEvent] Called and read header failed: ", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	if utils.IsNilHeader(fileHeader) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "FileHeader Is nil"})
+	}
+
+	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
+	log.Println("FILEHEADER: ", fileHeader.Header)
+	uploadId, uploadErr := Cloud.SaveFile(ctx, fileHeader)
+	if err != nil {
+		log.Println("[CTRL: CreateEvent] Called SaveFile to S3 Error: ", uploadErr)
+		return
+	}
+
+	req.EventImage, _ = Cloud.GetFileUrl(ctx, uploadId)
+
 	log.Println("[CTRL: CreateEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.CreateEvent(req)
 	if err != nil {

@@ -477,7 +477,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	}
 
 	to = append(to, email)
-	
+
 	contentHTML := fmt.Sprintf(`
     <html>
     <head>

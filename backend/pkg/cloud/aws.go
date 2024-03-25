@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -52,9 +53,9 @@ func NewAWSCloudService(bucket string) *awsService {
 		service: service,
 	}
 
-	if bucket == "profile" {
+	if bucket == constant.PROFILE {
 		res.bucketName = cfg.S3.AwsBucketProfileName
-	} else if bucket == "event" {
+	} else if bucket == constant.EVENT {
 		res.bucketName = cfg.S3.AwsBucketEventName
 	} else {
 		log.Println("[Config]: Error wrong bucket name")
