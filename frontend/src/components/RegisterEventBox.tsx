@@ -78,6 +78,7 @@ export default function RegisterEventBox({
       const rejectedResult = await rejectEvent(event.event_id);
       // Handle successful registration
       console.log("Reject successful:", rejectedResult);
+      router.push("/homepage");
     } catch (error: any) {
       // Handle registration error
       console.error("Reject failed:", error.message);
