@@ -733,7 +733,6 @@ func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserRes
 	if err != nil {
 		return nil, err
 	}
-	log.Println("CHECKORG:", checkOrg)
 	if checkOrg == "" {
 		if req.Role == "Organizer" {
 			orgId, err := s.RepositoryGateway.OrganizerRepository.CreateOrganizerWithUserId(req.UserId)
