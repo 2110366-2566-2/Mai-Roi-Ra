@@ -22,10 +22,6 @@ export default function HomePage() {
     };
   }, []);
 
-  const handleLoginGoogle = () => {
-    window.location.href = 'http://localhost:8080/api/v1/auth/google/login';
-  }
-
   return (
     <div
       className={`${styles.Roboto} w-screen h-screen flex ${isPhoneScreen ? "flex-col" : "flex-row"
@@ -102,11 +98,6 @@ export default function HomePage() {
             >
               Log in
             </Link>
-          </span>
-          <span className="ml-[3px]">
-            <button onClick={handleLoginGoogle}>
-              Click me
-            </button>
           </span>
         </div>
       </div>
