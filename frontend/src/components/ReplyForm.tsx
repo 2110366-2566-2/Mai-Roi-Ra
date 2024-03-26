@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import RouterBackEventButton from "./RouterBackEventButton";
 import { useRouter } from "next/navigation";
 import SuccessReplyModal from "./SuccessReplyModal";
+import LoadingLine from "./LoadingLine";
+import LoadingCircular from "./LoadingCircular";
 
 interface Props {
   problem: string;
@@ -19,6 +21,7 @@ export default function ReplyForm({
   problem_id,
   token,
 }: Props) {
+  const [isLoading, setIsloading] = useState(false);
   const router = useRouter();
 
   const [replySuccessModal, setReplySuccessModal] = useState(false);
@@ -29,6 +32,7 @@ export default function ReplyForm({
   };
 
   const handleFormSubmit = async (event: React.FormEvent) => {
+    setIsloading(true);
     event.preventDefault();
     console.log(reply);
     if (reply) {
@@ -43,21 +47,24 @@ export default function ReplyForm({
           token
         );
         setReplySuccessModal(true);
+        setIsloading(false);
         setTimeout(() => {
           router.push("/supportandservice");
           setReplySuccessModal(false);
         }, 4000);
       } catch (err) {
         console.log("Error during reply submit: ", err);
+        setIsloading(false);
       }
     } else {
       console.log("Reply Failed");
+      setIsloading(false);
     }
   };
 
   return (
     <main className="h-auto w-full text-black">
-      <div className="px-8">
+      <div className="px-8 pb-4">
         <RouterBackEventButton />
         <div className="mt-20 ml-12 flex-col ">
           <div className="flex justify-end">
@@ -93,12 +100,15 @@ export default function ReplyForm({
               className="mt-4 border border-slate-400 rounded-xl h-[200px] w-full focus:outline-none p-4 resize-none"
               placeholder="Write your reply here ..."
             ></textarea>
-            <button
-              type="submit"
-              className="mt-8 text-white px-12 py-4 rounded-full bg-[#F2D22E] hover:bg-yellow-500"
-            >
-              Send
-            </button>
+            <div className="flex mt-4 items-center pr-8">
+              <button
+                type="submit"
+                className=" text-white px-12 py-4 rounded-full bg-[#F2D22E] hover:bg-yellow-500 mr-8"
+              >
+                Send
+              </button>
+              {isLoading && <LoadingLine></LoadingLine>}
+            </div>
           </form>
         </div>
       </div>
