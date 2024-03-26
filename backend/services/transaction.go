@@ -147,6 +147,17 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	// Format the transaction date
 	formattedDate := transactionDate.Format("2006-01-02")
 
+	// Fetch event data
+	eventData, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventID)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching event data: %v", err)
+	}
+
+	// Format dates
+	formattedStartDate := eventData.StartDate.Format("2006-01-02")
+	formattedEndDate := eventData.EndDate.Format("2006-01-02")
+
+	// Update email content to include event details
 	contentHTML := fmt.Sprintf(`
 	<html>
 	<head>
@@ -176,16 +187,22 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	</head>
 	<body>
 		<h3>Dear Customer,</h3>
-		<p>We are pleased to inform you that your transaction has been successfully processed.</p>
+		<p>We are pleased to inform you that your transaction for the event <strong>%s</strong> has been successfully processed.</p>
 		<p>Transaction Details:</p>
 		<p>- Transaction ID: %s</p>
-		<p>- Event ID: %s</p>
 		<p>- Amount: %.2f THB</p>
 		<p>- Transaction Date: %s</p>
+		<p>Event Details:</p>
+		<p>- Event Name: %s</p>
+		<p>- Description: %s</p>
+		<p>- Activity: %s</p>
+		<p>- Start Date: %s</p>
+		<p>- End Date: %s</p>
+		<img src="%s" alt="Event Image" style="width:200px;height:auto;">
 		<p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`, req.TransactionID, req.EventID, req.Amount, formattedDate)
+	`, eventData.EventName, req.TransactionID, req.Amount, formattedDate, eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, GetString(eventData.EventImage))
 
 	if err = sender.SendEmail("Transaction Successful", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
 		return nil, err
@@ -195,4 +212,11 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	return &st.SendTransactionEmailResponse{
 		SendStatus: res,
 	}, nil
+}
+
+func GetString(s *string) string {
+	if s != nil {
+		return *s
+	}
+	return ""
 }
