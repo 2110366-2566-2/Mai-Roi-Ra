@@ -446,20 +446,12 @@ func (c *UserController) LoginGoogle(ctx *gin.Context) {
 // @Router /users/auth/{provider}/callback [get]
 func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 	log.Println("[CTRL: CallbackGoogle] Called: ")
-	token, flag, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
+	token, err := c.ServiceGateway.UserService.CallbackGoogle(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	hasAccount := false
-	if flag != nil {
-		hasAccount = *flag
-	}
 	redirectURL := fmt.Sprintf("%s/auth/handle-login", constant.FRONT_END_URL)
-	if !hasAccount {
-		// Redirect to the register page for a new user
-		redirectURL = fmt.Sprintf("%s/auth/signin", constant.FRONT_END_URL)
-	}
 	log.Println("User token at the end:", *token)
 
 	ctx.SetCookie("token", *token, middleware.MaxAge, "/", "localhost", false, true)
@@ -541,4 +533,33 @@ func (c *UserController) UpdateUserRole(ctx *gin.Context) {
 	}
 	log.Println("[CTRL: UpdateUserRole]: Output:", res)
 	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary Get User Verification Status
+// @Description Get the verification status of a user by their email.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param email query string true "User Email"
+// @Success 200 {boolean} bool "Returns the verification status of the user."
+// @Failure 400 {object} object "Bad Request"
+// @Failure 404 {object} object "User Not Found"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/verification_status [get]
+func (c *UserController) GetUserVerificationStatus(ctx *gin.Context) {
+	email := ctx.Query("email")
+	if email == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
+		return
+	}
+
+	log.Println("[CTRL: GetUserVerificationStatus] Input:", email)
+	user, err := c.ServiceGateway.UserService.GetUserByEmail(email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: GetUserVerificationStatus] Output:", user.IsVerified)
+	ctx.JSON(http.StatusOK, user.IsVerified)
 }

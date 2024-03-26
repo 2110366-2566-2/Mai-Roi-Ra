@@ -11,6 +11,7 @@ import Modal from "./Modal";
 import isRegisteredEvent from '@/libs/isRegisteredEvent';
 import verifyEvent from "@/libs/VerifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
+import { useRouter } from "next/navigation";
 
 interface Event {
   activities: string;
@@ -39,6 +40,8 @@ export default function RegisterEventBox({
 }) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
+
+  const router = useRouter();
 
   const handleRegisterEventButton = async () => {
     try {
@@ -79,6 +82,7 @@ export default function RegisterEventBox({
       const verificationResult = await verifyEvent(event.event_id);
       // Handle successful registration
       console.log("Verify successful:", verificationResult);
+      router.push("/homepage");
     } catch (error: any) {
       // Handle registration error
       console.error("Verify failed:", error.message);
@@ -90,6 +94,7 @@ export default function RegisterEventBox({
       const rejectedResult = await rejectEvent(event.event_id);
       // Handle successful registration
       console.log("Reject successful:", rejectedResult);
+      router.push("/homepage");
     } catch (error: any) {
       // Handle registration error
       console.error("Reject failed:", error.message);

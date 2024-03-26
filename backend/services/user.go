@@ -51,11 +51,12 @@ type IUserService interface {
 	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
 	LoginGoogle(c *gin.Context) (*goth.User, error)
-	CallbackGoogle(c *gin.Context) (*string, *bool, error)
+	CallbackGoogle(c *gin.Context) (*string, error)
 	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) // New function to send OTP email
 	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
 	GetUserOTP(userId *string) (*string, *time.Time, error)
 	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -558,7 +559,7 @@ func (s *UserService) LoginGoogle(c *gin.Context) (*goth.User, error) {
 	return &user, nil
 }
 
-func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
+func (s *UserService) CallbackGoogle(c *gin.Context) (*string, error) {
 	log.Println("[Service: CallbackGoogle]: Called")
 	provider := c.Param("provider")
 
@@ -569,7 +570,7 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 	gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 	if err != nil {
 		log.Println("[Service: CallbackGoogle]: Gothic CallbackGoogle error:", err)
-		return nil, nil, err
+		return nil, err
 	}
 	log.Println("Call from CallbackGoogle", gothUser)
 
@@ -592,21 +593,18 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 		Role:      constant.USER,
 	}
 
-	var flag = true
-
 	_, err = s.RepositoryGateway.UserRepository.GetUserByEmail(*createUserRequest.Email)
 	if err != nil {
 		_, err := s.RepositoryGateway.UserRepository.CreateUser(&createUserRequest, constant.GOOGLE, true)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		flag = false
 	}
 
 	existingUser, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
 	if err != nil {
 		log.Println("[Service: CallbackGoogle]: Error retrieving newly created user:", err)
-		return nil, nil, err
+		return nil, err
 	}
 
 	orgRes, _ := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(existingUser.UserID)
@@ -614,15 +612,15 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, *bool, error) {
 	token, tokenErr := GenerateJWTToken(existingUser, orgRes)
 	if tokenErr != nil {
 		log.Println("[Service: CallbackGoogle]: Error generating token:", tokenErr)
-		return nil, nil, tokenErr
+		return nil, tokenErr
 	}
 
 	// Update token
 	if err = s.RepositoryGateway.UserRepository.UpdateUserToken(existingUser.UserID, token); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return &token, &flag, nil
+	return &token, nil
 }
 
 func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) {
@@ -747,4 +745,14 @@ func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserRes
 		return nil, err
 	}
 	return res, nil
+}
+
+func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
+	log.Println("[Service: GetUserByEmail]: Called")
+	user, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
+	if err != nil {
+		log.Println("[Service: GetUserByEmail]: Error retrieving user by email", err)
+		return nil, err
+	}
+	return user, nil
 }

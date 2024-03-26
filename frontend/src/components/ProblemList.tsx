@@ -8,15 +8,21 @@ interface Props {
 }
 
 export default function ProblemList({ datas }: Props) {
-
   console.log(datas);
   return (
-    <main className="text-black flex flex-col h-screen overflow-hidden">
-      <div className='py-[20px] md:mt-[20px] mt-[5px] overflow-y-auto'>
-        {datas.map((problemItem:any) => (
-          <ProblemItem id={problemItem.problem_id} problem={problemItem.problem} description={problemItem.description} status={problemItem.status}/>
+    <main className="text-black flex flex-col h-screen">
+      <div className="my-8 px-4 lg:px-10">
+        {datas.map((problemItem: any) => (
+          <ProblemItem
+            id={problemItem.problem_id}
+            problem={problemItem.problem}
+            description={problemItem.description}
+            status={problemItem.status}
+            reply={problemItem.reply}
+            role="USER"
+          />
         ))}
-      </div> 
+      </div>
       <ReportProblemButton></ReportProblemButton>
     </main>
   );

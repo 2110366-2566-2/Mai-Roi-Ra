@@ -157,6 +157,25 @@ definitions:
     - transaction_amount
     - user_id
     type: object
+  structure.CreateRefundRequest:
+    properties:
+      refund_amount:
+        type: number
+      refund_reason:
+        type: string
+      transaction_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - refund_reason
+    - transaction_id
+    type: object
+  structure.CreateRefundResponse:
+    properties:
+      refund_id:
+        type: string
+    type: object
   structure.CreateUserRequest:
     properties:
       address:
@@ -1466,6 +1485,36 @@ paths:
       summary: Update existing problem
       tags:
       - problems
+  /refunds:
+    post:
+      consumes:
+      - application/json
+      description: CreateRefund for user to initiate refund process
+      parameters:
+      - description: Refund Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateRefundRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreateRefundResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: CreateRefund
+      tags:
+      - refunds
   /test:
     get:
       consumes:
@@ -1923,6 +1972,39 @@ paths:
           schema:
             type: object
       summary: Update User Role
+      tags:
+      - users
+  /users/verification_status:
+    get:
+      consumes:
+      - application/json
+      description: Get the verification status of a user by their email.
+      parameters:
+      - description: User Email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the verification status of the user.
+          schema:
+            type: boolean
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get User Verification Status
       tags:
       - users
   /users/verify_otp:
