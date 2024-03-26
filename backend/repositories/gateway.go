@@ -23,6 +23,7 @@ type RepositoryGateway struct {
 	SearchRepository       ISearchRepository
 	OtpRepository          IOtpRepository
 	TransactionRepository  ITransactionRepository
+	RefundRepository	   IRefundRepository
 }
 
 // NewRepository ...
