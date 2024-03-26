@@ -125,7 +125,9 @@ export default function EventItem({
 
           <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-full text-gray-500">
             <div className="text-nowrap	">{`${formattedStartDate} - ${formattedEndDate}`}</div>
-            <div className="text-nowrap">Location: Patumwan</div>
+            <div className="text-nowrap hidden xl:block">
+              Location: Patumwan
+            </div>
             {page == 1 ? (
               <div className="space-x-2 text-black">
                 <button
@@ -144,8 +146,12 @@ export default function EventItem({
 
           <div className="">
             {description && (
-              <div className="hidden sm:block break-words">
-                <p className="text-wrap break-words">{description}</p>
+              <div className="hidden lg:block break-words 2xl:pr-96 xl:pr-64 lg:pr-48 md:pr-24 pr-4">
+                <p className="text-wrap break-words">
+                  {description.length > 150
+                    ? `${description.substring(0, 150)}...`
+                    : description}
+                </p>
               </div>
             )}
           </div>

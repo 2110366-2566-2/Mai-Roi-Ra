@@ -31,7 +31,7 @@ export default async function Homepage() {
   repliedDatas = repliedProblems.problem_lists;
 
   return (
-    <main className="bg-white text-black h-full">
+    <main className="bg-white text-black">
       {session?.user.role == "ADMIN" ? (
         <AdminSupportAndService
           pendingDatas={pendingDatas}

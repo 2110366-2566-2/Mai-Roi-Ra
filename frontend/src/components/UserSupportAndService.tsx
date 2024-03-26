@@ -16,7 +16,7 @@ export default function UserSupportAndService({ datas }: Props) {
   };
 
   return (
-    <div className="bg-white text-black h-full">
+    <div className="bg-white text-black">
       <div className="lg:mr-24 border-r border-b bg-white">
         <div className="w-full text-2xl pt-20 border-b">
           {["FAQ", "Problem"].map((tabName) => (

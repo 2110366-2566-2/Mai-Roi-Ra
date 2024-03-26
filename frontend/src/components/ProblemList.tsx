@@ -10,8 +10,8 @@ interface Props {
 export default function ProblemList({ datas }: Props) {
   console.log(datas);
   return (
-    <main className="text-black flex flex-col h-screen">
-      <div className="my-8 px-4 lg:px-10">
+    <main className="text-black flex flex-col">
+      <div className="mt-8 px-4 lg:px-10">
         {datas.map((problemItem: any) => (
           <ProblemItem
             id={problemItem.problem_id}
