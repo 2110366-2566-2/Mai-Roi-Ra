@@ -3,13 +3,10 @@ package services
 import (
 	"log"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
-	"github.com/stripe/stripe-go/v72"
-	stripeTransfer "github.com/stripe/stripe-go/v72/transfer"
 )
 
 type TransactionService struct {
@@ -105,49 +102,44 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequest) (*st.TransferToOrganizerResponse, error) {
 	log.Println("[Service: TransferToOrganizer] Called")
 
-	// Load the configuration to get the Stripe secret key
-	cfg, err := config.NewConfig(".env")
+	event, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventID)
 	if err != nil {
-		log.Println("[Service: TransferToOrganizer] Error loading config:", err)
+		log.Println("[Service: TransferToOrganizer] Called Events Repo and error: ", err)
 		return nil, err
 	}
 
-	// Set the Stripe secret key
-	stripe.Key = cfg.Stripe.SecretKey
+	// initialize param
+	amount := int(event.ParticipantFee) * event.ParticipantCount
+	currency := constant.THB
+	destination := req.OrganizerStripeAccountId
 
-	// Retrieve the organizer's user record to get the Stripe account ID
-	getUserReq := &st.GetUserByUserIdRequest{
-		UserId: req.OrganizerId,
-	}
-	organizer, err := s.RepositoryGateway.UserRepository.GetUserByID(getUserReq)
-	if err != nil {
-		log.Println("[Service: TransferToOrganizer] Organizer not found:", err)
+	// create paymentIntent
+	paymentIntentId, intentErr := Stripe.CreatePaymentIntentID(int64(amount), currency)
+	if intentErr != nil {
+		log.Println("[Service: TransferToOrganizer] Called Stripe.CreatePaymentId error: ", err)
 		return nil, err
 	}
 
-	// Convert the amount to cents (or the smallest currency unit) and create a transfer
-	params := &stripe.TransferParams{
-		Amount:      stripe.Int64(int64(req.TransactionAmount * 100)),  // Assuming the amount is in baht
-		Currency:    stripe.String(string("thb")),                      // Set currency to Thai Baht
-		Destination: stripe.String(organizer.PaymentGatewayCustomerID), // Use the Stripe account ID from the organizer's user record
+	// get PaymentIntent object
+	tmp := &st.GetPaymentIntentByIdRequest{
+		PaymentIntentId: *paymentIntentId,
+	}
+	paymentIntent, getPIntentErr := Stripe.GetPaymentIntent(tmp)
+	if getPIntentErr != nil {
+		log.Println("[Service: TransferToOrganizer] Failed to retrieve PaymentIntent: ", getPIntentErr)
+		return nil, getPIntentErr
 	}
 
-	// Create the transfer with Stripe
-	t, err := stripeTransfer.New(params) // Use the fully qualified name for the Stripe transfer package
-	if err != nil {
-		log.Println("[Service: TransferToOrganizer] Error creating transfer:", err)
-		return nil, err
-	}
-
-	// Create a transaction record in your database using your method
-	transactionId, err := s.RepositoryGateway.TransactionRepository.CreateOrganizerTransferRecord(req.OrganizerId, t.ID, req.TransactionAmount)
-	if err != nil {
-		log.Println("[Service: TransferToOrganizer] Error saving transaction to database:", err)
-		return nil, err
+	// create Transfer Object
+	_, transferErr := Stripe.TransferToOrganizer(int64(amount), currency, destination, *paymentIntentId)
+	if transferErr != nil {
+		log.Println("[Service: TransferToOrganizer] Called transfer service error: ", err)
+		return nil, transferErr
 	}
 
 	return &st.TransferToOrganizerResponse{
-		TransactionId: transactionId,
-		Status:        "Completed", // Set the status based on the transfer result
+		TransactionId: *paymentIntentId,
+		Status:        paymentIntent.Status,
 	}, nil
+
 }

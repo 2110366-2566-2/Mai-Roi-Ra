@@ -8,6 +8,7 @@ import (
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
+	"github.com/stripe/stripe-go/v72"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +21,7 @@ type ITransactionRepository interface {
 	GetTransactionListByEventId(eventId string) ([]*models.Transaction, error)
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
-	CreateOrganizerTransferRecord(organizerId string, stripeTransferId string, amount float64) (string, error)
+	CreateOrganizerTransferRecord(req *stripe.Transfer) (string, error)
 	GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
 }
 
@@ -108,15 +109,14 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 	}, nil
 }
 
-func (r *TransactionRepository) CreateOrganizerTransferRecord(organizerId, stripeTransferId string, amount float64) (string, error) {
+func (r *TransactionRepository) CreateOrganizerTransferRecord(req *stripe.Transfer) (string, error) {
 	log.Println("[Repo: CreateOrganizerTransferRecord] Called")
 	transactionModel := models.Transaction{
-		TransactionID:     utils.GenerateUUID(),
-		UserID:            organizerId,
-		PaymentIntentID:   stripeTransferId,
-		TransactionAmount: amount,
+		TransactionID:     req.Metadata["payment_intent_id"],
+		UserID:            "",
+		PaymentIntentID:   "",
+		TransactionAmount: float64(req.Amount),
 		TransactionDate:   time.Now(),
-		Status:            "Completed",
 	}
 
 	trans := r.db.Begin().Debug()

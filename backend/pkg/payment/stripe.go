@@ -7,6 +7,7 @@ import (
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/client"
+	"github.com/stripe/stripe-go/v76/paymentintent"
 )
 
 type StripeService struct {
@@ -16,6 +17,7 @@ type StripeService struct {
 type IStripeService interface {
 	GetPaymentIntent(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error)
 	CreatePromptPayPayment(amount int64, currency string) (*stripe.PaymentIntent, error)
+	CreatePaymentIntentID(amount int64, currency string) (*string, error)
 	IssueRefund(paymentIntentID string) (*stripe.Refund, error)
 	TransferToOrganizer(amount int64, currency, destinationAccountID string) (*stripe.Transfer, error)
 }
@@ -42,6 +44,22 @@ func NewStripeService() *StripeService {
 	return &StripeService{
 		Client: sc,
 	}
+}
+
+func (s *StripeService) CreatePaymentIntentID(amount int64, currency string) (*string, error) {
+	params := &stripe.PaymentIntentParams{
+		Amount:   stripe.Int64(amount), // Amount in smallest currency unit (e.g., cents for USD)
+		Currency: stripe.String(currency),
+	}
+	intent, err := paymentintent.New(params)
+	if err != nil {
+		log.Println("[Pkg CreatePaymentIntent", err)
+	}
+
+	// Get the ID of the PaymentIntent
+	paymentIntentID := intent.ID
+	log.Printf("PaymentIntent ID: %s\n", paymentIntentID)
+	return &paymentIntentID, nil
 }
 
 func (s *StripeService) GetPaymentIntent(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error) {
@@ -99,12 +117,15 @@ func (s *StripeService) IssueRefund(paymentIntentID string) (*stripe.Refund, err
 	return s.Client.Refunds.New(refundParams)
 }
 
-func (s *StripeService) TransferToOrganizer(amount int64, currency, destinationAccountID string) (*stripe.Transfer, error) {
+func (s *StripeService) TransferToOrganizer(amount int64, currency, destinationAccountID string, paymentIntentID string) (*stripe.Transfer, error) {
 	log.Println("[Pkg: TransferToOrganizer] Called")
 	transferParams := &stripe.TransferParams{
 		Amount:      stripe.Int64(amount),
 		Currency:    stripe.String(currency),
 		Destination: stripe.String(destinationAccountID),
+		Metadata: map[string]string{
+			"payment_intent_id": paymentIntentID,
+		},
 	}
 	return s.Client.Transfers.New(transferParams)
 }
