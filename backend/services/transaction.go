@@ -111,32 +111,19 @@ func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequ
 	}
 
 	// initialize param
-	amount := int(event.ParticipantFee) * event.ParticipantCount
+	amount := int(event.ParticipantFee) * event.ParticipantCount * 100
 	currency := constant.THB
-	destination := req.OrganizerStripeAccountId
+
+	userId, _ := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(req.OrganizerId)
 
 	// create paymentIntent
-	paymentIntentId, intentErr := Stripe.CreatePaymentIntentID(int64(amount), currency)
+	paymentIntent, intentErr := Stripe.CreatePaymentIntent(int64(amount), currency, event.EventId, userId)
 	if intentErr != nil {
 		log.Println("[Service: TransferToOrganizer] Called Stripe.CreatePaymentId error: ", err)
 		return nil, err
 	}
 
-	// get PaymentIntent object
-	tmp := &st.GetPaymentIntentByIdRequest{
-		PaymentIntentId: *paymentIntentId,
-	}
-
-	userId, _ := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(req.OrganizerId)
-
-	// create Transfer Object
-	transfer, transferErr := Stripe.TransferToOrganizer(int64(amount), currency, destination, *paymentIntentId, req.EventID, userId)
-	if transferErr != nil {
-		log.Println("[Service: TransferToOrganizer] Called transfer service error: ", err)
-		return nil, transferErr
-	}
-
-	res, repoErr := s.RepositoryGateway.TransactionRepository.CreateOrganizerTransferRecord(tmp, transfer)
+	res, repoErr := s.RepositoryGateway.TransactionRepository.CreateOrganizerTransferRecord(paymentIntent)
 	if repoErr != nil {
 		log.Println("[Service: TransferToOrganizer] Called repo err: ", err)
 		return nil, err

@@ -117,18 +117,20 @@ func (s *StripeService) TransferToOrganizer(amount int64, currency, destinationA
 	return s.Client.Transfers.New(transferParams)
 }
 
-func (s *StripeService) CreatePaymentIntentID(amount int64, currency string) (*string, error) {
+func (s *StripeService) CreatePaymentIntent(amount int64, currency string, eventId string, userId string) (*stripe.PaymentIntent, error) {
 	params := &stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(amount), // Amount in smallest currency unit (e.g., cents for USD)
-		Currency: stripe.String(currency),
+		Amount:             stripe.Int64(amount), // Amount in smallest currency unit (e.g., cents for USD)
+		Currency:           stripe.String(currency),
+		PaymentMethodTypes: stripe.StringSlice([]string{"card", "promptpay"}),
+		Metadata: map[string]string{
+			"event_id": eventId,
+			"user_id":  userId,
+		},
 	}
 	intent, err := paymentintent.New(params)
 	if err != nil {
 		log.Println("[Pkg CreatePaymentIntent", err)
 	}
 
-	// Get the ID of the PaymentIntent
-	paymentIntentID := intent.ID
-	log.Printf("PaymentIntent ID: %s\n", paymentIntentID)
-	return &paymentIntentID, nil
+	return intent, nil
 }

@@ -22,7 +22,7 @@ type ITransactionRepository interface {
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
 	GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
-	CreateOrganizerTransferRecord(intentId *st.GetPaymentIntentByIdRequest, transfer *stripe.Transfer) (*models.Transaction, error)
+	CreateOrganizerTransferRecord(paymentIntent *stripe.PaymentIntent) (*models.Transaction, error)
 }
 
 func NewTransactionRepository(
@@ -122,20 +122,27 @@ func (r *TransactionRepository) GetTransactionDataByPaymentId(paymentIntentId st
 	return &transaction, nil
 }
 
-func (r *TransactionRepository) CreateOrganizerTransferRecord(intentId *st.GetPaymentIntentByIdRequest, transfer *stripe.Transfer) (*models.Transaction, error) {
+func (r *TransactionRepository) CreateOrganizerTransferRecord(paymentIntent *stripe.PaymentIntent) (*models.Transaction, error) {
 	log.Println("[Repo: CreateOrganizerTransferRecord] Called")
-	intent, err := Stripe.GetPaymentIntent(intentId)
-	if err != nil {
-		log.Println("[Repo: CreateOrganizerTransferRecord] Called GetPaymentIntent error: ", err)
-		return nil, err
+
+	var status string
+
+	switch paymentIntent.Status {
+	case "succeeded":
+		status = constant.COMPLETED
+	case "requires_payment_method", "requires_confirmation", "requires_action":
+		status = constant.PENDING
+	case "canceled":
+		status = constant.CANCELLED
 	}
+
 	transactionModel := models.Transaction{
-		TransactionID:     intent.PaymentIntentId,
-		UserID:            transfer.Metadata["user_id"],
-		EventID:           transfer.Metadata["event_id"],
-		TransactionAmount: float64(transfer.Amount),
+		TransactionID:     paymentIntent.ID,
+		UserID:            paymentIntent.Metadata["user_id"],
+		EventID:           paymentIntent.Metadata["user_id"],
+		TransactionAmount: float64(paymentIntent.Amount),
 		TransactionDate:   time.Time{},
-		Status:            intent.Status,
+		Status:            status,
 	}
 
 	trans := r.db.Begin().Debug()
