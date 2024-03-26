@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION verify_user_deletion() RETURNS TRIGGER AS $$
 BEGIN
     DELETE FROM users
-    WHERE id = NEW.id AND is_verified = FALSE AND created_at < NOW() - INTERVAL '1 day';
+    WHERE user_id = NEW.user_id AND is_verified = FALSE AND created_at < NOW() - INTERVAL '1 day';
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
