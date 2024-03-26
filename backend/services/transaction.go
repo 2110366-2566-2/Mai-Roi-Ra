@@ -202,7 +202,7 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 		<p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`, eventData.EventName, req.TransactionID, req.Amount, formattedDate, eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, GetString(eventData.EventImage))
+	`, eventData.EventName, req.TransactionID, req.Amount, formattedDate, eventData.EventName, eventData.Description, formattedStartDate, formattedEndDate, GetString(eventData.EventImage))
 
 	if err = sender.SendEmail("Transaction Successful", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
 		return nil, err
