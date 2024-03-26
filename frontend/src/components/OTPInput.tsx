@@ -246,7 +246,7 @@ export default function OTPInput({
           }, 500);
           setTimeout(() => {
             setSuccessModal(false);
-            router.push("/profile");
+            router.refresh();
           }, 4000);
           setIsLoading(false);
         } else {

@@ -4,10 +4,14 @@ import AdminProblemList from "./AdminProblemList";
 import ProblemList from "./ProblemList";
 
 interface Props {
-  datas: any[];
+  pendingDatas: any[];
+  repliedDatas: any[];
 }
 
-export default function AdminSupportAndService({ datas }: Props) {
+export default function AdminSupportAndService({
+  pendingDatas,
+  repliedDatas,
+}: Props) {
   const [activeTab, setActiveTab] = useState("Problem");
 
   const handleTabClick = (tab: string) => {
@@ -45,7 +49,10 @@ export default function AdminSupportAndService({ datas }: Props) {
           ))}
         </div>
         {activeTab == "Problem" && (
-          <AdminProblemList datas={datas}></AdminProblemList>
+          <AdminProblemList datas={pendingDatas}></AdminProblemList>
+        )}
+        {activeTab == "Replied" && (
+          <AdminProblemList datas={repliedDatas}></AdminProblemList>
         )}
       </div>
     </div>

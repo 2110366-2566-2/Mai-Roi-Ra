@@ -26,6 +26,7 @@ interface Props {
   birthDateProp: string;
   usernameProp: string;
   user_id: string;
+  emailIsVerified: boolean;
 }
 
 export default function ProfileUserInformation({
@@ -39,6 +40,7 @@ export default function ProfileUserInformation({
   birthDateProp,
   usernameProp,
   user_id,
+  emailIsVerified,
 }: Props) {
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
@@ -140,9 +142,10 @@ export default function ProfileUserInformation({
       </div>
       <div className="ml-10 flex">
         <div className="text-sm text-gray-500">@{username}</div>
-
         <div className="flex justify-center items-center ml-1">
-          <MdVerified className="text-gray-300" />
+          <MdVerified
+            className={`${!emailIsVerified ? "text-gray-300" : "text-sky-500"}`}
+          />
         </div>
       </div>
       <div className="mt-2 ml-16 space-y-2">
@@ -155,12 +158,14 @@ export default function ProfileUserInformation({
           <div className="flex items-center flex">
             <MdEmail className="text-gray-500 text-sm mr-1" />
             <div className="text-sm text-gray-500">{email}</div>
-            <button
-              className="text-sm text-gray-500 ml-2 hover:underline"
-              onClick={openOtpModal}
-            >
-              (click here to verify)
-            </button>
+            {!emailIsVerified && (
+              <button
+                className="text-sm text-sky-500 ml-2 hover:underline"
+                onClick={openOtpModal}
+              >
+                (click here to verify)
+              </button>
+            )}
           </div>
         )}
         <div className="flex items-center">
