@@ -584,6 +584,21 @@ definitions:
       response:
         type: string
     type: object
+  structure.TransferToOrganizerRequest:
+    properties:
+      organizer_id:
+        description: This is the system user ID of the organizer
+        type: string
+      organizer_stripe_account_id:
+        description: This is the Stripe account ID of the organizer
+        type: string
+      transaction_amount:
+        type: number
+    required:
+    - organizer_id
+    - organizer_stripe_account_id
+    - transaction_amount
+    type: object
   structure.UpdateEventRequest:
     properties:
       activities:
@@ -1561,6 +1576,36 @@ paths:
           schema:
             type: object
       summary: CreateQRPromptPay
+      tags:
+      - transactions
+  /transactions/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Transfer the specified amount of money to the organizer's account
+      parameters:
+      - description: Transfer to Organizer
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.TransferToOrganizerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/structure.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Transfer money to organizer
       tags:
       - transactions
   /users:
