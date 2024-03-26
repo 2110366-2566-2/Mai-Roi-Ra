@@ -10,6 +10,7 @@ import UserSupportAndService from "@/components/UserSupportAndService";
 import getProblems from "@/libs/getProblems";
 import getAllPendingProblems from "@/libs/getAllPendingProblems";
 import getAllRepliedProblems from "@/libs/getAllRepliedProblems";
+import { revalidateTag } from "next/cache";
 
 export default async function Homepage() {
   const session = await getServerSession(authOptions);

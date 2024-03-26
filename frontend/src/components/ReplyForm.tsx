@@ -50,6 +50,7 @@ export default function ReplyForm({
         setIsloading(false);
         setTimeout(() => {
           router.push("/supportandservice");
+          router.refresh();
           setReplySuccessModal(false);
         }, 4000);
       } catch (err) {
