@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { useState,useEffect } from "react";
 import { HandleCreateAnnouncement } from "./organizer/HandleCreateAnnouncement";
+import {Spinner} from "@nextui-org/react";
 
 interface Props {
     id:string
@@ -39,6 +40,24 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
       return () => window.removeEventListener('resize', updateSize);
     }, []);
 
+    useEffect(() => {
+        const createAnnoucement = async () => {
+            if (loading) {
+                try {
+                    await HandleCreateAnnouncement(id, name, subject, content);
+                    handleClose();
+                } catch (error) {
+                    console.error("Error during announcement creation:", error);
+                } finally {
+                    setLoading(false); 
+                }
+            } else {
+                handleClose();
+            }
+        };
+        createAnnoucement();
+    }, [loading]);
+
     const handleClose = () => {
         setError(0);
         setSubject("");
@@ -54,21 +73,13 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
             setError(2);
             return;
         } setLoading(true);
-        try {
-            await HandleCreateAnnouncement(id, name, subject, content);
-            handleClose();
-        } catch (error) {
-            console.error("Error during announcement creation:", error);
-        } finally {
-            setLoading(false); // Stop loading regardless of the outcome
-        }
     }
 
     if (!isVisible) return null;
 
     return ( 
         <div className={`w-screen h-screen fixed inset-0 z-auto top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>
-            { loading ?
+            { !loading ?
                 (<div className="lg:w-[1000px] lg:h-[450px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[5px] z-20 rounded-3xl"> 
                     <div className="flex w-full justify-end pr-[10px]">
                         <div className="px-4 py-2 flex cursor-pointer items-center w-fit">
@@ -122,7 +133,7 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
                 </div> ) : (
                     <div className="text-black">
                         <CircularProgress
-                            color="neutral"
+                            color="warning"
                             determinate={false}
                             size="lg"
                             value={29}
