@@ -159,50 +159,50 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 
 	// Update email content to include event details
 	contentHTML := fmt.Sprintf(`
-	<html>
-	<head>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				font-size: 16px;
-				line-height: 1.6;
-				margin: 40px auto;
-				max-width: 600px;
-				color: #333333;
-			}
-			h3 {
-				font-size: 24px;
-				margin-bottom: 20px;
-				color: #333333;
-			}
-			p {
-				margin-bottom: 20px;
-				color: #666666;
-			}
-			.signature {
-				margin-top: 20px;
-				font-style: italic;
-			}
-		</style>
-	</head>
-	<body>
-		<h3>Dear Customer,</h3>
-		<p>We are pleased to inform you that your transaction for the event <strong>%s</strong> has been successfully processed.</p>
-		<p>Transaction Details:</p>
-		<p>- Transaction ID: %s</p>
-		<p>- Amount: %.2f THB</p>
-		<p>- Transaction Date: %s</p>
-		<p>Event Details:</p>
-		<p>- Event Name: %s</p>
-		<p>- Description: %s</p>
-		<p>- Activity: %s</p>
-		<p>- Start Date: %s</p>
-		<p>- End Date: %s</p>
-		<img src="%s" alt="Event Image" style="width:200px;height:auto;">
-		<p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
-	</body>
-	</html>
-	`, eventData.EventName, req.TransactionID, req.Amount, formattedDate, eventData.EventName, eventData.Description, formattedStartDate, formattedEndDate, GetString(eventData.EventImage))
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 600px;
+                color: #333333;
+            }
+            h3 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333333;
+            }
+            p {
+                margin-bottom: 20px;
+                color: #666666;
+            }
+            .signature {
+                margin-top: 20px;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Dear Customer,</h3>
+        <p>We are pleased to inform you that your transaction for the event <strong>%s</strong> has been successfully processed.</p>
+        <p>Transaction Details:</p>
+        <p>- Transaction ID: %s</p>
+        <p>- Amount: %.2f THB</p>
+        <p>- Transaction Date: %s</p>
+        <p>Event Details:</p>
+        <p>- Event Name: %s</p>
+        <p>- Description: %s</p>
+        <p>- Activity: %s</p>
+        <p>- Start Date: %s</p>
+        <p>- End Date: %s</p>
+        <img src="%s" alt="Event Image" style="width:200px;height:auto;">
+        <p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
+    </body>
+    </html>
+    `, eventData.EventName, req.TransactionID, req.Amount, formattedDate, eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, GetString(eventData.EventImage))
 
 	if err = sender.SendEmail("Transaction Successful", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
 		return nil, err
