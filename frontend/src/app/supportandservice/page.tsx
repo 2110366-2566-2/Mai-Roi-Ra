@@ -16,14 +16,10 @@ export default async function Homepage() {
   console.log("successfully loaded Support and Service Page");
 
   if (!session || !session.user || !session.user.token) return null;
+  const problems = session ? await getProblems(session.user.user_id) : null;
 
-  // ชั่วคราว
-  // const problems = session ? await getProblems(session.user.user_id) : null;
-  // ชั่วคราว
-  const problems = session
-    ? await getProblems("146c0931-cd29-400a-b8f5-9fd1449b3d2e")
-    : null; // ชั่วคราว
-  // ชั่วคราว
+  let datas;
+  datas = problems.problem_lists;
 
   const pendingProblems = session ? await getAllPendingProblems() : null;
   let pendingDatas;
@@ -32,9 +28,6 @@ export default async function Homepage() {
   const repliedProblems = session ? await getAllRepliedProblems() : null;
   let repliedDatas;
   repliedDatas = repliedProblems.problem_lists;
-
-  let datas;
-  datas = problems.problem_lists;
 
   return (
     <main className="bg-white text-black h-full">
