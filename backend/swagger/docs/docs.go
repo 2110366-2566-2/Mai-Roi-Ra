@@ -626,6 +626,12 @@ const docTemplate = `{
                         "name": "status",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Admin ID",
+                        "name": "admin_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -933,8 +939,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "user_id",
                         "name": "user_id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -1603,6 +1608,56 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request - error in updating user role",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/verification_status": {
+            "get": {
+                "description": "Get the verification status of a user by their email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get User Verification Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the verification status of the user.",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "404": {
+                        "description": "User Not Found",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -2486,14 +2541,8 @@ const docTemplate = `{
         },
         "structure.LoginUserResponse": {
             "type": "object",
-            "required": [
-                "first_name"
-            ],
             "properties": {
                 "email": {
-                    "type": "string"
-                },
-                "first_name": {
                     "type": "string"
                 },
                 "organizer_id": {
@@ -2509,6 +2558,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

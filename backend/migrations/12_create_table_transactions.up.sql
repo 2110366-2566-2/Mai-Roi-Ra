@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS transactions (
     transaction_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
     user_id VARCHAR(36) NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
     payment_intent_id VARCHAR(27) NOT NULL,
     transaction_amount DECIMAL(10, 2),
     transaction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -8,7 +9,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (transaction_id),
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_event FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS refunds (

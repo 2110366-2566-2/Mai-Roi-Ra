@@ -371,8 +371,6 @@ definitions:
     properties:
       email:
         type: string
-      first_name:
-        type: string
       organizer_id:
         type: string
       phone_number:
@@ -383,8 +381,8 @@ definitions:
         type: string
       user_id:
         type: string
-    required:
-    - first_name
+      username:
+        type: string
     type: object
   structure.Participant:
     properties:
@@ -1082,6 +1080,10 @@ paths:
         name: status
         required: true
         type: string
+      - description: Admin ID
+        in: query
+        name: admin_id
+        type: string
       produces:
       - application/json
       responses:
@@ -1321,7 +1323,6 @@ paths:
       - description: user_id
         in: query
         name: user_id
-        required: true
         type: string
       - description: Problem Status (Replied or Pending)
         in: query
@@ -1922,6 +1923,39 @@ paths:
           schema:
             type: object
       summary: Update User Role
+      tags:
+      - users
+  /users/verification_status:
+    get:
+      consumes:
+      - application/json
+      description: Get the verification status of a user by their email.
+      parameters:
+      - description: User Email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the verification status of the user.
+          schema:
+            type: boolean
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get User Verification Status
       tags:
       - users
   /users/verify_otp:

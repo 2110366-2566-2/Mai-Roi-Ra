@@ -149,6 +149,7 @@ type GetParticipantListsResponse struct {
 type VerifyEventRequest struct {
 	EventId string `json:"event_id" binding:"required"`
 	Status  string `json:"status" binding:"required"`
+	AdminId string `json:"admin_id" binding:"required"`
 }
 
 type VerifyEventResponse struct {
