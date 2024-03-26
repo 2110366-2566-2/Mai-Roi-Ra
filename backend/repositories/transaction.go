@@ -6,7 +6,9 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+	"github.com/stripe/stripe-go/v76"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +22,7 @@ type ITransactionRepository interface {
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
 	GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
+	CreateOrganizerTransferRecord(intentId *st.GetPaymentIntentByIdRequest, transfer *stripe.Transfer) (*models.Transaction, error)
 }
 
 func NewTransactionRepository(
@@ -29,6 +32,10 @@ func NewTransactionRepository(
 		db: db,
 	}
 }
+
+var (
+	Stripe = payment.NewStripeService()
+)
 
 func (r *TransactionRepository) GetTransactionDataById(transactionId string) (*models.Transaction, error) {
 	log.Println("[Repo: GetTransactionDataById]: Called")
@@ -113,4 +120,36 @@ func (r *TransactionRepository) GetTransactionDataByPaymentId(paymentIntentId st
 		return nil, err
 	}
 	return &transaction, nil
+}
+
+func (r *TransactionRepository) CreateOrganizerTransferRecord(intentId *st.GetPaymentIntentByIdRequest, transfer *stripe.Transfer) (*models.Transaction, error) {
+	log.Println("[Repo: CreateOrganizerTransferRecord] Called")
+	intent, err := Stripe.GetPaymentIntent(intentId)
+	if err != nil {
+		log.Println("[Repo: CreateOrganizerTransferRecord] Called GetPaymentIntent error: ", err)
+		return nil, err
+	}
+	transactionModel := models.Transaction{
+		TransactionID:     intent.PaymentIntentId,
+		UserID:            transfer.Metadata["user_id"],
+		EventID:           transfer.Metadata["event_id"],
+		TransactionAmount: float64(transfer.Amount),
+		TransactionDate:   time.Time{},
+		Status:            intent.Status,
+	}
+
+	trans := r.db.Begin().Debug()
+	if err := trans.Create(&transactionModel).Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateOrganizerTransferRecord] Insert data in transactions table error:", err)
+		return nil, err
+	}
+
+	if err := trans.Commit().Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateOrganizerTransferRecord] Call orm DB Commit error:", err)
+		return nil, err
+	}
+
+	return &transactionModel, nil
 }

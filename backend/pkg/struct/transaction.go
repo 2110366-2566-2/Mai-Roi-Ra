@@ -49,3 +49,9 @@ type GetTransactionByPaymentIdResponse struct {
 type TransactionResponse struct {
 	Response string
 }
+
+type TransferToOrganizerRequest struct {
+	OrganizerId              string `json:"organizer_id" binding:"required"`                // This is the system user ID of the organizer
+	OrganizerStripeAccountId string `json:"organizer_stripe_account_id" binding:"required"` // This is the Stripe account ID of the organizer
+	EventID                  string `json:"event_id" binding:"required"`
+}

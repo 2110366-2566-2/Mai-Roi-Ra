@@ -1345,6 +1345,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/transactions/transfer": {
+            "post": {
+                "description": "Transfer the specified amount of money to the organizer's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Transfer money to organizer",
+                "parameters": [
+                    {
+                        "description": "Transfer to Organizer",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransferToOrganizerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/models.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Create a new user with the provided details.",
@@ -2070,6 +2116,35 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Transaction": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "status",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -2254,10 +2329,14 @@ const docTemplate = `{
         "structure.CreateQRPromptPayRequest": {
             "type": "object",
             "required": [
+                "event_id",
                 "transaction_amount",
                 "user_id"
             ],
             "properties": {
+                "event_id": {
+                    "type": "string"
+                },
                 "transaction_amount": {
                     "type": "number"
                 },
@@ -2273,16 +2352,10 @@ const docTemplate = `{
                 "transaction_id"
             ],
             "properties": {
-                "refund_amount": {
-                    "type": "number"
-                },
                 "refund_reason": {
                     "type": "string"
                 },
                 "transaction_id": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 }
             }
@@ -2938,6 +3011,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "response": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransferToOrganizerRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "organizer_id",
+                "organizer_stripe_account_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "description": "This is the system user ID of the organizer",
+                    "type": "string"
+                },
+                "organizer_stripe_account_id": {
+                    "description": "This is the Stripe account ID of the organizer",
                     "type": "string"
                 }
             }

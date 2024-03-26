@@ -74,3 +74,30 @@ func (c *TransactionController) CreateQRPromptPay(ctx *gin.Context) {
 	log.Println("[CTRL: CreateQRPromptPay] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// TransferToOrganizer
+// @Summary Transfer money to organizer
+// @Description Transfer the specified amount of money to the organizer's account
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param request body st.TransferToOrganizerRequest true "Transfer to Organizer"
+// @Success 200 {object} models.Transaction "success"
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /transactions/transfer [post]
+func (c *TransactionController) TransferToOrganizer(ctx *gin.Context) {
+	var req *st.TransferToOrganizerRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: TransferToOrganizer] Input:", req)
+	res, err := c.ServiceGateway.TransactionService.TransferToOrganizer(req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to transfer money to organizer", "error": err})
+		return
+	}
+	log.Println("[CTRL: TransferToOrganizer] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
