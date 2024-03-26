@@ -46,6 +46,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		setupParticipateRoutes(groupRoutes, controller.Gateway.ParticipateController)
 		setupProblemRoutes(groupRoutes, controller.Gateway.ProblemController)
 		setupTransactionRoutes(groupRoutes, controller.Gateway.TransactionController)
+		setupRefundRoutes(groupRoutes, controller.Gateway.RefundController)
 	})
 
 	if err != nil {
@@ -153,5 +154,12 @@ func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.Transact
 	{
 		transactionRoutes.POST("/qr", controller.CreateQRPromptPay)
 		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
+	}
+}
+
+func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundController) {
+	refundRoutes := r.Group("/refunds")
+	{
+		refundRoutes.POST("/", controller.CreateRefund)
 	}
 }

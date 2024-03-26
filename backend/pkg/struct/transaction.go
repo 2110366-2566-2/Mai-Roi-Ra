@@ -2,10 +2,12 @@ package structure
 
 type CreateQRPromptPayRequest struct {
 	UserId            string  `json:"user_id" binding:"required"`
+	EventId           string  `json:"event_id" binding:"required"`
 	TransactionAmount float64 `json:"transaction_amount" binding:"required"`
 }
 
 type CreateQRPromptPayResponse struct {
+	EventId             string  `json:"event_id"`
 	PaymentIntentId     string  `json:"payment_intent_id"`
 	PaymentClientSecret string  `json:"payment_client_secret"`
 	PaymentMethodType   string  `json:"payment_method_type"`
@@ -14,6 +16,7 @@ type CreateQRPromptPayResponse struct {
 
 type CreateTransactionRequest struct {
 	UserId            string  `json:"user_id" binding:"required"`
+	EventId           string  `json:"event_id" binding:"required"`
 	TransactionAmount float64 `json:"transaction_amount" binding:"required"`
 	Status            string  `json:"status" binding:"required"`
 }
