@@ -50,6 +50,7 @@ export default function MenuBar() {
               <NotificationsIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
               Notifications
             </div>
+
             {session ? (
               <div
                 className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
@@ -80,7 +81,7 @@ export default function MenuBar() {
 
       <div className="p-4 flex justify-center">
         <button
-          className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] max-h-[150px] w-[70%]"
+          className="text-white rounded-full hover:bg-yellow-500 bg-[#F2D22E] h-[40px] max-h-[150px] w-[70%]"
           onClick={() => {
             session
               ? router.push("/auth/signout")
