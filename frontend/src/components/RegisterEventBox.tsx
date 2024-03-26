@@ -18,6 +18,7 @@ import createPaymentIntent from '@/libs/createPaymentIntent';
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "@/components/CheckoutForm";
+
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,);
 
 
@@ -188,10 +189,12 @@ export default function RegisterEventBox({
         console.log(`Payment Method Type: ${result.payment_method_type}`);
         console.log(`Transaction Amount: ${result.transaction_amount}`);
         setClientSecret(result.payment_client_secret);
+
     } catch (error) {
       console.error('Failed to create payment intent:', error);
     }
   }
+
 
   return (
     <div>
@@ -202,13 +205,13 @@ export default function RegisterEventBox({
         title="Are you sure to register to this event?"
         style={null}
         allowOuterclose={true}
-        modalsize="h-screen w-full"
+        modalsize="h-[50%] w-full"
       >
         <p>The Registeration cannot be cancel in the future.</p>
         <div>
         { showQRCode ? (
-            <div className="w-full h-[200px] flex justify-center items-center flex-col">
-             <p>{clientSecret}</p>
+            <div className="w-full h-auto flex justify-center items-center flex-col">
+             {/* <p>{clientSecret}</p> */}
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
           <CheckoutForm />
