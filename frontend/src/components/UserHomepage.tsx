@@ -6,7 +6,7 @@ import getUserProfile from '@/libs/getUserProfile';
 import getUserSearchHistory from '@/libs/getUserSearchHistory';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { getServerSession } from 'next-auth';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { Suspense } from 'react';
 
 interface Props {
@@ -25,17 +25,15 @@ export default async function UserHomepage({page,limit,search} : Props) {
   const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id);
   console.log(history.search_history);
 
-  revalidatePath('profile');
   return (
     <main className="text-black flex flex-col h-screen overflow-hidden">
-      <Suspense fallback={<div className="flex justify-center items-center w-full h-full text-[40px]">Loading...</div>}>
           <div className='flex-shrink-0 lg:pt-8 md:pt-5 pt-4 px-10'>
               <h1 className='font-bold lg:text-5xl md:text-4xl text-3xl lg:mb-8 md:mb-5 mb-4'>Explore Event</h1>
               <SearchBar page={events.total_pages > 0 ? page : 0} last_page={events.total_pages} search={search} history={history.search_history}/>
           </div>
 
           { events.total_events > 0 ?
-              <div className='bg-white py-[5px] md:mt-[20px] mt-[5px] overflow-y-auto'>
+              <div className='py-[5px] md:mt-[20px] mt-[5px] overflow-y-auto'>
               {datas.map((eventItem:any) => (
               <EventItem key={eventItem.event_id} id={eventItem.event_id} name={eventItem.event_name} startDate={eventItem.start_date} endDate={eventItem.end_date}
                 description={eventItem.description} city={eventItem.city} district={eventItem.district} imgSrc={eventItem.event_image} page={0}/>
@@ -50,7 +48,6 @@ export default async function UserHomepage({page,limit,search} : Props) {
                 </div>
               </div>
           }
-      </Suspense> 
     </main>
   )
 }
