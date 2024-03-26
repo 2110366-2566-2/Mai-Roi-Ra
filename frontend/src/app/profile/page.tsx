@@ -13,13 +13,10 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import EventsList from "@/components/EventsList";
+import isEmailVerified from "@/libs/isEmailVerified";
 
 export default async function Profile() {
-  // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-  // const events = await getMyEvents("550e8400-e29b-41d4-a716-446655440200");
-
   revalidateTag("profile");
-
   // get user profile from user_id from session
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
@@ -36,6 +33,12 @@ export default async function Profile() {
     events = await getMyOrganizerEvents(session.user.organizer_id);
     datas = events?.event_lists;
     role = "ORGANIZER";
+  }
+
+  let emailIsVerified = false;
+  if (profile.email) {
+    const response = await isEmailVerified(profile.email);
+    emailIsVerified = response ? true : false;
   }
 
   return (
@@ -74,6 +77,8 @@ export default async function Profile() {
               emailProp={profile.email}
               birthDateProp={profile.birth_date}
               usernameProp={profile.username}
+              user_id={session.user.user_id}
+              emailIsVerified={emailIsVerified}
             ></ProfileUserInformation>
             <EditProfileButton
               isEnableNotificationProp={profile.is_enable_notification}

@@ -37,13 +37,14 @@ func (s *TransactionService) CreateQRPromptPay(req *st.CreateQRPromptPayRequest)
 
 	// TODO : Send clientSecret to frontend with correct amount
 
-	res, err := Stripe.CreatePromptPayPayment(int64(req.TransactionAmount), "thb")
+	res, err := Stripe.CreatePromptPayPayment(int64(req.TransactionAmount), constant.THB)
 	if err != nil {
 		return nil, err
 	}
 
 	reqCreate := &st.CreateTransactionRequest{
 		UserId:            req.UserId,
+		EventId:           req.EventId,
 		TransactionAmount: req.TransactionAmount,
 		Status:            constant.PENDING,
 	}
@@ -65,13 +66,35 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 	if req != nil {
 		paymentId = req.PaymentIntentId
 	}
-
-	res, err := Stripe.GetPaymentIntent(&st.GetPaymentIntentByIdRequest{
+	resPaymentData, err := Stripe.GetPaymentIntent(&st.GetPaymentIntentByIdRequest{
 		PaymentIntentId: paymentId,
 	})
 
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+
+	transModel, err := s.RepositoryGateway.TransactionRepository.GetTransactionDataByPaymentId(resPaymentData.PaymentIntentId)
+	if err != nil {
+		return nil, err
+	}
+
+	status := constant.PENDING
+	if resPaymentData.Status == constant.PAYMENT_CANCELED {
+		status = constant.CANCELLED
+	} else if resPaymentData.Status == constant.PAYMENT_SUCCEEDED {
+		status = constant.COMPLETED
+	}
+
+	reqUpdate := &st.UpdateTransactionRequest{
+		TransactionId: transModel.TransactionID,
+		Status:        status,
+	}
+
+	_, err = s.RepositoryGateway.TransactionRepository.UpdateTransaction(reqUpdate)
+	if err != nil {
+		return nil, err
+	}
+
+	return resPaymentData, nil
 }

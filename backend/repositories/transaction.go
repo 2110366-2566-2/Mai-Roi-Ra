@@ -19,6 +19,7 @@ type ITransactionRepository interface {
 	GetTransactionListByEventId(eventId string) ([]*models.Transaction, error)
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
+	GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
 }
 
 func NewTransactionRepository(
@@ -57,6 +58,7 @@ func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionReque
 	transactionModel := models.Transaction{
 		TransactionID:     utils.GenerateUUID(),
 		UserID:            req.UserId,
+		EventID:           req.EventId,
 		PaymentIntentID:   paymentIntentId,
 		TransactionAmount: req.TransactionAmount,
 		TransactionDate:   time.Now(),
@@ -102,4 +104,14 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 	return &st.TransactionResponse{
 		Response: "Update Transaction Successful",
 	}, nil
+}
+
+func (r *TransactionRepository) GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error) {
+	log.Println("[Repo: GetTransactionDataByPaymentId]: Called")
+	var transaction models.Transaction
+	if err := r.db.Where(`payment_intent_id=?`, paymentIntentId).Find(&transaction).Error; err != nil {
+		log.Println("[Repo: GetTransactionDataByPaymentId]: cannot find payment_intent_id:", err)
+		return nil, err
+	}
+	return &transaction, nil
 }

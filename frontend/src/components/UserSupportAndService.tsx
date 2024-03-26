@@ -10,7 +10,6 @@ interface Props {
 
 export default function UserSupportAndService({ datas }: Props) {
   const [activeTab, setActiveTab] = useState("FAQ");
-  
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -19,7 +18,7 @@ export default function UserSupportAndService({ datas }: Props) {
   return (
     <div className="bg-white text-black h-full">
       <div className="lg:mr-24 border-r border-b bg-white">
-        <div className="w-full text-2xl pt-20">
+        <div className="w-full text-2xl pt-20 border-b">
           {["FAQ", "Problem"].map((tabName) => (
             <button
               key={tabName}
