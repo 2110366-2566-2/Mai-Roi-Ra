@@ -153,5 +153,6 @@ func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.Transact
 	{
 		transactionRoutes.POST("/qr", controller.CreateQRPromptPay)
 		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
+		transactionRoutes.POST("/transfer", controller.TransferToOrganizer)
 	}
 }
