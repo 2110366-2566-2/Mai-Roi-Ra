@@ -51,7 +51,7 @@ export default function RegisterEventBox({
       );
       // Handle successful registration
       console.log("Registration successful:", registrationResult);
-      setShowQRCode(true);
+      setShowQRCode(false);
     } catch (error: any) {
       // Handle registration error
       console.error("Registration failed:", error.message);
@@ -63,8 +63,7 @@ export default function RegisterEventBox({
       try {
         const response = await isRegisteredEvent(session?.user?.user_id,event.event_id);
         setIsRegisterable(!response.is_registered)
-        console.log("isRegisterable:", response.is_registered);
-        setIsRegisterable(false)
+        console.log("isRegistered:", response.is_registered);
       } catch (error) {
         // Handle the error
         console.log("Error fetching isRegisterable:", error.message);
@@ -143,7 +142,8 @@ export default function RegisterEventBox({
   };
 
   const [showQRCode, setShowQRCode] = useState(false);
-  console.log(isRegisterable ,"here")
+  console.log(isRegisterable ,"here",session?.user?.user_id)
+  console.log("QR:",showQRCode)
 
 
   const closeAdminVerifyModal = () => {
@@ -153,7 +153,6 @@ export default function RegisterEventBox({
   const closeAdminRejectModal = () => {
     setIsAdminRejectModalOpen(false);
   };
-  console.log(`${endyear}-${endmonth}-${endday}`, "date");
 
   return (
     <div>
@@ -174,6 +173,26 @@ export default function RegisterEventBox({
                 alt="QR Code"
                 className="w-[150px] h-[150px] object-cover"
             />
+              <div className="w-full flex justify-between">
+          <button
+            onClick={() => {
+              closeModal();
+            }}
+            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 hover:bg-gray-400 w-[82px]"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              //closeModal();
+              handleRegisterEventButton();
+               // window.location.reload();
+            }}
+            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
+          >
+            Yes
+          </button>
+        </div>
             </div>
         ):(
             <div className="w-full flex justify-between">
@@ -346,6 +365,7 @@ export default function RegisterEventBox({
               className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4 hover:bg-yellow-500"
               onClick={() => {
                 setIsModalOpen(true);
+                setShowQRCode(true);
               }}
             >
               Register
