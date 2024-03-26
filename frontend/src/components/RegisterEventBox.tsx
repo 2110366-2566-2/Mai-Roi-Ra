@@ -13,6 +13,14 @@ import verifyEvent from "@/libs/VerifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
 import { useRouter } from "next/navigation";
 
+//Payment
+import createPaymentIntent from '@/libs/createPaymentIntent';
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "@/components/CheckoutForm";
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,);
+
+
 interface Event {
   activities: string;
   admin_id: string;
@@ -159,6 +167,32 @@ export default function RegisterEventBox({
     setIsAdminRejectModalOpen(false);
   };
 
+  //Payment
+  const [clientSecret, setClientSecret] = useState(null);
+  const appearance = {
+    theme: 'stripe',
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+  
+  async function handleCreatePaymentIntent(transaction_amount: number, user_id: string, event_id: string) {
+    try {
+      const result = await createPaymentIntent(transaction_amount, user_id, event_id);
+      console.log(result);
+      // Handle the response
+        console.log(`Event ID: ${result.event_id}`);
+        console.log(`Payment Intent ID: ${result.payment_intent_id}`);
+        console.log(`Payment Client Secret: ${result.payment_client_secret}`);
+        console.log(`Payment Method Type: ${result.payment_method_type}`);
+        console.log(`Transaction Amount: ${result.transaction_amount}`);
+        setClientSecret(result.payment_client_secret);
+    } catch (error) {
+      console.error('Failed to create payment intent:', error);
+    }
+  }
+
   return (
     <div>
 
@@ -168,16 +202,18 @@ export default function RegisterEventBox({
         title="Are you sure to register to this event?"
         style={null}
         allowOuterclose={true}
+        modalsize="h-screen w-full"
       >
         <p>The Registeration cannot be cancel in the future.</p>
         <div>
         { showQRCode ? (
-            <div className="w-full h-[200px] flex justify-center items-center">
-            <img
-                src="/img/qrcode.png"
-                alt="QR Code"
-                className="w-[150px] h-[150px] object-cover"
-            />
+            <div className="w-full h-[200px] flex justify-center items-center flex-col">
+             <p>{clientSecret}</p>
+      {clientSecret && (
+        <Elements options={options} stripe={stripePromise}>
+          <CheckoutForm />
+        </Elements>
+      )}
               <div className="w-full flex justify-between">
           <button
             onClick={() => {
@@ -371,6 +407,7 @@ export default function RegisterEventBox({
               onClick={() => {
                 setIsModalOpen(true);
                 setShowQRCode(true);
+                handleCreatePaymentIntent(event.participant_fee * numberOfGuest, session?.user?.user_id, event.event_id);
               }}
             >
               Register
