@@ -86,6 +86,7 @@ const SignInHandleSubmit = async (
       return;
     }
     router.replace("/homepage");
+    router.refresh();
     // I don't know how to fix this one but this works
     // setTimeout(() => {
     //   window.location.reload();
