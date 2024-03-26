@@ -8,7 +8,6 @@ import (
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 )
 
 type RefundService struct {
@@ -33,47 +32,43 @@ func (s *RefundService) CreateRefund(req *st.CreateRefundRequest) (*st.CreateRef
 
 	// TODO : Send clientSecret to frontend with correct amount
 
-	restransaction , err := s.RepositoryGateway.TransactionRepository.GetTransactionDataById(req.TransactionId)
+	resTransaction, err := s.RepositoryGateway.TransactionRepository.GetTransactionDataById(req.TransactionId)
 	if err != nil {
 		return nil, err
 	}
 
 	stripe := payment.NewStripeService()
 
-	reqpayment := &st.GetPaymentIntentByIdRequest{
-		PaymentIntentId: restransaction.PaymentIntentID,
+	reqPayment := &st.GetPaymentIntentByIdRequest{
+		PaymentIntentId: resTransaction.TransactionID,
 	}
-	respayment , err := stripe.GetPaymentIntent(reqpayment)
+	respayment, err := stripe.GetPaymentIntent(reqPayment)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = stripe.IssueRefund(restransaction.PaymentIntentID)
+	refundRes, err := stripe.IssueRefund(resTransaction.TransactionID)
 	if err != nil {
 		return nil, err
 	}
 
 	refundModel := models.Refund{
-		RefundId: utils.GenerateUUID(),
+		RefundId:      refundRes.ID,
 		TransactionId: req.TransactionId,
-		UserId: restransaction.UserID,
-		RefundAmount: respayment.TransactionAmount,
-		RefundReason: req.RefundReason,
-		RefundDate: time.Now(),
+		UserId:        resTransaction.UserID,
+		RefundAmount:  respayment.TransactionAmount,
+		RefundReason:  req.RefundReason,
+		RefundDate:    time.Now(),
 	}
 
-	createres, err := s.RepositoryGateway.RefundRepository.CreateRefund(&refundModel)
+	createRes, err := s.RepositoryGateway.RefundRepository.CreateRefund(&refundModel)
 	if err != nil {
 		return nil, err
 	}
 
-	resrefund := &st.CreateRefundResponse{
-		RefundId: createres.RefundId,
+	resRefund := &st.CreateRefundResponse{
+		RefundId: createRes.RefundId,
 	}
 
-	return resrefund, nil
+	return resRefund, nil
 }
-
-
-
-
