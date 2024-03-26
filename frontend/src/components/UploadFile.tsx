@@ -1,9 +1,13 @@
 'use client'
 import { apiBackUrl } from '@/constants';
 import createUpload from '@/libs/createUpload';
+import { useSession } from 'next-auth/react';
 import { useState, ChangeEvent, FormEvent } from 'react';
 
 const ImageUploadForm: React.FC = () => {
+  const session = useSession();
+  const user = session.data?.user;  
+  console.log(user);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
 
@@ -17,14 +21,13 @@ const ImageUploadForm: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     if (!selectedImage) return;
 
     const formData = new FormData();
     formData.append('image', selectedImage);
     // Example: POST request to your server endpoint
-    await createUpload(formData);
+    await createUpload(formData,user.token);
 
     // Clear the form
     setSelectedImage(null);
@@ -32,7 +35,7 @@ const ImageUploadForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+    <form action={handleSubmit} className="space-y-4" encType="multipart/form-data">
       {preview && (
         <div className="w-full h-64 flex justify-center items-center">
           <img src={preview} alt="Preview" className="max-h-full" />

@@ -1,12 +1,15 @@
 import { apiBackUrl } from "../constants";
 
-export default async function createEvent(formData:FormData) {
+export default async function createEvent(formData:FormData,token:string) {
     try {
         console.log(formData);
         console.log(formData.get('image'));
         
         const response = await fetch(`${apiBackUrl}/upload`, {
             method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
             body: formData
         });
 

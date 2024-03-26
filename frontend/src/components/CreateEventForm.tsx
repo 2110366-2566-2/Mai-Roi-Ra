@@ -11,7 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Image from "next/image";
 import BackupIcon from '@mui/icons-material/Backup';
-import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
+import HandleCreateEvent from "./organizer/HandleCreateEvent";
 import { useSession } from "next-auth/react";
 
 const CreateEventForm = () => {
@@ -19,9 +19,7 @@ const CreateEventForm = () => {
     const user = session.data?.user;
     console.log(user);
     const isMobile = useMediaQuery('(max-width:768px)');
-    
-    const [start,setStart] = useState("");
-    const [end,setEnd] = useState("");
+
     const [startDate,setStartDate] = useState<Dayjs | null>(null);
     const [endDate,setEndDate] = useState<Dayjs | null>(null);
     const router = useRouter();
@@ -116,9 +114,6 @@ const CreateEventForm = () => {
                 setError("End Date cannot before Start Date");
                 return;
             }
-
-            setStart(startTmp.format('YYYY/MM/DD'));
-            setEnd(endTmp.format('YYYY/MM/DD'));
             
             if (user) {
                 try {
@@ -129,8 +124,8 @@ const CreateEventForm = () => {
                     formData.append('city', province);
                     formData.append('description', description);
                     formData.append('district', district);
-                    formData.append('start_date', start);
-                    formData.append('end_date', end);
+                    formData.append('start_date', startTmp.format('YYYY/MM/DD'));
+                    formData.append('end_date', endTmp.format('YYYY/MM/DD'));
                     formData.append('event_image', selectedImage);
                     formData.append('location_name', location);
                     formData.append('organizer_id', user.organizer_id);
