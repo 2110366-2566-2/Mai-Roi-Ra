@@ -125,7 +125,7 @@ export default function EditProfileForm({
         if (firstRegister) {
           setOpenChooseRoleForm(true);
         } else {
-          redirect("/profile");
+          router.push("/profile");
         }
       } catch (err) {
         setError("Update error. Server Failed ?");
