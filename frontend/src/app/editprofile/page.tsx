@@ -5,7 +5,7 @@ import styles from "@/styles/FontPage.module.css";
 import getProfile from "@/libs/getProfile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import EditProfileFormSkeleton from "@/components/EditProfileFormSkeleton";
+import EditProfileFormSkeleton from "@/components/skeletons/EditProfileFormSkeleton";
 
 export default async function EditProfile() {
   // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
