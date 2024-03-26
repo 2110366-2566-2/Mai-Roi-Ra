@@ -3,10 +3,10 @@ package repository
 import (
 	"log"
 	"time"
+
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"gorm.io/gorm"
 )
 
@@ -56,10 +56,9 @@ func (r *TransactionRepository) GetTransactionListByEventId(eventId string) ([]*
 func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error) {
 	log.Println("[Repo: CreateTransaction]: Called")
 	transactionModel := models.Transaction{
-		TransactionID:     utils.GenerateUUID(),
+		TransactionID:     paymentIntentId,
 		UserID:            req.UserId,
 		EventID:           req.EventId,
-		PaymentIntentID:   paymentIntentId,
 		TransactionAmount: req.TransactionAmount,
 		TransactionDate:   time.Now(),
 		Status:            req.Status,
