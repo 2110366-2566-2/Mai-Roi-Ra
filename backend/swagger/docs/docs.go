@@ -1345,6 +1345,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/transactions/send_email": {
+            "post": {
+                "description": "Sends a transaction email to the specified user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Send Transaction Email",
+                "parameters": [
+                    {
+                        "description": "Send Transaction Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendTransactionEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction email successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendTransactionEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the transaction email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Create a new user with the provided details.",
@@ -2254,10 +2294,14 @@ const docTemplate = `{
         "structure.CreateQRPromptPayRequest": {
             "type": "object",
             "required": [
+                "event_id",
                 "transaction_amount",
                 "user_id"
             ],
             "properties": {
+                "event_id": {
+                    "type": "string"
+                },
                 "transaction_amount": {
                     "type": "number"
                 },
@@ -2273,16 +2317,10 @@ const docTemplate = `{
                 "transaction_id"
             ],
             "properties": {
-                "refund_amount": {
-                    "type": "number"
-                },
                 "refund_reason": {
                     "type": "string"
                 },
                 "transaction_id": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 }
             }
@@ -2922,6 +2960,34 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "announce_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendTransactionEmailRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendTransactionEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
                     "type": "string"
                 }
             }

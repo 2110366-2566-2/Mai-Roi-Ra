@@ -42,6 +42,18 @@ type GetTransactionByPaymentIdResponse struct {
 	TransactionAmount float64 `json:"transaction_amount"`
 }
 
+type SendTransactionEmailRequest struct {
+	UserID          string  `json:"user_id"`
+	TransactionID   string  `json:"transaction_id"`
+	EventID         string  `json:"event_id"`
+	Amount          float64 `json:"amount"`
+	TransactionDate string  `json:"transaction_date"`
+}
+
+type SendTransactionEmailResponse struct {
+	SendStatus string `json:"send_status"`
+}
+
 // ? Use for ...
 /*
 	UpdateTransactionResponse, CreateQRPromptPayResponse

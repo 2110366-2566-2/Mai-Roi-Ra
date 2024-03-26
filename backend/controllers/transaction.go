@@ -74,3 +74,28 @@ func (c *TransactionController) CreateQRPromptPay(ctx *gin.Context) {
 	log.Println("[CTRL: CreateQRPromptPay] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
+// @Summary Send Transaction Email
+// @Description Sends a transaction email to the specified user.
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param request body st.SendTransactionEmailRequest true "Send Transaction Email Request"
+// @Success 200 {object} st.SendTransactionEmailResponse "Transaction email successfully sent"
+// @Failure 400 {object} object "Bad request - error in sending the transaction email"
+// @Router /transactions/send_email [post]
+func (c *TransactionController) SendTransactionEmail(ctx *gin.Context) {
+	var req *st.SendTransactionEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: SendTransactionEmail]: Input:", req)
+	res, err := c.ServiceGateway.TransactionService.SendTransactionEmail(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: SendTransactionEmail]: Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}

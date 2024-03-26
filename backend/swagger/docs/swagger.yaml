@@ -149,23 +149,22 @@ definitions:
     type: object
   structure.CreateQRPromptPayRequest:
     properties:
+      event_id:
+        type: string
       transaction_amount:
         type: number
       user_id:
         type: string
     required:
+    - event_id
     - transaction_amount
     - user_id
     type: object
   structure.CreateRefundRequest:
     properties:
-      refund_amount:
-        type: number
       refund_reason:
         type: string
       transaction_id:
-        type: string
-      user_id:
         type: string
     required:
     - refund_reason
@@ -591,6 +590,24 @@ definitions:
   structure.SendReminderEmailResponse:
     properties:
       announce_status:
+        type: string
+    type: object
+  structure.SendTransactionEmailRequest:
+    properties:
+      amount:
+        type: number
+      event_id:
+        type: string
+      transaction_date:
+        type: string
+      transaction_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.SendTransactionEmailResponse:
+    properties:
+      send_status:
         type: string
     type: object
   structure.TestResponse:
@@ -1610,6 +1627,32 @@ paths:
           schema:
             type: object
       summary: CreateQRPromptPay
+      tags:
+      - transactions
+  /transactions/send_email:
+    post:
+      consumes:
+      - application/json
+      description: Sends a transaction email to the specified user.
+      parameters:
+      - description: Send Transaction Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendTransactionEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaction email successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendTransactionEmailResponse'
+        "400":
+          description: Bad request - error in sending the transaction email
+          schema:
+            type: object
+      summary: Send Transaction Email
       tags:
       - transactions
   /users:
