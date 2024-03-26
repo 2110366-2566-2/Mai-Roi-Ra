@@ -24,6 +24,13 @@ export default function ProblemItem({
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
+  let statusStyle = "";
+  if (status == "Pending") {
+    statusStyle = "text-yellow-500 border-yellow-500";
+  } else if (status == "Replied") {
+    statusStyle = "text-green-400 border-green-400";
+  }
+
   return (
     <div className="relative">
       {" "}
@@ -43,7 +50,9 @@ export default function ProblemItem({
                 {problem}
               </h2>
               <div className="space-x-2">
-                <button className="border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300">
+                <button
+                  className={`${statusStyle} border rounded-xl h-[30px] w-[80px] text-sm`}
+                >
                   {status}
                 </button>
               </div>
@@ -51,7 +60,7 @@ export default function ProblemItem({
 
             <div className="">
               {description && (
-                <div className="hidden sm:block break-words">
+                <div className="break-words">
                   <p className="text-wrap break-words">{description}</p>
                 </div>
               )}

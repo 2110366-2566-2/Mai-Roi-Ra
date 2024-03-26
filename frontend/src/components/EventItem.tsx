@@ -15,6 +15,7 @@ interface Props {
   imgSrc: string;
   page: number;
   role: string;
+  status: string;
 }
 
 export default function EventItem({
@@ -28,6 +29,7 @@ export default function EventItem({
   imgSrc,
   page,
   role,
+  status,
 }: Props) {
   const eventPath = role == "ADMIN" ? "verifyevents" : "events";
   const [showModal, setShowModal] = useState(false);
@@ -55,6 +57,19 @@ export default function EventItem({
     year: "numeric",
   });
 
+  // if status = "Waiting" then set to "Pending"
+  const [shownStatus, setShownStatus] = useState(status);
+  let statusStyle = "";
+  if (shownStatus == "Waiting") {
+    setShownStatus("Pending");
+  } else if (shownStatus == "Pending") {
+    statusStyle = "text-yellow-500 border-yellow-500";
+  } else if (shownStatus == "Approved") {
+    statusStyle = "text-green-400 border-green-400";
+  } else {
+    statusStyle = "text-red-500 border-red-400";
+  }
+
   return (
     <div>
       <div
@@ -78,13 +93,24 @@ export default function EventItem({
 
         <div className="h-full flex flex-col justify-start w-full space-y-[7px]">
           <div className="flex justify-between">
-            <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">
-              {name}
-            </h2>
+            <div className="flex space-x-4">
+              <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">
+                {name}
+              </h2>
+              {page == 1 || page == 2 ? (
+                <div className="space-x-2">
+                  <button
+                    className={`${statusStyle} border rounded-xl h-[24px] w-[72px] sm:h-[30px] sm:w-[80px] text-xs sm:text-sm`}
+                  >
+                    {shownStatus}
+                  </button>
+                </div>
+              ) : null}
+            </div>
             {page == 1 ? (
               <div className="space-x-2">
                 <button
-                  className="border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300"
+                  className="hidden sm:block text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] w-[64px] sm:h-[30px] sm:w-[80px] text-sm hover:scale-105 duration-300"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -97,13 +123,30 @@ export default function EventItem({
             ) : null}
           </div>
 
-          <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-2 w-full text-gray-500">
-            <div className="text-nowrap	">{`${formattedStartDate} - ${formattedEndDate}`}</div>
-            <div className="text-nowrap">Location: Patumwan</div>
+          <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-1 sm:space-y-2 w-full text-gray-500 sm:!mt-2 !mt-0">
+            <div className="text-nowrap	hidden xl:block">{`${formattedStartDate} - ${formattedEndDate}`}</div>
+            <div className="text-nowrap hidden xl:block">
+              Location: Patumwan
+            </div>
+
+            {page == 1 ? (
+              <div className="space-x-2">
+                <button
+                  className="sm:hidden block text-black text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] w-[72px] sm:h-[30px] sm:w-[80px] text-sm hover:scale-105 duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    router.push(`/homepage/editevent/${id}`);
+                  }}
+                >
+                  Edit event
+                </button>
+              </div>
+            ) : null}
             {page == 1 ? (
               <div className="space-x-2 text-black">
                 <button
-                  className="border border-slate-400 rounded-xl h-[30px] w-fit px-[5px] text-sm hover:scale-105 duration-300"
+                  className="text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] sm:h-[30px] w-fit px-[6px] text-sm hover:scale-105 duration-300"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -116,10 +159,14 @@ export default function EventItem({
             ) : null}
           </div>
 
-          <div className="">
+          <div className="xl:block hidden">
             {description && (
-              <div className="hidden sm:block break-words">
-                <p className="text-wrap break-words">{description}</p>
+              <div className="hidden lg:block break-words 2xl:pr-96 xl:pr-64 lg:pr-48 md:pr-24 pr-4">
+                <p className="text-wrap break-words">
+                  {description.length > 150
+                    ? `${description.substring(0, 150)}...`
+                    : description}
+                </p>
               </div>
             )}
           </div>
