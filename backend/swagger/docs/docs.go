@@ -1220,9 +1220,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/test/qr": {
-            "get": {
-                "description": "Get a test message",
+        "/transactions/payment": {
+            "post": {
+                "description": "CreatePayment for user to pay (1: card, 2: PromptPay)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1230,14 +1230,69 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "transactions"
                 ],
-                "summary": "TestCreatePromptPayPayment",
+                "summary": "CreatePayment",
+                "parameters": [
+                    {
+                        "description": "Get PromptPay",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePaymentRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "$ref": "#/definitions/structure.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
                             "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/confirm/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
                         }
                     },
                     "400": {
@@ -1282,52 +1337,6 @@ const docTemplate = `{
                         "description": "success",
                         "schema": {
                             "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
-        "/transactions/qr": {
-            "post": {
-                "description": "CreateQRPromptPay for user to pay",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transactions"
-                ],
-                "summary": "CreateQRPromptPay",
-                "parameters": [
-                    {
-                        "description": "Get PromptPay",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.CreateQRPromptPayRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structure.TransactionResponse"
                         }
                     },
                     "400": {
@@ -2125,6 +2134,9 @@ const docTemplate = `{
                 "user_id"
             ],
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "event_id": {
                     "type": "string"
                 },
@@ -2138,6 +2150,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transaction_id": {
+                    "type": "string"
+                },
+                "transaction_way": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "user_id": {
@@ -2287,6 +2305,29 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.CreatePaymentRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "payment_type",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "payment_type": {
+                    "type": "integer"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateProblemRequest": {
             "type": "object",
             "required": [
@@ -2320,25 +2361,6 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.CreateQRPromptPayRequest": {
-            "type": "object",
-            "required": [
-                "event_id",
-                "transaction_amount",
-                "user_id"
-            ],
-            "properties": {
-                "event_id": {
-                    "type": "string"
-                },
-                "transaction_amount": {
-                    "type": "number"
                 },
                 "user_id": {
                     "type": "string"
@@ -3019,8 +3041,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "event_id",
-                "organizer_id",
-                "organizer_stripe_account_id"
+                "organizer_id"
             ],
             "properties": {
                 "event_id": {
@@ -3028,10 +3049,6 @@ const docTemplate = `{
                 },
                 "organizer_id": {
                     "description": "This is the system user ID of the organizer",
-                    "type": "string"
-                },
-                "organizer_stripe_account_id": {
-                    "description": "This is the Stripe account ID of the organizer",
                     "type": "string"
                 }
             }

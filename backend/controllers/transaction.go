@@ -48,30 +48,30 @@ func (c *TransactionController) GetPaymentIntentById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// CreateQRPromptPay Get QR
-// @Summary CreateQRPromptPay
-// @Description CreateQRPromptPay for user to pay
+// CreatePayment Get QR
+// @Summary CreatePayment
+// @Description CreatePayment for user to pay (1: card, 2: PromptPay)
 // @Tags transactions
 // @Accept json
 // @Produce json
-// @Param request body st.CreateQRPromptPayRequest true "Get PromptPay"
+// @Param request body st.CreatePaymentRequest true "Get PromptPay"
 // @Success 200 {object} st.TransactionResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
-// @Router /transactions/qr [post]
-func (c *TransactionController) CreateQRPromptPay(ctx *gin.Context) {
-	var req *st.CreateQRPromptPayRequest
+// @Router /transactions/payment [post]
+func (c *TransactionController) CreatePayment(ctx *gin.Context) {
+	var req *st.CreatePaymentRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: CreateQRPromptPay] Input:", req)
-	res, err := c.ServiceGateway.TransactionService.CreateQRPromptPay(req)
+	log.Println("[CTRL: CreatePayment] Input:", req)
+	res, err := c.ServiceGateway.TransactionService.CreatePayment(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: CreateQRPromptPay] Output:", res)
+	log.Println("[CTRL: CreatePayment] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -100,4 +100,27 @@ func (c *TransactionController) TransferToOrganizer(ctx *gin.Context) {
 	}
 	log.Println("[CTRL: TransferToOrganizer] Output:", res)
 	ctx.JSON(http.StatusOK, res)
+}
+
+// GetPaymentIntentById
+// @Summary Retrieve Payment Intent by ID
+// @Description Retrieve details of a payment intent by its ID
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param id path string true "Payment Intent ID"
+// @Success 200 {object} st.GetPaymentIntentByIdResponse "success"
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /transactions/payment-intent/confirm/{id} [get]
+func (c *TransactionController) ConfirmPaymentIntent(ctx *gin.Context) {
+	paymentIntentId := ctx.Param("id")
+	log.Println("[CTRL: ConfirmPaymentIntent] Input:", paymentIntentId)
+	err := c.ServiceGateway.TransactionService.ConfirmPaymentIntent(paymentIntentId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to transfer money to organizer", "error": err})
+		return
+	}
+	log.Println("[CTRL: TransferToOrganizer] Output:")
+	ctx.JSON(http.StatusOK, gin.H{"message": "SUCCESS"})
 }
