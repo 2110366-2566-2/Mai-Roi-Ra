@@ -42,8 +42,8 @@ export default async function Profile() {
   }
 
   return (
-    <div className="bg-white text-black h-full">
-      <div className="lg:mr-24 border-r bg-white">
+    <div className="bg-white text-black">
+      <div className="lg:mr-24 border-r border-b bg-white min-h-screen">
         <div className="w-full h-[200px] relative">
           <Image
             src="/img/navy_background_picture.png"

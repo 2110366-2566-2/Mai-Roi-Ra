@@ -3,6 +3,8 @@ import React from "react";
 import EventItem from "@/components/EventItem";
 import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { data } from "cypress/types/jquery";
+import { TbZoomCancel } from "react-icons/tb";
 
 interface Props {
   datas: any[];
@@ -18,9 +20,16 @@ export default function EventsList({ datas, role }: Props) {
     return parts[0] + parts[2] + parts[1];
   };
   console.log(datas);
-
   return (
     <div className="w-full">
+      {datas.length == 0 && (
+        <div className="text-slate-400 mt-16 w-full flex flex-col justify-center items-center space-y-4">
+          <div className="text-7xl">
+            <TbZoomCancel />
+          </div>
+          <p className="text-xl">No events found</p>
+        </div>
+      )}
       <div className="mt-8 px-10">
         {datas.map((eventItem: any) => (
           <EventItem
