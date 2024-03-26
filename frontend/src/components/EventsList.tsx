@@ -35,6 +35,7 @@ export default function EventsList({ datas, role }: Props) {
             imgSrc={eventItem.event_image}
             page={roleToNumber}
             role="USER"
+            status={eventItem.status}
           />
         ))}
       </div>

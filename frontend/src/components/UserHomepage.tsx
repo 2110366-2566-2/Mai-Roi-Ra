@@ -57,6 +57,7 @@ export default async function UserHomepage({ page, limit, search }: Props) {
                 imgSrc={eventItem.event_image}
                 page={0}
                 role="USER"
+                status={eventItem.item}
               />
             ))}
           </div>

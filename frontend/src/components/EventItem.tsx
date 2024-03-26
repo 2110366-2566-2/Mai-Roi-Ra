@@ -15,6 +15,7 @@ interface Props {
   imgSrc: string;
   page: number;
   role: string;
+  status: string;
 }
 
 export default function EventItem({
@@ -28,6 +29,7 @@ export default function EventItem({
   imgSrc,
   page,
   role,
+  status,
 }: Props) {
   const eventPath = role == "ADMIN" ? "verifyevents" : "events";
   const [showModal, setShowModal] = useState(false);
@@ -55,6 +57,19 @@ export default function EventItem({
     year: "numeric",
   });
 
+  // if status = "Waiting" then set to "Pending"
+  const [shownStatus, setShownStatus] = useState(status);
+  let statusStyle = "";
+  if (shownStatus == "Waiting") {
+    setShownStatus("Pending");
+  } else if (shownStatus == "Pending") {
+    statusStyle = "text-yellow-500 border-yellow-500";
+  } else if (shownStatus == "Approved") {
+    statusStyle = "text-green-400 border-green-400";
+  } else {
+    statusStyle = "text-red-500 border-red-400";
+  }
+
   return (
     <div>
       <div
@@ -78,9 +93,20 @@ export default function EventItem({
 
         <div className="h-full flex flex-col justify-start w-full space-y-[7px]">
           <div className="flex justify-between">
-            <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">
-              {name}
-            </h2>
+            <div className="flex space-x-4">
+              <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">
+                {name}
+              </h2>
+              {page == 1 || page == 2 ? (
+                <div className="space-x-2">
+                  <button
+                    className={`${statusStyle} border rounded-xl h-[30px] w-[80px] text-sm `}
+                  >
+                    {shownStatus}
+                  </button>
+                </div>
+              ) : null}
+            </div>
             {page == 1 ? (
               <div className="space-x-2">
                 <button
