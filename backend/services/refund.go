@@ -42,6 +42,7 @@ func (s *RefundService) CreateRefund(req *st.CreateRefundRequest) (*st.CreateRef
 	reqPayment := &st.GetPaymentIntentByIdRequest{
 		PaymentIntentId: resTransaction.TransactionID,
 	}
+
 	respayment, err := stripe.GetPaymentIntent(reqPayment)
 	if err != nil {
 		return nil, err
@@ -56,7 +57,7 @@ func (s *RefundService) CreateRefund(req *st.CreateRefundRequest) (*st.CreateRef
 		RefundId:      refundRes.ID,
 		TransactionId: req.TransactionId,
 		UserId:        resTransaction.UserID,
-		RefundAmount:  respayment.TransactionAmount,
+		RefundAmount:  float64(respayment.Amount),
 		RefundReason:  req.RefundReason,
 		RefundDate:    time.Now(),
 	}
