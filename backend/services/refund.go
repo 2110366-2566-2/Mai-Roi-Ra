@@ -129,7 +129,7 @@ func (s *RefundService) SendRefundEmail(req *st.SendRefundEmailRequest) (*st.Sen
 	if *isEnableNotification && userEmail != nil {
 		to = append(to, *userEmail)
 	} else {
-		return nil, fmt.Errorf("user has disabled notifications or email is not available")
+		return nil, nil
 	}
 
 	formattedRefundDate := refundModel.RefundDate.Format("2006-01-02")
