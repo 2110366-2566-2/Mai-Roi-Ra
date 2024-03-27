@@ -21,6 +21,7 @@ type ITransactionService interface {
 	GetPaymentIntentById(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error)
 	TransferToOrganizer(req *st.TransferToOrganizerRequest) (*models.Transaction, error)
 	ConfirmPaymentIntent(req string) error
+	IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error)
 }
 
 func NewTransactionService(
@@ -177,4 +178,20 @@ func (s *TransactionService) ConfirmPaymentIntent(req string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *TransactionService) IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error) {
+	log.Println("[Service: IsPaid]: Called")
+
+	resUser , err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(req.OrganizerId)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.RepositoryGateway.TransactionRepository.IsPaid(req.EventId, resUser)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return nil, err
+	}
+	return res, err
 }
