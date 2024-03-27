@@ -137,14 +137,13 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 		_, emailErr := s.SendTransactionEmail(emailReq)
 		if emailErr != nil {
 			log.Printf("[Service: GetPaymentIntentById] Error sending transaction success email: %v\n", emailErr)
-			// Not returning the error here to ensure the transfer process is not affected
+			return nil, fmt.Errorf("[Service: GetPaymentIntentById] Error sending transaction success email: %w", emailErr)
 		}
 	}
 
 	return res, nil
 }
 
-// SendTransactionEmail implements ITransactionService.
 // SendTransactionEmail implements ITransactionService.
 func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRequest) (*st.SendTransactionEmailResponse, error) {
 	log.Println("[Service: SendTransactionEmail]: Called")
@@ -182,7 +181,7 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	// Fetch event data
 	eventData, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventID)
 	if err != nil {
-		return nil, fmt.Errorf("error fetching event data: %v", err)
+		return nil, err
 	}
 
 	// Format dates

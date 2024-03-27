@@ -1197,6 +1197,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/refunds/email": {
+            "post": {
+                "description": "Send an email to the user about their refund",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "Send Refund Email",
+                "parameters": [
+                    {
+                        "description": "Send Refund Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -1220,9 +1266,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/test/qr": {
-            "get": {
-                "description": "Get a test message",
+        "/transactions/payment": {
+            "post": {
+                "description": "CreatePayment for user to pay (1: card, 2: PromptPay)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1230,14 +1276,69 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "transactions"
                 ],
-                "summary": "TestCreatePromptPayPayment",
+                "summary": "CreatePayment",
+                "parameters": [
+                    {
+                        "description": "Get PromptPay",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePaymentRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "$ref": "#/definitions/structure.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
                             "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/confirm/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
                         }
                     },
                     "400": {
@@ -1299,52 +1400,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/transactions/qr": {
-            "post": {
-                "description": "CreateQRPromptPay for user to pay",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transactions"
-                ],
-                "summary": "CreateQRPromptPay",
-                "parameters": [
-                    {
-                        "description": "Get PromptPay",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.CreateQRPromptPayRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structure.TransactionResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
         "/transactions/send_email": {
             "post": {
                 "description": "Sends a transaction email to the specified user.",
@@ -1378,6 +1433,52 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request - error in sending the transaction email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/transfer": {
+            "post": {
+                "description": "Transfer the specified amount of money to the organizer's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Transfer money to organizer",
+                "parameters": [
+                    {
+                        "description": "Transfer to Organizer",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransferToOrganizerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/models.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -2110,6 +2211,44 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Transaction": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "status",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "transaction_way": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -2252,6 +2391,29 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.CreatePaymentRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "payment_type",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "payment_type": {
+                    "type": "integer"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateProblemRequest": {
             "type": "object",
             "required": [
@@ -2285,25 +2447,6 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.CreateQRPromptPayRequest": {
-            "type": "object",
-            "required": [
-                "event_id",
-                "transaction_amount",
-                "user_id"
-            ],
-            "properties": {
-                "event_id": {
-                    "type": "string"
-                },
-                "transaction_amount": {
-                    "type": "number"
                 },
                 "user_id": {
                     "type": "string"
@@ -2569,6 +2712,12 @@ const docTemplate = `{
                 "currency": {
                     "type": "string"
                 },
+                "eventId": {
+                    "type": "string"
+                },
+                "numParticipants": {
+                    "type": "integer"
+                },
                 "paymentClientSecret": {
                     "type": "string"
                 },
@@ -2580,6 +2729,9 @@ const docTemplate = `{
                 },
                 "transactionAmount": {
                     "type": "number"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },
@@ -2908,6 +3060,22 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.SendRefundEmailRequest": {
+            "type": "object",
+            "properties": {
+                "refund_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRefundEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.SendRegisteredEmailRequest": {
             "type": "object",
             "properties": {
@@ -3004,6 +3172,22 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "response": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransferToOrganizerRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "organizer_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "description": "This is the system user ID of the organizer",
                     "type": "string"
                 }
             }

@@ -163,5 +163,6 @@ func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundControl
 	refundRoutes := r.Group("/refunds")
 	{
 		refundRoutes.POST("/", controller.CreateRefund)
+		refundRoutes.POST("/email", controller.SendRefundEmail)
 	}
 }

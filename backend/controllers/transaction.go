@@ -75,6 +75,7 @@ func (c *TransactionController) CreatePayment(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// SendTransactionEmail
 // @Summary Send Transaction Email
 // @Description Sends a transaction email to the specified user.
 // @Tags transactions
@@ -85,16 +86,21 @@ func (c *TransactionController) CreatePayment(ctx *gin.Context) {
 // @Failure 400 {object} object "Bad request - error in sending the transaction email"
 // @Router /transactions/send_email [post]
 func (c *TransactionController) SendTransactionEmail(ctx *gin.Context) {
-	var req *st.SendTransactionEmailRequest
-	log.Println("[CTRL: SendTransactionEmail]: Input:", req)
-	res, err := c.ServiceGateway.TransactionService.SendTransactionEmail(req)
+	var req st.SendTransactionEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: SendTransactionEmail] Input:", req)
+	res, err := c.ServiceGateway.TransactionService.SendTransactionEmail(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("[CTRL: SendTransactionEmail]: Output:", res)
+	log.Println("[CTRL: SendTransactionEmail] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
+
 // TransferToOrganizer
 // @Summary Transfer money to organizer
 // @Description Transfer the specified amount of money to the organizer's account
