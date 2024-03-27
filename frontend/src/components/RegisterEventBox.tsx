@@ -52,6 +52,12 @@ export default function RegisterEventBox({
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
 
+  // Check if the user is the owner of the event for Getting money when the event is over
+  const [isOwner, setIsOwner] = useState(false);
+
+  console.log("session", session)
+  console.log("event", event)
+
   const router = useRouter();
 
   const handleRegisterEventButton = async () => {
@@ -86,6 +92,10 @@ export default function RegisterEventBox({
 
     fetchIsRegisterable();
 
+    // Check if the user is the owner of the event for Getting money when the event is over
+    if(session?.user?.organizer_id == event.organizer_id){
+      setIsOwner(true);
+    }
   }, []);
 
   const handleVerifyEventButton = async () => {
@@ -344,10 +354,26 @@ export default function RegisterEventBox({
       </Modal>
 
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
-        <div>
-          <span className="text-2xl font-semibold">
+        <div className="">            
+        {
+          isOwner && true ? 
+          (
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-semibold">
+                {event.participant_fee} ฿
+              </span>
+              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Get Money
+              </button>
+            </div>
+          )
+          :
+          (
+            <span className="text-2xl font-semibold">
             {event.participant_fee} ฿
           </span>
+          )
+        }
           <div className="w-full border rounded-lg flex flex-col h-auto mt-4">
             <div className="w-full h-auto border flex flex-col p-4">
               <span className="w-full font-semibold flex items-center mb-4">
