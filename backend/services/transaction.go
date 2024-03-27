@@ -21,6 +21,7 @@ type ITransactionService interface {
 	GetPaymentIntentById(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error)
 	TransferToOrganizer(req *st.TransferToOrganizerRequest) (*models.Transaction, error)
 	ConfirmPaymentIntent(req string) error
+	IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error)
 }
 
 func NewTransactionService(
@@ -62,14 +63,11 @@ func (s *TransactionService) CreatePayment(req *st.CreatePaymentRequest) (*st.Cr
 
 func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error) {
 	log.Println("[Service: GetPaymentIntentById]: Called")
-
-	// TODO : Check whether the transaction is done
-
 	paymentId := ""
 	if req != nil {
 		paymentId = req.PaymentIntentId
 	}
-	resPaymentData, err := Stripe.GetPaymentIntent(&st.GetPaymentIntentByIdRequest{
+	resPaymentIntent, err := Stripe.GetPaymentIntent(&st.GetPaymentIntentByIdRequest{
 		PaymentIntentId: paymentId,
 	})
 
@@ -77,15 +75,23 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 		return nil, err
 	}
 
-	transModel, err := s.RepositoryGateway.TransactionRepository.GetTransactionDataById(resPaymentData.PaymentIntentId)
+	transModel, err := s.RepositoryGateway.TransactionRepository.GetTransactionDataById(resPaymentIntent.ID)
 	if err != nil {
 		return nil, err
 	}
 
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(transModel.EventID)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentAmount := float64(resPaymentIntent.Amount) / 100
+	numParticipants := int(paymentAmount / resEvent.ParticipantFee)
+
 	status := constant.PENDING
-	if resPaymentData.Status == constant.PAYMENT_CANCELED {
+	if resPaymentIntent.Status == constant.PAYMENT_CANCELED {
 		status = constant.CANCELLED
-	} else if resPaymentData.Status == constant.PAYMENT_SUCCEEDED {
+	} else if resPaymentIntent.Status == constant.PAYMENT_SUCCEEDED {
 		status = constant.COMPLETED
 	}
 
@@ -94,12 +100,25 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 		Status:        status,
 	}
 
-	_, err = s.RepositoryGateway.TransactionRepository.UpdateTransaction(reqUpdate)
-	if err != nil {
-		return nil, err
+	if transModel.Status == constant.PENDING {
+		_, err = s.RepositoryGateway.TransactionRepository.UpdateTransaction(reqUpdate)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return resPaymentData, nil
+	res := &st.GetPaymentIntentByIdResponse{
+		EventId:             transModel.EventID,
+		UserId:              transModel.UserID,
+		NumParticipants:     numParticipants,
+		PaymentIntentId:     resPaymentIntent.ID,
+		PaymentClientSecret: resPaymentIntent.ClientSecret,
+		TransactionAmount:   paymentAmount,
+		Currency:            string(resPaymentIntent.Currency),
+		Status:              status,
+	}
+
+	return res, nil
 }
 
 func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequest) (*models.Transaction, error) {
@@ -159,4 +178,20 @@ func (s *TransactionService) ConfirmPaymentIntent(req string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *TransactionService) IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error) {
+	log.Println("[Service: IsPaid]: Called")
+
+	resUser , err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(req.OrganizerId)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.RepositoryGateway.TransactionRepository.IsPaid(req.EventId, resUser)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return nil, err
+	}
+	return res, err
 }

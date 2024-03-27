@@ -1,0 +1,9 @@
+.hideSpinners::-webkit-inner-spin-button,
+.hideSpinners::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.hideSpinners {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

@@ -5,6 +5,9 @@ type GetPaymentIntentByIdRequest struct {
 }
 
 type GetPaymentIntentByIdResponse struct {
+	EventId             string
+	UserId              string
+	NumParticipants     int
 	PaymentIntentId     string
 	PaymentClientSecret string
 	TransactionAmount   float64

@@ -1,7 +1,9 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import { apiBackUrl } from "../constants";
 
-export default async function userRegister(
+export default async function participateEvent(
+  amount : number,
   event_id: string,
   num_participant : number,
   user_id : string
@@ -15,6 +17,7 @@ export default async function userRegister(
     },
     // next: { tags: ["ีuserRegister"] },
     body: JSON.stringify({
+        amount,
         event_id,
         num_participant,
         user_id
@@ -24,6 +27,8 @@ export default async function userRegister(
   if (!response.ok) {
     throw new Error("Failed to register to an Event (cannot participate)");
   }
+
+  revalidatePath(`/events/${event_id}`);
 
   return await response.json();
 }

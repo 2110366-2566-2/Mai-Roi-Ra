@@ -1220,6 +1220,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/transactions/is_paid": {
+            "get": {
+                "description": "Determine that whether the user has paid in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "IsPaid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsPaidResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/payment": {
             "post": {
                 "description": "CreatePayment for user to pay (1: card, 2: PromptPay)",
@@ -2626,6 +2677,12 @@ const docTemplate = `{
                 "currency": {
                     "type": "string"
                 },
+                "eventId": {
+                    "type": "string"
+                },
+                "numParticipants": {
+                    "type": "integer"
+                },
                 "paymentClientSecret": {
                     "type": "string"
                 },
@@ -2637,6 +2694,9 @@ const docTemplate = `{
                 },
                 "transactionAmount": {
                     "type": "number"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },
@@ -2659,6 +2719,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.SearchHistory"
                     }
+                }
+            }
+        },
+        "structure.IsPaidResponse": {
+            "type": "object",
+            "required": [
+                "is_paid"
+            ],
+            "properties": {
+                "is_paid": {
+                    "type": "boolean"
                 }
             }
         },
