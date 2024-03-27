@@ -351,14 +351,22 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 		}
 	}
 
-	// Delete the event using the repository
-	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
-	if err != nil {
+	// Delete event after passing a week
+	updateReq := &models.Event{
+		EventId: req.EventId,
+		Status:  "Deleted",
+	}
+	_, updateErr := s.RepositoryGateway.EventRepository.UpdateEvent(updateReq)
+	if updateErr != nil {
 		log.Println("[Service: DeleteEvent] Error deleting event:", err)
 		return nil, err
 	}
 
-	return deleteMessage, nil
+	res := &st.DeleteEventResponse{
+		Message: "Delete Successful",
+	}
+
+	return res, nil
 }
 
 func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error) {
