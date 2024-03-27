@@ -5,7 +5,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { useState,useEffect } from "react";
 import { HandleCreateAnnouncement } from "./organizer/HandleCreateAnnouncement";
-import {Spinner} from "@nextui-org/react";
 
 interface Props {
     id:string
