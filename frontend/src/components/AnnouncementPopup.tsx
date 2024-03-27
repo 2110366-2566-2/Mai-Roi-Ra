@@ -3,6 +3,7 @@ import styles from "@/styles/FontPage.module.css"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress'; // Replace the import statement
+import LoadingCircular from "./LoadingCircular";
 import { useState,useEffect } from "react";
 import { HandleCreateAnnouncement } from "./organizer/HandleCreateAnnouncement";
 
@@ -131,13 +132,14 @@ const AnnouncementPopup = ({id,name,isVisible,onClose} : Props) => {
                 
                 </div> ) : (
                     <div className="text-black">
-                        <CircularProgress
+                        <LoadingCircular></LoadingCircular>
+                        {/* <CircularProgress
                             color="warning"
                             determinate={false}
                             size="lg"
                             value={29}
                             variant="solid"
-                        />
+                        /> */}
                     </div>
                 )
             }
