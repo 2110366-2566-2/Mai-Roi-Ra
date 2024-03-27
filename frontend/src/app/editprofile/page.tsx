@@ -6,10 +6,11 @@ import getProfile from "@/libs/getProfile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import EditProfileFormSkeleton from "@/components/skeletons/EditProfileFormSkeleton";
+import showLoadingOverlay, {
+  hideLoadingOverlay,
+} from "@/components/GlobalLoading";
 
 export default async function EditProfile() {
-  // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
   const profile = session ? await getProfile(session.user.user_id) : null;
