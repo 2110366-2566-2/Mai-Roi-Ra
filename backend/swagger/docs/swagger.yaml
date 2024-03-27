@@ -390,6 +390,13 @@ definitions:
           $ref: '#/definitions/structure.SearchHistory'
         type: array
     type: object
+  structure.IsPaidResponse:
+    properties:
+      is_paid:
+        type: boolean
+    required:
+    - is_paid
+    type: object
   structure.IsRegisteredResponse:
     properties:
       is_registered:
@@ -1633,6 +1640,40 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /transactions/is_paid:
+    get:
+      consumes:
+      - application/json
+      description: Determine that whether the user has paid in this events
+      parameters:
+      - description: organizer_id
+        in: query
+        name: organizer_id
+        required: true
+        type: string
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.IsPaidResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: IsPaid
+      tags:
+      - transactions
   /transactions/payment:
     post:
       consumes:
