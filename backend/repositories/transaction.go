@@ -6,6 +6,7 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"gorm.io/gorm"
 )
@@ -19,7 +20,8 @@ type ITransactionRepository interface {
 	GetTransactionListByEventId(eventId string) ([]*models.Transaction, error)
 	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
-	GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
+	// GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
+	CreateOrganizerTransferRecord(req *st.CreateOrganizerTransferRecordRequest) (*models.Transaction, error)
 }
 
 func NewTransactionRepository(
@@ -29,6 +31,10 @@ func NewTransactionRepository(
 		db: db,
 	}
 }
+
+var (
+	Stripe = payment.NewStripeService()
+)
 
 func (r *TransactionRepository) GetTransactionDataById(transactionId string) (*models.Transaction, error) {
 	log.Println("[Repo: GetTransactionDataById]: Called")
@@ -62,6 +68,8 @@ func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionReque
 		TransactionAmount: req.TransactionAmount,
 		TransactionDate:   time.Now(),
 		Status:            req.Status,
+		TransactionWay:    constant.PAYMENT_RECEIVED,
+		CreatedAt:         time.Now(),
 	}
 
 	trans := r.db.Begin().Debug()
@@ -85,7 +93,7 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 	log.Println("[Repo: UpdateTransaction] Called")
 
 	var transaction models.Transaction
-	if err := r.db.Where(`transaction_id=?`).Find(&transaction).Error; err != nil {
+	if err := r.db.Where(`transaction_id=?`, req.TransactionId).Find(&transaction).Error; err != nil {
 		log.Print("[Repo: UpdateTransaction] transaction_id not found")
 		return nil, err
 	}
@@ -94,6 +102,10 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 	if req.Status != "" {
 		transaction.Status = req.Status
 	}
+
+	transaction.UpdatedAt = time.Now()
+
+	transaction.TransactionWay = constant.PAYMENT_RECEIVED // will change later
 
 	// Save the updated version
 	if err := r.db.Save(&transaction).Error; err != nil {
@@ -105,12 +117,45 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 	}, nil
 }
 
-func (r *TransactionRepository) GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error) {
-	log.Println("[Repo: GetTransactionDataByPaymentId]: Called")
-	var transaction models.Transaction
-	if err := r.db.Where(`payment_intent_id=?`, paymentIntentId).Find(&transaction).Error; err != nil {
-		log.Println("[Repo: GetTransactionDataByPaymentId]: cannot find payment_intent_id:", err)
+func (r *TransactionRepository) CreateOrganizerTransferRecord(req *st.CreateOrganizerTransferRecordRequest) (*models.Transaction, error) {
+	log.Println("[Repo: CreateOrganizerTransferRecord] Called")
+
+	var status string
+
+	switch req.Status {
+	case "succeeded":
+		status = constant.COMPLETED
+	case "requires_payment_method", "requires_confirmation", "requires_action":
+		status = constant.PENDING
+	case "canceled":
+		status = constant.CANCELLED
+	default:
+		status = constant.PENDING
+	}
+
+	transactionModel := models.Transaction{
+		TransactionID:     req.PaymentIntentId,
+		UserID:            req.UserId,
+		EventID:           req.EventId,
+		TransactionAmount: float64(req.Amount),
+		TransactionDate:   time.Time{},
+		Status:            status,
+		TransactionWay:    constant.PAYMENT_TRANSFERRED,
+		CreatedAt:         time.Time{},
+	}
+
+	trans := r.db.Begin().Debug()
+	if err := trans.Create(&transactionModel).Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateOrganizerTransferRecord] Insert data in transactions table error:", err)
 		return nil, err
 	}
-	return &transaction, nil
+
+	if err := trans.Commit().Error; err != nil {
+		trans.Rollback()
+		log.Println("[Repo: CreateOrganizerTransferRecord] Call orm DB Commit error:", err)
+		return nil, err
+	}
+
+	return &transactionModel, nil
 }

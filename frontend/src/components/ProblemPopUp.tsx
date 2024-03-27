@@ -65,8 +65,8 @@ const ProblemPopUp = ({ isVisible, onClose, id, problem , description,reply}) =>
                     </div>
                     <div className="text-xl md:text-xl sm:text-xl text-base flex flex-col flex-grow">
                         <div className="border border-gray-300 rounded-xl p-4 mb-2 flex-grow">
-                        Temporary Reply
-                        {/* {reply} */}
+                        {/* Temporary Reply */}
+                        {reply}
                         </div>
                     </div>
                 </div>

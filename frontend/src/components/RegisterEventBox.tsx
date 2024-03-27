@@ -12,6 +12,8 @@ import isRegisteredEvent from '@/libs/isRegisteredEvent';
 import verifyEvent from "@/libs/VerifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
 import { useRouter } from "next/navigation";
+import LoadingLine from "./LoadingLine";
+import { FaLastfmSquare } from "react-icons/fa";
 
 //Payment
 import createPaymentIntent from '@/libs/createPaymentIntent';
@@ -87,26 +89,34 @@ export default function RegisterEventBox({
   }, []);
 
   const handleVerifyEventButton = async () => {
+    setIsVerifyLoading(true);
     try {
       const verificationResult = await verifyEvent(event.event_id);
       // Handle successful registration
+      setIsVerifyLoading(false);
+      closeAdminVerifyModal();
       console.log("Verify successful:", verificationResult);
       router.push("/homepage");
+      router.refresh();
     } catch (error: any) {
       // Handle registration error
       console.error("Verify failed:", error.message);
+      setIsVerifyLoading(false);
     }
   };
 
   const handleRejectEventButton = async () => {
+    setIsVerifyLoading(true);
     try {
       const rejectedResult = await rejectEvent(event.event_id);
       // Handle successful registration
+      setIsVerifyLoading(false);
       console.log("Reject successful:", rejectedResult);
       router.push("/homepage");
     } catch (error: any) {
       // Handle registration error
       console.error("Reject failed:", error.message);
+      setIsVerifyLoading(false);
     }
   };
 
@@ -149,6 +159,8 @@ export default function RegisterEventBox({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdminVerifyModalOpen, setIsAdminVerifyModalOpen] = useState(false);
   const [isAdminRejectModalOpen, setIsAdminRejectModalOpen] = useState(false);
+
+  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -272,6 +284,12 @@ export default function RegisterEventBox({
         style={null}
       >
         <p>The event cannot be rejected in the future.</p>
+        {isVerifyLoading && (
+          <div className="mt-4 px-2">
+            <LoadingLine></LoadingLine>
+          </div>
+        )}
+
         <div className="w-full flex justify-between">
           <button
             onClick={() => {
@@ -283,7 +301,6 @@ export default function RegisterEventBox({
           </button>
           <button
             onClick={() => {
-              closeAdminVerifyModal();
               handleVerifyEventButton();
             }}
             className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
@@ -300,6 +317,11 @@ export default function RegisterEventBox({
         style={null}
       >
         <p>The event cannot be verified in the future.</p>
+        {isVerifyLoading && (
+          <div className="mt-4 px-2">
+            <LoadingLine></LoadingLine>
+          </div>
+        )}
         <div className="w-full flex justify-between">
           <button
             onClick={() => {

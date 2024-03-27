@@ -24,6 +24,32 @@ definitions:
     - problem_id
     - user_id
     type: object
+  models.Transaction:
+    properties:
+      created_at:
+        type: string
+      event_id:
+        type: string
+      status:
+        type: string
+      transaction_amount:
+        type: number
+      transaction_date:
+        type: string
+      transaction_id:
+        type: string
+      transaction_way:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    required:
+    - event_id
+    - status
+    - transaction_amount
+    - user_id
+    type: object
   models.User:
     properties:
       address:
@@ -121,6 +147,22 @@ definitions:
       event_id:
         type: string
     type: object
+  structure.CreatePaymentRequest:
+    properties:
+      event_id:
+        type: string
+      payment_type:
+        type: integer
+      transaction_amount:
+        type: number
+      user_id:
+        type: string
+    required:
+    - event_id
+    - payment_type
+    - transaction_amount
+    - user_id
+    type: object
   structure.CreateProblemRequest:
     properties:
       description:
@@ -147,25 +189,11 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.CreateQRPromptPayRequest:
-    properties:
-      transaction_amount:
-        type: number
-      user_id:
-        type: string
-    required:
-    - transaction_amount
-    - user_id
-    type: object
   structure.CreateRefundRequest:
     properties:
-      refund_amount:
-        type: number
       refund_reason:
         type: string
       transaction_id:
-        type: string
-      user_id:
         type: string
     required:
     - refund_reason
@@ -602,6 +630,17 @@ definitions:
     properties:
       response:
         type: string
+    type: object
+  structure.TransferToOrganizerRequest:
+    properties:
+      event_id:
+        type: string
+      organizer_id:
+        description: This is the system user ID of the organizer
+        type: string
+    required:
+    - event_id
+    - organizer_id
     type: object
   structure.UpdateEventRequest:
     properties:
@@ -1530,18 +1569,25 @@ paths:
       summary: GetTest
       tags:
       - Test
-  /test/qr:
-    get:
+  /transactions/payment:
+    post:
       consumes:
       - application/json
-      description: Get a test message
+      description: 'CreatePayment for user to pay (1: card, 2: PromptPay)'
+      parameters:
+      - description: Get PromptPay
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreatePaymentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: object
+            $ref: '#/definitions/structure.TransactionResponse'
         "400":
           description: Bad Request
           schema:
@@ -1550,9 +1596,9 @@ paths:
           description: Internal Server Error
           schema:
             type: object
-      summary: TestCreatePromptPayPayment
+      summary: CreatePayment
       tags:
-      - Test
+      - transactions
   /transactions/payment-intent/{id}:
     get:
       consumes:
@@ -1582,25 +1628,24 @@ paths:
       summary: Retrieve Payment Intent by ID
       tags:
       - transactions
-  /transactions/qr:
-    post:
+  /transactions/payment-intent/confirm/{id}:
+    get:
       consumes:
       - application/json
-      description: CreateQRPromptPay for user to pay
+      description: Retrieve details of a payment intent by its ID
       parameters:
-      - description: Get PromptPay
-        in: body
-        name: request
+      - description: Payment Intent ID
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/structure.CreateQRPromptPayRequest'
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: success
           schema:
-            $ref: '#/definitions/structure.TransactionResponse'
+            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
         "400":
           description: Bad Request
           schema:
@@ -1609,7 +1654,37 @@ paths:
           description: Internal Server Error
           schema:
             type: object
-      summary: CreateQRPromptPay
+      summary: Retrieve Payment Intent by ID
+      tags:
+      - transactions
+  /transactions/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Transfer the specified amount of money to the organizer's account
+      parameters:
+      - description: Transfer to Organizer
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.TransferToOrganizerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Transfer money to organizer
       tags:
       - transactions
   /users:
