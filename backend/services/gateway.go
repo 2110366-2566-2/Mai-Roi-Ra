@@ -20,7 +20,7 @@ type ServiceGateway struct {
 	AnnouncementService IAnnouncementService
 	ProblemService      IProblemService
 	TransactionService  ITransactionService
-	RefundService		IRefundService
+	RefundService       IRefundService
 }
 
 // NewService ...
