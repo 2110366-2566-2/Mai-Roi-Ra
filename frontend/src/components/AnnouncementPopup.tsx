@@ -2,7 +2,7 @@
 import styles from "@/styles/FontPage.module.css"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import CloseIcon from '@mui/icons-material/Close';
-import CircularProgress from '@mui/joy/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress'; // Replace the import statement
 import { useState,useEffect } from "react";
 import { HandleCreateAnnouncement } from "./organizer/HandleCreateAnnouncement";
 

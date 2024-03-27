@@ -20,6 +20,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "@/components/CheckoutForm";
 import createTransferToOrganizer from "@/libs/createTransferToOrganizer";
+import getIsOrganizerGotMoney from "@/libs/isOrganizerGotMoney";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,);
 
@@ -51,6 +52,7 @@ export default function RegisterEventBox({
 }) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
+  const [isOrganizerGotMoney, setIsOrganizerGotMoney] = useState(true);
 
   // Check if the user is the owner of the event for Getting money when the event is over
   const [isOwner, setIsOwner] = useState(false);
@@ -78,6 +80,19 @@ export default function RegisterEventBox({
     // Check if the user is the owner of the event for Getting money when the event is over
     if (session?.user?.organizer_id == event.organizer_id) {
       setIsOwner(true);
+      // Fetch isOrganizerGotMoney if the user is the owner
+      const fetchIsOrganizerGotMoney = async () => {
+        try {
+          const response = await getIsOrganizerGotMoney(session?.user?.user_id, event.event_id);
+          setIsOrganizerGotMoney(response.is_paid);
+          console.log("isOrganizerGotMoney:", response.is_paid);
+        } catch (error) {
+          // Handle the error
+          console.log("Error fetching isOrganizerGotMoney:", error.message);
+        }
+      };
+
+      fetchIsOrganizerGotMoney();
     }
   }, []);
 
@@ -204,11 +219,14 @@ export default function RegisterEventBox({
     try {
       const res = await createTransferToOrganizer(session?.user.organizer_id, event.event_id);
       console.log(res);
+      setIsOrganizerGotMoney(true);
     } catch (error: any) {
       // Handle registration error
       console.error(error.message);
     }
   };
+
+
 
 
   return (
@@ -224,15 +242,15 @@ export default function RegisterEventBox({
       >
         <p>The Registeration cannot be cancel in the future.</p>
         <div>
-        <div className="w-full h-auto flex justify-center items-center flex-col">
-              {/* <p>{clientSecret}</p> */}
-              {clientSecret && (
-                <Elements options={options} stripe={stripePromise}>
-                  <CheckoutForm />
-                </Elements>
-              )}
-              
-            </div>
+          <div className="w-full h-auto flex justify-center items-center flex-col">
+            {/* <p>{clientSecret}</p> */}
+            {clientSecret && (
+              <Elements options={options} stripe={stripePromise}>
+                <CheckoutForm />
+              </Elements>
+            )}
+
+          </div>
         </div>
       </Modal>
 
@@ -305,14 +323,17 @@ export default function RegisterEventBox({
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
         <div className="">
           {
-            isOwner && isRegistrationClosed ?
+            isOwner && true ?
               (
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-semibold">
                     {event.participant_fee} ฿
                   </span>
-                  <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+
+                  <button
+                    className={`font-bold py-2 px-4 rounded ${isOrganizerGotMoney ? 'bg-gray-500 cursor-not-allowed text-white' : 'bg-green-500 hover:bg-green-700 text-white'}`}
                     onClick={() => { handleCreateTransferToOrganizer() }}
+                    disabled={isOrganizerGotMoney}
                   >
                     Get Money
                   </button>

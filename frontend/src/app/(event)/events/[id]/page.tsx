@@ -23,7 +23,7 @@ export default async function EventDetailPage({ params }: Props) {
 
     return (
         <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
-            <RouterBackEventButton/>
+            <RouterBackEventButton isEventDetailPage/>
 
             <div className="lg:mx-16">
                 <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>

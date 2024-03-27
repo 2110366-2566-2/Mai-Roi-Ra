@@ -14,7 +14,7 @@ export default async function isRegisteredEvent(
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch user profile");
+    throw new Error("Failed to fetch isRegisteredEvent");
   }
 
   return await response.json();
