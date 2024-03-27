@@ -1,8 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ProblemItem from "./ProblemItem";
 
-import ReportProblemButton from "./ReportProblemButton";
-
 interface Props {
   datas: any[];
 }

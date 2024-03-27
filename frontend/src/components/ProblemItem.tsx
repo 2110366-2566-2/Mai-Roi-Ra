@@ -31,9 +31,11 @@ export default function ProblemItem({
     statusStyle = "text-green-400 border-green-400";
   }
 
+  console.log("STATUS IS >>>>>> ", status);
+  console.log("STYLE >>>>>>> ", statusStyle);
+
   return (
     <div className="relative">
-      {" "}
       {/* Container with relative positioning */}
       <div className="bg-white flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-10 w-full hover:scale-105 duration-300">
         {role == "USER" && (
@@ -81,7 +83,9 @@ export default function ProblemItem({
                 {problem}
               </h2>
               <div className="space-x-2">
-                <button className="border border-slate-400 rounded-xl h-[30px] w-[80px] text-sm hover:scale-105 duration-300">
+                <button
+                  className={`${statusStyle} border rounded-xl h-[30px] w-[80px] text-sm`}
+                >
                   {status}
                 </button>
               </div>

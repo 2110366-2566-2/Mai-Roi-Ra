@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useState } from "react";
 import updateEnableNotification from "@/libs/updateEnableNotification";
+import LoadingCircular from "./LoadingCircular";
 
 interface Props {
   isEnableNotificationProp: boolean;
@@ -15,6 +16,7 @@ export default function EditProfileButton({
   userIDProp,
 }: Props) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isChecked, setIsChecked] = useState(isEnableNotificationProp);
 
@@ -31,8 +33,9 @@ export default function EditProfileButton({
     }
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     router.push("/editprofile");
   };
 
@@ -45,6 +48,11 @@ export default function EditProfileButton({
         >
           Edit Profile
         </button>
+        {isLoading && (
+          <div className="flex justify-center items-center fixed left-0 top-0 w-full h-full bg-black bg-opacity-20 z-50">
+            <LoadingCircular></LoadingCircular>
+          </div>
+        )}
       </div>
       <div className="text-blue-500 absolute bottom-2 right-0 m-10">
         <div className="inline-flex items-center">

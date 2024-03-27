@@ -18,6 +18,7 @@ import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";
 
 export default async function Profile() {
   revalidateTag("profile");
+
   // get user profile from user_id from session
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
