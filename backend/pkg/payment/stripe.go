@@ -48,25 +48,14 @@ func NewStripeService() *StripeService {
 	}
 }
 
-func (s *StripeService) GetPaymentIntent(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error) {
+func (s *StripeService) GetPaymentIntent(req *st.GetPaymentIntentByIdRequest) (*stripe.PaymentIntent, error) {
 	log.Println("[Pkg: GetPaymentIntent] Called")
 	pi, err := s.Client.PaymentIntents.Get(req.PaymentIntentId, nil)
 	if err != nil {
 		log.Println("[Pkg: GetPaymentIntent]: Error fetching payment intent:", err)
 		return nil, err
 	}
-
-	transactionAmount := float64(pi.Amount / 100)
-
-	response := &st.GetPaymentIntentByIdResponse{
-		PaymentIntentId:     pi.ID,
-		PaymentClientSecret: pi.ClientSecret,
-		TransactionAmount:   transactionAmount,
-		Currency:            string(pi.Currency), // thb
-		Status:              string(pi.Status),
-	}
-
-	return response, nil
+	return pi, nil
 }
 
 func (s *StripeService) CreatePaymentIntent(amount int64, currency string, eventId string, userId string, paymentType int) (*st.CreatePaymentResponse, error) {
