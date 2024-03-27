@@ -39,22 +39,22 @@ const StripeReturnPage = () => {
     fetchPaymentIntent();
     }, []);
 
-    // useEffect(() => {
-    //     const fetchParticipateEvent = async () => {
-    //         const registrationResult = await participateEvent(
-    //             paymentIntent.event_id,
-    //             paymentIntent.numberOfGuest,
-    //             session?.user?.user_id
-    //         );
-    //     console.log("Registeration result:", registrationResult);
-    //     };
-    //     if (paymentIntent?.Status === 'succeeded') {
-    //         // Participate in the event
-    //         fetchParticipateEvent();
-    //       } else {
-    //         console.log('Payment:', paymentIntent?.Status);
-    //       }
-    // },[paymentIntent]);
+    useEffect(() => {
+        const fetchParticipateEvent = async () => {
+            const registrationResult = await participateEvent(
+                paymentIntent.EventId,
+                paymentIntent.NumParticipants,
+                session?.user?.user_id
+            );
+        console.log("Registeration result:", registrationResult);
+        };
+        if (paymentIntent?.Status === 'succeeded') {
+            // Participate in the event
+            fetchParticipateEvent();
+          } else {
+            console.log('Payment:', paymentIntent?.Status);
+          }
+    },[paymentIntent]);
 
 
   
@@ -71,14 +71,15 @@ const StripeReturnPage = () => {
     //     {paymentIntent.Status === 'succeeded' && <p className="text-green-500 font-bold">Complete Registering</p>}
     //   </div>
     <div className="h-screen w-screen flex justify-center items-center">
-    <div className="bg-white text-blue-600 p-6 rounded-lg shadow-lg max-w-md mx-auto font-sans">
+    <div className="bg-white text-blue-600 p-6 rounded-lg shadow-lg mx-auto font-sans">
   <h1 className="text-2xl font-bold mb-4 text-black">Payment Status</h1>
   <p><strong>Payment Intent ID:</strong> {paymentIntent.PaymentIntentId}</p>
   <p><strong>Transaction Amount:</strong> {paymentIntent.TransactionAmount}</p>
   <p><strong>Currency:</strong> {paymentIntent.Currency}</p>
   <p><strong>Status:</strong> {paymentIntent.Status}</p>
-  <p><strong>EventID:</strong> {paymentIntent.event_id}</p>
-  <p><strong>Number of guest:</strong> {paymentIntent.numberOfGuest}</p>
+  <p><strong>EventID:</strong> {paymentIntent.EventId}</p>
+  <p><strong>Number of guest:</strong> {paymentIntent.NumParticipants}</p>
+  <p><strong>UserID:</strong> {paymentIntent.UserId}</p>
   {paymentIntent.Status === 'succeeded' && <p className="text-green-500 font-bold">Complete Registering</p>}
 </div>
     </div>
