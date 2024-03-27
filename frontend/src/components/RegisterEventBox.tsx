@@ -190,9 +190,9 @@ export default function RegisterEventBox({
     appearance,
   };
   
-  async function handleCreatePaymentIntent(transaction_amount: number, user_id: string, event_id: string) {
+  async function handleCreatePaymentIntent(transaction_amount: number, user_id: string, event_id: string, payment_type: number) {
     try {
-      const result = await createPaymentIntent(transaction_amount, user_id, event_id);
+      const result = await createPaymentIntent(transaction_amount, user_id, event_id, 2);
       console.log(result);
       // Handle the response
         console.log(`Event ID: ${result.event_id}`);

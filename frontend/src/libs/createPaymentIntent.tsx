@@ -4,6 +4,7 @@ export default async function createPaymentIntent(
     transaction_amount: number,
     user_id: string,
     event_id: string,
+    payment_type: number
     // token: string
 ) {
     try {
@@ -11,8 +12,9 @@ export default async function createPaymentIntent(
             "transaction_amount": transaction_amount,
             "user_id": user_id,
             "event_id": event_id,
+            "payment_type": payment_type,
           })
-        const response = await fetch(`${apiBackUrl}/transactions/qr`, {
+        const response = await fetch(`${apiBackUrl}/transactions/payment`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
