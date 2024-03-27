@@ -1,3 +1,4 @@
+import { revalidatePath, revalidateTag } from "next/cache";
 import { apiBackUrl } from "../constants"
 
 const isValidEmail = (email: string):boolean => {
@@ -23,6 +24,7 @@ export default async function userLogin(userName: string, userPassword:string) {
         console.log(userName,userPassword)
         throw new Error("Failed to log in12")
     }
+    revalidatePath("/profile");
 
     return await response.json()
 }

@@ -5,9 +5,6 @@ import RegisterEventBox from "@/components/RegisterEventBox";
 import RouterBackEventButton from "@/components/RouterBackEventButton";
 import getEventParticipants from "@/libs/getEventParticipants";
 import ParticipantListModal from "@/components/ParticipantListModal";
-import isRegisteredEvent from '@/libs/isRegisteredEvent';
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../api/auth/[...nextauth]/route";
 
 interface Props {
     params: {id:string}
@@ -16,17 +13,6 @@ interface Props {
 
 export default async function EventDetailPage({ params }: Props) {
     const event = await getEvent(params.id);
-
-    let isRegisterable = false;
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.token){
-        
-    }else{
-        isRegisterable = await isRegisteredEvent(session?.user?.user_id,event.event_id);
-        console.log(isRegisterable)
-    }
-
-
     const participants = await getEventParticipants(params.id);
     let numParticipants = 0;
 
@@ -37,7 +23,7 @@ export default async function EventDetailPage({ params }: Props) {
 
     return (
         <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
-            <RouterBackEventButton/>
+            <RouterBackEventButton isEventDetailPage/>
 
             <div className="lg:mx-16">
                 <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>
@@ -70,13 +56,13 @@ export default async function EventDetailPage({ params }: Props) {
                                 />
                             </div>
                             <div className="flex flex-col items-start">
-                                <label className="font-semibold">{event.organizer_id}</label>
+                                <label className="font-semibold">{event.first_name} {event.last_name}</label>
                                 <label className="text-md text-slate-600">Hosted {8} Events</label>
                             </div>
                         </div>
                     </div>
                     <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
-                        <RegisterEventBox event={event} isRegisterable={isRegisterable}/>
+                        <RegisterEventBox event={event} />
                         <ParticipantListModal participants={participants} numParticipants={numParticipants} />
                     </div>
                 </div>
