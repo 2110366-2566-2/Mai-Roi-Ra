@@ -7,7 +7,7 @@ import AddGuestIcon from "@mui/icons-material/GroupAdd";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Modal from "./Modal";
-import isRegisteredEvent from '@/libs/isRegisteredEvent';
+import isRegisteredEvent from "@/libs/isRegisteredEvent";
 import verifyEvent from "@/libs/VerifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
 import { useRouter } from "next/navigation";
@@ -15,15 +15,16 @@ import LoadingLine from "./LoadingLine";
 import { FaLastfmSquare } from "react-icons/fa";
 
 //Payment
-import createPaymentIntent from '@/libs/createPaymentIntent';
+import createPaymentIntent from "@/libs/createPaymentIntent";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "@/components/CheckoutForm";
 import createTransferToOrganizer from "@/libs/createTransferToOrganizer";
 import getIsOrganizerGotMoney from "@/libs/isOrganizerGotMoney";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,);
-
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+);
 
 interface Event {
   activities: string;
@@ -45,11 +46,7 @@ interface Event {
   status: string;
 }
 
-export default function RegisterEventBox({
-  event,
-}: {
-  event: Event;
-}) {
+export default function RegisterEventBox({ event }: { event: Event }) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
   const [isOrganizerGotMoney, setIsOrganizerGotMoney] = useState(true);
@@ -57,17 +54,19 @@ export default function RegisterEventBox({
   // Check if the user is the owner of the event for Getting money when the event is over
   const [isOwner, setIsOwner] = useState(false);
 
-  console.log("session", session)
-  console.log("event", event)
+  console.log("session", session);
+  console.log("event", event);
 
   const router = useRouter();
-
 
   useEffect(() => {
     const fetchIsRegisterable = async () => {
       try {
-        const response = await isRegisteredEvent(session?.user?.user_id, event.event_id);
-        setIsRegisterable(!response.is_registered)
+        const response = await isRegisteredEvent(
+          session?.user?.user_id,
+          event.event_id
+        );
+        setIsRegisterable(!response.is_registered);
         console.log("isRegistered:", response.is_registered);
       } catch (error) {
         // Handle the error
@@ -83,7 +82,10 @@ export default function RegisterEventBox({
       // Fetch isOrganizerGotMoney if the user is the owner
       const fetchIsOrganizerGotMoney = async () => {
         try {
-          const response = await getIsOrganizerGotMoney(session?.user?.user_id, event.event_id);
+          const response = await getIsOrganizerGotMoney(
+            session?.user?.user_id,
+            event.event_id
+          );
           setIsOrganizerGotMoney(response.is_paid);
           console.log("isOrganizerGotMoney:", response.is_paid);
         } catch (error) {
@@ -176,9 +178,8 @@ export default function RegisterEventBox({
   };
 
   const [showQRCode, setShowQRCode] = useState(false);
-  console.log(isRegisterable, "here", session?.user?.user_id)
-  console.log("QR:", showQRCode)
-
+  console.log(isRegisterable, "here", session?.user?.user_id);
+  console.log("QR:", showQRCode);
 
   const closeAdminVerifyModal = () => {
     setIsAdminVerifyModalOpen(false);
@@ -191,16 +192,26 @@ export default function RegisterEventBox({
   //Payment
   const [clientSecret, setClientSecret] = useState(null);
   const appearance = {
-    theme: 'stripe',
+    theme: "stripe",
   };
   const options = {
     clientSecret,
     appearance,
   };
 
-  async function handleCreatePaymentIntent(transaction_amount: number, user_id: string, event_id: string, payment_type: number) {
+  async function handleCreatePaymentIntent(
+    transaction_amount: number,
+    user_id: string,
+    event_id: string,
+    payment_type: number
+  ) {
     try {
-      const result = await createPaymentIntent(transaction_amount, user_id, event_id, 2);
+      const result = await createPaymentIntent(
+        transaction_amount,
+        user_id,
+        event_id,
+        2
+      );
       console.log(result);
       // Handle the response
       console.log(`Event ID: ${result.event_id}`);
@@ -209,15 +220,17 @@ export default function RegisterEventBox({
       console.log(`Payment Method Type: ${result.payment_method_type}`);
       console.log(`Transaction Amount: ${result.transaction_amount}`);
       setClientSecret(result.payment_client_secret);
-
     } catch (error) {
-      console.error('Failed to create payment intent:', error);
+      console.error("Failed to create payment intent:", error);
     }
   }
 
   const handleCreateTransferToOrganizer = async () => {
     try {
-      const res = await createTransferToOrganizer(session?.user.organizer_id, event.event_id);
+      const res = await createTransferToOrganizer(
+        session?.user.organizer_id,
+        event.event_id
+      );
       console.log(res);
       setIsOrganizerGotMoney(true);
     } catch (error: any) {
@@ -226,12 +239,8 @@ export default function RegisterEventBox({
     }
   };
 
-
-
-
   return (
     <div>
-
       <Modal //confirm register modal
         isOpen={isModalOpen}
         closeModal={closeModal}
@@ -249,7 +258,6 @@ export default function RegisterEventBox({
                 <CheckoutForm />
               </Elements>
             )}
-
           </div>
         </div>
       </Modal>
@@ -322,30 +330,31 @@ export default function RegisterEventBox({
 
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
         <div className="">
-          {
-            isOwner && true ?
-              (
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-semibold">
-                    {event.participant_fee} ฿
-                  </span>
+          {isOwner && true ? (
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-semibold">
+                {event.participant_fee} ฿
+              </span>
 
-                  <button
-                    className={`font-bold py-2 px-4 rounded ${isOrganizerGotMoney ? 'bg-gray-500 cursor-not-allowed text-white' : 'bg-green-500 hover:bg-green-700 text-white'}`}
-                    onClick={() => { handleCreateTransferToOrganizer() }}
-                    disabled={isOrganizerGotMoney}
-                  >
-                    Get Money
-                  </button>
-                </div>
-              )
-              :
-              (
-                <span className="text-2xl font-semibold">
-                  {event.participant_fee} ฿
-                </span>
-              )
-          }
+              <button
+                className={`font-bold py-2 px-4 rounded ${
+                  isOrganizerGotMoney
+                    ? "bg-gray-500 cursor-not-allowed text-white"
+                    : "bg-green-500 hover:bg-green-700 text-white"
+                }`}
+                onClick={() => {
+                  handleCreateTransferToOrganizer();
+                }}
+                disabled={isOrganizerGotMoney}
+              >
+                Get Money
+              </button>
+            </div>
+          ) : (
+            <span className="text-2xl font-semibold">
+              {event.participant_fee} ฿
+            </span>
+          )}
           <div className="w-full border rounded-lg flex flex-col h-auto mt-4">
             <div className="w-full h-auto border flex flex-col p-4">
               <span className="w-full font-semibold flex items-center mb-4">
@@ -423,33 +432,41 @@ export default function RegisterEventBox({
             </button>
           </div>
         )}
-        {session && !session.user.organizer_id && !isRegistrationClosed ? (
-          isRegisterable ? (
-            <button
-              className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4 hover:bg-yellow-500"
-              onClick={() => {
-                setIsModalOpen(true);
-                setShowQRCode(true);
-                handleCreatePaymentIntent(event.participant_fee * numberOfGuest, session?.user?.user_id, event.event_id, 2);
-              }}
-            >
-              Register
-            </button>
-          ) :
-            <button className="rounded-lg text-center w-full h-full bg-white text-red-500 p-4 cursor-not-allowed border-red-500 border-2">
-              You are already registered
-            </button>
-        ) : (
-          <button className="rounded-lg text-center w-full h-full bg-gray-300 text-white p-4 cursor-not-allowed">
-            {session
-              ? session.user.organizer_id
-                ? "You are organizer. Only user can register"
-                : isRegistrationClosed
+        {session?.user.role != "ADMIN" ? (
+          session && !session.user.organizer_id && !isRegistrationClosed ? (
+            isRegisterable ? (
+              <button
+                className="rounded-lg text-center w-full h-full bg-[#F2D22E] p-4 hover:bg-yellow-500"
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setShowQRCode(true);
+                  handleCreatePaymentIntent(
+                    event.participant_fee * numberOfGuest,
+                    session?.user?.user_id,
+                    event.event_id,
+                    2
+                  );
+                }}
+              >
+                Register
+              </button>
+            ) : (
+              <button className="rounded-lg text-center w-full h-full bg-white text-red-500 p-4 cursor-not-allowed border-red-500 border-2">
+                You are already registered
+              </button>
+            )
+          ) : (
+            <button className="rounded-lg text-center w-full h-full bg-gray-300 text-white p-4 cursor-not-allowed">
+              {session
+                ? session.user.organizer_id
+                  ? "You are organizer. Only user can register"
+                  : isRegistrationClosed
                   ? "The Event has passed"
                   : null
-              : "Please Sign in first"}
-          </button>
-        )}
+                : "Please Sign in first"}
+            </button>
+          )
+        ) : null}
       </div>
     </div>
   );
