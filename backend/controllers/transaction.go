@@ -130,7 +130,7 @@ func (c *TransactionController) ConfirmPaymentIntent(ctx *gin.Context) {
 // @Tags transactions
 // @Accept json
 // @Produce json
-// @Param user_id query string true "user_id"
+// @Param organizer_id query string true "organizer_id"
 // @Param event_id query string true "event_id"
 // @Success 200 {object} structure.IsPaidResponse
 // @Failure 400 {object} object "Bad Request"

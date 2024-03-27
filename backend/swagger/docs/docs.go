@@ -1236,8 +1236,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "user_id",
-                        "name": "user_id",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
                         "in": "query",
                         "required": true
                     },

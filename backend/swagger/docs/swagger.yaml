@@ -1588,9 +1588,9 @@ paths:
       - application/json
       description: Determine that whether the user has paid in this events
       parameters:
-      - description: user_id
+      - description: organizer_id
         in: query
-        name: user_id
+        name: organizer_id
         required: true
         type: string
       - description: event_id
