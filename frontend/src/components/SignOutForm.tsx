@@ -20,7 +20,6 @@ export default function SignOut() {
       // }, 1000);
     }
     router.push("/");
-    setIsLoading(false);
   };
 
   return (
