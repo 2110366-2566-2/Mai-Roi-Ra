@@ -6,7 +6,6 @@ import CalendarIcon from "@mui/icons-material/CalendarMonth";
 import AddGuestIcon from "@mui/icons-material/GroupAdd";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import participateEvent from "@/libs/participateEvent";
 import Modal from "./Modal";
 import isRegisteredEvent from '@/libs/isRegisteredEvent';
 import verifyEvent from "@/libs/VerifyEvent";
@@ -61,28 +60,11 @@ export default function RegisterEventBox({
 
   const router = useRouter();
 
-  const handleRegisterEventButton = async () => {
-    try {
-      // Call the userRegister function to register the user for the event
-      console.log(event.event_id, numberOfGuest, session?.user?.user_id);
-      const registrationResult = await participateEvent(
-        event.event_id,
-        numberOfGuest,
-        session?.user?.user_id
-      );
-      // Handle successful registration
-      console.log("Registration successful:", registrationResult);
-      setShowQRCode(false);
-    } catch (error: any) {
-      // Handle registration error
-      console.error("Registration failed:", error.message);
-    }
-  };
 
   useEffect(() => {
     const fetchIsRegisterable = async () => {
       try {
-        const response = await isRegisteredEvent(session?.user?.user_id,event.event_id);
+        const response = await isRegisteredEvent(session?.user?.user_id, event.event_id);
         setIsRegisterable(!response.is_registered)
         console.log("isRegistered:", response.is_registered);
       } catch (error) {
@@ -94,7 +76,7 @@ export default function RegisterEventBox({
     fetchIsRegisterable();
 
     // Check if the user is the owner of the event for Getting money when the event is over
-    if(session?.user?.organizer_id == event.organizer_id){
+    if (session?.user?.organizer_id == event.organizer_id) {
       setIsOwner(true);
     }
   }, []);
@@ -179,8 +161,8 @@ export default function RegisterEventBox({
   };
 
   const [showQRCode, setShowQRCode] = useState(false);
-  console.log(isRegisterable ,"here",session?.user?.user_id)
-  console.log("QR:",showQRCode)
+  console.log(isRegisterable, "here", session?.user?.user_id)
+  console.log("QR:", showQRCode)
 
 
   const closeAdminVerifyModal = () => {
@@ -200,18 +182,18 @@ export default function RegisterEventBox({
     clientSecret,
     appearance,
   };
-  
+
   async function handleCreatePaymentIntent(transaction_amount: number, user_id: string, event_id: string, payment_type: number) {
     try {
       const result = await createPaymentIntent(transaction_amount, user_id, event_id, 2);
       console.log(result);
       // Handle the response
-        console.log(`Event ID: ${result.event_id}`);
-        console.log(`Payment Intent ID: ${result.payment_intent_id}`);
-        console.log(`Payment Client Secret: ${result.payment_client_secret}`);
-        console.log(`Payment Method Type: ${result.payment_method_type}`);
-        console.log(`Transaction Amount: ${result.transaction_amount}`);
-        setClientSecret(result.payment_client_secret);
+      console.log(`Event ID: ${result.event_id}`);
+      console.log(`Payment Intent ID: ${result.payment_intent_id}`);
+      console.log(`Payment Client Secret: ${result.payment_client_secret}`);
+      console.log(`Payment Method Type: ${result.payment_method_type}`);
+      console.log(`Transaction Amount: ${result.transaction_amount}`);
+      setClientSecret(result.payment_client_secret);
 
     } catch (error) {
       console.error('Failed to create payment intent:', error);
@@ -220,7 +202,7 @@ export default function RegisterEventBox({
 
   const handleCreateTransferToOrganizer = async () => {
     try {
-      const res = await createTransferToOrganizer(session?.user.organizer_id,event.event_id);
+      const res = await createTransferToOrganizer(session?.user.organizer_id, event.event_id);
       console.log(res);
     } catch (error: any) {
       // Handle registration error
@@ -242,59 +224,15 @@ export default function RegisterEventBox({
       >
         <p>The Registeration cannot be cancel in the future.</p>
         <div>
-        { showQRCode ? (
-            <div className="w-full h-auto flex justify-center items-center flex-col">
-             {/* <p>{clientSecret}</p> */}
-      {clientSecret && (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
-      )}
-              <div className="w-full flex justify-between">
-          <button
-            onClick={() => {
-              closeModal();
-            }}
-            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 hover:bg-gray-400 w-[82px]"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              //closeModal();
-              handleRegisterEventButton();
-               // window.location.reload();
-            }}
-            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
-          >
-            Yes
-          </button>
-        </div>
+        <div className="w-full h-auto flex justify-center items-center flex-col">
+              {/* <p>{clientSecret}</p> */}
+              {clientSecret && (
+                <Elements options={options} stripe={stripePromise}>
+                  <CheckoutForm />
+                </Elements>
+              )}
+              
             </div>
-        ):(
-            <div className="w-full flex justify-between">
-          <button
-            onClick={() => {
-              closeModal();
-            }}
-            className="mt-4 py-2 px-4 text-white rounded-md bg-gray-300 hover:bg-gray-400 w-[82px]"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              //closeModal();
-              handleRegisterEventButton();
-               // window.location.reload();
-            }}
-            className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
-          >
-            Yes
-          </button>
-        </div>
-         )
-            
-        }
         </div>
       </Modal>
 
@@ -365,28 +303,28 @@ export default function RegisterEventBox({
       </Modal>
 
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
-        <div className="">            
-        {
-          isOwner && isRegistrationClosed ? 
-          (
-            <div className="flex items-center justify-between">
-              <span className="text-2xl font-semibold">
-                {event.participant_fee} ฿
-              </span>
-              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" 
-                onClick={()=>{handleCreateTransferToOrganizer()}}
-              >
-                Get Money
-              </button>
-            </div>
-          )
-          :
-          (
-            <span className="text-2xl font-semibold">
-            {event.participant_fee} ฿
-          </span>
-          )
-        }
+        <div className="">
+          {
+            isOwner && isRegistrationClosed ?
+              (
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-semibold">
+                    {event.participant_fee} ฿
+                  </span>
+                  <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => { handleCreateTransferToOrganizer() }}
+                  >
+                    Get Money
+                  </button>
+                </div>
+              )
+              :
+              (
+                <span className="text-2xl font-semibold">
+                  {event.participant_fee} ฿
+                </span>
+              )
+          }
           <div className="w-full border rounded-lg flex flex-col h-auto mt-4">
             <div className="w-full h-auto border flex flex-col p-4">
               <span className="w-full font-semibold flex items-center mb-4">
@@ -476,18 +414,18 @@ export default function RegisterEventBox({
             >
               Register
             </button>
-           ) :
-           <button className="rounded-lg text-center w-full h-full bg-white text-red-500 p-4 cursor-not-allowed border-red-500 border-2">
-             You are already registered
-           </button>
+          ) :
+            <button className="rounded-lg text-center w-full h-full bg-white text-red-500 p-4 cursor-not-allowed border-red-500 border-2">
+              You are already registered
+            </button>
         ) : (
           <button className="rounded-lg text-center w-full h-full bg-gray-300 text-white p-4 cursor-not-allowed">
             {session
               ? session.user.organizer_id
                 ? "You are organizer. Only user can register"
                 : isRegistrationClosed
-                ? "The Event has passed"
-                : null
+                  ? "The Event has passed"
+                  : null
               : "Please Sign in first"}
           </button>
         )}

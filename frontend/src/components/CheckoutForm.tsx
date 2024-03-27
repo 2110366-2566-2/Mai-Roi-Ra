@@ -11,8 +11,8 @@ export default function CheckoutForm() {
   const elements = useElements();
 
 
-const [message, setMessage] = React.useState<string | null>(null);
-const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [message, setMessage] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!stripe) {
@@ -45,7 +45,7 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
     });
   }, [stripe]);
 
-  const handleSubmit = async (e : any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
@@ -56,7 +56,7 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     setIsLoading(true);
 
-    console.log(elements , stripe)
+    console.log(elements, stripe)
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -84,14 +84,16 @@ const [isLoading, setIsLoading] = React.useState<boolean>(false);
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form id="payment-form" onSubmit={handleSubmit} className="mt-2">
 
       <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
-        <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-        </span>
-      </button>
+      <div className="flex items-center justify-center">
+        <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-2">
+          <span id="button-text">
+            {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          </span>
+        </button>
+      </div>
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>
