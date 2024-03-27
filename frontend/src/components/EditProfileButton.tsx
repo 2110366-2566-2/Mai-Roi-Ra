@@ -33,7 +33,7 @@ export default function EditProfileButton({
     }
   };
 
-  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsLoading(true);
     router.push("/editprofile");

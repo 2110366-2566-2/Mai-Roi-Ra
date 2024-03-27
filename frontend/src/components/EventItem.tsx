@@ -121,6 +121,7 @@ export default function EventItem({
                 <button
                   className="hidden sm:block text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] w-[64px] sm:h-[30px] sm:w-[80px] text-sm hover:scale-105 duration-300"
                   onClick={(e) => {
+                    setIsLoading(true);
                     e.stopPropagation();
                     e.preventDefault();
                     router.push(`/homepage/editevent/${id}`);
@@ -143,6 +144,7 @@ export default function EventItem({
                 <button
                   className="sm:hidden block text-black text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] w-[72px] sm:h-[30px] sm:w-[80px] text-sm hover:scale-105 duration-300"
                   onClick={(e) => {
+                    setIsLoading(true);
                     e.stopPropagation();
                     e.preventDefault();
                     router.push(`/homepage/editevent/${id}`);
@@ -157,6 +159,7 @@ export default function EventItem({
                 <button
                   className="text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] sm:h-[30px] w-fit px-[6px] text-sm hover:scale-105 duration-300"
                   onClick={(e) => {
+                    setIsLoading(true);
                     e.stopPropagation();
                     e.preventDefault();
                     setShowModal(true);
