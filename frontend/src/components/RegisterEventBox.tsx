@@ -20,6 +20,7 @@ import createPaymentIntent from '@/libs/createPaymentIntent';
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "@/components/CheckoutForm";
+import createTransferToOrganizer from "@/libs/createTransferToOrganizer";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,);
 
@@ -217,6 +218,16 @@ export default function RegisterEventBox({
     }
   }
 
+  const handleCreateTransferToOrganizer = async () => {
+    try {
+      const res = await createTransferToOrganizer(session?.user.organizer_id,event.event_id);
+      console.log(res);
+    } catch (error: any) {
+      // Handle registration error
+      console.error(error.message);
+    }
+  };
+
 
   return (
     <div>
@@ -356,13 +367,15 @@ export default function RegisterEventBox({
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
         <div className="">            
         {
-          isOwner && true ? 
+          isOwner && isRegistrationClosed ? 
           (
             <div className="flex items-center justify-between">
               <span className="text-2xl font-semibold">
                 {event.participant_fee} ฿
               </span>
-              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" 
+                onClick={()=>{handleCreateTransferToOrganizer()}}
+              >
                 Get Money
               </button>
             </div>
@@ -458,7 +471,7 @@ export default function RegisterEventBox({
               onClick={() => {
                 setIsModalOpen(true);
                 setShowQRCode(true);
-                handleCreatePaymentIntent(event.participant_fee * numberOfGuest, session?.user?.user_id, event.event_id);
+                handleCreatePaymentIntent(event.participant_fee * numberOfGuest, session?.user?.user_id, event.event_id, 2);
               }}
             >
               Register
