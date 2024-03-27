@@ -80,6 +80,13 @@ func ToDateString(t time.Time) string {
 	return t.Format("20060102")
 }
 
+func GetString(s *string) string {
+	if s != nil {
+		return *s
+	}
+	return ""
+}
+
 var (
 	MonthMapThStr = map[string]string{
 		"01": "ม.ค.",

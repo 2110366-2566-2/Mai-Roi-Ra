@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default async function UserHomepage({page,limit,search} : Props) {
-  const events = await getEvents({offset : page , limit : limit , search : search});
+  const events = await getEvents({offset : page , limit : limit , search : search , filter : "Approved"});
   const datas = events.event_lists;
   const session = await getServerSession(authOptions);
   const user = session?.user;

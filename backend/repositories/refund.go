@@ -14,6 +14,7 @@ type RefundRepository struct {
 
 type IRefundRepository interface {
 	CreateRefund(req *models.Refund) (*st.CreateRefundResponse, error)
+	GetRefundById(refundId string) (*models.Refund, error)
 }
 
 func NewRefundRepository(
@@ -40,4 +41,14 @@ func (r *RefundRepository) CreateRefund(req *models.Refund) (*st.CreateRefundRes
 	return &st.CreateRefundResponse{
 		RefundId: req.RefundId,
 	}, nil
+}
+
+func (r *RefundRepository) GetRefundById(refundId string) (*models.Refund, error) {
+	log.Println("[Repo: GetRefundById]: Called")
+	var refund models.Refund
+	if err := r.db.Where("refund_id = ?", refundId).First(&refund).Error; err != nil {
+		log.Println("[Repo: GetRefundById]: can't find refund")
+		return nil, err
+	}
+	return &refund, nil
 }

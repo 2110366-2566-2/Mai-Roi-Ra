@@ -153,6 +153,7 @@ func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.Transact
 	{
 		transactionRoutes.POST("/payment", controller.CreatePayment)
 		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
+		transactionRoutes.POST("/send_email", controller.SendTransactionEmail)
 		transactionRoutes.POST("/transfer", controller.TransferToOrganizer)
 		transactionRoutes.GET("/payment-intent/confirm/:id", controller.ConfirmPaymentIntent)
 		transactionRoutes.GET("/is_paid", controller.IsPaid)
@@ -163,5 +164,6 @@ func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundControl
 	refundRoutes := r.Group("/refunds")
 	{
 		refundRoutes.POST("/", controller.CreateRefund)
+		refundRoutes.POST("/email", controller.SendRefundEmail)
 	}
 }

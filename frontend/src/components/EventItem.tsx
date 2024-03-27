@@ -81,7 +81,7 @@ export default function EventItem({
         </div>
       )}
       <div
-        className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-105 duration-300"
+        className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-y-105 hover:shadow-gray-500 hover:shadow-y-xl duration-300"
         onClick={(e) => {
           setIsLoading(true);
           e.stopPropagation();
@@ -157,9 +157,8 @@ export default function EventItem({
             {page == 1 ? (
               <div className="space-x-2 text-black">
                 <button
-                  className="text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] sm:h-[30px] w-fit px-[6px] text-sm hover:scale-105 duration-300"
+                  className="text-xs sm:text-sm border border-slate-400 rounded-xl h-[24px] sm:h-[30px] w-fit px-[6px] hover:scale-105 duration-300"
                   onClick={(e) => {
-                    setIsLoading(true);
                     e.stopPropagation();
                     e.preventDefault();
                     setShowModal(true);

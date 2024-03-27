@@ -80,6 +80,7 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
 
     const handleSubmit = async () => {
         if (searching == "") {
+            if (search != "") router.push(`/homepage`);
             return;
         } else {
             const temp = searching;

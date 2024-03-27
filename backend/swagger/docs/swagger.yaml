@@ -598,6 +598,16 @@ definitions:
       message:
         type: string
     type: object
+  structure.SendRefundEmailRequest:
+    properties:
+      refund_id:
+        type: string
+    type: object
+  structure.SendRefundEmailResponse:
+    properties:
+      send_status:
+        type: string
+    type: object
   structure.SendRegisteredEmailRequest:
     properties:
       event_id:
@@ -632,6 +642,24 @@ definitions:
   structure.SendReminderEmailResponse:
     properties:
       announce_status:
+        type: string
+    type: object
+  structure.SendTransactionEmailRequest:
+    properties:
+      amount:
+        type: number
+      event_id:
+        type: string
+      transaction_date:
+        type: string
+      transaction_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.SendTransactionEmailResponse:
+    properties:
+      send_status:
         type: string
     type: object
   structure.TestResponse:
@@ -1567,6 +1595,36 @@ paths:
       summary: CreateRefund
       tags:
       - refunds
+  /refunds/email:
+    post:
+      consumes:
+      - application/json
+      description: Send an email to the user about their refund
+      parameters:
+      - description: Send Refund Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendRefundEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.SendRefundEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Send Refund Email
+      tags:
+      - refunds
   /test:
     get:
       consumes:
@@ -1702,6 +1760,32 @@ paths:
           schema:
             type: object
       summary: Retrieve Payment Intent by ID
+      tags:
+      - transactions
+  /transactions/send_email:
+    post:
+      consumes:
+      - application/json
+      description: Sends a transaction email to the specified user.
+      parameters:
+      - description: Send Transaction Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendTransactionEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaction email successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendTransactionEmailResponse'
+        "400":
+          description: Bad request - error in sending the transaction email
+          schema:
+            type: object
+      summary: Send Transaction Email
       tags:
       - transactions
   /transactions/transfer:
