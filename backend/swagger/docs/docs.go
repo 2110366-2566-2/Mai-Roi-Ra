@@ -1197,6 +1197,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/refunds/email": {
+            "post": {
+                "description": "Send an email to the user about their refund",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "Send Refund Email",
+                "parameters": [
+                    {
+                        "description": "Send Refund Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -1215,6 +1261,57 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.TestResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/is_paid": {
+            "get": {
+                "description": "Determine that whether the user has paid in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "IsPaid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsPaidResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
@@ -1347,6 +1444,46 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/send_email": {
+            "post": {
+                "description": "Sends a transaction email to the specified user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Send Transaction Email",
+                "parameters": [
+                    {
+                        "description": "Send Transaction Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendTransactionEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction email successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendTransactionEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the transaction email",
                         "schema": {
                             "type": "object"
                         }
@@ -2629,6 +2766,12 @@ const docTemplate = `{
                 "currency": {
                     "type": "string"
                 },
+                "eventId": {
+                    "type": "string"
+                },
+                "numParticipants": {
+                    "type": "integer"
+                },
                 "paymentClientSecret": {
                     "type": "string"
                 },
@@ -2640,6 +2783,9 @@ const docTemplate = `{
                 },
                 "transactionAmount": {
                     "type": "number"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },
@@ -2662,6 +2808,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.SearchHistory"
                     }
+                }
+            }
+        },
+        "structure.IsPaidResponse": {
+            "type": "object",
+            "required": [
+                "is_paid"
+            ],
+            "properties": {
+                "is_paid": {
+                    "type": "boolean"
                 }
             }
         },
@@ -2968,6 +3125,22 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.SendRefundEmailRequest": {
+            "type": "object",
+            "properties": {
+                "refund_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRefundEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.SendRegisteredEmailRequest": {
             "type": "object",
             "properties": {
@@ -3020,6 +3193,34 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "announce_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendTransactionEmailRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendTransactionEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
                     "type": "string"
                 }
             }

@@ -33,16 +33,16 @@ type UpdateTransactionRequest struct {
 	Status        string `json:"status" binding:"required"`
 }
 
-type GetTransactionByPaymentIdRequest struct {
-	PaymentIntentId string `json:"payment_intent_id" binding:"required"`
+type SendTransactionEmailRequest struct {
+	UserID          string  `json:"user_id"`
+	TransactionID   string  `json:"transaction_id"`
+	EventID         string  `json:"event_id"`
+	Amount          float64 `json:"amount"`
+	TransactionDate string  `json:"transaction_date"`
 }
 
-type GetTransactionByPaymentIdResponse struct {
-	TransactionId     string  `json:"transaction_id"`
-	UserId            string  `json:"user_id"`
-	PaymentIntentId   string  `json:"payment_intent_id"`
-	Status            string  `json:"status"`
-	TransactionAmount float64 `json:"transaction_amount"`
+type SendTransactionEmailResponse struct {
+	SendStatus string `json:"send_status"`
 }
 
 // ? Use for ...
@@ -64,4 +64,13 @@ type CreateOrganizerTransferRecordRequest struct {
 	EventId         string `json:"event_id" binding:"required"`
 	Amount          int64  `json:"amount" binding:"required"`
 	Status          string `json:"status" binding:"required"`
+}
+
+type IsPaidRequest struct {
+	OrganizerId  string `json:"organizer_id" binding:"required"`
+	EventId string `json:"event_id" binding:"required"`
+}
+
+type IsPaidResponse struct {
+	IsPaid bool `json:"is_paid" binding:"required"`
 }
