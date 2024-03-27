@@ -76,8 +76,9 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
                   city={eventItem.city}
                   district={eventItem.district}
                   imgSrc={eventItem.event_image}
-                  page={0}
+                  page={2}
                   role="ADMIN"
+                  status={eventItem.status}
                 />
               ))}
             </div>
@@ -97,8 +98,9 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
                     city={eventItem.city}
                     district={eventItem.district}
                     imgSrc={eventItem.event_image}
-                    page={0}
+                    page={2}
                     role="ADMIN"
+                    status={eventItem.status}
                   />
                   <div
                     className="absolute top-0 right-0 bottom-0 left-0"
@@ -123,8 +125,9 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
                     city={eventItem.city}
                     district={eventItem.district}
                     imgSrc={eventItem.event_image}
-                    page={0}
+                    page={2}
                     role="ADMIN"
+                    status={eventItem.status}
                     // Add other props if necessary
                   />
                   <div
