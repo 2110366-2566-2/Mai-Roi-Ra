@@ -10,6 +10,7 @@ import (
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
@@ -122,9 +123,28 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 		Status:              status,
 	}
 
+	if resPaymentIntent.Status == constant.PAYMENT_SUCCEEDED {
+		status = constant.COMPLETED
+
+		// Send the transaction success email
+		emailReq := &st.SendTransactionEmailRequest{
+			UserID:          transModel.UserID,
+			TransactionID:   transModel.TransactionID,
+			Amount:          paymentAmount,
+			TransactionDate: utils.ToDateString(time.Now()), 
+			EventID:         transModel.EventID,
+		}
+		_, emailErr := s.SendTransactionEmail(emailReq)
+		if emailErr != nil {
+			log.Printf("[Service: GetPaymentIntentById] Error sending transaction success email: %v\n", emailErr)
+			// Not returning the error here to ensure the transfer process is not affected
+		}
+	}
+
 	return res, nil
 }
 
+// SendTransactionEmail implements ITransactionService.
 // SendTransactionEmail implements ITransactionService.
 func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRequest) (*st.SendTransactionEmailResponse, error) {
 	log.Println("[Service: SendTransactionEmail]: Called")
@@ -159,15 +179,6 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 		return nil, fmt.Errorf("user has disabled notifications or email is not available")
 	}
 
-	// Parse the transaction date
-	transactionDate, err := time.Parse("2006/01/02", req.TransactionDate)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing transaction date: %v", err)
-	}
-
-	// Format the transaction date
-	formattedDate := transactionDate.Format("2006-01-02")
-
 	// Fetch event data
 	eventData, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventID)
 	if err != nil {
@@ -175,8 +186,8 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	}
 
 	// Format dates
-	formattedStartDate := eventData.StartDate.Format("2006-01-02")
-	formattedEndDate := eventData.EndDate.Format("2006-01-02")
+	formattedStartDate := utils.ToDateString(eventData.StartDate)
+	formattedEndDate := utils.ToDateString(eventData.EndDate)
 
 	// Update email content to include event details
 	contentHTML := fmt.Sprintf(`
@@ -223,7 +234,7 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
         <p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
     </body>
     </html>
-    `, eventData.EventName, req.TransactionID, req.Amount, formattedDate, eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, GetString(eventData.EventImage))
+    `, eventData.EventName, req.TransactionID, req.Amount, utils.ToDateString(time.Now()), eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, utils.GetString(eventData.EventImage))
 
 	if err = sender.SendEmail("Transaction Successful", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
 		return nil, err
@@ -235,11 +246,6 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	}, nil
 }
 
-func GetString(s *string) string {
-	if s != nil {
-		return *s
-	}
-	return ""
 func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequest) (*models.Transaction, error) {
 	log.Println("[Service: TransferToOrganizer] Called")
 
@@ -286,6 +292,22 @@ func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequ
 		return nil, err
 	}
 
+	// Send email notification to the organizer
+	organizer, _ := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{UserId: userId})
+	if organizer != nil && organizer.IsEnableNotification {
+		emailRequest := &st.SendTransactionEmailRequest{
+			UserID:          userId,
+			TransactionID:   paymentIntent.PaymentIntentId,
+			Amount:          float64(paymentIntent.TransactionAmount),
+			TransactionDate: utils.ToDateString(time.Now()),
+			EventID:         event.EventId,
+		}
+		_, emailErr := s.SendTransactionEmail(emailRequest)
+		if emailErr != nil {
+			log.Println("[Service: TransferToOrganizer] Email sending error: ", emailErr)
+			// Not returning the error here to ensure the transfer process is not affected
+		}
+	}
 	return res, nil
 
 }
