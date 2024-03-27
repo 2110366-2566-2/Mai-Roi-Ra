@@ -176,7 +176,7 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	if isEnableNotification && email != "" {
 		to = append(to, email)
 	} else {
-		return nil, fmt.Errorf("user has disabled notifications or email is not available")
+		return nil, nil
 	}
 
 	// Fetch event data
