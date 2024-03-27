@@ -182,7 +182,13 @@ func (s *TransactionService) ConfirmPaymentIntent(req string) error {
 
 func (s *TransactionService) IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error) {
 	log.Println("[Service: IsPaid]: Called")
-	res, err := s.RepositoryGateway.TransactionRepository.IsPaid(req)
+
+	resUser , err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(req.OrganizerId)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.RepositoryGateway.TransactionRepository.IsPaid(req.EventId, resUser)
 	if err != nil {
 		log.Println("[Service: Call Repo Error]:", err)
 		return nil, err

@@ -139,7 +139,7 @@ func (c *TransactionController) ConfirmPaymentIntent(ctx *gin.Context) {
 func (c *TransactionController) IsPaid(ctx *gin.Context) {
 	req := &st.IsPaidRequest{
 		EventId: ctx.Query("event_id"),
-		UserId:  ctx.Query("user_id"),
+		OrganizerId:  ctx.Query("organizer_id"),
 	}
 	log.Println("[CTRL: IsPaid] Input:", req)
 	res, err := c.ServiceGateway.TransactionService.IsPaid(req)

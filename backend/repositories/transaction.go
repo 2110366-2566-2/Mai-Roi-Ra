@@ -22,7 +22,7 @@ type ITransactionRepository interface {
 	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
 	// GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
 	CreateOrganizerTransferRecord(req *st.CreateOrganizerTransferRecordRequest) (*models.Transaction, error)
-	IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error)
+	IsPaid(event_id string, organizer_id string) (*st.IsPaidResponse, error)
 }
 
 func NewTransactionRepository(
@@ -161,17 +161,17 @@ func (r *TransactionRepository) CreateOrganizerTransferRecord(req *st.CreateOrga
 	return &transactionModel, nil
 }
 
-func (r *TransactionRepository) IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error) {
+func (r *TransactionRepository) IsPaid(event_id string, organizer_id string) (*st.IsPaidResponse, error) {
 	log.Println("[Repo: IsPaid]: Called")
 
-	query := r.db.Where("event_id = ? AND user_id = ? AND status = ?", req.EventId, req.UserId,constant.COMPLETED)
+	query := r.db.Where("event_id = ? AND organizer_id = ? AND status = ?", event_id, organizer_id,constant.COMPLETED)
 	var count int64
 	if err := query.Model(&models.Transaction{}).Count(&count).Error; err != nil {
 		log.Println("[Repo: IsPaid]: cannot query for existing rows:", err)
 		return nil, err
 	}
 
-	if count > 0 {
+	if count == 1 {
 		return &st.IsPaidResponse{
 			IsPaid: true,
 		}, nil
