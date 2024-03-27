@@ -361,6 +361,10 @@ definitions:
     properties:
       currency:
         type: string
+      eventId:
+        type: string
+      numParticipants:
+        type: integer
       paymentClientSecret:
         type: string
       paymentIntentId:
@@ -369,6 +373,8 @@ definitions:
         type: string
       transactionAmount:
         type: number
+      userId:
+        type: string
     type: object
   structure.GetProblemListsResponse:
     properties:
@@ -383,6 +389,13 @@ definitions:
         items:
           $ref: '#/definitions/structure.SearchHistory'
         type: array
+    type: object
+  structure.IsPaidResponse:
+    properties:
+      is_paid:
+        type: boolean
+    required:
+    - is_paid
     type: object
   structure.IsRegisteredResponse:
     properties:
@@ -1569,6 +1582,40 @@ paths:
       summary: GetTest
       tags:
       - Test
+  /transactions/is_paid:
+    get:
+      consumes:
+      - application/json
+      description: Determine that whether the user has paid in this events
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.IsPaidResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: IsPaid
+      tags:
+      - transactions
   /transactions/payment:
     post:
       consumes:
