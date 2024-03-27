@@ -1,17 +1,20 @@
 package structure
 
-type CreateQRPromptPayRequest struct {
+type CreatePaymentRequest struct {
 	UserId            string  `json:"user_id" binding:"required"`
 	EventId           string  `json:"event_id" binding:"required"`
 	TransactionAmount float64 `json:"transaction_amount" binding:"required"`
+	PaymentType       int     `json:"payment_type" binding:"required"`
 }
 
-type CreateQRPromptPayResponse struct {
-	EventId             string  `json:"event_id"`
-	PaymentIntentId     string  `json:"payment_intent_id"`
-	PaymentClientSecret string  `json:"payment_client_secret"`
-	PaymentMethodType   string  `json:"payment_method_type"`
-	TransactionAmount   float64 `json:"transaction_amount"`
+type CreatePaymentResponse struct {
+	EventId             string            `json:"event_id"`
+	PaymentIntentId     string            `json:"payment_intent_id"`
+	PaymentClientSecret string            `json:"payment_client_secret"`
+	PaymentMethodType   string            `json:"payment_method_type"`
+	TransactionAmount   float64           `json:"transaction_amount"`
+	Status              string            `json:"status"`
+	MetaData            map[string]string `json:"meta_data"`
 }
 
 type CreateTransactionRequest struct {
@@ -60,4 +63,17 @@ type SendTransactionEmailResponse struct {
 */
 type TransactionResponse struct {
 	Response string
+}
+
+type TransferToOrganizerRequest struct {
+	OrganizerId string `json:"organizer_id" binding:"required"` // This is the system user ID of the organizer
+	EventID     string `json:"event_id" binding:"required"`
+}
+
+type CreateOrganizerTransferRecordRequest struct {
+	PaymentIntentId string `json:"payment_intent_id" binding:"required"`
+	UserId          string `json:"user_id" binding:"required"`
+	EventId         string `json:"event_id" binding:"required"`
+	Amount          int64  `json:"amount" binding:"required"`
+	Status          string `json:"status" binding:"required"`
 }

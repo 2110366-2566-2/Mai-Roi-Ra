@@ -6,6 +6,7 @@ INSERT INTO transactions (
         transaction_amount,
         transaction_date,
         status,
+        transaction_way,
         created_at,
         updated_at
     )
@@ -16,6 +17,7 @@ VALUES (
         100.50,
         '2024-03-16 12:00:00',
         'Completed',
+        'Transferred',
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + interval '1 day'
     ),
@@ -26,6 +28,7 @@ VALUES (
         50.25,
         '2024-03-17 13:00:00',
         'Pending',
+        'Transferred',
         CURRENT_TIMESTAMP,
         NULL
     ),
@@ -36,6 +39,7 @@ VALUES (
         75.75,
         '2024-03-18 14:00:00',
         'Completed',
+        'Transferred',
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + interval '1 day'
     ),
@@ -46,6 +50,7 @@ VALUES (
         30.00,
         '2024-03-19 15:00:00',
         'Cancelled',
+        'Received',
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + interval '1 day'
     );

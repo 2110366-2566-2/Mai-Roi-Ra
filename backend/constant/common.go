@@ -27,3 +27,6 @@ const PAYMENT_REQUIRED = "requires_payment_method"
 const PAYMENT_PROCESSING = "processing"
 const PAYMENT_CANCELED = "canceled"
 const PAYMENT_SUCCEEDED = "succeeded"
+
+const PAYMENT_TRANSFERRED = "Transferred"
+const PAYMENT_RECEIVED = "Received"

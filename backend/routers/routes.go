@@ -117,7 +117,6 @@ func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController)
 	{
 		testRoutes.POST("/upload", controller.TestUpload)
 		testRoutes.GET("/", controller.GetTest)
-		testRoutes.GET("/test/qr", controller.TestCreatePromptPayPayment)
 	}
 }
 
@@ -152,9 +151,11 @@ func setupProblemRoutes(r *gin.RouterGroup, controller *controllers.ProblemContr
 func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.TransactionController) {
 	transactionRoutes := r.Group("/transactions")
 	{
-		transactionRoutes.POST("/qr", controller.CreateQRPromptPay)
+		transactionRoutes.POST("/payment", controller.CreatePayment)
 		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
 		transactionRoutes.POST("/send_email", controller.SendTransactionEmail)
+		transactionRoutes.POST("/transfer", controller.TransferToOrganizer)
+		transactionRoutes.GET("/payment-intent/confirm/:id", controller.ConfirmPaymentIntent)
 	}
 }
 
