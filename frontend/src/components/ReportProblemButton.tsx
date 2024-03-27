@@ -11,10 +11,10 @@ const ReportProblemButton = () => {
     <div className="lg:pt-8 pt-6 px-20 text-black">
       <div className="flex flex-row justify-center w-full mt-[30px] mb-[50px]">
         <button
-          className=" border-slate-400 flex justify-center flex-row items-center rounded-full 
+          className="border-slate-400 border flex justify-center flex-row items-center rounded-full 
                 lg:h-[40px] md:h-[35px] h-[35px] 
-                lg:w-[140px] md:w-[110px] w-[110px] hover:scale-105 duration-300 text-black py-[10px] px-[10px]
-                lg:text-[17px] md:text-[11px] text-[11px] bg-[#F2D22E]"
+                lg:w-[140px] md:w-[110px] w-[110px] hover:scale-105 duration-300 py-[10px] px-[10px]
+                lg:text-[17px] md:text-[11px] text-[11px]"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
