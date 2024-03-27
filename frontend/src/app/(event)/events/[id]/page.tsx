@@ -56,7 +56,7 @@ export default async function EventDetailPage({ params }: Props) {
                                 />
                             </div>
                             <div className="flex flex-col items-start">
-                                <label className="font-semibold">{event.organizer_id}</label>
+                                <label className="font-semibold">{event.first_name} {event.last_name}</label>
                                 <label className="text-md text-slate-600">Hosted {8} Events</label>
                             </div>
                         </div>

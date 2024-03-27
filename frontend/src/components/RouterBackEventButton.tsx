@@ -6,7 +6,7 @@ export default function RouterBackEventButton(){
     const router = useRouter();
 
     return (
-        <div className="absolute top-[38px] left-8 flex items-center justify-center hover:scale-[1.2] duration-300" onClick={()=>router.back()}>
+        <div className="absolute top-[38px] left-8 flex items-center justify-center hover:scale-[1.2] duration-300" onClick={()=>router.push('/homepage')}>
                 <ArrowBackIosNewIcon className="text-[#1DA1F2]"/>
         </div>
     )
