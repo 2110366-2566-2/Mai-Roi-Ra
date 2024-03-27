@@ -161,8 +161,7 @@ export default function RegisterEventBox({
   };
 
   const currentDate = new Date();
-  const enddateCompare = new Date(event.end_date);
-  const isRegistrationClosed = currentDate > enddateCompare;
+  const isRegistrationClosed = currentDate > enddateObj;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdminVerifyModalOpen, setIsAdminVerifyModalOpen] = useState(false);
@@ -226,7 +225,9 @@ export default function RegisterEventBox({
     }
   };
 
-
+  console.log("isclose",isRegistrationClosed)
+  console.log("close1",currentDate > enddateObj,enddateObj)
+  console.log("test" , new Date('2024-5-5') > enddateObj)
 
 
   return (
@@ -323,7 +324,7 @@ export default function RegisterEventBox({
       <div className="flex mb-2 border rounded-lg p-4 flex flex-col w-full max-w-[400px] h-auto shadow-xl">
         <div className="">
           {
-            isOwner && true ?
+            isOwner && isRegistrationClosed ?
               (
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-semibold">
