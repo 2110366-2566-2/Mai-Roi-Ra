@@ -121,8 +121,10 @@ export default function RegisterEventBox({ event }: { event: Event }) {
       const rejectedResult = await rejectEvent(event.event_id);
       // Handle successful registration
       setIsVerifyLoading(false);
+      closeAdminVerifyModal();
       console.log("Reject successful:", rejectedResult);
       router.push("/homepage");
+      router.refresh();
     } catch (error: any) {
       // Handle registration error
       console.error("Reject failed:", error.message);
@@ -318,7 +320,6 @@ export default function RegisterEventBox({ event }: { event: Event }) {
           </button>
           <button
             onClick={() => {
-              closeAdminRejectModal();
               handleRejectEventButton();
             }}
             className="mt-4 py-2 px-4 text-white rounded-md bg-[#F2D22E] hover:bg-yellow-500 w-[82px]"
