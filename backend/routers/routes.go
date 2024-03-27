@@ -155,6 +155,7 @@ func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.Transact
 		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
 		transactionRoutes.POST("/transfer", controller.TransferToOrganizer)
 		transactionRoutes.GET("/payment-intent/confirm/:id", controller.ConfirmPaymentIntent)
+		transactionRoutes.GET("/is_paid", controller.IsPaid)
 	}
 }
 

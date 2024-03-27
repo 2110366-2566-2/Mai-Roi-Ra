@@ -53,3 +53,12 @@ type CreateOrganizerTransferRecordRequest struct {
 	Amount          int64  `json:"amount" binding:"required"`
 	Status          string `json:"status" binding:"required"`
 }
+
+type IsPaidRequest struct {
+	UserId  string `json:"user_id" binding:"required"`
+	EventId string `json:"event_id" binding:"required"`
+}
+
+type IsPaidResponse struct {
+	IsPaid bool `json:"is_paid" binding:"required"`
+}
