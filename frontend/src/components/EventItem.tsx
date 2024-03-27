@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import AnnouncementPopup from "./AnnouncementPopup";
+import LoadingCircular from "./LoadingCircular";
 
 interface Props {
   id: string;
@@ -70,11 +71,19 @@ export default function EventItem({
     statusStyle = "text-red-500 border-red-400";
   }
 
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <div>
+      {isLoading && (
+        <div className="flex justify-center items-center fixed left-0 top-0 w-full h-full bg-black bg-opacity-20 z-50">
+          <LoadingCircular></LoadingCircular>
+        </div>
+      )}
       <div
         className="flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-5 w-full hover:scale-105 duration-300"
         onClick={(e) => {
+          setIsLoading(true);
           e.stopPropagation();
           e.preventDefault();
           router.push(`/${eventPath}/${id}`);

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import ProblemPopUp from "./ProblemPopUp";
 import getProblem from "@/libs/getProblem";
+import LoadingCircular from "./LoadingCircular";
 
 interface Props {
   id: string;
@@ -23,6 +24,7 @@ export default function ProblemItem({
 }: Props) {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   let statusStyle = "";
   if (status == "Pending") {
@@ -36,6 +38,11 @@ export default function ProblemItem({
 
   return (
     <div className="relative">
+      {isLoading && (
+        <div className="flex justify-center items-center fixed left-0 top-0 w-full h-full bg-black bg-opacity-20 z-50">
+          <LoadingCircular></LoadingCircular>
+        </div>
+      )}
       {/* Container with relative positioning */}
       <div className="bg-white flex items-center my-4 shadow-md lg:h-[200px] md:h-[160px] h-[120px] p-2 lg:p-10 w-full hover:scale-105 duration-300">
         {role == "USER" && (
@@ -73,6 +80,7 @@ export default function ProblemItem({
           <div
             className="h-full flex flex-col justify-start w-full space-y-[7px] mx-10"
             onClick={(e) => {
+              setIsLoading(true);
               e.stopPropagation();
               e.preventDefault();
               router.push(`/replyproblems/${id}`);
