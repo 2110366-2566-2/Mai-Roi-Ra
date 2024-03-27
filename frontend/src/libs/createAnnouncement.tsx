@@ -15,8 +15,8 @@ export default async function createAnnouncement(
             "event_name" : name,
             "subject" : header
         });
-
-        const response = await fetch(`${apiBackUrl}/announcement`, {
+        console.log(jsonBody);
+        const response = await fetch(`${apiBackUrl}/announcements`, { 
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

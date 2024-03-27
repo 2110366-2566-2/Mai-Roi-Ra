@@ -5,13 +5,15 @@ interface EventQueryParams {
   offset?: number;
   limit?: number;
   search?: string;
+  filter?: string
 }
 
 export default async function getEvents({
 	organizer_id,
 	search = "",
 	offset = 1,
-	limit = 2}
+	limit = 5,
+	filter}
 	: EventQueryParams) {
 
 	const url = new URL(`${apiBackUrl}/events`);
@@ -25,6 +27,9 @@ export default async function getEvents({
 		url.searchParams.append('search',search);
 	} url.searchParams.append('offset', offset.toString());
 	url.searchParams.append('limit', limit.toString());
+	if (filter) {
+		url.searchParams.append('filter',filter);
+	}
 
 	const response = await fetch(url.toString(), {
 		method: "GET",
