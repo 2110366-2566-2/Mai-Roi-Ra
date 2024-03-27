@@ -297,7 +297,11 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 	if err != nil {
 		return nil, err
 	}
+
+	// announcement
 	announcementService := NewAnnouncementService(s.RepositoryGateway)
+
+	// get participant to notify them when the event is cancelled
 	reqparticipate := &st.GetParticipantListsRequest{
 		EventId: req.EventId,
 	}
@@ -319,19 +323,29 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 		}
 	}
 
+	// transaction
 	restransaction, err := s.RepositoryGateway.TransactionRepository.GetTransactionListByEventId(req.EventId)
 	if err != nil {
 		return nil, err
 	}
 
-	refundservice := NewRefundService(s.RepositoryGateway)
-
 	for _, v := range restransaction {
-		reqrefund := &st.CreateRefundRequest{
+
+		refundId, refundErr := Stripe.IssueRefund(v.TransactionID)
+		if refundErr != nil {
+			log.Println("[Service: DeleteEventByDataId] Error issueRefunds: ", refundErr)
+			return nil, err
+		}
+
+		reqrefund := &models.Refund{
+			RefundId:      refundId.ID,
+			UserId:        v.UserID,
+			RefundAmount:  v.TransactionAmount,
 			TransactionId: v.TransactionID,
 			RefundReason:  "Event Cancelled",
+			RefundDate:    time.Time{},
 		}
-		_, err := refundservice.CreateRefund(reqrefund)
+		_, err := s.RepositoryGateway.RefundRepository.CreateRefund(reqrefund)
 		if err != nil {
 			return nil, err
 		}

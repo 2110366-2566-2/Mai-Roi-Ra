@@ -191,18 +191,20 @@ definitions:
     type: object
   structure.CreateRefundRequest:
     properties:
+      event_id:
+        type: string
       refund_reason:
         type: string
-      transaction_id:
-        type: string
     required:
+    - event_id
     - refund_reason
-    - transaction_id
     type: object
-  structure.CreateRefundResponse:
+  structure.CreateRefundResponseList:
     properties:
-      refund_id:
-        type: string
+      refund_id_list:
+        items:
+          type: string
+        type: array
     type: object
   structure.CreateUserRequest:
     properties:
@@ -1542,7 +1544,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateRefundResponse'
+            $ref: '#/definitions/structure.CreateRefundResponseList'
         "400":
           description: Bad Request
           schema:

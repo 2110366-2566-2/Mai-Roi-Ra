@@ -1179,7 +1179,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.CreateRefundResponse"
+                            "$ref": "#/definitions/structure.CreateRefundResponseList"
                         }
                     },
                     "400": {
@@ -2370,23 +2370,26 @@ const docTemplate = `{
         "structure.CreateRefundRequest": {
             "type": "object",
             "required": [
-                "refund_reason",
-                "transaction_id"
+                "event_id",
+                "refund_reason"
             ],
             "properties": {
-                "refund_reason": {
+                "event_id": {
                     "type": "string"
                 },
-                "transaction_id": {
+                "refund_reason": {
                     "type": "string"
                 }
             }
         },
-        "structure.CreateRefundResponse": {
+        "structure.CreateRefundResponseList": {
             "type": "object",
             "properties": {
-                "refund_id": {
-                    "type": "string"
+                "refund_id_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

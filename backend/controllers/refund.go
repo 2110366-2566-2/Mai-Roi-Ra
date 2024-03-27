@@ -28,7 +28,7 @@ func NewRefundController(
 // @Accept json
 // @Produce json
 // @Param request body st.CreateRefundRequest true "Refund Request"
-// @Success 200 {object} st.CreateRefundResponse
+// @Success 200 {object} st.CreateRefundResponseList
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /refunds [post]
