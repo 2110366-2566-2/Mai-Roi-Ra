@@ -1,13 +1,15 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select, useMediaQuery } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import EditIcon from '@mui/icons-material/Edit';
+import Image from "next/image";
 
 interface Props {
     Id:string
@@ -39,8 +41,24 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
     const [district,setDistrict] = useState(District);
     const [province,setProvince] = useState(Province);
     const [description,setDescription] = useState(Description);
-    const [imageSrc,setImageSrc] = useState(ImgSrc);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string>(ImgSrc);
+    const fileInputRef = useRef(null);
     const [error,setError] = useState("");
+
+    const triggerFileInput = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files ? event.target.files[0] : null;
+        if (file) {
+            setSelectedImage(file); 
+            setPreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmit = async () => {
         try {
@@ -49,9 +67,6 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                 return;
             } if (activity == ""){
                 setError("Activity Required")
-            } if (imageSrc == "") {
-                setError("Image Source Required");
-                return;
             } if (price == null) {
                 setError("Price Required");
                 return;
@@ -64,11 +79,8 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
             } if (province == "" ){
                 setError("Province Required");
                 return;
-            } if (imageSrc == "") {
-                setError("Image Source Required");
-                return;
-            } if (!imageSrc.includes("https://drive.google.com") && !imageSrc.includes("https://images.unsplash.com")) {
-                setError("Invalid Picture URI");
+            } if (!selectedImage) {
+                setError("Image Required");
                 return;
             } 
             const currentDate = dayjs();
@@ -240,13 +252,32 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                     {/* Right Form */}
                     <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
                      border-gray-300 rounded-md flex justify-center items-center relative">
-                        <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px] lg:text-[17px] md:text-[15px] text-[13px]"
-                        placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
-                         {imageSrc.length != 0 && (
-                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Image Src
+                        <div className="w-full h-full relative">
+                                <Image className="h-full w-full absolute top-0 left-0 opacity-60" width={1000} height={1000} src={preview} alt="Preview"
+                                onClick={triggerFileInput}/>
+                            
+                                <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center absolute">
+                                    <input
+                                        type="file"
+                                        name="event_image"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                    />
+                            
+                                    <div className="cursor-pointer text-gray-500 border-gray-500 border-dashed border-[3px]  w-[120px] h-[120px] 
+                                    hover:text-black hover:border-black flex flex-col items-center justify-center absolute" onClick={triggerFileInput}>
+                                        <div className="w-fit">
+                                            <EditIcon style={{ fontSize: "60px", color: "yelllow"}}/>
+                                        </div>
+
+                                        <div className="text-[15px]">
+                                            Edit Image
+                                        </div>
+                                    </div>
                                 </div>
-                            )}
+                        </div> 
                     </div>
 
                 </div>
@@ -277,7 +308,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                     <div className="">
                         <button className="bg-[#D9D5D2] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
                         text-[10px] rounded-full"
-                        onClick={() => router.push("/homepage/organizer")}>
+                        onClick={() => router.push("/profile")}>
                             Cancel
                         </button>
                     </div>
@@ -289,10 +320,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         </button>
                     </div>
                 </div>
-                <SuccessModal id={Id} name={name} activity={activity} startDate={start} endDate={end}
-                price={price?price:0} location={location} 
-                district={district} province={province} description={description} imageSrc={imageSrc}
-                topic="Save Changes" isVisible={showModal}/>
+                <SuccessModal topic="Save Changes" isVisible={showModal}/>
             </form>
         </div>
     )

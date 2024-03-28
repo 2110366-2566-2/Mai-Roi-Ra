@@ -1,3 +1,4 @@
+import { revalidatePath, revalidateTag } from "next/cache";
 import { apiBackUrl } from "../constants";
 
 export default async function createEvent(formData:FormData, token:string) {
@@ -10,7 +11,7 @@ export default async function createEvent(formData:FormData, token:string) {
             console.log(`${key}: ${value}`);
         }
         
-        const response = await fetch(`${apiBackUrl}/events`, {
+        const response = await fetch(`${apiBackUrl}/events/`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -23,7 +24,8 @@ export default async function createEvent(formData:FormData, token:string) {
             throw new Error(
                 `Failed to create event: ${response.status} - ${errorData.message || "Unknown error"}`
             );
-        } console.log("Success To Create Event");
+        } 
+        console.log("Success To Create Event");
         return await response.json();
 
     } catch (error) {

@@ -13,6 +13,7 @@ import Image from "next/image";
 import BackupIcon from '@mui/icons-material/Backup';
 import HandleCreateEvent from "./organizer/HandleCreateEvent";
 import { useSession } from "next-auth/react";
+import EditIcon from '@mui/icons-material/Edit';
 
 const CreateEventForm = () => {
     const session = useSession()
@@ -34,35 +35,7 @@ const CreateEventForm = () => {
     const [description,setDescription] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
-    // const [sendForm,setSendForm] = useState(false);
     const fileInputRef = useRef(null);
-    
-    // useEffect(() => {
-    //     const createEvent = async () => {
-    //         if (sendForm && user) {
-    //             try {
-    //                 if (!selectedImage || !price) return;
-    //                 const formData = new FormData();
-    //                 formData.append('event_name', name);
-    //                 formData.append('activities', activity);
-    //                 formData.append('city', province);
-    //                 formData.append('description', description);
-    //                 formData.append('district', district);
-    //                 formData.append('start_date', start);
-    //                 formData.append('end_date', end);
-    //                 formData.append('event_image', selectedImage);
-    //                 formData.append('location_name', location);
-    //                 formData.append('organizer_id', user.organizer_id);
-    //                 formData.append('participant_fee', price.toString());
-    //                 console.log(formData);
-    //                 await HandleCreateEvent(formData,user.token);
-    //             } catch (err) {
-    //                 console.log(err)
-    //             }
-    //         } 
-    //     }
-    //     createEvent();
-    // },[sendForm])
 
     const triggerFileInput = () => {
         if (fileInputRef.current) {
@@ -78,7 +51,8 @@ const CreateEventForm = () => {
         }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (/*e: React.FormEvent<HTMLFormElement>*/) => {
+        // e.preventDefault();
         try {
             if (name == "") {
                 setError("Event Name Required ! ");
@@ -116,8 +90,7 @@ const CreateEventForm = () => {
             }
             
             if (user) {
-                try {
-                    if (!selectedImage || !price) return;
+                if (!selectedImage || !price) return;
                     const formData = new FormData();
                     formData.append('event_name', name);
                     formData.append('activities', activity);
@@ -128,15 +101,12 @@ const CreateEventForm = () => {
                     formData.append('end_date', endTmp.format('YYYY/MM/DD'));
                     formData.append('event_image', selectedImage);
                     formData.append('location_name', location);
-                    formData.append('organizer_id', user.organizer_id);
+                    formData.append('organizer_id', user?.organizer_id);
                     formData.append('participant_fee', price.toString());
                     console.log(formData);
                     await HandleCreateEvent(formData,user.token);
-                } catch (err) {
-                    console.log(err)
-                }
+                    setShowModal(true);
             } 
-            setShowModal(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -305,10 +275,10 @@ const CreateEventForm = () => {
                                         className="hidden"
                                     />
                             
-                                    <div className="cursor-pointer text-gray-400 rounded-full w-[150px] h-[150px] bg-gray-200
+                                    <div className="cursor-pointer text-gray-500 border-gray-500 border-dashed border-[3px]  w-[120px] h-[120px] 
                                     hover:text-black hover:border-black flex flex-col items-center justify-center absolute" onClick={triggerFileInput}>
                                         <div className="w-fit">
-                                            <BackupIcon style={{ fontSize: "60px", color: "yelllow"}}/>
+                                            <EditIcon style={{ fontSize: "60px", color: "yelllow"}}/>
                                         </div>
 
                                         <div className="text-[15px]">
@@ -378,7 +348,7 @@ const CreateEventForm = () => {
                     <div className="">
                         <button className="bg-[#D9D5D2] lg:py-[17px] md:py-[14px] py-[11px] lg:px-[90px] md:px-[70px] px-[40px] lg:text-[17px] md:text-[13px] 
                         text-[10px] rounded-full"
-                        onClick={() => router.push("/homepage/organizer")}>
+                        onClick={() => router.push("/profile")}>
                             Cancel
                         </button>
                     </div>
