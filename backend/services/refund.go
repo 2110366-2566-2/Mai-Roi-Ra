@@ -7,9 +7,9 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/payment"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 )
 
@@ -19,7 +19,7 @@ type RefundService struct {
 }
 
 type IRefundService interface {
-	CreateRefund(req *st.CreateRefundRequest) (*st.CreateRefundResponse, error)
+	CreateRefund(req *st.CreateRefundRequest) (*st.CreateRefundResponseList, error)
 	SendRefundEmail(req *st.SendRefundEmailRequest) (*st.SendRefundEmailResponse, error)
 }
 
@@ -31,62 +31,34 @@ func NewRefundService(
 	}
 }
 
-func (s *RefundService) CreateRefund(req *st.CreateRefundRequest) (*st.CreateRefundResponse, error) {
+func (s *RefundService) CreateRefund(req *st.CreateRefundRequest) (*st.CreateRefundResponseList, error) {
 	log.Println("[Service: CreateRefund]: Called")
 
-	// TODO : Send clientSecret to frontend with correct amount
+	var response []string
 
-	resTransaction, err := s.RepositoryGateway.TransactionRepository.GetTransactionDataById(req.TransactionId)
+	res, err := s.RepositoryGateway.TransactionRepository.GetTransactionListByEventId(req.EventId)
 	if err != nil {
 		return nil, err
 	}
-
-	stripe := payment.NewStripeService()
-
-	reqPayment := &st.GetPaymentIntentByIdRequest{
-		PaymentIntentId: resTransaction.TransactionID,
+	for _, v := range res {
+		reqrefund := &models.Refund{
+			RefundId:      utils.GenerateUUID(),
+			UserId:        v.UserID,
+			RefundAmount:  v.TransactionAmount,
+			TransactionId: v.TransactionID,
+			RefundReason:  "Event Cancelled",
+			RefundDate:    time.Time{},
+		}
+		refundId, err := s.RepositoryGateway.RefundRepository.CreateRefund(reqrefund)
+		if err != nil {
+			return nil, err
+		}
+		response = append(response, refundId.RefundId)
 	}
 
-	respayment, err := stripe.GetPaymentIntent(reqPayment)
-	if err != nil {
-		return nil, err
-	}
-
-	refundRes, err := stripe.IssueRefund(resTransaction.TransactionID)
-	if err != nil {
-		return nil, err
-	}
-
-	refundModel := models.Refund{
-		RefundId:      refundRes.ID,
-		TransactionId: req.TransactionId,
-		UserId:        resTransaction.UserID,
-		RefundAmount:  float64(respayment.Amount),
-		RefundReason:  req.RefundReason,
-		RefundDate:    time.Now(),
-	}
-
-	createRes, err := s.RepositoryGateway.RefundRepository.CreateRefund(&refundModel)
-	if err != nil {
-		return nil, err
-	}
-
-	// Prepare and send the refund email
-	emailReq := &st.SendRefundEmailRequest{
-		RefundId: createRes.RefundId,
-		// Add other necessary fields if needed for the email
-	}
-	_, emailErr := s.SendRefundEmail(emailReq)
-	if emailErr != nil {
-		log.Printf("[Service: CreateRefund] Error sending refund email: %v\n", emailErr)
-		return nil, emailErr
-	}
-
-	resRefund := &st.CreateRefundResponse{
-		RefundId: createRes.RefundId,
-	}
-
-	return resRefund, nil
+	return &st.CreateRefundResponseList{
+		RefundIdList: response,
+	}, nil
 }
 
 func (s *RefundService) SendRefundEmail(req *st.SendRefundEmailRequest) (*st.SendRefundEmailResponse, error) {
