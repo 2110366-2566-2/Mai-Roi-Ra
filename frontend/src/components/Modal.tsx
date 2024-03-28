@@ -12,6 +12,7 @@ type ModalProps = {
   isNotRound: boolean;
   canScroll: boolean;
   MarginTop : string;
+  allowOuterclose: boolean;
 };
 
 export default function Modal({
@@ -24,11 +25,12 @@ export default function Modal({
   modalsize,
   isNotRound,
   canScroll,
-  MarginTop
+  MarginTop,
+  allowOuterclose
 }: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={()=>null}>
+      <Dialog as="div" className="relative z-10" onClose={allowOuterclose ? (()=>closeModal()) : (()=> null)}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

@@ -1,26 +1,26 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- CREATE TABLE IF NOT EXISTS admins (
---     admin_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
---     password VARCHAR(64) NOT NULL,
---     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     updated_at TIMESTAMP WITHOUT TIME ZONE,
---     PRIMARY KEY (admin_id)
--- );
-
--- CREATE TYPE account_type AS ENUM ('Entertainment', 'Meditation', 'Exercise', 'Cooking', 'Volunteer');
 DO $$ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM pg_type
         WHERE typname = 'account_type') 
-        THEN CREATE TYPE account_type AS ENUM ('ADMIN', 'USER', 'ORGANIZER');
+    THEN
+        CREATE TYPE account_type AS ENUM ('ADMIN', 'USER', 'ORGANIZER');
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_type
+        WHERE typname = 'registration_method')
+    THEN
+        CREATE TYPE registration_method AS ENUM ('GOOGLE', 'NORMAL');
     END IF;
 END $$;
 
 CREATE TABLE IF NOT EXISTS users (
-    user_id VARCHAR(255) NOT NULL UNIQUE,
-    username VARCHAR(255) UNIQUE NOT NULL,
+    user_id VARCHAR(255) NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
+    username VARCHAR(255) NOT NULL,
     phone_number CHAR(10) UNIQUE,
     email VARCHAR(64) UNIQUE,
     first_name VARCHAR(64) NOT NULL,
@@ -34,8 +34,10 @@ CREATE TABLE IF NOT EXISTS users (
     district VARCHAR(64) NOT NULL,
     province VARCHAR(64) NOT NULL,
     banner_image VARCHAR(1024) NOT NULL,
-    token VARCHAR(1024) DEFAULT '' NOT NULL,
     role account_type NOT NULL,
+    register_type registration_method NOT NULL,
+    token VARCHAR(1024) DEFAULT '' NOT NULL,
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (user_id)
@@ -92,11 +94,11 @@ END $$;
 CREATE TABLE IF NOT EXISTS events (
     event_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
     organizer_id VARCHAR(36) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
     location_id VARCHAR(36) NOT NULL,
+    admin_id VARCHAR(36) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    status TEXT NOT NULL CHECK (status IN ('Approved', 'Rejected', 'Waiting')),
+    status TEXT NOT NULL CHECK (status IN ('Approved', 'Rejected', 'Waiting', 'Deleted')),
     participant_fee DOUBLE PRECISION NOT NULL,
     participant_count INT NOT NULL DEFAULT 0,
     description VARCHAR(1000),
@@ -108,7 +110,6 @@ CREATE TABLE IF NOT EXISTS events (
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     PRIMARY KEY (event_id),
     CONSTRAINT fk_organizer FOREIGN KEY (organizer_id) REFERENCES organizers(organizer_id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE
 );
 

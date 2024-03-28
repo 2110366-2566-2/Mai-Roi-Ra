@@ -17,12 +17,13 @@ type EventRepository struct {
 
 type IEventRepository interface {
 	CreateEvent(req *models.Event) (*st.CreateEventResponse, error)
-	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error)
+	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, *int, *int, error)
 	GetEventListsByStartDate(endDate string) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
 	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventRepository(
@@ -54,20 +55,55 @@ func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventRespons
 func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error) {
 	log.Println("[Repo: UpdateEvent]: Called")
 
-	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
-		Updates(map[string]interface{}{
-			"StartDate":      req.StartDate,
-			"EndDate":        req.EndDate,
-			"Status":         req.Status,
-			"ParticipantFee": req.ParticipantFee,
-			"Description":    req.Description,
-			"EventName":      req.EventName,
-			"Deadline":       req.Deadline,
-			"Activities":     req.Activities,
-			"EventImage":     req.EventImage,
-			"UpdatedAt":      time.Now(),
-		}).Error; err != nil {
-		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+	// Find the event by event_id
+	var modelEvent models.Event
+	if err := r.db.Where("event_id = ?", req.EventId).First(&modelEvent).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] event_id not found")
+		return nil, err
+	}
+
+	// Update the fields
+	if !req.StartDate.IsZero() {
+		modelEvent.StartDate = req.StartDate
+	}
+
+	if !req.EndDate.IsZero() {
+		modelEvent.EndDate = req.EndDate
+	}
+
+	if req.Status != "" {
+		modelEvent.Status = req.Status
+	}
+
+	if req.ParticipantFee != 0.0 {
+		modelEvent.ParticipantFee = req.ParticipantFee
+	}
+
+	if req.Description != "" {
+		modelEvent.Description = req.Description
+	}
+
+	if req.EventName != "" {
+		modelEvent.EventName = req.EventName
+	}
+
+	if !req.Deadline.IsZero() {
+		modelEvent.Deadline = req.Deadline
+	}
+
+	if req.Activities != "" {
+		modelEvent.Activities = req.Activities
+	}
+
+	if req.EventImage != nil {
+		modelEvent.EventImage = req.EventImage
+	}
+
+	modelEvent.UpdatedAt = time.Now()
+
+	// Save the updated version
+	if err := r.db.Save(&modelEvent).Error; err != nil {
+		log.Println("[Repo: UpdateEventInformation] Error updating event in the database:", err)
 		return nil, err
 	}
 
@@ -102,46 +138,73 @@ func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.Delet
 	}, nil
 }
 
-func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, error) {
+func (r *EventRepository) GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, *int, *int, error) {
 	log.Println("[Repo: GetEventLists] Called")
 	var eventLists []*models.Event
-	query := r.db
+
+	query := r.db.Model(&models.Event{})
 
 	if req.OrganizerId != "" {
-		query = query.Where(`organizer_id=?`, req.OrganizerId)
+		query = query.Where(`organizer_id = ?`, req.OrganizerId)
 	}
-	// status
+
 	if req.Filter != "" {
 		query = query.Where(`status=?`, req.Filter)
 	}
 
+	if req.Search != "" {
+		search := "%" + req.Search + "%"
+		query = query.Where(`event_name ILIKE ? OR description ILIKE ?`, search, search)
+	}
+
 	if req.Sort != "" {
 		query = query.Order(req.Sort)
+	} else {
+		query = query.Order("start_date ASC")
 	}
 
-	query = query.Offset(req.Offset)
-
-	if req.Limit > 0 {
-		query = query.Limit(req.Limit)
+	// Pagination logic
+	offset := req.Offset
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 10
 	}
+
+	totalEventsQuery := query
+	var totalEventsInt64 int64
+	if err := totalEventsQuery.Count(&totalEventsInt64).Error; err != nil {
+		log.Println("[Repo: GetEventLists]: cannot count the events:", err)
+		return nil, nil, nil, err
+	}
+
+	query = query.Offset(offset).Limit(limit)
+
 	if err := query.Find(&eventLists).Error; err != nil {
 		log.Println("[Repo: GetEventLists]: cannot query the events:", err)
-		return nil, err
+		return nil, nil, nil, err
 	}
-	return eventLists, nil
+
+	totalEvents := int(totalEventsInt64)
+	totalPages := int(totalEvents) / limit
+
+	if int(totalEvents)%limit > 0 {
+		totalPages++
+	}
+
+	return eventLists, &totalEvents, &totalPages, nil
 }
 
 func (r *EventRepository) GetEventListsByStartDate(startDate string) ([]*models.Event, error) {
-    log.Println("[Repo: GetEventListsByStartDate] Called")
-    
-    var eventLists []*models.Event
-    
-    // Find events where start_date is equal to the input startDate
-    if err := r.db.Where("start_date = ?", startDate).Find(&eventLists).Error; err != nil {
-        log.Println("[Repo: GetEventListsByStartDate] Error querying the events:", err)
-        return nil, err
-    }
-    return eventLists, nil
+	log.Println("[Repo: GetEventListsByStartDate] Called")
+
+	var eventLists []*models.Event
+
+	// Find events where start_date is equal to the input startDate
+	if err := r.db.Where("start_date = ?", startDate).Find(&eventLists).Error; err != nil {
+		log.Println("[Repo: GetEventListsByStartDate] Error querying the events:", err)
+		return nil, err
+	}
+	return eventLists, nil
 }
 
 func (r *EventRepository) GetEventDataById(eventId string) (*models.Event, error) {
@@ -161,5 +224,22 @@ func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string
 		log.Println("[Repo: GetAdminAndOrganizerEventById]: cannot find event_id:", err)
 		return nil, nil, err
 	}
-	return &eventModel.UserId, &eventModel.OrganizerId, nil
+	return &eventModel.AdminId, &eventModel.OrganizerId, nil
+}
+
+func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	log.Println("[Repo: VerifyEvent]: Called")
+	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
+		Updates(map[string]interface{}{
+			"AdminId":   req.AdminId,
+			"Status":    req.Status,
+			"UpdatedAt": time.Now(),
+		}).Error; err != nil {
+		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
+		return nil, err
+	}
+	res := &st.VerifyEventResponse{
+		Message: "Verify Event Successful",
+	}
+	return res, nil
 }

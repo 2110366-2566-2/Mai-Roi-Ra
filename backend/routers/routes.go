@@ -2,15 +2,11 @@ package routers
 
 import (
 	"log"
-	"net/http"
-	"strconv"
-
-	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
-	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/token"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -21,321 +17,36 @@ type routers struct {
 	tokenMaker token.Maker
 }
 
+func setupCORS() gin.HandlerFunc {
+	return cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	})
+}
+
 func SetupRouter(c *dig.Container) *gin.Engine {
-	// tokenMaker , err := token.NewPasetoMaker("")
-	// if err != nil {
-	// 	return nil , fmt.Errorf("cannot create token maker : %w" , err)
-	// }
 	r := gin.Default()
-	auth := r.Group("", middleware.Authentication(c)) //use auth instead of r if that api want authentication
+
+	r.Use(setupCORS())
 
 	// Swagger setup
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Example of setting up a route using the container to resolve dependencies
-	err := c.Invoke(func(eventController *controllers.EventController) {
-		r.POST("/api/v1/events", func(ctx *gin.Context) {
-			var req st.CreateEventRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			eventController.CreateEvent(ctx, &req)
-		})
-		r.GET("/api/v1/events", func(ctx *gin.Context) {
-			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
-				return
-			}
+	groupRoutes := r.Group("api/v1")
 
-			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
-				return
-			}
-			req := &st.GetEventListsRequest{
-				OrganizerId: ctx.Query("organizer_id"),
-				Filter:      ctx.Query("filter"),
-				Sort:        ctx.Query("sort"),
-				Offset:      offset,
-				Limit:       limit,
-			}
-
-			eventController.GetEventLists(ctx, req)
-		})
-		r.GET("/api/v1/events/:id", func(ctx *gin.Context) {
-			req := st.GetEventDataByIdRequest{
-				EventId: ctx.Param("id"),
-			}
-			eventController.GetEventDataById(ctx, req)
-		})
-		r.GET("/api/v1/events/participant", func(ctx *gin.Context) {
-			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
-				return
-			}
-
-			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
-				return
-			}
-
-			req := &st.GetParticipantListsRequest{
-				EventId: ctx.Query("event_id"),
-				Offset:  offset,
-				Limit:   limit,
-			}
-			eventController.GetParticipantLists(ctx, req)
-		})
-		r.PUT("/api/v1/events/:id", func(ctx *gin.Context) {
-			var req st.UpdateEventRequest
-			if err := ctx.BindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			req.EventId = ctx.Param("id")
-			eventController.UpdateEvent(ctx, &req)
-		})
-		r.DELETE("/api/v1/events/:id", func(ctx *gin.Context) {
-			req := st.DeleteEventRequest{
-				EventId: ctx.Param("id"),
-			}
-			eventController.DeleteEventById(ctx, &req)
-		})
-
-	})
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	err = c.Invoke(func(locationController *controllers.LocationController) {
-		r.GET("/api/v1/locations/:id", func(ctx *gin.Context) {
-			req := st.GetLocationByIdRequest{
-				LocationId: ctx.Param("id"),
-			}
-			locationController.GetLocationById(ctx, req)
-		})
-	})
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	err = c.Invoke(func(testController *controllers.TestController) {
-		r.GET("/api/v1/test", func(ctx *gin.Context) {
-			// var req st.CreateEventRequest
-			// if err := ctx.ShouldBindJSON(&req); err != nil {
-			// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			// 	return
-			// }
-			testController.GetTest(ctx)
-		})
-	})
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	err = c.Invoke(func(userController *controllers.UserController) {
-		// POST
-		r.POST("/api/v1/users", func(ctx *gin.Context) {
-			var req st.CreateUserRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			userController.CreateUser(ctx, &req)
-		})
-		r.POST("/api/v1/users/participate", func(ctx *gin.Context) {
-			var req st.RegisterEventRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			userController.RegisterEvent(ctx, &req)
-		})
-
-		// GET
-		r.GET("/api/v1/users/:id", func(ctx *gin.Context) {
-			req := st.GetUserByUserIdRequest{
-				UserId: ctx.Param("id"),
-			}
-			userController.GetUserByUserId(ctx, &req)
-		})
-		r.GET("/api/v1/users/events", func(ctx *gin.Context) {
-			offset, err := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid offset value"})
-				return
-			}
-
-			limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "0"))
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit value"})
-				return
-			}
-
-			req := &st.GetParticipatedEventListsRequest{
-				UserId: ctx.Query("user_id"),
-				Offset: offset,
-				Limit:  limit,
-			}
-			userController.GetParticipatedEventLists(ctx, req)
-		})
-		// PUT
-		r.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
-			var req st.UpdateUserInformationRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			userController.UpdateUserInformation(ctx, &req)
-		})
-		// // need to login type api in future usage
-		// auth.PUT("/api/v1/users/:id", func(ctx *gin.Context) {
-		// 	var req st.UpdateUserInformationRequest
-		// 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// 		return
-		// 	}
-		// 	userController.UpdateUserInformation(ctx, &req)
-		// })
-
-		// // delete user but I don't think It's necessary
-		// r.DELETE("/api/v1/users/:id", func(ctx *gin.Context) {
-		// 	req := st.DeleteUserRequest{
-		// 		ID: ctx.Param("id"),
-		// 	}
-		// 	userController.DeleteUser(ctx, &req)
-		// })
-
-		r.PUT("/api/v1/users/notification", func(ctx *gin.Context) {
-			req := st.GetUserByUserIdRequest{
-				UserId: ctx.Query("user_id"),
-			}
-			userController.ToggleNotifications(ctx, &req)
-		})
-		// DELETE
-		r.DELETE("/api/v1/users/:event_id", func(ctx *gin.Context) {
-			eventID := ctx.Param("event_id")
-			userID := ctx.Query("user_id")
-
-			req := st.CancelRegisterEventRequest{
-				EventId: eventID,
-				UserId:  userID,
-			}
-
-			userController.CancelRegisterEvent(ctx, &req)
-		})
-	})
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	// login/logout is here
-	err = c.Invoke(func(userController *controllers.UserController) {
-		r.POST("/api/v1/login", func(ctx *gin.Context) {
-			var req st.LoginUserRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			userController.LoginUser(ctx, &req)
-		})
-		r.POST("/api/v1/loginemail", func(ctx *gin.Context) {
-			var req st.LoginUserEmailRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			userController.LoginUserEmail(ctx, &req)
-		})
-		r.POST("/api/v1/loginphone", func(ctx *gin.Context) {
-			var req st.LoginUserPhoneRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			userController.LoginUserPhone(ctx, &req)
-		})
-		auth.POST("/api/v1/logout", func(ctx *gin.Context) {
-			var req st.LogoutUserRequest
-			req.UserID = ctx.GetString(middleware.KeyUserID)
-
-			userController.LogoutUser(ctx, &req)
-		})
-		// r.GET("/api/v1/auth/me", func(ctx *gin.Context) {
-
-		// })
-
-		// require token function to test
-		auth.GET("/api/v1/auth/users", func(ctx *gin.Context) {
-			userController.GetAllUsers(ctx)
-		})
-	})
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	err = c.Invoke(func(announcementController *controllers.AnnouncementController) {
-		r.POST("/api/v1/announcement", func(ctx *gin.Context) {
-			var req st.SendAnnouncementRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			announcementController.SendAnnouncement(ctx, &req)
-		})
-		r.POST("/api/v1/registeredemail", func(ctx *gin.Context) {
-			var req st.SendRegisteredEmailRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			announcementController.SendRegisteredEmail(ctx, &req)
-		})
-		r.POST("/api/v1/reminderemail", func(ctx *gin.Context) {
-			var req st.SendReminderEmailRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			announcementController.SendReminderEmail(ctx, &req)
-		})
-		r.POST("/api/v1/cancelledemail", func(ctx *gin.Context) {
-			var req st.SendCancelledEmailRequest
-			if err := ctx.ShouldBindJSON(&req); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			announcementController.SendCancelledEmail(ctx, &req)
-		})
-	})
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	err = c.Invoke(func(participateController *controllers.ParticipateController) {
-		r.GET("/api/v1/isregistered", func(ctx *gin.Context) {
-			req := st.IsRegisteredRequest{
-				EventId: ctx.Query("event_id"),
-				UserId:  ctx.Query("user_id"),
-			}
-			participateController.IsRegistered(ctx, &req)
-		})
+	err := c.Invoke(func(controller *controllers.Controller) {
+		setupEventRoutes(groupRoutes, controller.Gateway.EventController)
+		setupLocationRoutes(groupRoutes, controller.Gateway.LocationController)
+		setupUserRoutes(groupRoutes, controller.Gateway.UserController)
+		setupTestRoutes(groupRoutes, controller.Gateway.TestController)
+		setupAnnouncementRoutes(groupRoutes, controller.Gateway.AnnouncementController)
+		setupParticipateRoutes(groupRoutes, controller.Gateway.ParticipateController)
+		setupProblemRoutes(groupRoutes, controller.Gateway.ProblemController)
+		setupTransactionRoutes(groupRoutes, controller.Gateway.TransactionController)
+		setupRefundRoutes(groupRoutes, controller.Gateway.RefundController)
 	})
 
 	if err != nil {
@@ -344,4 +55,115 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 	}
 
 	return r
+}
+
+func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventController) {
+	eventRoutes := r.Group("/events")
+	{
+		eventRoutes.POST("/", controller.CreateEvent)
+		eventRoutes.GET("/", controller.GetEventLists)
+		eventRoutes.GET("/:id", controller.GetEventDataById)
+		eventRoutes.PUT("/:id", controller.UpdateEvent)
+		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)
+		eventRoutes.DELETE("/:id", controller.DeleteEventById)
+		eventRoutes.GET("/participant", controller.GetParticipantLists)
+	}
+}
+
+func setupLocationRoutes(r *gin.RouterGroup, controller *controllers.LocationController) {
+	locationRoutes := r.Group("/locations")
+	{
+		locationRoutes.GET("/:id", controller.GetLocationById)
+	}
+}
+
+func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController) {
+	userRoutes := r.Group("/users")
+	{
+		userRoutes.POST("/", controller.CreateUser)
+		userRoutes.POST("/participate", controller.RegisterEvent)
+		userRoutes.GET("/:id", controller.GetUserByUserId)
+		userRoutes.GET("/events", controller.GetParticipatedEventLists)
+		userRoutes.POST("/:id/searchevent", controller.SearchEvent)
+		userRoutes.GET("/:id/searchhistory", controller.GetSearchHistories)
+		userRoutes.PUT("/:id", controller.UpdateUserInformation)
+		userRoutes.PUT("/notification", controller.ToggleNotifications)
+		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)
+		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)
+		userRoutes.PUT("/verify_otp", controller.VerifyOTP)
+		userRoutes.PUT("/update_user_role", controller.UpdateUserRole)
+		userRoutes.GET("/verification_status", controller.GetUserVerificationStatus)
+	}
+	loginRoutes := r.Group("")
+	{
+		loginRoutes.POST("/login", controller.LoginUser)
+		loginRoutes.POST("/loginemail", controller.LoginUserEmail)
+		loginRoutes.POST("/loginphone", controller.LoginUserPhone)
+	}
+	authRoutes := r.Group("", middleware.Authentication())
+	{
+		authRoutes.POST("/logout", controller.LogoutUser)
+		authRoutes.GET("/auth/users", controller.GetAllUsers)
+	}
+	gAuth := r.Group("", middleware.GoogleAuth())
+	{
+		gAuth.GET("/auth/:provider/login", controller.LoginGoogle)
+		gAuth.GET("/auth/:provider/callback", controller.CallbackGoogle)
+	}
+}
+
+func setupTestRoutes(r *gin.RouterGroup, controller *controllers.TestController) {
+	testRoutes := r
+	{
+		testRoutes.POST("/upload", controller.TestUpload)
+		testRoutes.GET("/", controller.GetTest)
+	}
+}
+
+func setupAnnouncementRoutes(r *gin.RouterGroup, controller *controllers.AnnouncementController) {
+	announcementRoutes := r.Group("/announcements")
+	{
+		announcementRoutes.POST("/", controller.SendAnnouncement)
+		announcementRoutes.POST("/registered_email", controller.SendRegisteredEmail)
+		announcementRoutes.POST("/reminder_email", controller.SendReminderEmail)
+		announcementRoutes.POST("/cancelled_email", controller.SendCancelledEmail)
+	}
+}
+
+func setupParticipateRoutes(r *gin.RouterGroup, controller *controllers.ParticipateController) {
+	participateRoutes := r.Group("/participate")
+	{
+		participateRoutes.GET("/is_registered", controller.IsRegistered)
+	}
+}
+
+func setupProblemRoutes(r *gin.RouterGroup, controller *controllers.ProblemController) {
+	problemRoutes := r.Group("/problems")
+	{
+		problemRoutes.POST("/", controller.CreateProblem)
+		problemRoutes.GET("/:id", controller.GetProblemDetailById)
+		problemRoutes.GET("/", controller.GetProblemLists)
+		problemRoutes.PUT("/:id", controller.UpdateProblem)
+		problemRoutes.DELETE("/:id", controller.DeleteProblemById)
+	}
+}
+
+func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.TransactionController) {
+	transactionRoutes := r.Group("/transactions")
+	{
+		transactionRoutes.POST("/payment", controller.CreatePayment)
+		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
+		transactionRoutes.POST("/send_email", controller.SendTransactionEmail)
+		transactionRoutes.POST("/transfer", controller.TransferToOrganizer)
+		transactionRoutes.GET("/payment-intent/confirm/:id", controller.ConfirmPaymentIntent)
+		transactionRoutes.GET("/is_paid", controller.IsPaid)
+	}
+}
+
+func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundController) {
+	refundRoutes := r.Group("/refunds")
+	{
+		refundRoutes.POST("/", controller.CreateRefund)
+		refundRoutes.POST("/email", controller.SendRefundEmail)
+	}
 }

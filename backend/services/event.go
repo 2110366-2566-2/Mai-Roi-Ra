@@ -2,13 +2,17 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
+	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
 )
 
 type EventService struct {
@@ -24,6 +28,7 @@ type IEventService interface {
 	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
 }
 
 func NewEventService(
@@ -37,10 +42,6 @@ func NewEventService(
 func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventResponse, error) {
 	log.Println("[Service: CreateEvent]: Called")
 	resLocation, err := s.RepositoryGateway.LocationRepository.GetLocationByName(req.LocationName, req.District, req.City)
-	if err != nil {
-		return nil, err
-	}
-	resAdmin, err := s.RepositoryGateway.UserRepository.GetRandomAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +66,6 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 	eventModel := models.Event{
 		EventId:        utils.GenerateUUID(),
 		OrganizerId:    req.OrganizerId,
-		UserId:         resAdmin.UserID,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -87,14 +87,13 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 
 func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error) {
 	log.Println("[Service: GetEventLists]: Called")
-	resEvents, err := s.RepositoryGateway.EventRepository.GetEventLists(req)
+	resEvents, totalEvents, totalPages, err := s.RepositoryGateway.EventRepository.GetEventLists(req)
 	if err != nil {
 		return nil, err
 	}
 	log.Println("[Service: GetEventLists]: resEvents:", resEvents)
-	resLists := &st.GetEventListsResponse{
-		EventLists: make([]st.GetEventList, 0),
-	}
+
+	eventLists := make([]st.GetEventList, 0)
 
 	for _, v := range resEvents {
 		locationId := v.LocationId
@@ -117,7 +116,13 @@ func (s *EventService) GetEventLists(req *st.GetEventListsRequest) (*st.GetEvent
 			City:        resLocation.City,
 			District:    resLocation.District,
 		}
-		resLists.EventLists = append(resLists.EventLists, res)
+		eventLists = append(eventLists, res)
+	}
+
+	resLists := &st.GetEventListsResponse{
+		TotalPages: *totalPages,
+		TotalEvent: *totalEvents,
+		EventLists: eventLists,
 	}
 	return resLists, nil
 }
@@ -142,14 +147,14 @@ func (s *EventService) GetEventListsByStartDate(req *st.GetEventListsByStartDate
 			eventImage = *v.EventImage
 		}
 		res := st.GetEventListByStartDate{
-			EventId:     v.EventId,
-			OrganizerId: v.OrganizerId,
-			EventName:   v.EventName,
-			StartDate:   utils.GetDate(v.StartDate),
-			EndDate:     utils.GetDate(v.EndDate),
-			Description: v.Description,
-			Status:      v.Status,
-			EventImage:  eventImage,
+			EventId:      v.EventId,
+			OrganizerId:  v.OrganizerId,
+			EventName:    v.EventName,
+			StartDate:    utils.GetDate(v.StartDate),
+			EndDate:      utils.GetDate(v.EndDate),
+			Description:  v.Description,
+			Status:       v.Status,
+			EventImage:   eventImage,
 			LocationName: resLocation.LocationName,
 		}
 		resLists.EventLists = append(resLists.EventLists, res)
@@ -178,11 +183,23 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if err != nil {
 		return nil, err
 	}
+	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return nil, err
+	}
+	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+		UserId: orgUserId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	res := &st.GetEventDataByIdResponse{
 		EventId:          resEvent.EventId,
 		OrganizerId:      resEvent.OrganizerId,
-		UserId:           resEvent.UserId,
+		UserId:           resEvent.AdminId,
 		LocationId:       resLocation.LocationId,
+		FirstName:        orgUserInfo.FirstName,
+		LastName:         orgUserInfo.LastName,
 		StartDate:        utils.GetDate(resEvent.StartDate),
 		EndDate:          utils.GetDate(resEvent.EndDate),
 		Status:           resEvent.Status,
@@ -252,7 +269,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
-		UserId:         resEvent.UserId,
+		AdminId:        resEvent.AdminId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
 		EndDate:        endDate,
@@ -269,8 +286,8 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
 
+	return res, nil
 }
 
 func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
@@ -280,36 +297,76 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 	if err != nil {
 		return nil, err
 	}
+
+	// announcement
 	announcementService := NewAnnouncementService(s.RepositoryGateway)
+
+	// get participant to notify them when the event is cancelled
 	reqparticipate := &st.GetParticipantListsRequest{
 		EventId: req.EventId,
 	}
-	resparticipate,err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
+	resparticipate, err := s.RepositoryGateway.ParticipateRepository.GetParticipantsForEvent(reqparticipate)
 	if err != nil {
 		return nil, err
 	}
 
-	for _,v := range resparticipate{
+	for _, v := range resparticipate {
 		reqcancelled := &st.SendCancelledEmailRequest{
-			UserId:      v.UserId,
-			EventId:	 resevent.EventId,	
-			EventName:   resevent.EventName,
-			EventDate:   resevent.StartDate.Format("2006-01-02"),
+			UserId:    v.UserId,
+			EventId:   resevent.EventId,
+			EventName: resevent.EventName,
+			EventDate: resevent.StartDate.Format("2006-01-02"),
 		}
-		if _,err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
+		if _, err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
 			log.Println("[Service: Call SendCancelledEmail]:", err)
 			return nil, err
 		}
 	}
 
-	// Delete the event using the repository
-	deleteMessage, err := s.RepositoryGateway.EventRepository.DeleteEventById(req)
+	// transaction
+	restransaction, err := s.RepositoryGateway.TransactionRepository.GetTransactionListByEventId(req.EventId)
 	if err != nil {
-		log.Println("[Service: DeleteEvent] Error deleting event:", err)
 		return nil, err
 	}
 
-	return deleteMessage, nil
+	for _, v := range restransaction {
+
+		refundId, refundErr := Stripe.IssueRefund(v.TransactionID)
+		if refundErr != nil {
+			log.Println("[Service: DeleteEventByDataId] Error issueRefunds: ", refundErr)
+			return nil, err
+		}
+
+		reqrefund := &models.Refund{
+			RefundId:      refundId.ID,
+			UserId:        v.UserID,
+			RefundAmount:  v.TransactionAmount,
+			TransactionId: v.TransactionID,
+			RefundReason:  "Event Cancelled",
+			RefundDate:    time.Time{},
+		}
+		_, err := s.RepositoryGateway.RefundRepository.CreateRefund(reqrefund)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Delete event after passing a week
+	updateReq := &models.Event{
+		EventId: req.EventId,
+		Status:  "Deleted",
+	}
+	_, updateErr := s.RepositoryGateway.EventRepository.UpdateEvent(updateReq)
+	if updateErr != nil {
+		log.Println("[Service: DeleteEvent] Error updating event:", err)
+		return nil, err
+	}
+
+	res := &st.DeleteEventResponse{
+		Message: "Delete Successful",
+	}
+
+	return res, nil
 }
 
 func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error) {
@@ -327,4 +384,213 @@ func (s *EventService) GetParticipantLists(req *st.GetParticipantListsRequest) (
 	}
 
 	return resLists, nil
+}
+
+func (s *EventService) SendApprovalEmail(eventId string) error {
+	log.Println("[Service: SendApprovalEmail]: Called")
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(eventId)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return err
+	}
+
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return err
+	}
+	log.Println("Config path from Gmail:", cfg)
+
+	subject := fmt.Sprintf("Event Approval: %s", resEvent.EventName)
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+	to := make([]string, 0)
+	cc := make([]string, 0)
+	bcc := make([]string, 0)
+	attachFiles := make([]string, 0)
+
+	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return err
+	}
+
+	reqId := st.GetUserByUserIdRequest{
+		UserId: resUserId,
+	}
+
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
+	if err != nil {
+		return err
+	}
+	email := ""
+	if resUser.Email != nil {
+		email = *resUser.Email
+	}
+
+	if email == "" {
+		return nil
+	}
+
+	to = append(to, email)
+
+	contentHTML := fmt.Sprintf(`
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 600px;
+                color: #333333;
+            }
+            h3 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333333;
+            }
+            p {
+                margin-bottom: 20px;
+                color: #666666;
+            }
+            .signature {
+                margin-top: 20px;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Congratulations, your event "%s" has been approved!</h3>
+        <p>Hello %s,</p>
+        <p>We are pleased to inform you that your event has been successfully approved. You can now see your event listed on our platform.</p>
+        <p class="signature">Best regards,<br>The Mai-Roi-Ra Team</p>
+    </body>
+    </html>
+    `, resEvent.EventName, resUser.Username)
+
+	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		log.Println("[Service: SendApprovalEmail] Error sending email:", err)
+		return err
+	}
+	return nil
+}
+
+func (s *EventService) SendRejectionEmail(eventId string) error {
+	log.Println("[Service: SendRejectionEmail]: Called")
+	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(eventId)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return err
+	}
+
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return err
+	}
+	log.Println("Config path from Gmail:", cfg)
+
+	subject := fmt.Sprintf("Event Rejection: %s", resEvent.EventName)
+	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
+	to := make([]string, 0)
+	cc := make([]string, 0)
+	bcc := make([]string, 0)
+	attachFiles := make([]string, 0)
+
+	resUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(resEvent.OrganizerId)
+	if err != nil {
+		return err
+	}
+
+	reqId := st.GetUserByUserIdRequest{
+		UserId: resUserId,
+	}
+
+	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(&reqId)
+	if err != nil {
+		return err
+	}
+	email := ""
+	if resUser.Email != nil {
+		email = *resUser.Email
+	}
+
+	if email == "" {
+		return nil
+	}
+
+	to = append(to, email)
+
+	contentHTML := fmt.Sprintf(`
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 40px auto;
+                max-width: 600px;
+                color: #333333;
+            }
+            h3 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333333;
+            }
+            p {
+                margin-bottom: 20px;
+                color: #666666;
+            }
+            .signature {
+                margin-top: 20px;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Notification of Event Rejection: "%s"</h3>
+        <p>Hello %s,</p>
+        <p>We regret to inform you that your event submission has been reviewed and not approved at this time. We appreciate your interest in hosting events with us and encourage you to review our event guidelines for future submissions.</p>
+        <p class="signature">Best regards,<br>The Mai-Roi-Ra Team</p>
+    </body>
+    </html>
+    `, resEvent.EventName, resUser.Username)
+
+	if err = sender.SendEmail(subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+		log.Println("[Service: SendRejectionEmail] Error sending email:", err)
+		return err
+	}
+	return nil
+}
+
+func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+	log.Println("[Service: VerifyEvent]: Called")
+	if req.Status == constant.APPROVED {
+		err := s.SendApprovalEmail(req.EventId)
+		if err != nil {
+			log.Println("[Service: VerifyEvent] Error sending approval email:", err)
+			// Decide if you want to return an error or just log it
+			return nil, err
+		}
+	} else if req.Status == constant.REJECTED {
+		// Assuming you have a similar method for sending rejection emails
+		err := s.SendRejectionEmail(req.EventId)
+		if err != nil {
+			log.Println("[Service: VerifyEvent] Error sending rejection email:", err)
+			// Decide if you want to return an error or just log it
+			return nil, err
+		}
+	}
+
+	res, err := s.RepositoryGateway.EventRepository.VerifyEvent(req)
+	if err != nil {
+		log.Println("[Service: VerifyEvent]: Called Repo Error: ", err)
+		return nil, err
+	}
+	return res, nil
 }

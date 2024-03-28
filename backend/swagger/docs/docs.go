@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/announcement": {
+        "/announcements": {
             "post": {
                 "description": "Sends an announcement email to the specified recipients.",
                 "consumes": [
@@ -57,6 +57,126 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request - error in sending the announcement",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/cancelled_email": {
+            "post": {
+                "description": "Sends an Cancelled email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send CancelledEmail",
+                "parameters": [
+                    {
+                        "description": "Send CancelledEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CancelledEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the CancelledEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/registered_email": {
+            "post": {
+                "description": "Sends an Registered email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send RegisteredEmail",
+                "parameters": [
+                    {
+                        "description": "Send RegisteredEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRegisteredEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "RegisteredEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the RegisteredEmail",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/reminder_email": {
+            "post": {
+                "description": "Sends an Reminder email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "announcements"
+                ],
+                "summary": "Send ReminderEmail",
+                "parameters": [
+                    {
+                        "description": "Send ReminderEmail Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ReminderEmail successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the ReminderEmail",
                         "schema": {
                             "type": "object"
                         }
@@ -125,9 +245,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/cancelledemail": {
-            "post": {
-                "description": "Sends an Cancelled email to the specified recipients.",
+        "/auth/{provider}/login": {
+            "get": {
+                "description": "Get list of all participated events of the user",
                 "consumes": [
                     "application/json"
                 ],
@@ -135,29 +255,33 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "announcements"
+                    "user"
                 ],
-                "summary": "Send CancelledEmail",
+                "summary": "LoginGoogle",
                 "parameters": [
                     {
-                        "description": "Send CancelledEmail Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
-                        }
+                        "type": "string",
+                        "description": "provider",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "CancelledEmail successfully sent",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                            "$ref": "#/definitions/structure.CreateUserResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad request - error in sending the CancelledEmail",
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -195,6 +319,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Sort order. i.e. start_date ASC",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search i.e. Hello",
+                        "name": "search",
                         "in": "query"
                     },
                     {
@@ -469,9 +599,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/isregistered": {
-            "get": {
-                "description": "Determine that whether the user has registered in this events",
+        "/events/{event_id}/verify": {
+            "put": {
+                "description": "Verify an Event",
                 "consumes": [
                     "application/json"
                 ],
@@ -479,30 +609,36 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "participate"
+                    "events"
                 ],
-                "summary": "IsRegistered",
+                "summary": "VerifyEvent",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "user_id",
-                        "name": "user_id",
+                        "description": "Event ID",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status",
+                        "name": "status",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "event_id",
-                        "name": "event_id",
-                        "in": "query",
-                        "required": true
+                        "description": "Admin ID",
+                        "name": "admin_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.IsRegisteredResponse"
+                            "$ref": "#/definitions/structure.VerifyEventResponse"
                         }
                     },
                     "400": {
@@ -574,7 +710,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log in a user",
                 "parameters": [
@@ -620,7 +756,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log in a user with email",
                 "parameters": [
@@ -666,7 +802,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log in a user with phone",
                 "parameters": [
@@ -712,24 +848,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Log out a user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Confirms the user has been logged out.",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/structure.UserResponse"
                         }
                     },
                     "400": {
@@ -744,9 +870,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/registeredemail": {
-            "post": {
-                "description": "Sends an Registered email to the specified recipients.",
+        "/participate/is_registered": {
+            "get": {
+                "description": "Determine that whether the user has registered in this events",
                 "consumes": [
                     "application/json"
                 ],
@@ -754,29 +880,40 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "announcements"
+                    "participates"
                 ],
-                "summary": "Send RegisteredEmail",
+                "summary": "IsRegistered",
                 "parameters": [
                     {
-                        "description": "Send RegisteredEmail Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.SendRegisteredEmailRequest"
-                        }
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "RegisteredEmail successfully sent",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                            "$ref": "#/definitions/structure.IsRegisteredResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad request - error in sending the RegisteredEmail",
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -784,9 +921,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/reminderemail": {
-            "post": {
-                "description": "Sends an Reminder email to the specified recipients.",
+        "/problems": {
+            "get": {
+                "description": "Get a list of problems filtered by status (Replied or Pending).",
                 "consumes": [
                     "application/json"
                 ],
@@ -794,29 +931,311 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "announcements"
+                    "problems"
                 ],
-                "summary": "Send ReminderEmail",
+                "summary": "Get list of problems",
                 "parameters": [
                     {
-                        "description": "Send ReminderEmail Request",
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Problem Status (Replied or Pending)",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetProblemListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Create a new problem",
+                "parameters": [
+                    {
+                        "description": "Create Problem Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/structure.SendReminderEmailRequest"
+                            "$ref": "#/definitions/structure.CreateProblemRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "ReminderEmail successfully sent",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                            "$ref": "#/definitions/structure.CreateProblemResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad request - error in sending the ReminderEmail",
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/problems/{problem_id}": {
+            "get": {
+                "description": "Get the details of a specific problem by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Get problem detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Problem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing problem with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Update existing problem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Problem Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateProblemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a problem with the specified ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems"
+                ],
+                "summary": "Delete problem by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Problem ID",
+                        "name": "problem_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.ProblemResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/refunds": {
+            "post": {
+                "description": "CreateRefund for user to initiate refund process",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "CreateRefund",
+                "parameters": [
+                    {
+                        "description": "Refund Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateRefundRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateRefundResponseList"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/refunds/email": {
+            "post": {
+                "description": "Send an email to the user about their refund",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "Send Refund Email",
+                "parameters": [
+                    {
+                        "description": "Send Refund Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -847,6 +1266,277 @@ const docTemplate = `{
                 }
             }
         },
+        "/transactions/is_paid": {
+            "get": {
+                "description": "Determine that whether the user has paid in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "IsPaid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsPaidResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment": {
+            "post": {
+                "description": "CreatePayment for user to pay (1: card, 2: PromptPay)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "CreatePayment",
+                "parameters": [
+                    {
+                        "description": "Get PromptPay",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePaymentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/confirm/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/send_email": {
+            "post": {
+                "description": "Sends a transaction email to the specified user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Send Transaction Email",
+                "parameters": [
+                    {
+                        "description": "Send Transaction Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendTransactionEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction email successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendTransactionEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the transaction email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/transfer": {
+            "post": {
+                "description": "Transfer the specified amount of money to the organizer's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Transfer money to organizer",
+                "parameters": [
+                    {
+                        "description": "Transfer to Organizer",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransferToOrganizerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/models.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Create a new user with the provided details.",
@@ -857,7 +1547,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Create new user",
                 "parameters": [
@@ -893,6 +1583,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/auth/{provider}/callback": {
+            "get": {
+                "description": "Get info of user from Gmail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "CallbackGoogle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "provider",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/events": {
             "get": {
                 "description": "Get list of all participated events of the user",
@@ -903,7 +1637,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetParticipatedEventLists",
                 "parameters": [
@@ -959,7 +1693,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "ToggleNotifications",
                 "parameters": [
@@ -1003,7 +1737,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Register an event",
                 "parameters": [
@@ -1039,6 +1773,182 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/send_otp_email": {
+            "put": {
+                "description": "Sends an OTP email to the specified recipients.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Send OTP Email",
+                "parameters": [
+                    {
+                        "description": "Send OTP Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendOTPEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP email successfully sent",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendOTPEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the OTP email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/update_user_role": {
+            "put": {
+                "description": "Updates the role of a user based on the provided request.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update User Role",
+                "parameters": [
+                    {
+                        "description": "Update User Role Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateUserRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User successfully updated",
+                        "schema": {
+                            "$ref": "#/definitions/structure.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in updating user role",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/verification_status": {
+            "get": {
+                "description": "Get the verification status of a user by their email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get User Verification Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the verification status of the user.",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "404": {
+                        "description": "User Not Found",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/verify_otp": {
+            "put": {
+                "description": "Verifies the OTP entered by the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Verify OTP",
+                "parameters": [
+                    {
+                        "description": "Verify OTP Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.VerifyOTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP successfully verified",
+                        "schema": {
+                            "$ref": "#/definitions/structure.VerifyOTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in verifying the OTP",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{event_id}": {
             "delete": {
                 "description": "Cancel Register an event based on user_id and event_id",
@@ -1049,7 +1959,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Cancel Register an event",
                 "parameters": [
@@ -1100,7 +2010,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetUserByUserId",
                 "parameters": [
@@ -1142,7 +2052,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "UpdateUserInformation",
                 "parameters": [
@@ -1178,6 +2088,101 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{user_id}/searchevent": {
+            "post": {
+                "description": "Search the Event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "SearchEvent",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SearchEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/searchhistory": {
+            "get": {
+                "description": "Get Search History for the User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "GetSearchHistories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetSearchHistoriesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/validate-token": {
             "get": {
                 "description": "Validates a user's authentication token and returns the associated user details if valid.",
@@ -1188,7 +2193,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Validate user token",
                 "parameters": [
@@ -1221,6 +2226,80 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Problem": {
+            "type": "object",
+            "required": [
+                "problem_id",
+                "user_id"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Transaction": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "status",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "transaction_way": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -1248,6 +2327,9 @@ const docTemplate = `{
                 "is_enable_notification": {
                     "type": "boolean"
                 },
+                "is_verified": {
+                    "type": "boolean"
+                },
                 "last_name": {
                     "type": "string"
                 },
@@ -1255,14 +2337,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone_number": {
-                    "description": "Replace \"phone_length_constraint\" with actual SQL check expression if needed",
                     "type": "string"
                 },
                 "province": {
                     "type": "string"
                 },
+                "register_type": {
+                    "type": "string"
+                },
                 "role": {
-                    "description": "Added role field",
                     "type": "string"
                 },
                 "updated_at": {
@@ -1356,6 +2439,94 @@ const docTemplate = `{
             "properties": {
                 "event_id": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.CreatePaymentRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "payment_type",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "payment_type": {
+                    "type": "integer"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateProblemRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "problem",
+                "user_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateProblemResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateRefundRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "refund_reason"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "refund_reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateRefundResponseList": {
+            "type": "object",
+            "properties": {
+                "refund_id_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -1472,6 +2643,12 @@ const docTemplate = `{
                 "event_name": {
                     "type": "string"
                 },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
                 "location_id": {
                     "type": "string"
                 },
@@ -1535,6 +2712,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.GetEventList"
                     }
+                },
+                "total_events": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },
@@ -1574,6 +2757,68 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/structure.ParticipatedEvent"
                     }
+                }
+            }
+        },
+        "structure.GetPaymentIntentByIdResponse": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "eventId": {
+                    "type": "string"
+                },
+                "numParticipants": {
+                    "type": "integer"
+                },
+                "paymentClientSecret": {
+                    "type": "string"
+                },
+                "paymentIntentId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transactionAmount": {
+                    "type": "number"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.GetProblemListsResponse": {
+            "type": "object",
+            "properties": {
+                "problem_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.ProblemList"
+                    }
+                }
+            }
+        },
+        "structure.GetSearchHistoriesResponse": {
+            "type": "object",
+            "properties": {
+                "search_history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.SearchHistory"
+                    }
+                }
+            }
+        },
+        "structure.IsPaidResponse": {
+            "type": "object",
+            "required": [
+                "is_paid"
+            ],
+            "properties": {
+                "is_paid": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1626,14 +2871,8 @@ const docTemplate = `{
         },
         "structure.LoginUserResponse": {
             "type": "object",
-            "required": [
-                "first_name"
-            ],
             "properties": {
                 "email": {
-                    "type": "string"
-                },
-                "first_name": {
                     "type": "string"
                 },
                 "organizer_id": {
@@ -1649,6 +2888,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -1737,14 +2979,49 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.ProblemList": {
+            "type": "object",
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.ProblemResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.RegisterEventRequest": {
             "type": "object",
             "required": [
+                "amount",
                 "event_id",
                 "num_participant",
                 "user_id"
             ],
             "properties": {
+                "amount": {
+                    "type": "integer"
+                },
                 "event_id": {
                     "type": "string"
                 },
@@ -1760,6 +3037,29 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SearchEventResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SearchHistory": {
+            "type": "object",
+            "required": [
+                "search_name",
+                "user_id"
+            ],
+            "properties": {
+                "search_name": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -1802,6 +3102,41 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendOTPEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendOTPEmailResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRefundEmailRequest": {
+            "type": "object",
+            "properties": {
+                "refund_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRefundEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
                     "type": "string"
                 }
             }
@@ -1862,10 +3197,62 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.SendTransactionEmailRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendTransactionEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.TestResponse": {
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransferToOrganizerRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "organizer_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "description": "This is the system user ID of the organizer",
                     "type": "string"
                 }
             }
@@ -1931,6 +3318,32 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.UpdateProblemRequest": {
+            "type": "object",
+            "required": [
+                "problem_id"
+            ],
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.UpdateUserInformationRequest": {
             "type": "object",
             "required": [
@@ -1966,6 +3379,60 @@ const docTemplate = `{
                 },
                 "user_image": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.UpdateUserRoleRequest": {
+            "type": "object",
+            "required": [
+                "role",
+                "user_id",
+                "username"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.UserResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.VerifyEventResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.VerifyOTPRequest": {
+            "type": "object",
+            "properties": {
+                "otp": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.VerifyOTPResponse": {
+            "type": "object",
+            "properties": {
+                "verified": {
+                    "type": "boolean"
                 }
             }
         }

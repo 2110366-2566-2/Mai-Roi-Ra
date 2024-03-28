@@ -18,6 +18,9 @@ type ServiceGateway struct {
 	UserService         IUserService
 	ParticipateService  IParticipateService
 	AnnouncementService IAnnouncementService
+	ProblemService      IProblemService
+	TransactionService  ITransactionService
+	RefundService       IRefundService
 }
 
 // NewService ...

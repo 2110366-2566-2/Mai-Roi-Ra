@@ -5,6 +5,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
@@ -20,7 +22,7 @@ type UserRepository struct {
 type IUserRepository interface {
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByPhoneNumber(phoneNumber string) (*models.User, error)
-	CreateUser(*st.CreateUserRequest) (*string, error)
+	CreateUser(req *st.CreateUserRequest, registerType string, isVerified bool) (*string, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 	GetUserByToken(token string) (*models.User, error)
 	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
@@ -30,6 +32,9 @@ type IUserRepository interface {
 	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
 	IsEnableNotification(userId string) (*bool, *string, error)
 	GetRandomAdmin() (*models.User, error)
+	GetAllAdmins() ([]*models.User, error)
+	UpdateVerified(userId *string) error
+	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -76,14 +81,14 @@ func (repo *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*models.Us
 }
 
 // CreateUser adds a new user to the database.
-func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) {
+func (r *UserRepository) CreateUser(req *st.CreateUserRequest, registerType string, isVerified bool) (*string, error) {
 	log.Println("[Repo: CreateUser]: Called")
 
-	role := "USER"
+	role := constant.USER
 	if req.Role == "Organizer" {
-		role = "ORGANIZER"
+		role = constant.ORGANIZER
 	} else if req.Role == "Admin" {
-		role = "ADMIN"
+		role = constant.ADMIN
 	}
 	userModel := models.User{
 		UserID:                   utils.GenerateUUID(),
@@ -93,14 +98,17 @@ func (r *UserRepository) CreateUser(req *st.CreateUserRequest) (*string, error) 
 		FirstName:                req.FirstName,
 		LastName:                 req.LastName,
 		Password:                 req.Password,
+		IsEnableNotification:     false,
 		PaymentGatewayCustomerID: "", // NullString for other string fields
 		UserImage:                "",
 		Address:                  req.Address,
 		District:                 req.District,
 		Province:                 req.Province,
 		BannerImage:              "",
-		CreatedAt:                time.Time{},
 		Role:                     role,
+		RegisterType:             registerType, // will change later
+		IsVerified:               isVerified,
+		CreatedAt:                time.Time{},
 	}
 
 	trans := r.DB.Begin().Debug()
@@ -276,7 +284,7 @@ func (r *UserRepository) ToggleNotifications(req *st.GetUserByUserIdRequest) (*s
 func (r *UserRepository) GetRandomAdmin() (*models.User, error) {
 	log.Println("[Repo: GetRandomAdmin]: Called")
 	var admin models.User
-	if err := r.DB.Where(`role = ?`, "ADMIN").Order("RANDOM()").First(&admin).Error; err != nil {
+	if err := r.DB.Where(`role = ?`, constant.ADMIN).Order("RANDOM()").First(&admin).Error; err != nil {
 		log.Println("[Repo: GetRandomAdmin]: Error randomized the admin")
 		return nil, err
 	}
@@ -291,4 +299,69 @@ func (r *UserRepository) IsEnableNotification(userId string) (*bool, *string, er
 		return nil, nil, err
 	}
 	return &userModel.IsEnableNotification, userModel.Email, nil
+}
+
+func (r *UserRepository) GetAllAdmins() ([]*models.User, error) {
+	log.Println("[Repo: GetAllAdminsEmail] Called")
+	var userModels []*models.User
+	if err := r.DB.Where(`role = ?`, constant.ADMIN).Find(&userModels).Error; err != nil {
+		log.Println("[Repo: GetAllAdminsEmail]: cannot retrieve data from DB:", err)
+		return nil, err
+	}
+	return userModels, nil
+}
+
+func (r *UserRepository) UpdateVerified(userId *string) error {
+	log.Println("[Repo: UpdateVerified] Called")
+
+	// find the user by user_id
+	var modelUser models.User
+	if err := r.DB.Where(`user_id=?`, userId).Find(&modelUser).Error; err != nil {
+		log.Print("[Repo: UpdateVerified] user_id not found")
+		return err
+	}
+
+	modelUser.IsVerified = true
+
+	// Save the updated version
+	if err := r.DB.Save(&modelUser).Error; err != nil {
+		log.Println("[Repo: UpdateVerified] Error updating in the database:", err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error) {
+	log.Println("[Repo: UpdateUserRole] Called")
+
+	var modelUser models.User
+	if err := r.DB.Where(`user_id=?`, req.UserId).Find(&modelUser).Error; err != nil {
+		log.Print("[Repo: UpdateUserRole] user_id not found")
+		return nil, err
+	}
+	response := &st.UserResponse{
+		Response: "Update role successful",
+	}
+	if (modelUser.Username != "") {
+		response.Response = "Role has already been updated. The change won't be saved"
+		return response, nil
+	}
+	role := constant.USER
+	if req.Role == "Organizer" {
+		role = constant.ORGANIZER
+	} else if req.Role == "Admin" {
+		role = constant.ADMIN
+	}
+	modelUser.Role = role
+
+	if req.Username != "" {
+		modelUser.Username = req.Username
+	}
+	
+	if err := r.DB.Save(&modelUser).Error; err != nil {
+		log.Println("[Repo: UpdateUserRole] Error updating in the database:", err)
+		return nil, err
+	}
+	return response, nil
 }

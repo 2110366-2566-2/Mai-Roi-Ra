@@ -62,11 +62,14 @@ type GetEventListsRequest struct {
 	OrganizerId string `json:"organizer_id"`
 	Filter      string `json:"filter"`
 	Sort        string `json:"sort"`
+	Search      string `json:"search"`
 	Offset      int    `json:"offset"`
 	Limit       int    `json:"limit"`
 }
 
 type GetEventListsResponse struct {
+	TotalPages int            `json:"total_pages"`
+	TotalEvent int            `json:"total_events"`
 	EventLists []GetEventList `json:"event_lists"`
 }
 
@@ -99,6 +102,8 @@ type GetEventDataByIdResponse struct {
 	OrganizerId      string         `json:"organizer_id"`
 	UserId           string         `json:"admin_id"`
 	LocationId       string         `json:"location_id"`
+	FirstName        string         `json:"first_name"`
+	LastName         string         `json:"last_name"`
 	StartDate        string         `json:"start_date"`
 	EndDate          string         `json:"end_date"`
 	Status           string         `json:"status"`
@@ -139,4 +144,14 @@ type GetParticipantListsRequest struct {
 
 type GetParticipantListsResponse struct {
 	ParticipantList []Participant `json:"participant_list"`
+}
+
+type VerifyEventRequest struct {
+	EventId string `json:"event_id" binding:"required"`
+	Status  string `json:"status" binding:"required"`
+	AdminId string `json:"admin_id" binding:"required"`
+}
+
+type VerifyEventResponse struct {
+	Message string `json:"message"`
 }
