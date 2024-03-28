@@ -358,7 +358,7 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 	}
 	_, updateErr := s.RepositoryGateway.EventRepository.UpdateEvent(updateReq)
 	if updateErr != nil {
-		log.Println("[Service: DeleteEvent] Error deleting event:", err)
+		log.Println("[Service: DeleteEvent] Error updating event:", err)
 		return nil, err
 	}
 

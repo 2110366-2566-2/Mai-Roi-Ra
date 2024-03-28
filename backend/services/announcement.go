@@ -172,7 +172,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	if len(to) != 0 {
 		if err = sender.SendEmail(req.Subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
 			return nil, err
-		}	
+		}
 	}
 
 	announceModel := &models.Announcement{
@@ -237,6 +237,20 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 		return nil, err
 	}
 
+	emailOrg := ""
+	if orgRes.Email != nil {
+		emailOrg = *orgRes.Email
+	}
+	phoneOrg := ""
+	if orgRes.PhoneNumber != nil {
+		phoneOrg = *orgRes.PhoneNumber
+	}
+
+	contactOrg := phoneOrg
+	if emailOrg != "" {
+		contactOrg = emailOrg
+	}
+
 	// resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	// if err != nil {
 	// 	return nil, err
@@ -281,7 +295,7 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 		<p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`, req.EventName, *orgRes.PhoneNumber)
+	`, req.EventName, contactOrg)
 
 	// Insert image
 	//attachFiles = append(attachFiles, eventImage)
