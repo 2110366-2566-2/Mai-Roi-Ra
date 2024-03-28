@@ -45,6 +45,10 @@ const SignInForm = () => {
     );
   };
 
+  const handleLoginGoogle = () => {
+    window.location.href = 'http://localhost:8080/api/v1/auth/google/login';
+  }
+
   return (
     <div className="text-black bg-white w-screen h-screen flex justify-center items-center">
       <div
@@ -133,15 +137,20 @@ const SignInForm = () => {
         </form>
 
         <div
-          className="flex justify-end w-full text-sky-500 mt-[30px] 
-                    lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]"
+          className="flex justify-between w-full text-sky-500 mt-[30px] 
+                    lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px] items-center"
         >
+          <button className="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150" onClick={handleLoginGoogle}>
+        <img className="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
+        <span className="lg:text-[18px] md:text-[16px] sm:text-[14px] text-[12px]">Login with Google</span>
+        </button>
           <Link
             href="/auth/register"
             className="hover:text-sky-600 hover:underline"
           >
             Sign up
           </Link>
+
         </div>
       </div>
     </div>

@@ -274,6 +274,7 @@ func (c *EventController) GetParticipantLists(ctx *gin.Context) {
 // @Produce json
 // @Param event_id path string true "Event ID" example:"event123"
 // @Param status query string true "Status" example:"Approved or Rejected"
+// @Param admin_id query string trie "Admin ID"
 // @Success 200 {object} structure.VerifyEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
@@ -282,6 +283,7 @@ func (c *EventController) VerifyEvent(ctx *gin.Context) {
 	req := &st.VerifyEventRequest{
 		EventId: ctx.Param("id"),
 		Status:  ctx.Query("status"),
+		AdminId: ctx.Query("admin_id"),
 	}
 	log.Println("[CTRL: VerifyEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.VerifyEvent(req)

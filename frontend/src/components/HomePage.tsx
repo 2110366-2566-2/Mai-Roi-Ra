@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { HandleLoginGoogle } from "./HandleLoginGoogle";
 
 export default function HomePage() {
   const [isPhoneScreen, setIsPhoneScreen] = useState(false);
@@ -23,15 +24,13 @@ export default function HomePage() {
 
   return (
     <div
-      className={`${styles.Roboto} w-screen h-screen flex ${
-        isPhoneScreen ? "flex-col" : "flex-row"
-      } justify-start`}
+      className={`${styles.Roboto} w-screen h-screen flex ${isPhoneScreen ? "flex-col" : "flex-row"
+        } justify-start`}
     >
       {/* Banner Home Page On Left Size */}
       <div
-        className={`${
-          isPhoneScreen ? "w-full h-[60%]" : "w-[100%] h-screen"
-        } overflow-hidden`}
+        className={`${isPhoneScreen ? "w-full h-[60%]" : "w-[100%] h-screen"
+          } overflow-hidden`}
       >
         <Image
           className="w-full h-full object-cover"
@@ -46,17 +45,15 @@ export default function HomePage() {
       <div
         className={
           "flex flex-col px-[8%] py-[10%] w-[100%] " +
-          `${
-            isPhoneScreen
-              ? "h-[40%] items-center justify-start !p-8"
-              : "h-screen !py-[15%]"
+          `${isPhoneScreen
+            ? "h-[40%] items-center justify-start !p-8"
+            : "h-screen !py-[15%]"
           }`
         }
       >
         <div
-          className={`w-[60px] h-[60px] flex ${
-            isPhoneScreen ? "justify-center" : "items-end mb-4"
-          }`}
+          className={`w-[60px] h-[60px] flex ${isPhoneScreen ? "justify-center" : "items-end mb-4"
+            }`}
         >
           <Image
             className="w-[60px] h-[60px]"
@@ -68,34 +65,30 @@ export default function HomePage() {
         </div>
 
         <div
-          className={`font-black w-full ${
-            isPhoneScreen ? "text-center mb-2 text-4xl " : "text-8xl mb-4"
-          }`}
+          className={`font-black w-full ${isPhoneScreen ? "text-center mb-2 text-4xl " : "text-8xl mb-4"
+            }`}
         >
           Happening now
         </div>
 
         <div
-          className={`font-black w-full ${
-            isPhoneScreen ? "text-base text-center mb-4" : "text-5xl mb-10"
-          }`}
+          className={`font-black w-full ${isPhoneScreen ? "text-base text-center mb-4" : "text-5xl mb-10"
+            }`}
         >
           Join MAI-ROI-RA today
         </div>
 
         <Link
-          className={`bg-[#F2D22E] hover:bg-yellow-500 font-black py-[15px] rounded-full px-[65px] text-[12px] text-center ${
-            isPhoneScreen ? "text-center mb-4" : "w-fit text-xl mb-4"
-          }`}
+          className={`bg-[#F2D22E] hover:bg-yellow-500 font-black py-[15px] rounded-full px-[65px] text-[12px] text-center ${isPhoneScreen ? "text-center mb-4" : "w-fit text-xl mb-4"
+            }`}
           href="/auth/register"
         >
           Sign up with phone or email
         </Link>
 
         <div
-          className={`w-full mt-4 ${
-            isPhoneScreen ? "flex justify-center" : ""
-          }`}
+          className={`w-full mt-4 ${isPhoneScreen ? "flex justify-center" : ""
+            }`}
         >
           <span className="ml-2">Already have an acoount?</span>
           <span className="ml-1">

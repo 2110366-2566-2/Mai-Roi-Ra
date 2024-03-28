@@ -102,6 +102,8 @@ type GetEventDataByIdResponse struct {
 	OrganizerId      string         `json:"organizer_id"`
 	UserId           string         `json:"admin_id"`
 	LocationId       string         `json:"location_id"`
+	FirstName        string         `json:"first_name"`
+	LastName         string         `json:"last_name"`
 	StartDate        string         `json:"start_date"`
 	EndDate          string         `json:"end_date"`
 	Status           string         `json:"status"`
@@ -147,6 +149,7 @@ type GetParticipantListsResponse struct {
 type VerifyEventRequest struct {
 	EventId string `json:"event_id" binding:"required"`
 	Status  string `json:"status" binding:"required"`
+	AdminId string `json:"admin_id" binding:"required"`
 }
 
 type VerifyEventResponse struct {

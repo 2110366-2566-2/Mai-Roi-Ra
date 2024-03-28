@@ -79,11 +79,11 @@ export default async function EventDetailPage({ params }: Props) {
             </div>
           </div>
           <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
-            <RegisterEventBox event={event} isRegisterable={isRegisterable} />
-            <ParticipantListModal
+            <RegisterEventBox event={event} isRegisterable={false} />
+            {/* <ParticipantListModal
               participants={participants}
               numParticipants={numParticipants}
-            />
+            /> */}
           </div>
         </div>
       </div>

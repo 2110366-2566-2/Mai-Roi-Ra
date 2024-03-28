@@ -3,7 +3,7 @@ import React, { useState, FormEvent } from "react";
 import styles from "@/styles/FontPage.module.css";
 import { useRouter } from "next/navigation";
 import updateProfile from "@/libs/updateProfile";
-import updateProfileAction from "@/action/updateProfileAction";
+import updateProfileAction from "@/action/UpdateProfileAction";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -11,8 +11,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { TextField } from "@mui/material";
+import ChooseRoleForm from "./ChooseRoleForm";
+import { redirect } from "next/navigation";
+import updateRole from "@/libs/updateUserRole";
+import { signOut } from "next-auth/react";
 
 interface Props {
+  firstRegister: boolean;
   firstNameProp: string;
   lastNameProp: string;
   addressProp: string;
@@ -22,9 +27,11 @@ interface Props {
   emailProp: string;
   birthDateProp: string;
   userId: string;
+  token: string;
 }
 
 export default function EditProfileForm({
+  firstRegister,
   firstNameProp,
   lastNameProp,
   addressProp,
@@ -34,6 +41,7 @@ export default function EditProfileForm({
   emailProp,
   birthDateProp,
   userId,
+  token,
 }: Props) {
   const isMobile = useMediaQuery("(max-width:768px)");
 
@@ -48,6 +56,7 @@ export default function EditProfileForm({
   // const [birthDate, setBirthDate] = useState(birthDateProp);
   const initialBirthDate = dayjs(birthDateProp);
   const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
+  const [role, setRole] = useState("User");
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
 
@@ -113,6 +122,11 @@ export default function EditProfileForm({
         //   setSuccessModal(false);
         //   router.push("/profile");
         // }, 4000);
+        if (firstRegister) {
+          setOpenChooseRoleForm(true);
+        } else {
+          router.push("/profile");
+        }
       } catch (err) {
         setError("Update error. Server Failed ?");
         console.log("Err: ", err);
@@ -122,126 +136,151 @@ export default function EditProfileForm({
     }
   };
 
+  const handleCancleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    router.push("/profile");
+  };
+
+  const handleUpdateRole = async () => {
+    console.log(role, userId, username);
+
+    try {
+      await updateRole(role, userId, username);
+      // handle success, e.g. show a success message or redirect
+      await signOut({ redirect: false });
+      alert("Please login again");
+      router.push("/auth/signin");
+    } catch (error) {
+      // handle error, e.g. show an error message
+      console.error(`Error updating role: ${error}`);
+    }
+  };
+
+  const [username, setUsername] = useState("");
+  const [openChoosRoleForm, setOpenChooseRoleForm] = useState(false);
+  console.log(openChoosRoleForm);
+
   return (
-    <div className="w-full">
-      <form className="space-y-6" onSubmit={handleEditProfileSubmit}>
-        <div className="flex">
-          <div className="relative w-full mr-2">
+    <div className={`w-full ${openChoosRoleForm ? "" : "mt-6"}`}>
+      {!openChoosRoleForm ? (
+        <form className="space-y-6" onSubmit={handleEditProfileSubmit}>
+          <div className="flex">
+            <div className="relative w-full mr-2">
+              <input
+                type="text"
+                id="firstname"
+                name="firstname"
+                value={firstName}
+                onChange={handleFirstNameChange}
+                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="First name"
+              />
+              {firstName && (
+                <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                  First Name
+                </div>
+              )}
+            </div>
+            <div className="relative w-full ml-2">
+              <input
+                type="text"
+                id="lastname"
+                name="lastname"
+                value={lastName}
+                onChange={handleLastNameChange}
+                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="Last name"
+              />
+              {lastName && (
+                <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                  Last Name
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="relative">
             <input
               type="text"
-              id="firstname"
-              name="firstname"
-              value={firstName}
-              onChange={handleFirstNameChange}
+              id="address"
+              name="address"
+              value={address}
+              onChange={handleAddressChange}
               className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-              placeholder="First name"
+              placeholder="Address"
             />
-            {firstName && (
+            {address && (
               <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                First Name
+                Address
               </div>
             )}
           </div>
-          <div className="relative w-full ml-2">
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
-              value={lastName}
-              onChange={handleLastNameChange}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-              placeholder="Last name"
-            />
-            {lastName && (
-              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                Last Name
-              </div>
-            )}
+          <div className="flex ">
+            <div className="relative w-full mr-2">
+              <input
+                type="text"
+                id="district"
+                name="district"
+                value={district}
+                onChange={handleDistrictChange}
+                className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="District"
+              />
+              {district && (
+                <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                  District
+                </div>
+              )}
+            </div>
+            <div className="relative w-full ml-2">
+              <input
+                type="text"
+                id="province"
+                name="province"
+                value={province}
+                onChange={handleProvinceChange}
+                className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="Province"
+              />
+              {province && (
+                <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                  Province
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="relative">
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={address}
-            onChange={handleAddressChange}
-            className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-            placeholder="Address"
-          />
-          {address && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-              Address
+          {phoneNumber ? (
+            <div className="relative">
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={phoneNumber}
+                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="Phone number"
+                readOnly
+              />
+              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                Phone number
+              </div>
+            </div>
+          ) : (
+            <div className="relative">
+              <input
+                type="text"
+                id="email"
+                name="email"
+                value={email}
+                className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
+                placeholder="Email"
+                readOnly
+              />
+              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+                Email
+              </div>
             </div>
           )}
-        </div>
-        <div className="flex ">
-          <div className="relative w-full mr-2">
-            <input
-              type="text"
-              id="district"
-              name="district"
-              value={district}
-              onChange={handleDistrictChange}
-              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
-              placeholder="District"
-            />
-            {district && (
-              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                District
-              </div>
-            )}
-          </div>
-          <div className="relative w-full ml-2">
-            <input
-              type="text"
-              id="province"
-              name="province"
-              value={province}
-              onChange={handleProvinceChange}
-              className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
-              placeholder="Province"
-            />
-            {province && (
-              <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-                Province
-              </div>
-            )}
-          </div>
-        </div>
-        {phoneNumber ? (
-          <div className="relative">
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={phoneNumber}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-              placeholder="Phone number"
-              readOnly
-            />
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-              Phone number
-            </div>
-          </div>
-        ) : (
-          <div className="relative">
-            <input
-              type="text"
-              id="email"
-              name="email"
-              value={email}
-              className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
-              placeholder="Email"
-              readOnly
-            />
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
-              Email
-            </div>
-          </div>
-        )}
 
-        {/* <div className="relative">
+          {/* <div className="relative">
           <input
             type="text"
             id="birthdate"
@@ -257,33 +296,49 @@ export default function EditProfileForm({
             </div>
           )}
         </div> */}
-        <div className="relative">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Birth Date"
-              value={birthDate}
-              onChange={(e) => setBirthDate(e)}
-              className="w-full"
-              slotProps={{ textField: { size: "medium" } }}
-            />
-          </LocalizationProvider>
-        </div>
-
-        <div className="flex flex-col !mt-2">
-          <div style={{ color: "#F16E1E" }}>
-            {allInputsFilled ? "" : "All fields must be filled correctly !"}
+          <div className="relative">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Birth Date"
+                value={birthDate}
+                onChange={(e) => setBirthDate(e)}
+                className="w-full"
+                slotProps={{ textField: { size: "medium" } }}
+              />
+            </LocalizationProvider>
           </div>
-        </div>
-        <div className="pt-8">
-          <button
-            type="submit"
-            className="w-full text-white px-4 py-4 rounded-full hover:bg-blue-600"
-            style={{ backgroundColor: "#F2D22E" }}
-          >
-            Done
-          </button>
-        </div>
-      </form>
+
+          <div className="flex flex-col !mt-2">
+            <div style={{ color: "#F16E1E" }}>
+              {allInputsFilled ? "" : "All fields must be filled correctly !"}
+            </div>
+          </div>
+          <div className="pt-8 flex items-center justify-center">
+            <button
+              type="button"
+              className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4 xl:mr-6 mr-6 rounded-full bg-gray-300 hover:bg-gray-400"
+              onClick={handleCancleClick}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4  xl:ml-8 ml-6 rounded-full bg-[#F2D22E] hover:bg-yellow-500"
+            >
+              Done
+            </button>
+          </div>
+        </form>
+      ) : (
+        <ChooseRoleForm
+          role={role}
+          setRole={setRole}
+          setOpenChooseRoleForm={setOpenChooseRoleForm}
+          handleUpdateRole={handleUpdateRole}
+          username={username}
+          setUsername={setUsername}
+        />
+      )}
       {/* {successModal && (
         <div className="fixed inset-0 z-50">
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75"></div>

@@ -3,8 +3,6 @@ package routers
 import (
 	"log"
 
-	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
-
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/token"
@@ -39,14 +37,16 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 
 	groupRoutes := r.Group("api/v1")
 
-	err := c.Invoke(func(eventController *controllers.EventController, locationController *controllers.LocationController, userController *controllers.UserController, testController *controllers.TestController, announcementController *controllers.AnnouncementController, participateController *controllers.ParticipateController, problemController *controllers.ProblemController) {
-		setupEventRoutes(groupRoutes, eventController)
-		setupLocationRoutes(groupRoutes, locationController)
-		setupUserRoutes(groupRoutes, userController)
-		setupTestRoutes(groupRoutes, testController)
-		setupAnnouncementRoutes(groupRoutes, announcementController)
-		setupParticipateRoutes(groupRoutes, participateController)
-		setupProblemRoutes(groupRoutes, problemController)
+	err := c.Invoke(func(controller *controllers.Controller) {
+		setupEventRoutes(groupRoutes, controller.Gateway.EventController)
+		setupLocationRoutes(groupRoutes, controller.Gateway.LocationController)
+		setupUserRoutes(groupRoutes, controller.Gateway.UserController)
+		setupTestRoutes(groupRoutes, controller.Gateway.TestController)
+		setupAnnouncementRoutes(groupRoutes, controller.Gateway.AnnouncementController)
+		setupParticipateRoutes(groupRoutes, controller.Gateway.ParticipateController)
+		setupProblemRoutes(groupRoutes, controller.Gateway.ProblemController)
+		setupTransactionRoutes(groupRoutes, controller.Gateway.TransactionController)
+		setupRefundRoutes(groupRoutes, controller.Gateway.RefundController)
 	})
 
 	if err != nil {
@@ -91,6 +91,8 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)
 		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)
 		userRoutes.PUT("/verify_otp", controller.VerifyOTP)
+		userRoutes.PUT("/update_user_role", controller.UpdateUserRole)
+		userRoutes.GET("/verification_status", controller.GetUserVerificationStatus)
 	}
 	loginRoutes := r.Group("")
 	{
@@ -102,6 +104,11 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 	{
 		authRoutes.POST("/logout", controller.LogoutUser)
 		authRoutes.GET("/auth/users", controller.GetAllUsers)
+	}
+	gAuth := r.Group("", middleware.GoogleAuth())
+	{
+		gAuth.GET("/auth/:provider/login", controller.LoginGoogle)
+		gAuth.GET("/auth/:provider/callback", controller.CallbackGoogle)
 	}
 }
 
@@ -138,5 +145,25 @@ func setupProblemRoutes(r *gin.RouterGroup, controller *controllers.ProblemContr
 		problemRoutes.GET("/", controller.GetProblemLists)
 		problemRoutes.PUT("/:id", controller.UpdateProblem)
 		problemRoutes.DELETE("/:id", controller.DeleteProblemById)
+	}
+}
+
+func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.TransactionController) {
+	transactionRoutes := r.Group("/transactions")
+	{
+		transactionRoutes.POST("/payment", controller.CreatePayment)
+		transactionRoutes.GET("/payment-intent/:id", controller.GetPaymentIntentById)
+		transactionRoutes.POST("/send_email", controller.SendTransactionEmail)
+		transactionRoutes.POST("/transfer", controller.TransferToOrganizer)
+		transactionRoutes.GET("/payment-intent/confirm/:id", controller.ConfirmPaymentIntent)
+		transactionRoutes.GET("/is_paid", controller.IsPaid)
+	}
+}
+
+func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundController) {
+	refundRoutes := r.Group("/refunds")
+	{
+		refundRoutes.POST("/", controller.CreateRefund)
+		refundRoutes.POST("/email", controller.SendRefundEmail)
 	}
 }

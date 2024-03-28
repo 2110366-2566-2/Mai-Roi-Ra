@@ -8,12 +8,21 @@ import PersonIcon from "@mui/icons-material/Person";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import LoadingCircular from "./LoadingCircular";
+import showLoadingOverlay, { hideLoadingOverlay } from "./GlobalLoading";
 
 export default function MenuBar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
   console.log(pathname);
+
+  const handleClick = (path: string) => () => {
+    if (pathname != path) {
+      showLoadingOverlay();
+      router.push(path);
+    }
+  };
 
   return (
     <div
@@ -36,9 +45,7 @@ export default function MenuBar() {
             <div
               className={`px-4 py-2 flex cursor-pointer items-center w-full hover:bg-gray-200 
             ${pathname === "/homepage" ? "text-[#FFAE27]" : ""}`}
-              onClick={() => {
-                router.push("/homepage");
-              }}
+              onClick={handleClick("/homepage")}
             >
               <HomeIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
               Home
@@ -50,13 +57,12 @@ export default function MenuBar() {
               <NotificationsIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
               Notifications
             </div>
+
             {session ? (
               <div
                 className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
               ${pathname === "/profile" ? "text-[#FFAE27]" : ""}`}
-                onClick={() => {
-                  router.push("/profile");
-                }}
+                onClick={handleClick("/profile")}
               >
                 <PersonIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
                 Profile
@@ -67,9 +73,7 @@ export default function MenuBar() {
               className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200 ${
                 pathname === "/supportandservice" ? "text-[#FFAE27]" : ""
               }`}
-              onClick={() => {
-                router.push("/supportandservice");
-              }}
+              onClick={handleClick("/supportandservice")}
             >
               <SupportAgentIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
               Support and Service
@@ -80,7 +84,7 @@ export default function MenuBar() {
 
       <div className="p-4 flex justify-center">
         <button
-          className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] max-h-[150px] w-[70%]"
+          className="text-white rounded-full hover:bg-yellow-500 bg-[#F2D22E] h-[40px] max-h-[150px] w-[70%]"
           onClick={() => {
             session
               ? router.push("/auth/signout")

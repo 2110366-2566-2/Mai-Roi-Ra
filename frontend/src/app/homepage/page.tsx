@@ -14,12 +14,12 @@ export default async function Homepage({
       search : string | undefined}
 }) {
   const page = Number(searchParams.offset ?? '1');
-  const limit = Number(searchParams.limit ?? '2');
+  const limit = Number(searchParams.limit ?? '5');
   const search = searchParams.search ?? '';
 
   const session = await getServerSession(authOptions);
   console.log("successfully");
-  console.log(session);
+  // console.log(session);
 
   const waitingEvents = await getWaitingEvents();
   const waitingEventsDatas = waitingEvents.event_lists;

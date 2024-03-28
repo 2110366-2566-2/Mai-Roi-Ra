@@ -45,7 +45,7 @@ type LoginUserRequest struct {
 
 type LoginUserResponse struct {
 	UserId      string `json:"user_id"`
-	FirstName   string `json:"first_name" binding:"required"`
+	Username    string `json:"username"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	Token       string `json:"token"`
@@ -56,8 +56,6 @@ type LogoutUserRequest struct {
 	UserID string `json:"user_id" binding:"required"`
 	//Token  string
 
-}
-type LogoutUserResponse struct {
 }
 
 // email login
@@ -105,6 +103,7 @@ type RegisterEventRequest struct {
 	UserId         string `json:"user_id" binding:"required"`
 	EventId        string `json:"event_id" binding:"required"`
 	NumParticipant int    `json:"num_participant" binding:"required"`
+	Amount         int    `json:"amount" binding:"required"`
 }
 
 type CancelRegisterEventRequest struct {
@@ -170,4 +169,18 @@ type VerifyOTPRequest struct {
 
 type VerifyOTPResponse struct {
 	Verified bool `json:"verified"`
+}
+
+type UpdateUserRoleRequest struct {
+	UserId   string `json:"user_id" binding:"required"`
+	Username string `json:"username" binding:"required"`
+	Role     string `json:"role" binding:"required"`
+}
+
+type UserResponse struct {
+	Response string `json:"response"`
+}
+
+type GetUserVerificationStatusResponse struct {
+	IsVerified bool `json:"isVerified"`
 }
