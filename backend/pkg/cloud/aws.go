@@ -9,12 +9,12 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type awsService struct {
@@ -72,7 +72,7 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 		return "", err
 	}
 
-	uploadID := uuid.New().String()
+	uploadID := utils.GenerateUUID()
 
 	_, err = c.service.PutObject(&s3.PutObjectInput{
 		Body:        file,

@@ -64,7 +64,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 
 	eventImage := req.EventImage
 	eventModel := models.Event{
-		EventId:        utils.GenerateUUID(),
+		EventId:        req.EventId,
 		OrganizerId:    req.OrganizerId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,

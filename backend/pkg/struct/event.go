@@ -13,6 +13,7 @@ type CreateEventRequest struct {
 	LocationName   string  `json:"location_name" binding:"required"`
 	District       string  `json:"district" binding:"required"`
 	City           string  `json:"city" binding:"required"`
+	EventId        string  `json:"event_id"`
 }
 
 type CreateEventResponse struct {

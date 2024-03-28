@@ -90,6 +90,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 	}
 
 	req.EventImage, _ = Cloud.GetFileUrl(ctx, uploadId)
+	req.EventId = uploadId
 
 	log.Println("[CTRL: CreateEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.CreateEvent(req)
