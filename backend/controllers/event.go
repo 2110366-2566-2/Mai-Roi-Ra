@@ -66,7 +66,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 		Description:    ctx.Request.FormValue("description"),
 		LocationName:   ctx.Request.FormValue("location_name"),
 		ParticipantFee: float64(fee),
-		Status:         "Waiting",
+		Status:         constant.WAITING,
 	}
 
 	// S3
