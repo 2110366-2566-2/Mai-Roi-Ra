@@ -24,6 +24,7 @@ type RepositoryGateway struct {
 	OtpRepository          IOtpRepository
 	TransactionRepository  ITransactionRepository
 	RefundRepository	   IRefundRepository
+	PostRepository		   IPostRepository
 }
 
 // NewRepository ...

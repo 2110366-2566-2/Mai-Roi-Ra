@@ -47,6 +47,7 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 		setupProblemRoutes(groupRoutes, controller.Gateway.ProblemController)
 		setupTransactionRoutes(groupRoutes, controller.Gateway.TransactionController)
 		setupRefundRoutes(groupRoutes, controller.Gateway.RefundController)
+		setupPostRoutes(groupRoutes, controller.Gateway.PostController)
 	})
 
 	if err != nil {
@@ -165,5 +166,13 @@ func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundControl
 	{
 		refundRoutes.POST("/", controller.CreateRefund)
 		refundRoutes.POST("/email", controller.SendRefundEmail)
+	}
+}
+
+func setupPostRoutes(r *gin.RouterGroup, controller *controllers.PostController) {
+	postRoutes := r.Group("/posts")
+	{
+		postRoutes.POST("/", controller.CreatePost)
+		postRoutes.DELETE("/:id", controller.DeletePostById)
 	}
 }

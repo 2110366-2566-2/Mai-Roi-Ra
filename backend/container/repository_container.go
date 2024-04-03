@@ -52,6 +52,10 @@ func (c *Container) RepositoryProvider() {
 		c.Error = err
 	}
 
+	if err := c.Container.Provide(repositories.NewPostRepository); err != nil {
+		c.Error = err
+	}
+
 	if err := c.Container.Provide(repositories.NewRepository); err != nil {
 		c.Error = err
 	}
