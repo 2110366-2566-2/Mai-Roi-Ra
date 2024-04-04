@@ -38,11 +38,11 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 	}
 
 	return &st.GetPostByIdResponse{
-		PostId: req.PostId,
-		UserId: res.UserId,
-		EventId: res.EventId,
-		PostImage: res.PostImage,
-		Caption: res.Caption,
+		PostId:      req.PostId,
+		UserId:      res.UserId,
+		EventId:     res.EventId,
+		PostImage:   res.PostImage,
+		Caption:     res.Caption,
 		RatingScore: res.RatingScore,
 	}, nil
 }
@@ -59,11 +59,11 @@ func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest
 
 	for _, v := range postLists {
 		post := st.PostList{
-			PostId: v.PostId,
-			UserId: v.UserId,
-			EventId: v.EventId,
-			PostImage: v.PostImage,
-			Caption: v.Caption,
+			PostId:      v.PostId,
+			UserId:      v.UserId,
+			EventId:     v.EventId,
+			PostImage:   v.PostImage,
+			Caption:     v.Caption,
 			RatingScore: v.RatingScore,
 		}
 
@@ -76,14 +76,14 @@ func (s *PostService) CreatePost(req *st.CreatePostRequest) (*st.CreatePostRespo
 	log.Println("[Service: CreatePost]: Called")
 
 	postModel := models.Post{
-		PostId: utils.GenerateUUID(),
-		UserId: req.UserId,
-		EventId: req.EventId,
-		PostImage: req.PostImage,
-		Caption: req.Caption,
+		PostId:      utils.GenerateUUID(),
+		UserId:      req.UserId,
+		EventId:     req.EventId,
+		PostImage:   req.PostImage,
+		Caption:     req.Caption,
 		RatingScore: req.RatingScore,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	res, err := s.RepositoryGateway.PostRepository.CreatePost(&postModel)
@@ -101,4 +101,3 @@ func (s *PostService) DeletePostById(req *st.DeletePostRequest) (*st.DeletePostR
 	}
 	return res, nil
 }
-
