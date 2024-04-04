@@ -41,7 +41,6 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 		PostId:      req.PostId,
 		UserId:      res.UserId,
 		EventId:     res.EventId,
-		PostImage:   res.PostImage,
 		Caption:     res.Caption,
 		RatingScore: res.RatingScore,
 	}, nil
@@ -62,7 +61,6 @@ func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest
 			PostId:      v.PostId,
 			UserId:      v.UserId,
 			EventId:     v.EventId,
-			PostImage:   v.PostImage,
 			Caption:     v.Caption,
 			RatingScore: v.RatingScore,
 		}
@@ -79,7 +77,6 @@ func (s *PostService) CreatePost(req *st.CreatePostRequest) (*st.CreatePostRespo
 		PostId:      utils.GenerateUUID(),
 		UserId:      req.UserId,
 		EventId:     req.EventId,
-		PostImage:   req.PostImage,
 		Caption:     req.Caption,
 		RatingScore: req.RatingScore,
 		CreatedAt:   time.Now(),

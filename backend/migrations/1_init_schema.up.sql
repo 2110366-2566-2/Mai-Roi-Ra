@@ -117,7 +117,6 @@ CREATE TABLE IF NOT EXISTS posts (
     post_id VARCHAR(36) NOT NULL DEFAULT uuid_generate_v4(),
     user_id VARCHAR(36) NOT NULL,
     event_id VARCHAR(36) NOT NULL,
-    post_image VARCHAR(1024),
     caption VARCHAR(1000),
     rating_score INT NOT NULL CHECK (rating_score BETWEEN 1 AND 5),
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

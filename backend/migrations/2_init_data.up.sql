@@ -31,9 +31,9 @@ BEGIN
     ('550e8400-e29b-41d4-a716-446655440400', '550e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440300', '550e8400-e29b-41d4-a716-446655440108', '2024-03-01', '2024-03-05', 'Approved', 50.0, 6, 'Event description 1', 'Event 1', '2024-02-15', 'Entertainment', 'https://picsum.photos/200/300?random=6', CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Posts table
-    INSERT INTO posts (post_id, user_id, event_id, post_image, caption, rating_score, created_at, updated_at)
+    INSERT INTO posts (post_id, user_id, event_id, caption, rating_score, created_at, updated_at)
     VALUES 
-    ('550e8400-e29b-41d4-a716-446655440500', '550e8400-e29b-41d4-a716-446655440100', '550e8400-e29b-41d4-a716-446655440400', 'https://picsum.photos/200/300?random=7', 'Caption for post 1', 4, CURRENT_TIMESTAMP, NULL);
+    ('550e8400-e29b-41d4-a716-446655440500', '550e8400-e29b-41d4-a716-446655440100', '550e8400-e29b-41d4-a716-446655440400', 'Caption for post 1', 4, CURRENT_TIMESTAMP, NULL);
 
     -- Insert data into Responses table
     INSERT INTO responses (organizer_id, post_id, detail, created_at, updated_at)

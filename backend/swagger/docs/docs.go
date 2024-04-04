@@ -2467,9 +2467,6 @@ const docTemplate = `{
                 "post_id": {
                     "type": "string"
                 },
-                "post_image": {
-                    "type": "string"
-                },
                 "rating_score": {
                     "type": "integer",
                     "maximum": 5,
@@ -2734,9 +2731,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "event_id": {
-                    "type": "string"
-                },
-                "post_image": {
                     "type": "string"
                 },
                 "rating_score": {
@@ -3329,9 +3323,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "post_id": {
-                    "type": "string"
-                },
-                "post_image": {
                     "type": "string"
                 },
                 "rating_score": {

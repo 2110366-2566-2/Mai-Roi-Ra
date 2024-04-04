@@ -30,8 +30,8 @@ func (s *ResponseService) CreateResponse(req *st.CreateResponseRequest) (*st.Cre
 
 	ResponseModel := models.Response{
 		OrganizerId: req.OrganizerId,
-		PostId: req.PostId,
-		Detail: req.Detail,
+		PostId:      req.PostId,
+		Detail:      req.Detail,
 	}
 
 	res, err := s.RepositoryGateway.ResponseRepository.CreateResponse(&ResponseModel)

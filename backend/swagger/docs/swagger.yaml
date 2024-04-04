@@ -10,8 +10,6 @@ definitions:
         type: string
       post_id:
         type: string
-      post_image:
-        type: string
       rating_score:
         maximum: 5
         minimum: 1
@@ -193,8 +191,6 @@ definitions:
       caption:
         type: string
       event_id:
-        type: string
-      post_image:
         type: string
       rating_score:
         maximum: 5
@@ -592,8 +588,6 @@ definitions:
       event_id:
         type: string
       post_id:
-        type: string
-      post_image:
         type: string
       rating_score:
         type: integer
