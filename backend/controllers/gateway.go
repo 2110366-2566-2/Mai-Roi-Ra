@@ -22,6 +22,7 @@ type Gateway struct {
 	TransactionController  *TransactionController
 	RefundController	   *RefundController
 	PostController		   *PostController
+	ResponseController	   *ResponseController
 }
 
 // NewController ...

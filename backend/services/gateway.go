@@ -22,6 +22,7 @@ type ServiceGateway struct {
 	TransactionService  ITransactionService
 	RefundService       IRefundService
 	PostService			IPostService
+	ResponseService		IResponseService
 }
 
 // NewService ...

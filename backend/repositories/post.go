@@ -15,6 +15,8 @@ type PostRepository struct {
 }
 
 type IPostRepository interface {
+	GetPostById(postID string) (*models.Post, error)
+	GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, error)
 	CreatePost(req *models.Post) (*st.CreatePostResponse, error)
 	DeletePostById(req *st.DeletePostRequest) (*st.DeletePostResponse, error)
 }
@@ -25,6 +27,34 @@ func NewPostRepository(
 	return &PostRepository{
 		db: db,
 	}
+}
+
+func (repo *PostRepository) GetPostById(postID string) (*models.Post, error) {
+	log.Println("[Repo: GetPostById] Called")
+
+	var post models.Post
+	if err := repo.db.Where("post_id = ?", postID).First(&post).Error; err != nil {
+		log.Println("[Repo: GetPostById] Error finding post:", err)
+		return nil, err
+	}
+
+	return &post, nil
+}
+
+func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, error) {
+	log.Println("[Repo: GetPostListsByEventId] Called")
+
+	var posts []models.Post
+	query := repo.db
+	if req.EventId != "" {
+		query = query.Where(`event_id = ?`, req.EventId)
+	}
+
+	if err := query.Find(&posts).Error; err != nil {
+		log.Println("[Repo: GetPostListsByEventId] Error finding posts:", err)
+		return nil, err
+	}
+	return posts, nil
 }
 
 func (r *PostRepository) CreatePost(req *models.Post) (*st.CreatePostResponse, error) {
