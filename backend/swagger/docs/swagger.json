@@ -915,6 +915,181 @@
                 }
             }
         },
+        "/posts": {
+            "post": {
+                "description": "Create a new post with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Create a new post",
+                "parameters": [
+                    {
+                        "description": "CreatePost Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/events/{event_id}": {
+            "get": {
+                "description": "Get list of posts by EventId.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get list of posts by EventId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPostListsByEventIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{post_id}": {
+            "get": {
+                "description": "Get the details of a specific post by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get post detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "post_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Post"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a post with the specified ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Delete post by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "post_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.DeletePostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/problems": {
             "get": {
                 "description": "Get a list of problems filtered by status (Replied or Pending).",
@@ -1145,6 +1320,144 @@
                 }
             }
         },
+        "/refunds": {
+            "post": {
+                "description": "CreateRefund for user to initiate refund process",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "CreateRefund",
+                "parameters": [
+                    {
+                        "description": "Refund Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateRefundRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateRefundResponseList"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/refunds/email": {
+            "post": {
+                "description": "Send an email to the user about their refund",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refunds"
+                ],
+                "summary": "Send Refund Email",
+                "parameters": [
+                    {
+                        "description": "Send Refund Email Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.SendRefundEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/responses": {
+            "post": {
+                "description": "Create a new response with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "responses"
+                ],
+                "summary": "Create a new response",
+                "parameters": [
+                    {
+                        "description": "CreateResponse Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateResponseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateResponseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Get a test message",
@@ -1168,9 +1481,9 @@
                 }
             }
         },
-        "/test/qr": {
+        "/transactions/is_paid": {
             "get": {
-                "description": "Get a test message",
+                "description": "Determine that whether the user has paid in this events",
                 "consumes": [
                     "application/json"
                 ],
@@ -1178,14 +1491,120 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "transactions"
                 ],
-                "summary": "TestCreatePromptPayPayment",
+                "summary": "IsPaid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "$ref": "#/definitions/structure.IsPaidResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
                             "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment": {
+            "post": {
+                "description": "CreatePayment for user to pay (1: card, 2: PromptPay)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "CreatePayment",
+                "parameters": [
+                    {
+                        "description": "Get PromptPay",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePaymentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/payment-intent/confirm/{id}": {
+            "get": {
+                "description": "Retrieve details of a payment intent by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Retrieve Payment Intent by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Intent ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
                         }
                     },
                     "400": {
@@ -1247,9 +1666,9 @@
                 }
             }
         },
-        "/transactions/qr": {
+        "/transactions/send_email": {
             "post": {
-                "description": "CreateQRPromptPay for user to pay",
+                "description": "Sends a transaction email to the specified user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1259,23 +1678,63 @@
                 "tags": [
                     "transactions"
                 ],
-                "summary": "CreateQRPromptPay",
+                "summary": "Send Transaction Email",
                 "parameters": [
                     {
-                        "description": "Get PromptPay",
+                        "description": "Send Transaction Email Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/structure.CreateQRPromptPayRequest"
+                            "$ref": "#/definitions/structure.SendTransactionEmailRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Transaction email successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.TransactionResponse"
+                            "$ref": "#/definitions/structure.SendTransactionEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - error in sending the transaction email",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/transfer": {
+            "post": {
+                "description": "Transfer the specified amount of money to the organizer's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Transfer money to organizer",
+                "parameters": [
+                    {
+                        "description": "Transfer to Organizer",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.TransferToOrganizerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/models.Transaction"
                         }
                     },
                     "400": {
@@ -1609,6 +2068,56 @@
                 }
             }
         },
+        "/users/verification_status": {
+            "get": {
+                "description": "Get the verification status of a user by their email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get User Verification Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the verification status of the user.",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "404": {
+                        "description": "User Not Found",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/verify_otp": {
             "put": {
                 "description": "Verifies the OTP entered by the user.",
@@ -1932,6 +2441,39 @@
         }
     },
     "definitions": {
+        "models.Post": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "post_id",
+                "user_id"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                },
+                "rating_score": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Problem": {
             "type": "object",
             "required": [
@@ -1958,6 +2500,44 @@
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Transaction": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "status",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "transaction_way": {
                     "type": "string"
                 },
                 "updated_at": {
@@ -2110,6 +2690,64 @@
                 }
             }
         },
+        "structure.CreatePaymentRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "payment_type",
+                "transaction_amount",
+                "user_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "payment_type": {
+                    "type": "integer"
+                },
+                "transaction_amount": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreatePostRequest": {
+            "type": "object",
+            "required": [
+                "caption",
+                "event_id",
+                "user_id"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "rating_score": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreatePostResponse": {
+            "type": "object",
+            "required": [
+                "post_id"
+            ],
+            "properties": {
+                "post_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateProblemRequest": {
             "type": "object",
             "required": [
@@ -2149,17 +2787,54 @@
                 }
             }
         },
-        "structure.CreateQRPromptPayRequest": {
+        "structure.CreateRefundRequest": {
             "type": "object",
             "required": [
-                "transaction_amount",
-                "user_id"
+                "event_id",
+                "refund_reason"
             ],
             "properties": {
-                "transaction_amount": {
-                    "type": "number"
+                "event_id": {
+                    "type": "string"
                 },
-                "user_id": {
+                "refund_reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateRefundResponseList": {
+            "type": "object",
+            "properties": {
+                "refund_id_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "structure.CreateResponseRequest": {
+            "type": "object",
+            "required": [
+                "organizer_id",
+                "post_id"
+            ],
+            "properties": {
+                "detail": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateResponseResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -2219,6 +2894,14 @@
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.DeletePostResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -2400,6 +3083,12 @@
                 "currency": {
                     "type": "string"
                 },
+                "eventId": {
+                    "type": "string"
+                },
+                "numParticipants": {
+                    "type": "integer"
+                },
                 "paymentClientSecret": {
                     "type": "string"
                 },
@@ -2411,6 +3100,20 @@
                 },
                 "transactionAmount": {
                     "type": "number"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.GetPostListsByEventIdResponse": {
+            "type": "object",
+            "properties": {
+                "post_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.PostList"
+                    }
                 }
             }
         },
@@ -2433,6 +3136,17 @@
                     "items": {
                         "$ref": "#/definitions/structure.SearchHistory"
                     }
+                }
+            }
+        },
+        "structure.IsPaidResponse": {
+            "type": "object",
+            "required": [
+                "is_paid"
+            ],
+            "properties": {
+                "is_paid": {
+                    "type": "boolean"
                 }
             }
         },
@@ -2593,6 +3307,26 @@
                 }
             }
         },
+        "structure.PostList": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                },
+                "rating_score": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.ProblemList": {
             "type": "object",
             "properties": {
@@ -2739,6 +3473,22 @@
                 }
             }
         },
+        "structure.SendRefundEmailRequest": {
+            "type": "object",
+            "properties": {
+                "refund_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendRefundEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.SendRegisteredEmailRequest": {
             "type": "object",
             "properties": {
@@ -2795,6 +3545,34 @@
                 }
             }
         },
+        "structure.SendTransactionEmailRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.SendTransactionEmailResponse": {
+            "type": "object",
+            "properties": {
+                "send_status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.TestResponse": {
             "type": "object",
             "properties": {
@@ -2807,6 +3585,22 @@
             "type": "object",
             "properties": {
                 "response": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.TransferToOrganizerRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "organizer_id"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "description": "This is the system user ID of the organizer",
                     "type": "string"
                 }
             }

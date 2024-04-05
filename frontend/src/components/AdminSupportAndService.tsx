@@ -1,9 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import ProblemItem from "./ProblemItem";
-// Other imports...
+import AdminProblemList from "./AdminProblemList";
+import ProblemList from "./ProblemList";
 
-export default function AdminSupportAndService() {
+interface Props {
+  pendingDatas: any[];
+  repliedDatas: any[];
+}
+
+export default function AdminSupportAndService({
+  pendingDatas,
+  repliedDatas,
+}: Props) {
   const [activeTab, setActiveTab] = useState("Problem");
 
   const handleTabClick = (tab: string) => {
@@ -13,7 +21,7 @@ export default function AdminSupportAndService() {
   return (
     <div className="bg-white text-black h-full">
       <div className="lg:mr-24 border-r border-b bg-white">
-        <div className="w-full text-2xl pt-20">
+        <div className="w-full text-2xl pt-20 border-b">
           {["Problem", "Replied"].map((tabName) => (
             <button
               key={tabName}
@@ -40,9 +48,12 @@ export default function AdminSupportAndService() {
             </button>
           ))}
         </div>
-      </div>
-      <div className="my-8 px-4 lg:px-10">
-        <ProblemItem></ProblemItem>
+        {activeTab == "Problem" && (
+          <AdminProblemList datas={pendingDatas}></AdminProblemList>
+        )}
+        {activeTab == "Replied" && (
+          <AdminProblemList datas={repliedDatas}></AdminProblemList>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,28 @@
 basePath: /api/v1
 definitions:
+  models.Post:
+    properties:
+      caption:
+        type: string
+      created_at:
+        type: string
+      event_id:
+        type: string
+      post_id:
+        type: string
+      rating_score:
+        maximum: 5
+        minimum: 1
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    required:
+    - event_id
+    - post_id
+    - user_id
+    type: object
   models.Problem:
     properties:
       admin_username:
@@ -22,6 +45,32 @@ definitions:
         type: string
     required:
     - problem_id
+    - user_id
+    type: object
+  models.Transaction:
+    properties:
+      created_at:
+        type: string
+      event_id:
+        type: string
+      status:
+        type: string
+      transaction_amount:
+        type: number
+      transaction_date:
+        type: string
+      transaction_id:
+        type: string
+      transaction_way:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    required:
+    - event_id
+    - status
+    - transaction_amount
     - user_id
     type: object
   models.User:
@@ -121,6 +170,46 @@ definitions:
       event_id:
         type: string
     type: object
+  structure.CreatePaymentRequest:
+    properties:
+      event_id:
+        type: string
+      payment_type:
+        type: integer
+      transaction_amount:
+        type: number
+      user_id:
+        type: string
+    required:
+    - event_id
+    - payment_type
+    - transaction_amount
+    - user_id
+    type: object
+  structure.CreatePostRequest:
+    properties:
+      caption:
+        type: string
+      event_id:
+        type: string
+      rating_score:
+        maximum: 5
+        minimum: 1
+        type: integer
+      user_id:
+        type: string
+    required:
+    - caption
+    - event_id
+    - user_id
+    type: object
+  structure.CreatePostResponse:
+    properties:
+      post_id:
+        type: string
+    required:
+    - post_id
+    type: object
   structure.CreateProblemRequest:
     properties:
       description:
@@ -147,15 +236,39 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.CreateQRPromptPayRequest:
+  structure.CreateRefundRequest:
     properties:
-      transaction_amount:
-        type: number
-      user_id:
+      event_id:
+        type: string
+      refund_reason:
         type: string
     required:
-    - transaction_amount
-    - user_id
+    - event_id
+    - refund_reason
+    type: object
+  structure.CreateRefundResponseList:
+    properties:
+      refund_id_list:
+        items:
+          type: string
+        type: array
+    type: object
+  structure.CreateResponseRequest:
+    properties:
+      detail:
+        type: string
+      organizer_id:
+        type: string
+      post_id:
+        type: string
+    required:
+    - organizer_id
+    - post_id
+    type: object
+  structure.CreateResponseResponse:
+    properties:
+      message:
+        type: string
     type: object
   structure.CreateUserRequest:
     properties:
@@ -197,6 +310,11 @@ definitions:
         type: string
     required:
     - user_id
+    type: object
+  structure.DeletePostResponse:
+    properties:
+      message:
+        type: string
     type: object
   structure.GetAllUsersResponse:
     properties:
@@ -314,6 +432,10 @@ definitions:
     properties:
       currency:
         type: string
+      eventId:
+        type: string
+      numParticipants:
+        type: integer
       paymentClientSecret:
         type: string
       paymentIntentId:
@@ -322,6 +444,15 @@ definitions:
         type: string
       transactionAmount:
         type: number
+      userId:
+        type: string
+    type: object
+  structure.GetPostListsByEventIdResponse:
+    properties:
+      post_lists:
+        items:
+          $ref: '#/definitions/structure.PostList'
+        type: array
     type: object
   structure.GetProblemListsResponse:
     properties:
@@ -336,6 +467,13 @@ definitions:
         items:
           $ref: '#/definitions/structure.SearchHistory'
         type: array
+    type: object
+  structure.IsPaidResponse:
+    properties:
+      is_paid:
+        type: boolean
+    required:
+    - is_paid
     type: object
   structure.IsRegisteredResponse:
     properties:
@@ -443,6 +581,19 @@ definitions:
     - location_name
     - start_date
     type: object
+  structure.PostList:
+    properties:
+      caption:
+        type: string
+      event_id:
+        type: string
+      post_id:
+        type: string
+      rating_score:
+        type: integer
+      user_id:
+        type: string
+    type: object
   structure.ProblemList:
     properties:
       admin_username:
@@ -538,6 +689,16 @@ definitions:
       message:
         type: string
     type: object
+  structure.SendRefundEmailRequest:
+    properties:
+      refund_id:
+        type: string
+    type: object
+  structure.SendRefundEmailResponse:
+    properties:
+      send_status:
+        type: string
+    type: object
   structure.SendRegisteredEmailRequest:
     properties:
       event_id:
@@ -574,6 +735,24 @@ definitions:
       announce_status:
         type: string
     type: object
+  structure.SendTransactionEmailRequest:
+    properties:
+      amount:
+        type: number
+      event_id:
+        type: string
+      transaction_date:
+        type: string
+      transaction_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  structure.SendTransactionEmailResponse:
+    properties:
+      send_status:
+        type: string
+    type: object
   structure.TestResponse:
     properties:
       message:
@@ -583,6 +762,17 @@ definitions:
     properties:
       response:
         type: string
+    type: object
+  structure.TransferToOrganizerRequest:
+    properties:
+      event_id:
+        type: string
+      organizer_id:
+        description: This is the system user ID of the organizer
+        type: string
+    required:
+    - event_id
+    - organizer_id
     type: object
   structure.UpdateEventRequest:
     properties:
@@ -1314,6 +1504,121 @@ paths:
       summary: IsRegistered
       tags:
       - participates
+  /posts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new post with the provided details.
+      parameters:
+      - description: CreatePost Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreatePostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create a new post
+      tags:
+      - posts
+  /posts/{post_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a post with the specified ID.
+      parameters:
+      - description: Post ID
+        in: path
+        name: post_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.DeletePostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Delete post by ID
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a specific post by its ID.
+      parameters:
+      - description: Post ID
+        in: path
+        name: post_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get post detail
+      tags:
+      - posts
+  /posts/events/{event_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get list of posts by EventId.
+      parameters:
+      - description: event_id
+        in: query
+        name: event_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetPostListsByEventIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get list of posts by EventId
+      tags:
+      - posts
   /problems:
     get:
       consumes:
@@ -1466,6 +1771,96 @@ paths:
       summary: Update existing problem
       tags:
       - problems
+  /refunds:
+    post:
+      consumes:
+      - application/json
+      description: CreateRefund for user to initiate refund process
+      parameters:
+      - description: Refund Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateRefundRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreateRefundResponseList'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: CreateRefund
+      tags:
+      - refunds
+  /refunds/email:
+    post:
+      consumes:
+      - application/json
+      description: Send an email to the user about their refund
+      parameters:
+      - description: Send Refund Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendRefundEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.SendRefundEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Send Refund Email
+      tags:
+      - refunds
+  /responses:
+    post:
+      consumes:
+      - application/json
+      description: Create a new response with the provided details.
+      parameters:
+      - description: CreateResponse Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreateResponseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.CreateResponseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create a new response
+      tags:
+      - responses
   /test:
     get:
       consumes:
@@ -1481,18 +1876,29 @@ paths:
       summary: GetTest
       tags:
       - Test
-  /test/qr:
+  /transactions/is_paid:
     get:
       consumes:
       - application/json
-      description: Get a test message
+      description: Determine that whether the user has paid in this events
+      parameters:
+      - description: organizer_id
+        in: query
+        name: organizer_id
+        required: true
+        type: string
+      - description: event_id
+        in: query
+        name: event_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: object
+            $ref: '#/definitions/structure.IsPaidResponse'
         "400":
           description: Bad Request
           schema:
@@ -1501,9 +1907,39 @@ paths:
           description: Internal Server Error
           schema:
             type: object
-      summary: TestCreatePromptPayPayment
+      summary: IsPaid
       tags:
-      - Test
+      - transactions
+  /transactions/payment:
+    post:
+      consumes:
+      - application/json
+      description: 'CreatePayment for user to pay (1: card, 2: PromptPay)'
+      parameters:
+      - description: Get PromptPay
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.CreatePaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: CreatePayment
+      tags:
+      - transactions
   /transactions/payment-intent/{id}:
     get:
       consumes:
@@ -1533,25 +1969,24 @@ paths:
       summary: Retrieve Payment Intent by ID
       tags:
       - transactions
-  /transactions/qr:
-    post:
+  /transactions/payment-intent/confirm/{id}:
+    get:
       consumes:
       - application/json
-      description: CreateQRPromptPay for user to pay
+      description: Retrieve details of a payment intent by its ID
       parameters:
-      - description: Get PromptPay
-        in: body
-        name: request
+      - description: Payment Intent ID
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/structure.CreateQRPromptPayRequest'
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: success
           schema:
-            $ref: '#/definitions/structure.TransactionResponse'
+            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
         "400":
           description: Bad Request
           schema:
@@ -1560,7 +1995,63 @@ paths:
           description: Internal Server Error
           schema:
             type: object
-      summary: CreateQRPromptPay
+      summary: Retrieve Payment Intent by ID
+      tags:
+      - transactions
+  /transactions/send_email:
+    post:
+      consumes:
+      - application/json
+      description: Sends a transaction email to the specified user.
+      parameters:
+      - description: Send Transaction Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.SendTransactionEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaction email successfully sent
+          schema:
+            $ref: '#/definitions/structure.SendTransactionEmailResponse'
+        "400":
+          description: Bad request - error in sending the transaction email
+          schema:
+            type: object
+      summary: Send Transaction Email
+      tags:
+      - transactions
+  /transactions/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Transfer the specified amount of money to the organizer's account
+      parameters:
+      - description: Transfer to Organizer
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/structure.TransferToOrganizerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Transfer money to organizer
       tags:
       - transactions
   /users:
@@ -1923,6 +2414,39 @@ paths:
           schema:
             type: object
       summary: Update User Role
+      tags:
+      - users
+  /users/verification_status:
+    get:
+      consumes:
+      - application/json
+      description: Get the verification status of a user by their email.
+      parameters:
+      - description: User Email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the verification status of the user.
+          schema:
+            type: boolean
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "404":
+          description: User Not Found
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get User Verification Status
       tags:
       - users
   /users/verify_otp:

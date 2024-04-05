@@ -33,6 +33,7 @@ const SignInHandleSubmit = async (
     setPassword("");
     setIsLoading(false);
     console.log("Error: Not a phone number or email address format");
+    return;
   }
 
   // Check User Input
@@ -42,6 +43,7 @@ const SignInHandleSubmit = async (
     setPassword("");
     setIsLoading(false);
     console.log("Error: Please fill in your phone number or email address");
+    return;
   }
 
   // Check Password Input
@@ -51,6 +53,16 @@ const SignInHandleSubmit = async (
     setPassword("");
     setIsLoading(false);
     console.log("Error: Please fill in your password");
+    return;
+  }
+
+  if (password.length < 6) {
+    setErrorPassword(2);
+    setError(true);
+    setPassword("");
+    setIsLoading(false);
+    console.log("Error: Password too short");
+    return;
   }
 
   // Check Error
@@ -58,28 +70,6 @@ const SignInHandleSubmit = async (
     setIsLoading(false);
     return;
   }
-
-  // Check Authorization For Username And Password
-  // else {
-  //   try {
-  //     const result = await signIn("credentials",{
-  //       username : user,
-  //       password : password,
-  //       redirect: true,
-  //       callbackUrl: "/",
-  //     });
-
-  //     window.location.href = result?.callbackUrl;
-  //   } catch (error) {
-  //     setError(true);
-  //     setPassword("");
-  //     setErrorPassword(2);
-  //     console.error("Sign in failed,error");
-  //   }
-
-  // Your authentication logic here
-  // For example, you can use the signIn function from next-auth/react
-  // and handle the redirect or error accordingly
 
   try {
     const res = await signIn("credentials", {
@@ -96,6 +86,7 @@ const SignInHandleSubmit = async (
       return;
     }
     router.replace("/homepage");
+    router.refresh();
     // I don't know how to fix this one but this works
     // setTimeout(() => {
     //   window.location.reload();

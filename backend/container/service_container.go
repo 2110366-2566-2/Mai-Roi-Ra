@@ -41,6 +41,18 @@ func (c *Container) ServiceProvider() {
 		c.Error = err
 	}
 
+	if err := c.Container.Provide(services.NewRefundService); err != nil {
+		c.Error = err
+	}
+
+	if err := c.Container.Provide(services.NewPostService); err != nil {
+		c.Error = err
+	}
+
+	if err := c.Container.Provide(services.NewResponseService); err != nil {
+		c.Error = err
+	}
+
 	if err := c.Container.Provide(cloud.NewAWSCloudService); err != nil {
 		c.Error = err
 	}
