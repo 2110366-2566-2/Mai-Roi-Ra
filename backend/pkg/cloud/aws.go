@@ -9,7 +9,6 @@ import (
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -64,7 +63,7 @@ func NewAWSCloudService(bucket string) *awsService {
 	return res
 }
 
-func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader) (string, error) {
+func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader, id string) (string, error) {
 	log.Println("[Service: awsService]: Called")
 	file, err := fileHeader.Open()
 	if err != nil {
@@ -72,12 +71,10 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 		return "", err
 	}
 
-	uploadID := utils.GenerateUUID()
-
 	_, err = c.service.PutObject(&s3.PutObjectInput{
 		Body:        file,
 		Bucket:      aws.String(c.bucketName),
-		Key:         aws.String(uploadID),
+		Key:         aws.String(id),
 		ContentType: aws.String("image/jpeg"),
 	})
 	if err != nil {
@@ -85,14 +82,9 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 		return "", err
 	}
 
-	return uploadID, nil
-}
-
-func (c *awsService) GetFileUrl(ctx context.Context, uploadID string) (string, error) {
-
 	req, _ := c.service.GetObjectRequest(&s3.GetObjectInput{
 		Bucket: aws.String(c.bucketName),
-		Key:    aws.String(uploadID),
+		Key:    aws.String(id),
 	})
 
 	url, err := req.Presign(filePreSignExpireDuration)
@@ -102,4 +94,36 @@ func (c *awsService) GetFileUrl(ctx context.Context, uploadID string) (string, e
 	}
 
 	return url, nil
+}
+
+// func (c *awsService) GetFileUrl(ctx context.Context, uploadID string) (string, error) {
+
+// 	req, _ := c.service.GetObjectRequest(&s3.GetObjectInput{
+// 		Bucket: aws.String(c.bucketName),
+// 		Key:    aws.String(uploadID),
+// 	})
+
+// 	url, err := req.Presign(filePreSignExpireDuration)
+// 	if err != nil {
+// 		log.Println("Error open file", err)
+// 		return "", err
+// 	}
+
+// 	return url, nil
+// }
+
+func (c *awsService) DeleteFile(ctx *gin.Context, uploadID string) error {
+	log.Println("[Service: awsService]: Called to delete file with ID:", uploadID)
+
+	_, err := c.service.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(c.bucketName),
+		Key:    aws.String(uploadID),
+	})
+	if err != nil {
+		log.Println("Error deleting file", err)
+		return err
+	}
+
+	log.Println("File deleted successfully")
+	return nil
 }

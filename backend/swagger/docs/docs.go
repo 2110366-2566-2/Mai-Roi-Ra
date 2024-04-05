@@ -576,7 +576,7 @@ const docTemplate = `{
             "put": {
                 "description": "Update an existing event with the provided details.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -594,13 +594,70 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Update Event Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.UpdateEventRequest"
-                        }
+                        "type": "string",
+                        "description": "Name of the event",
+                        "name": "event_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Activity of the event",
+                        "name": "activities",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "City of the event",
+                        "name": "city",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "description for the event",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "district of the event",
+                        "name": "district",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "start_date",
+                        "name": "start_date",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "end date",
+                        "name": "end_date",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Event image",
+                        "name": "event_image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "location name",
+                        "name": "location_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "participant fee",
+                        "name": "participant_fee",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "status of the event",
+                        "name": "status",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -3266,59 +3323,6 @@ const docTemplate = `{
                 },
                 "organizer_id": {
                     "description": "This is the system user ID of the organizer",
-                    "type": "string"
-                }
-            }
-        },
-        "structure.UpdateEventRequest": {
-            "type": "object",
-            "required": [
-                "activities",
-                "city",
-                "description",
-                "district",
-                "end_date",
-                "event_name",
-                "location_name",
-                "participant_fee",
-                "start_date",
-                "status"
-            ],
-            "properties": {
-                "activities": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "district": {
-                    "type": "string"
-                },
-                "end_date": {
-                    "type": "string"
-                },
-                "event_id": {
-                    "type": "string"
-                },
-                "event_image": {
-                    "type": "string"
-                },
-                "event_name": {
-                    "type": "string"
-                },
-                "location_name": {
-                    "type": "string"
-                },
-                "participant_fee": {
-                    "type": "number"
-                },
-                "start_date": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 }
             }

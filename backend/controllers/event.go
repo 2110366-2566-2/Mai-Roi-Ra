@@ -67,6 +67,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 		LocationName:   ctx.Request.FormValue("location_name"),
 		ParticipantFee: float64(fee),
 		Status:         constant.WAITING,
+		EventId:        utils.GenerateUUID(),
 	}
 
 	// S3
@@ -83,14 +84,13 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 
 	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
-	uploadId, uploadErr := Cloud.SaveFile(ctx, fileHeader)
+	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, req.EventId)
 	if err != nil {
 		log.Println("[CTRL: CreateEvent] Called SaveFile to S3 Error: ", uploadErr)
 		return
 	}
 
-	req.EventImage, _ = Cloud.GetFileUrl(ctx, uploadId)
-	req.EventId = uploadId
+	req.EventImage = url
 
 	log.Println("[CTRL: CreateEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.CreateEvent(req)
@@ -106,21 +106,76 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 // @Summary Update existing event
 // @Description Update an existing event with the provided details.
 // @Tags events
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
 // @Param event_id path string true "Event ID" example:"event123"
-// @Param request body structure.UpdateEventRequest true "Update Event Request"
+// @Param event_name formData string false "Name of the event"
+// @Param activities formData string false "Activity of the event" Enum ("Entertainment", "Exercise", "Volunteer", "Meditation", "Cooking")
+// @Param city formData string false "City of the event"
+// @Param description formData string false "description for the event"
+// @Param district formData string false "district of the event"
+// @Param start_date formData string false "start_date"
+// @Param end_date formData string false "end date"
+// @Param event_image formData file false "Event image"
+// @Param location_name formData string false "location name"
+// @Param participant_fee formData string false "participant fee"
+// @Param status formData string false "status of the event" Enum ("Approved", "Rejected", "Waiting", "Deleted")
 // @Success 200 {object} structure.UpdateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [put]
 func (c *EventController) UpdateEvent(ctx *gin.Context) {
-	var req *st.UpdateEventRequest
-	if err := ctx.BindJSON(&req); err != nil {
+	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	fee, _ := strconv.Atoi(ctx.Request.FormValue("participant_fee"))
+
+	req := &st.UpdateEventRequest{
+		Activities:     ctx.Request.FormValue("activities"),
+		City:           ctx.Request.FormValue("city"),
+		District:       ctx.Request.FormValue("district"),
+		StartDate:      ctx.Request.FormValue("start_date"),
+		EndDate:        ctx.Request.FormValue("end_date"),
+		EventName:      ctx.Request.FormValue("event_name"),
+		Description:    ctx.Request.FormValue("description"),
+		LocationName:   ctx.Request.FormValue("location_name"),
+		ParticipantFee: float64(fee),
+		Status:         ctx.Request.FormValue("status"),
+	}
+
 	req.EventId = ctx.Param("id")
+
+	// S3
+	fileHeader, err := ctx.FormFile("event_image")
+	if err != nil {
+		log.Println("[CTRL: CreateEvent] Called and read header failed: ", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	if utils.IsNilHeader(fileHeader) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "FileHeader Is nil"})
+	}
+	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
+	log.Println("FILEHEADER: ", fileHeader.Header)
+
+	// delete the existing image in the bucket
+	deleteErr := Cloud.DeleteFile(ctx, req.EventId)
+	if deleteErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
+	}
+
+	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, req.EventId)
+	if uploadErr != nil {
+		log.Println("[CTRL: CreateEvent] Called SaveFile to S3 Error: ", uploadErr)
+		return
+	}
+
+	req.EventImage = url
+
 	log.Println("[CTRL: UpdateEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
 	if err != nil {

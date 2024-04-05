@@ -10,6 +10,7 @@ import (
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	_ "github.com/2110366-2566-2/Mai-Roi-Ra/backend/swagger/docs" // Import the auto-generated docs file
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -69,9 +70,12 @@ func (c *TestController) TestUpload(ctx *gin.Context) {
 		log.Println("HELLO YEYEY: filHeader is nil or filHeader.Header is nil")
 		return
 	}
+
+	id := utils.GenerateUUID()
+
 	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
-	uploadId, err := Cloud.SaveFile(ctx, fileHeader)
+	url, err := Cloud.SaveFile(ctx, fileHeader, id)
 
 	if err != nil {
 		log.Println("[CTRL: TestUpload] Called and save file failed: ", err)
@@ -79,12 +83,6 @@ func (c *TestController) TestUpload(ctx *gin.Context) {
 		return
 	}
 
-	url, err := Cloud.GetFileUrl(ctx, uploadId)
-	if err != nil {
-		log.Println("[CTRL: TestUpload] Called and get file failed: ", err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		return
-	}
 	log.Println(url)
 
 	ctx.JSON(http.StatusOK, gin.H{
