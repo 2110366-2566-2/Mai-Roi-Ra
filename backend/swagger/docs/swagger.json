@@ -1040,6 +1040,181 @@
                 }
             }
         },
+        "/posts": {
+            "post": {
+                "description": "Create a new post with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Create a new post",
+                "parameters": [
+                    {
+                        "description": "CreatePost Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreatePostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/events/{event_id}": {
+            "get": {
+                "description": "Get list of posts by EventId.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get list of posts by EventId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetPostListsByEventIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{post_id}": {
+            "get": {
+                "description": "Get the details of a specific post by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get post detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "post_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Post"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a post with the specified ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Delete post by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "post_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.DeletePostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/problems": {
             "get": {
                 "description": "Get a list of problems filtered by status (Replied or Pending).",
@@ -1345,6 +1520,52 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.SendRefundEmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/responses": {
+            "post": {
+                "description": "Create a new response with the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "responses"
+                ],
+                "summary": "Create a new response",
+                "parameters": [
+                    {
+                        "description": "CreateResponse Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateResponseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.CreateResponseResponse"
                         }
                     },
                     "400": {
@@ -2345,6 +2566,39 @@
         }
     },
     "definitions": {
+        "models.Post": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "post_id",
+                "user_id"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                },
+                "rating_score": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Problem": {
             "type": "object",
             "required": [
@@ -2529,6 +2783,41 @@
                 }
             }
         },
+        "structure.CreatePostRequest": {
+            "type": "object",
+            "required": [
+                "caption",
+                "event_id",
+                "user_id"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "rating_score": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreatePostResponse": {
+            "type": "object",
+            "required": [
+                "post_id"
+            ],
+            "properties": {
+                "post_id": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateProblemRequest": {
             "type": "object",
             "required": [
@@ -2594,6 +2883,32 @@
                 }
             }
         },
+        "structure.CreateResponseRequest": {
+            "type": "object",
+            "required": [
+                "organizer_id",
+                "post_id"
+            ],
+            "properties": {
+                "detail": {
+                    "type": "string"
+                },
+                "organizer_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.CreateResponseResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -2649,6 +2964,14 @@
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.DeletePostResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -2853,6 +3176,17 @@
                 }
             }
         },
+        "structure.GetPostListsByEventIdResponse": {
+            "type": "object",
+            "properties": {
+                "post_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.PostList"
+                    }
+                }
+            }
+        },
         "structure.GetProblemListsResponse": {
             "type": "object",
             "properties": {
@@ -3039,6 +3373,26 @@
                     "type": "string"
                 },
                 "start_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.PostList": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "string"
+                },
+                "rating_score": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
