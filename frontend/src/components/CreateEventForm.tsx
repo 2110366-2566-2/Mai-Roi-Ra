@@ -14,6 +14,7 @@ import BackupIcon from '@mui/icons-material/Backup';
 import HandleCreateEvent from "./organizer/HandleCreateEvent";
 import { useSession } from "next-auth/react";
 import EditIcon from '@mui/icons-material/Edit';
+import LoadingCircular from "./LoadingCircular";
 
 const CreateEventForm = () => {
     const session = useSession()
@@ -21,6 +22,7 @@ const CreateEventForm = () => {
     console.log(user);
     const isMobile = useMediaQuery('(max-width:768px)');
 
+    const [loading,setLoading] = useState(false);
     const [startDate,setStartDate] = useState<Dayjs | null>(null);
     const [endDate,setEndDate] = useState<Dayjs | null>(null);
     const router = useRouter();
@@ -36,6 +38,33 @@ const CreateEventForm = () => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
     const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        const createEvent = async () => {
+            if (loading) {
+                if (!selectedImage || !price) return;
+                const startTmp = dayjs(startDate);
+                const endTmp = dayjs(endDate);
+                const formData = new FormData();
+                formData.append('event_name', name);
+                formData.append('activities', activity);
+                formData.append('city', province);
+                formData.append('description', description);
+                formData.append('district', district);
+                formData.append('start_date', startTmp.format('YYYY/MM/DD'));
+                formData.append('end_date', endTmp.format('YYYY/MM/DD'));
+                formData.append('event_image', selectedImage);
+                formData.append('location_name', location);
+                formData.append('organizer_id', user?.organizer_id);
+                formData.append('participant_fee', price.toString());
+                console.log(formData);
+                await HandleCreateEvent(formData,user.token);
+                setShowModal(true);
+                setLoading(false);
+            }
+        };
+        createEvent();
+    }, [loading]);
 
     const triggerFileInput = () => {
         if (fileInputRef.current) {
@@ -91,21 +120,7 @@ const CreateEventForm = () => {
             
             if (user) {
                 if (!selectedImage || !price) return;
-                    const formData = new FormData();
-                    formData.append('event_name', name);
-                    formData.append('activities', activity);
-                    formData.append('city', province);
-                    formData.append('description', description);
-                    formData.append('district', district);
-                    formData.append('start_date', startTmp.format('YYYY/MM/DD'));
-                    formData.append('end_date', endTmp.format('YYYY/MM/DD'));
-                    formData.append('event_image', selectedImage);
-                    formData.append('location_name', location);
-                    formData.append('organizer_id', user?.organizer_id);
-                    formData.append('participant_fee', price.toString());
-                    console.log(formData);
-                    await HandleCreateEvent(formData,user.token);
-                    setShowModal(true);
+                setLoading(true);
             } 
         } catch (err) {
             setError("Create Failed. Please check the constraint");
@@ -362,6 +377,11 @@ const CreateEventForm = () => {
                 </div>
                 <SuccessModal topic="Event Created" isVisible={showModal}/>
             </form>
+            {loading &&
+                <div className={`w-screen z-30 h-screen fixed inset-0 top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>
+                    <LoadingCircular></LoadingCircular>
+                </div>
+            }
         </div>
     )
 }

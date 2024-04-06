@@ -1,7 +1,7 @@
 'use client'
 import styles from "@/styles/FontPage.module.css"
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { FormControl, InputLabel, MenuItem, Select, useMediaQuery } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
@@ -10,6 +10,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import EditIcon from '@mui/icons-material/Edit';
 import Image from "next/image";
+import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
+import LoadingCircular from "./LoadingCircular";
 
 interface Props {
     Id:string
@@ -22,16 +24,16 @@ interface Props {
     District:string,
     Province:string,
     Description:string,
-    ImgSrc:string
+    ImgSrc:string,
+    Status: string
 }
 
-const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc} : Props) => {
+const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc,Status} : Props) => {
     const isMobile = useMediaQuery('(max-width:768px)');
-    
-    const [start,setStart] = useState("");
-    const [end,setEnd] = useState("");
-    const [startDate,setStartDate] = useState<Dayjs | null>(dayjs(StartDate, "YYYY/MM/DD"));
-    const [endDate,setEndDate] = useState<Dayjs | null>(dayjs(EndDate, "YYYY/MM/DD"));
+
+    const [loading,setLoading] = useState(false);
+    const [startDate,setStartDate] = useState<Dayjs | null>(dayjs(StartDate.substring(0,4) + '/' + StartDate.substring(4,6) + '/' + StartDate.substring(6,8),  "YYYY/MM/DD"));
+    const [endDate,setEndDate] = useState<Dayjs | null>(dayjs(EndDate.substring(0,4) + '/' + EndDate.substring(4,6) + '/' + EndDate.substring(6,8), "YYYY/MM/DD"));
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState(Name);
@@ -41,7 +43,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
     const [district,setDistrict] = useState(District);
     const [province,setProvince] = useState(Province);
     const [description,setDescription] = useState(Description);
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [selectedImage, setSelectedImage] = useState<File|null>(null);
     const [preview, setPreview] = useState<string>(ImgSrc);
     const fileInputRef = useRef(null);
     const [error,setError] = useState("");
@@ -60,10 +62,38 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
         }
     };
 
+    useEffect(() => {
+        const updateEvent = async () => {
+            if (loading) {
+                const startTmp = dayjs(startDate);
+                const endTmp = dayjs(endDate);
+                const formData = new FormData();
+                formData.append('event_name', name);
+                formData.append('activities', activity);
+                formData.append('city', province);
+                formData.append('description', description);
+                formData.append('district', district);
+                formData.append('start_date', startTmp.format('YYYY/MM/DD'));
+                formData.append('end_date', endTmp.format('YYYY/MM/DD'));
+                if (selectedImage) {
+                    formData.append('event_image', selectedImage);
+                } 
+                formData.append('location_name', location);
+                formData.append('participant_fee', price.toString());
+                formData.append('status', Status);
+                console.log(formData);
+                await HandleUpdateEvent(Id,formData);
+                setShowModal(true);
+                setLoading(false);
+            }
+        };
+        updateEvent();
+    }, [loading]);
+
     const handleSubmit = async () => {
         try {
             if (name == "") {
-                setError("Event Name Required ! ");
+                setError("Event Name Required!");
                 return;
             } if (activity == ""){
                 setError("Activity Required")
@@ -71,7 +101,6 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                 setError("Price Required");
                 return;
             } if (location == ""){
-                setError("Location Required");
                 return;
             } if (district == ""){
                 setError("District Required");
@@ -79,11 +108,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
             } if (province == "" ){
                 setError("Province Required");
                 return;
-            } if (!selectedImage) {
-                setError("Image Required");
-                return;
-            } 
-            const currentDate = dayjs();
+            } const currentDate = dayjs();
             const startTmp = dayjs(startDate);
             const endTmp = dayjs(endDate);
             if (startTmp.isBefore(currentDate) || endTmp.isBefore(currentDate)) {
@@ -96,10 +121,8 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                 setError("End Date cannot before Start Date");
                 return;
             }
-
-            setStart(startTmp.format('YYYY/MM/DD'));
-            setEnd(endTmp.format('YYYY/MM/DD'));
-            setShowModal(true);
+            if (!price) return;
+            setLoading(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
             console.log(err)
@@ -129,16 +152,15 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                             </div>
 
                             <div className="w-[48%] relative">
-                                <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px] relative">
-                                    <InputLabel className="text-[16px] lg:mt-[-2px] md:mt-[-4px] sm:mt-[-6px] mt-[-8px]">Activity</InputLabel>
+                                <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px] relative focus:outline-none">
+                                    <InputLabel className="text-[16px] lg:mt-[-2px] md:mt-[-4px] sm:mt-[-6px] mt-[-8px] focus:outline-none">Activity</InputLabel>
                                     <Select value={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
-                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md`}
-                                        onChange={(e) => setActivity(e.target.value)} >
-                                        <MenuItem value="Entertainment">Entertainment</MenuItem>
-                                        <MenuItem value="Exercise">Exercise</MenuItem>
-                                        <MenuItem value="Volunteer">Volunteen</MenuItem>
-                                        <MenuItem value="Meditation">Meditation</MenuItem>
-                                        <MenuItem value="Cooking">Cooking</MenuItem>
+                                    lg:text-[17px] md:text-[15px] text-[13px] rounded-md focus:outline-none`} readOnly>
+                                        <MenuItem value="Entertainment" className="focus:outline-none">Entertainment</MenuItem>
+                                        <MenuItem value="Exercise" className="focus:outline-none">Exercise</MenuItem>
+                                        <MenuItem value="Volunteer" className="focus:outline-none">Volunteen</MenuItem>
+                                        <MenuItem value="Meditation" className="focus:outline-none">Meditation</MenuItem>
+                                        <MenuItem value="Cooking" className="focus:outline-none">Cooking</MenuItem>
                                     </Select>
                                 </FormControl>
                             </div>
@@ -151,17 +173,17 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                             <DatePicker
                                                 label="Start Date"
                                                 value={startDate}
-                                                onChange={(e) => setStartDate(e)}
                                                 className="w-full"
                                                 slotProps={{ textField: { size: 'small' } }}
+                                                readOnly
                                             />
                                         ) : (
                                             <DatePicker
                                                 label="Start Date"
                                                 value={startDate}
-                                                onChange={(e) => setStartDate(e)}
                                                 className="w-full"
                                                 slotProps={{ textField: { size: 'medium' } }}
+                                                readOnly
                                             />
                                         )}
                                 </LocalizationProvider>
@@ -173,17 +195,17 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                             <DatePicker
                                                 label="End Date"
                                                 value={endDate}
-                                                onChange={(e) => setEndDate(e)}
                                                 className="w-full"
                                                 slotProps={{ textField: { size: 'small' } }}
+                                                readOnly
                                             />
                                         ) : (
                                             <DatePicker
                                                 label="End Date"
                                                 value={endDate}
-                                                onChange={(e) => setEndDate(e)}
                                                 className="w-full"
                                                 slotProps={{ textField: { size: 'medium' } }}
+                                                readOnly
                                             />
                                         )}
                                     </LocalizationProvider>
@@ -192,8 +214,8 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
 
                         <div className="flex flex-start flex-wrap justify-between w-full">
                             <div className="w-[48%] relative">
-                                <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                                rounded-md"
+                                <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] 
+                                h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px] rounded-md"
                                 type="text" placeholder="Location Name"
                                 value={location} onChange={(e) => setLocation(e.target.value)} maxLength={20}/>
 
@@ -206,9 +228,9 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
 
                             <div className="w-[48%] relative">
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
-                                rounded-md"
+                                rounded-md focus:outline-none"
                                 type="number" placeholder="Price"
-                                value={price} onChange={(e) => setPrice(e.target.value)} min={0} step={10}/>
+                                value={price} min={0} step={10} readOnly/>
 
                                 {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
@@ -266,8 +288,8 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                         className="hidden"
                                     />
                             
-                                    <div className="cursor-pointer text-gray-500 border-gray-500 border-dashed border-[3px]  w-[120px] h-[120px] 
-                                    hover:text-black hover:border-black flex flex-col items-center justify-center absolute" onClick={triggerFileInput}>
+                                    <div className="absolute cursor-pointer text-gray-500 border-gray-500 border-dashed border-[3px]  w-[120px] h-[120px] 
+                                    hover:text-black hover:border-black flex flex-col items-center justify-center" onClick={triggerFileInput}>
                                         <div className="w-fit">
                                             <EditIcon style={{ fontSize: "60px", color: "yelllow"}}/>
                                         </div>
@@ -320,8 +342,13 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Save Changes" isVisible={showModal}/>
+                <SuccessModal topic="Save Changes" isVisible={showModal} id={Id}/>
             </form>
+            {loading &&
+                <div className={`w-screen z-30 h-screen fixed inset-0 top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>
+                    <LoadingCircular></LoadingCircular>
+                </div>
+            }
         </div>
     )
 }
