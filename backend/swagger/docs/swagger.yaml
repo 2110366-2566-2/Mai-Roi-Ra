@@ -47,6 +47,22 @@ definitions:
     - problem_id
     - user_id
     type: object
+  models.Response:
+    properties:
+      created_at:
+        type: string
+      detail:
+        type: string
+      organizer_id:
+        type: string
+      post_id:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - organizer_id
+    - post_id
+    type: object
   models.Transaction:
     properties:
       created_at:
@@ -1859,6 +1875,35 @@ paths:
           schema:
             type: object
       summary: Create a new response
+      tags:
+      - responses
+  /responses/{post_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a specific response by post ID.
+      parameters:
+      - description: Post ID
+        in: path
+        name: post_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Get response detail
       tags:
       - responses
   /test:
