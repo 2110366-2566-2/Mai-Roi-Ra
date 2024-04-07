@@ -5,11 +5,13 @@ type GetPostByIdRequest struct {
 }
 
 type GetPostByIdResponse struct {
-	PostId      string  `json:"post_id"`
-	UserId      string  `json:"user_id"`
-	EventId     string  `json:"event_id"`
-	Caption     *string `json:"caption"`
-	RatingScore int     `json:"rating_score"`
+	PostId            string  `json:"post_id"`
+	UserId            string  `json:"user_id"`
+	Username          string  `json:"username"`
+	EventId           string  `json:"event_id"`
+	Caption           *string `json:"caption"`
+	RatingScore       int     `json:"rating_score"`
+	OrganizerResponse string  `json:"organizer_response"`
 }
 
 type PostList struct {
