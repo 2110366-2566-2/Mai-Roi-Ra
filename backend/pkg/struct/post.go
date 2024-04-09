@@ -31,10 +31,10 @@ type GetPostListsByEventIdResponse struct {
 }
 
 type CreatePostRequest struct {
-	UserId      string  `json:"user_id" binding:"required"`
-	EventId     string  `json:"event_id" binding:"required"`
-	Caption     *string `json:"caption" binding:"required"`
-	RatingScore int     `json:"rating_score" binding:"gte=1,lte=5"`
+	UserId      string  `json:"user_id" binding:"required" example:"User001"`
+	EventId     string  `json:"event_id" binding:"required" example:"Event001"`
+	Caption     *string `json:"caption" binding:"required" example:"Caption1"`
+	RatingScore int     `json:"rating_score" binding:"gte=1,lte=5" example:"4"` // RatingScore must be an integer between 1 and 5.
 }
 
 type CreatePostResponse struct {

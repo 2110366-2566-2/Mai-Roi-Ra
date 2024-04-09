@@ -205,14 +205,19 @@ definitions:
   structure.CreatePostRequest:
     properties:
       caption:
+        example: Caption1
         type: string
       event_id:
+        example: Event001
         type: string
       rating_score:
+        description: RatingScore must be an integer between 1 and 5.
+        example: 4
         maximum: 5
         minimum: 1
         type: integer
       user_id:
+        example: User001
         type: string
     required:
     - caption
@@ -1524,9 +1529,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new post with the provided details.
+      description: Create a new post with the provided details
       parameters:
-      - description: CreatePost Request
+      - description: CreatePost Request (rating_score must be integer between 1-5).
         in: body
         name: request
         required: true

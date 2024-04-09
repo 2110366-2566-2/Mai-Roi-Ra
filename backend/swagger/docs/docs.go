@@ -923,7 +923,7 @@ const docTemplate = `{
         },
         "/posts": {
             "post": {
-                "description": "Create a new post with the provided details.",
+                "description": "Create a new post with the provided details",
                 "consumes": [
                     "application/json"
                 ],
@@ -936,7 +936,7 @@ const docTemplate = `{
                 "summary": "Create a new post",
                 "parameters": [
                     {
-                        "description": "CreatePost Request",
+                        "description": "CreatePost Request (rating_score must be integer between 1-5).",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2796,18 +2796,23 @@ const docTemplate = `{
             ],
             "properties": {
                 "caption": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Caption1"
                 },
                 "event_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Event001"
                 },
                 "rating_score": {
+                    "description": "RatingScore must be an integer between 1 and 5.",
                     "type": "integer",
                     "maximum": 5,
-                    "minimum": 1
+                    "minimum": 1,
+                    "example": 4
                 },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "User001"
                 }
             }
         },
