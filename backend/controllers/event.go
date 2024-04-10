@@ -151,9 +151,6 @@ func (c *EventController) UpdateEventImage(ctx *gin.Context) {
 	}
 
 	eventId := ctx.Param("id")
-	req := &st.UpdateEventRequest{
-		EventId: eventId,
-	}
 
 	// S3
 	fileHeader, err := ctx.FormFile("event_image")
@@ -170,21 +167,19 @@ func (c *EventController) UpdateEventImage(ctx *gin.Context) {
 	log.Println("FILEHEADER: ", fileHeader.Header)
 
 	// delete the existing image in the bucket
-	deleteErr := Cloud.DeleteFile(ctx, req.EventId)
+	deleteErr := Cloud.DeleteFile(ctx, eventId)
 	if deleteErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
 		return
 	}
 
-	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, req.EventId)
+	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, eventId)
 	if uploadErr != nil {
 		log.Println("[CTRL: UpdateEventImage] Called SaveFile to S3 Error: ", uploadErr)
 		return
 	}
 
-	req.EventImage = url
-
-	res, err := c.ServiceGateway.EventService.UpdateEventImage(req)
+	res, err := c.ServiceGateway.EventService.UpdateEventImage(eventId, url)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -3701,9 +3701,6 @@ const docTemplate = `{
                 "event_id": {
                     "type": "string"
                 },
-                "event_image": {
-                    "type": "string"
-                },
                 "event_name": {
                     "type": "string"
                 },
