@@ -27,7 +27,7 @@ func NewPostController(
 // @Accept json
 // @Produce json
 // @Param post_id path string true "Post ID"
-// @Success 200 {object} models.Post
+// @Success 200 {object} st.GetPostByIdResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/{post_id} [get]

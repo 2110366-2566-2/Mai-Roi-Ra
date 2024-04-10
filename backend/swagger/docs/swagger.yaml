@@ -1,28 +1,5 @@
 basePath: /api/v1
 definitions:
-  models.Post:
-    properties:
-      caption:
-        type: string
-      created_at:
-        type: string
-      event_id:
-        type: string
-      post_id:
-        type: string
-      rating_score:
-        maximum: 5
-        minimum: 1
-        type: integer
-      updated_at:
-        type: string
-      user_id:
-        type: string
-    required:
-    - event_id
-    - post_id
-    - user_id
-    type: object
   models.Problem:
     properties:
       admin_username:
@@ -205,10 +182,10 @@ definitions:
   structure.CreatePostRequest:
     properties:
       caption:
-        example: Caption1
+        example: Caption (Max Length 1000)
         type: string
       event_id:
-        example: Event001
+        example: b21d43c3-1a0a-4f36-b38b-81d0e57af681
         type: string
       rating_score:
         description: RatingScore must be an integer between 1 and 5.
@@ -217,7 +194,7 @@ definitions:
         minimum: 1
         type: integer
       user_id:
-        example: User001
+        example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
         type: string
     required:
     - caption
@@ -227,6 +204,7 @@ definitions:
   structure.CreatePostResponse:
     properties:
       post_id:
+        example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
         type: string
     required:
     - post_id
@@ -277,10 +255,13 @@ definitions:
   structure.CreateResponseRequest:
     properties:
       detail:
+        example: Response Detail
         type: string
       organizer_id:
+        example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f12f4
         type: string
       post_id:
+        example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
         type: string
     required:
     - organizer_id
@@ -289,6 +270,7 @@ definitions:
   structure.CreateResponseResponse:
     properties:
       message:
+        example: 'Create Respose for PostID : 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6 successful'
         type: string
     type: object
   structure.CreateUserRequest:
@@ -335,6 +317,7 @@ definitions:
   structure.DeletePostResponse:
     properties:
       message:
+        example: Delete Successful
         type: string
     type: object
   structure.GetAllUsersResponse:
@@ -466,6 +449,30 @@ definitions:
       transactionAmount:
         type: number
       userId:
+        type: string
+    type: object
+  structure.GetPostByIdResponse:
+    properties:
+      caption:
+        example: Caption (Max Length 1000)
+        type: string
+      event_id:
+        example: b21d43c3-1a0a-4f36-b38b-81d0e57af681
+        type: string
+      organizer_response:
+        example: Response1
+        type: string
+      post_id:
+        example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
+        type: string
+      rating_score:
+        example: 4
+        type: integer
+      user_id:
+        example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
+        type: string
+      username:
+        example: User001
         type: string
     type: object
   structure.GetPostListsByEventIdResponse:
@@ -605,14 +612,19 @@ definitions:
   structure.PostList:
     properties:
       caption:
+        example: Caption (Max Length 1000)
         type: string
       event_id:
+        example: b21d43c3-1a0a-4f36-b38b-81d0e57af681
         type: string
       post_id:
+        example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
         type: string
       rating_score:
+        example: 4
         type: integer
       user_id:
+        example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
         type: string
     type: object
   structure.ProblemList:
@@ -1600,7 +1612,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Post'
+            $ref: '#/definitions/structure.GetPostByIdResponse'
         "400":
           description: Bad Request
           schema:
