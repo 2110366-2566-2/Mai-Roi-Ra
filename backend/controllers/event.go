@@ -106,52 +106,58 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 // @Summary Update existing event
 // @Description Update an existing event with the provided details.
 // @Tags events
-// @Accept multipart/form-data
+// @Accept json
 // @Produce json
-// @Param event_id path string true "Event ID" example:"event123"
-// @Param event_name formData string false "Name of the event"
-// @Param activities formData string false "Activity of the event" Enum ("Entertainment", "Exercise", "Volunteer", "Meditation", "Cooking")
-// @Param city formData string false "City of the event"
-// @Param description formData string false "description for the event"
-// @Param district formData string false "district of the event"
-// @Param start_date formData string false "start_date"
-// @Param end_date formData string false "end date"
-// @Param event_image formData file false "Event image"
-// @Param location_name formData string false "location name"
-// @Param participant_fee formData string false "participant fee"
-// @Param status formData string false "status of the event" Enum ("Approved", "Rejected", "Waiting", "Deleted")
+// @Param request body structure.UpdateEventRequest true "Create Event Request"
 // @Success 200 {object} structure.UpdateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [put]
 func (c *EventController) UpdateEvent(ctx *gin.Context) {
+	var req *st.UpdateEventRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: UpdateEvent] Input:", req)
+	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: UpdateEvent] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// UpdateEventImage updates an existing event's image.
+// @Summary Update existing event's image
+// @Description Update an existing event with the provided details.
+// @Tags events
+// @Accept multipart/form-data
+// @Produce json
+// @Param event_image formData file True "Event image"
+// @Success 200 {object} structure.UpdateEventResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/upload/{event_id} [put]
+func (c *EventController) UpdateEventImage(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	fee, _ := strconv.Atoi(ctx.Request.FormValue("participant_fee"))
-
+	eventId := ctx.Param("id")
 	req := &st.UpdateEventRequest{
-		Activities:     ctx.Request.FormValue("activities"),
-		City:           ctx.Request.FormValue("city"),
-		District:       ctx.Request.FormValue("district"),
-		StartDate:      ctx.Request.FormValue("start_date"),
-		EndDate:        ctx.Request.FormValue("end_date"),
-		EventName:      ctx.Request.FormValue("event_name"),
-		Description:    ctx.Request.FormValue("description"),
-		LocationName:   ctx.Request.FormValue("location_name"),
-		ParticipantFee: float64(fee),
-		Status:         ctx.Request.FormValue("status"),
+		EventId: eventId,
 	}
-
-	req.EventId = ctx.Param("id")
 
 	// S3
 	fileHeader, err := ctx.FormFile("event_image")
 	if err != nil {
-		log.Println("[CTRL: CreateEvent] Called and read header failed: ", err)
+		log.Println("[CTRL: UpdateEventImage] Called and read header failed: ", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
@@ -166,24 +172,24 @@ func (c *EventController) UpdateEvent(ctx *gin.Context) {
 	deleteErr := Cloud.DeleteFile(ctx, req.EventId)
 	if deleteErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
+		return
 	}
 
 	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, req.EventId)
 	if uploadErr != nil {
-		log.Println("[CTRL: CreateEvent] Called SaveFile to S3 Error: ", uploadErr)
+		log.Println("[CTRL: UpdateEventImage] Called SaveFile to S3 Error: ", uploadErr)
 		return
 	}
 
 	req.EventImage = url
 
-	log.Println("[CTRL: UpdateEvent] Input:", req)
-	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
+	res, err := c.ServiceGateway.EventService.UpdateEventImage(req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	log.Println("[CTRL: UpdateEvent] Output:", res)
+	log.Println("[CTRL: UpdateEventImage] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
 

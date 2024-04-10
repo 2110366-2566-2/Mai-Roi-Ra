@@ -29,6 +29,7 @@ type IEventService interface {
 	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
 	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
+	UpdateEventImage(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
 }
 
 func NewEventService(
@@ -264,8 +265,6 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		return nil, errors.New("start date must be before end date")
 	}
 
-	eventImage := req.EventImage
-
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
@@ -279,7 +278,10 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		EventName:      req.EventName,
 		Deadline:       deadline,
 		Activities:     req.Activities,
-		EventImage:     &eventImage,
+	}
+
+	if len(req.EventImage) != 0 {
+		eventModel.EventImage = &req.EventImage
 	}
 
 	res, err := s.RepositoryGateway.EventRepository.UpdateEvent(&eventModel)
@@ -592,5 +594,21 @@ func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventR
 		log.Println("[Service: VerifyEvent]: Called Repo Error: ", err)
 		return nil, err
 	}
+	return res, nil
+}
+
+func (s *EventService) UpdateEventImage(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
+	log.Println("[Service: UpdateEventImage] Called")
+	eventModel := models.Event{
+		EventImage: &req.EventImage,
+		EventId:    req.EventId,
+	}
+
+	res, err := s.RepositoryGateway.EventRepository.UpdateEvent(&eventModel)
+	if err != nil {
+		log.Println("[Service: UpdateEventImage] Called repo updateEvent error", err)
+		return nil, err
+	}
+
 	return res, nil
 }

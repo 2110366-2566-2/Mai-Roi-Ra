@@ -734,6 +734,44 @@ definitions:
     - event_id
     - organizer_id
     type: object
+  structure.UpdateEventRequest:
+    properties:
+      activities:
+        type: string
+      city:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      end_date:
+        type: string
+      event_id:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      location_name:
+        type: string
+      participant_fee:
+        type: number
+      start_date:
+        type: string
+      status:
+        type: string
+    required:
+    - activities
+    - city
+    - description
+    - district
+    - end_date
+    - event_name
+    - location_name
+    - participant_fee
+    - start_date
+    - status
+    type: object
   structure.UpdateEventResponse:
     properties:
       event_id:
@@ -1193,58 +1231,15 @@ paths:
       - events
     put:
       consumes:
-      - multipart/form-data
+      - application/json
       description: Update an existing event with the provided details.
       parameters:
-      - description: Event ID
-        in: path
-        name: event_id
+      - description: Create Event Request
+        in: body
+        name: request
         required: true
-        type: string
-      - description: Name of the event
-        in: formData
-        name: event_name
-        type: string
-      - description: Activity of the event
-        in: formData
-        name: activities
-        type: string
-      - description: City of the event
-        in: formData
-        name: city
-        type: string
-      - description: description for the event
-        in: formData
-        name: description
-        type: string
-      - description: district of the event
-        in: formData
-        name: district
-        type: string
-      - description: start_date
-        in: formData
-        name: start_date
-        type: string
-      - description: end date
-        in: formData
-        name: end_date
-        type: string
-      - description: Event image
-        in: formData
-        name: event_image
-        type: file
-      - description: location name
-        in: formData
-        name: location_name
-        type: string
-      - description: participant fee
-        in: formData
-        name: participant_fee
-        type: string
-      - description: status of the event
-        in: formData
-        name: status
-        type: string
+        schema:
+          $ref: '#/definitions/structure.UpdateEventRequest'
       produces:
       - application/json
       responses:
@@ -1336,6 +1331,35 @@ paths:
           schema:
             type: object
       summary: GetParticipantLists
+      tags:
+      - events
+  /events/upload/{event_id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing event with the provided details.
+      parameters:
+      - description: Event image
+        in: formData
+        name: event_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.UpdateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing event's image
       tags:
       - events
   /locations/{location_id}:

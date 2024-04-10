@@ -66,6 +66,7 @@ func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventControlle
 		eventRoutes.GET("/", controller.GetEventLists)
 		eventRoutes.GET("/:id", controller.GetEventDataById)
 		eventRoutes.PUT("/:id", controller.UpdateEvent)
+		eventRoutes.PUT("/upload/:id", controller.UpdateEventImage)
 		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)
 		eventRoutes.DELETE("/:id", controller.DeleteEventById)
 		eventRoutes.GET("/participant", controller.GetParticipantLists)
