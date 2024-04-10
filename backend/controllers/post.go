@@ -27,7 +27,7 @@ func NewPostController(
 // @Accept json
 // @Produce json
 // @Param post_id path string true "Post ID"
-// @Success 200 {object} models.Post
+// @Success 200 {object} st.GetPostByIdResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/{post_id} [get]
@@ -72,11 +72,11 @@ func (c *PostController) GetPostListsByEventId(ctx *gin.Context) {
 
 // CreatePost endpoint
 // @Summary Create a new post
-// @Description Create a new post with the provided details.
+// @Description Create a new post with the provided details
 // @Tags posts
 // @Accept json
 // @Produce json
-// @Param request body st.CreatePostRequest true "CreatePost Request"
+// @Param request body st.CreatePostRequest true "CreatePost Request (rating_score must be integer between 1-5)."
 // @Success 200 {object} st.CreatePostResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"

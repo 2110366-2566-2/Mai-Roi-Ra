@@ -923,7 +923,7 @@ const docTemplate = `{
         },
         "/posts": {
             "post": {
-                "description": "Create a new post with the provided details.",
+                "description": "Create a new post with the provided details",
                 "consumes": [
                     "application/json"
                 ],
@@ -936,7 +936,7 @@ const docTemplate = `{
                 "summary": "Create a new post",
                 "parameters": [
                     {
-                        "description": "CreatePost Request",
+                        "description": "CreatePost Request (rating_score must be integer between 1-5).",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1036,7 +1036,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Post"
+                            "$ref": "#/definitions/structure.GetPostByIdResponse"
                         }
                     },
                     "400": {
@@ -2491,39 +2491,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Post": {
-            "type": "object",
-            "required": [
-                "event_id",
-                "post_id",
-                "user_id"
-            ],
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "event_id": {
-                    "type": "string"
-                },
-                "post_id": {
-                    "type": "string"
-                },
-                "rating_score": {
-                    "type": "integer",
-                    "maximum": 5,
-                    "minimum": 1
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Problem": {
             "type": "object",
             "required": [
@@ -2796,18 +2763,23 @@ const docTemplate = `{
             ],
             "properties": {
                 "caption": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Caption (Max Length 1000)"
                 },
                 "event_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "b21d43c3-1a0a-4f36-b38b-81d0e57af681"
                 },
                 "rating_score": {
+                    "description": "RatingScore must be an integer between 1 and 5.",
                     "type": "integer",
                     "maximum": 5,
-                    "minimum": 1
+                    "minimum": 1,
+                    "example": 4
                 },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
                 }
             }
         },
@@ -2818,7 +2790,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "post_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"
                 }
             }
         },
@@ -2895,13 +2868,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "detail": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Response Detail"
                 },
                 "organizer_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f12f4"
                 },
                 "post_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"
                 }
             }
         },
@@ -2909,7 +2885,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Create Respose for PostID : 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6 successful"
                 }
             }
         },
@@ -2976,7 +2953,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Delete Successful"
                 }
             }
         },
@@ -3177,6 +3155,39 @@ const docTemplate = `{
                 },
                 "userId": {
                     "type": "string"
+                }
+            }
+        },
+        "structure.GetPostByIdResponse": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string",
+                    "example": "Caption (Max Length 1000)"
+                },
+                "event_id": {
+                    "type": "string",
+                    "example": "b21d43c3-1a0a-4f36-b38b-81d0e57af681"
+                },
+                "organizer_response": {
+                    "type": "string",
+                    "example": "Response1"
+                },
+                "post_id": {
+                    "type": "string",
+                    "example": "1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"
+                },
+                "rating_score": {
+                    "type": "integer",
+                    "example": 4
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "User001"
                 }
             }
         },
@@ -3385,19 +3396,24 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "caption": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Caption (Max Length 1000)"
                 },
                 "event_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "b21d43c3-1a0a-4f36-b38b-81d0e57af681"
                 },
                 "post_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"
                 },
                 "rating_score": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 4
                 },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
                 }
             }
         },
