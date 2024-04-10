@@ -1339,6 +1339,11 @@ paths:
       - multipart/form-data
       description: Update an existing event with the provided details.
       parameters:
+      - description: Event Id
+        in: path
+        name: event_id
+        required: true
+        type: string
       - description: Event image
         in: formData
         name: event_image

@@ -545,6 +545,13 @@ const docTemplate = `{
                 "summary": "Update existing event's image",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Event Id",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "type": "file",
                         "description": "Event image",
                         "name": "event_image",

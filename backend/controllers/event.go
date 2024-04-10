@@ -137,6 +137,7 @@ func (c *EventController) UpdateEvent(ctx *gin.Context) {
 // @Tags events
 // @Accept multipart/form-data
 // @Produce json
+// @Param event_id path string True "Event Id"
 // @Param event_image formData file True "Event image"
 // @Success 200 {object} structure.UpdateEventResponse
 // @Failure 400 {object} object "Bad Request"

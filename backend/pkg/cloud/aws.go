@@ -81,6 +81,7 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 		log.Println("Error save file", err)
 		return "", err
 	}
+	log.Println("File Saved Successfully")
 
 	req, _ := c.service.GetObjectRequest(&s3.GetObjectInput{
 		Bucket: aws.String(c.bucketName),
@@ -93,6 +94,7 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 		return "", err
 	}
 
+	log.Println("File Url Extracted Successfully")
 	return url, nil
 }
 
