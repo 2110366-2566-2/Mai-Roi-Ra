@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   backend:
-    container_name: mai-roi-ra-backend
+    container_name: backend
     build: 
       context: ./backend
       dockerfile: Dockerfile
@@ -53,8 +53,8 @@ services:
   pg_migration:
     container_name: pg_migration
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile.migration
+      context: ./backend
+      dockerfile: Dockerfile.migration
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
