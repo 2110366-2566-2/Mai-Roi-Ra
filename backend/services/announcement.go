@@ -88,11 +88,14 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 		orgId = *resOrganizer
 	}
 
-	userRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
-		UserId: adminId,
-	})
-	if err != nil {
-		return nil, err
+	var userRes *models.User
+	if adminId != "" {
+		userRes, err = s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+			UserId: adminId,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 	orgUserId, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(orgId)
 	if err != nil {
@@ -106,7 +109,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	}
 
 	adminEmail := ""
-	if userRes != nil {
+	if adminId != "" && userRes != nil {
 		adminEmail = *userRes.Email
 	}
 	orgName := ""
@@ -114,7 +117,9 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 		orgName = orgRes.FirstName + " " + orgRes.LastName
 	}
 	// append admin to email
-	to = append(to, adminEmail)
+	if adminEmail != "" {
+		to = append(to, adminEmail)
+	}
 	eventData, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	if err != nil {
 		return nil, err
@@ -162,8 +167,12 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	attachFiles = append(attachFiles, eventImage)
 	// attachFiles = append(attachFiles, "../../frontend/public/img/icon_sunlight.png")
 
-	if err = sender.SendEmail(req.Subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
-		return nil, err
+	log.Println("TO:", to)
+
+	if len(to) != 0 {
+		if err = sender.SendEmail(req.Subject, "", contentHTML, to, cc, bcc, attachFiles); err != nil {
+			return nil, err
+		}
 	}
 
 	announceModel := &models.Announcement{
@@ -228,6 +237,20 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 		return nil, err
 	}
 
+	emailOrg := ""
+	if orgRes.Email != nil {
+		emailOrg = *orgRes.Email
+	}
+	phoneOrg := ""
+	if orgRes.PhoneNumber != nil {
+		phoneOrg = *orgRes.PhoneNumber
+	}
+
+	contactOrg := phoneOrg
+	if emailOrg != "" {
+		contactOrg = emailOrg
+	}
+
 	// resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	// if err != nil {
 	// 	return nil, err
@@ -272,7 +295,7 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 		<p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
 	</body>
 	</html>
-	`, req.EventName, *orgRes.PhoneNumber)
+	`, req.EventName, contactOrg)
 
 	// Insert image
 	//attachFiles = append(attachFiles, eventImage)
@@ -434,7 +457,7 @@ func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailReque
 
 	//eventImage := ""
 	//if resEvent.EventImage != nil {
-		//eventImage = *resEvent.EventImage
+	//eventImage = *resEvent.EventImage
 	//}
 
 	contentHTML := fmt.Sprintf(`

@@ -34,8 +34,8 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
 
   return (
     <div className="bg-white text-black h-full">
-      <div className="lg:mr-24 border-r border-b bg-white">
-        <div className="w-full text-2xl pt-20">
+      <div className="lg:mr-24 border-r bg-white">
+        <div className="w-full text-2xl pt-20 border-b">
           {["Pending", "Approved", "Rejected"].map((tabName) => (
             <button
               key={tabName}
@@ -62,76 +62,84 @@ const AdminSupportAndService: React.FC<AdminSupportAndServiceProps> = ({
             </button>
           ))}
         </div>
+        {activeTab == "Pending" && (
+          <div className="border-b">
+            <div className="py-6 px-4 lg:px-10">
+              {waitingEventsDatas.map((eventItem: any) => (
+                <EventItem
+                  key={eventItem.event_id}
+                  id={eventItem.event_id}
+                  name={eventItem.event_name}
+                  startDate={eventItem.start_date}
+                  endDate={eventItem.end_date}
+                  description={eventItem.description}
+                  city={eventItem.city}
+                  district={eventItem.district}
+                  imgSrc={eventItem.event_image}
+                  page={2}
+                  role="ADMIN"
+                  status={eventItem.status}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {activeTab == "Approved" && (
+          <div className="">
+            <div className="py-6 px-4 lg:px-10 border-b">
+              {approvedEventsDatas.map((eventItem: any) => (
+                <div key={eventItem.event_id} className="relative">
+                  <EventItem
+                    id={eventItem.event_id}
+                    name={eventItem.event_name}
+                    startDate={eventItem.start_date}
+                    endDate={eventItem.end_date}
+                    description={eventItem.description}
+                    city={eventItem.city}
+                    district={eventItem.district}
+                    imgSrc={eventItem.event_image}
+                    page={2}
+                    role="ADMIN"
+                    status={eventItem.status}
+                  />
+                  <div
+                    className="absolute top-0 right-0 bottom-0 left-0"
+                    style={{ zIndex: 10 }}
+                  ></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {activeTab == "Rejected" && (
+          <div className="">
+            <div className="py-6 px-4 lg:px-10 border-b">
+              {rejectedEventsDatas.map((eventItem: any) => (
+                <div key={eventItem.event_id} className="relative">
+                  <EventItem
+                    id={eventItem.event_id}
+                    name={eventItem.event_name}
+                    startDate={eventItem.start_date}
+                    endDate={eventItem.end_date}
+                    description={eventItem.description}
+                    city={eventItem.city}
+                    district={eventItem.district}
+                    imgSrc={eventItem.event_image}
+                    page={2}
+                    role="ADMIN"
+                    status={eventItem.status}
+                    // Add other props if necessary
+                  />
+                  <div
+                    className="absolute top-0 right-0 bottom-0 left-0"
+                    style={{ zIndex: 10 }}
+                  ></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-      {activeTab == "Pending" && (
-        <div className="my-8 px-4 lg:px-10">
-          {waitingEventsDatas.map((eventItem: any) => (
-            <EventItem
-              key={eventItem.event_id}
-              id={eventItem.event_id}
-              name={eventItem.event_name}
-              startDate={eventItem.start_date}
-              endDate={eventItem.end_date}
-              description={eventItem.description}
-              city={eventItem.city}
-              district={eventItem.district}
-              imgSrc={eventItem.event_image}
-              page={0}
-              role="ADMIN"
-            />
-          ))}
-        </div>
-      )}
-      {activeTab == "Approved" && (
-        <div className="my-8 px-4 lg:px-10">
-          {approvedEventsDatas.map((eventItem: any) => (
-            <div key={eventItem.event_id} className="relative">
-              <EventItem
-                id={eventItem.event_id}
-                name={eventItem.event_name}
-                startDate={eventItem.start_date}
-                endDate={eventItem.end_date}
-                description={eventItem.description}
-                city={eventItem.city}
-                district={eventItem.district}
-                imgSrc={eventItem.event_image}
-                page={0}
-                role="ADMIN"
-                // Add other props if necessary
-              />
-              <div
-                className="absolute top-0 right-0 bottom-0 left-0"
-                style={{ zIndex: 10 }}
-              ></div>
-            </div>
-          ))}
-        </div>
-      )}
-      {activeTab == "Rejected" && (
-        <div className="my-8 px-4 lg:px-10">
-          {rejectedEventsDatas.map((eventItem: any) => (
-            <div key={eventItem.event_id} className="relative">
-              <EventItem
-                id={eventItem.event_id}
-                name={eventItem.event_name}
-                startDate={eventItem.start_date}
-                endDate={eventItem.end_date}
-                description={eventItem.description}
-                city={eventItem.city}
-                district={eventItem.district}
-                imgSrc={eventItem.event_image}
-                page={0}
-                role="ADMIN"
-                // Add other props if necessary
-              />
-              <div
-                className="absolute top-0 right-0 bottom-0 left-0"
-                style={{ zIndex: 10 }}
-              ></div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

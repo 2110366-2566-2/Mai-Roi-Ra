@@ -8,13 +8,13 @@ import UserHomepage from "@/components/UserHomepage";
 import AdminSupportAndService from "@/components/AdminSupportAndService";
 import UserSupportAndService from "@/components/UserSupportAndService";
 import getProblems from "@/libs/getProblems";
+import getAllPendingProblems from "@/libs/getAllPendingProblems";
+import getAllRepliedProblems from "@/libs/getAllRepliedProblems";
+import { revalidateTag } from "next/cache";
 
 export default async function Homepage() {
   const session = await getServerSession(authOptions);
-  // const events = await getEvents();
   console.log("successfully loaded Support and Service Page");
-  // console.log(events);
-
 
   if (!session || !session.user || !session.user.token) return null;
   const problems = session ? await getProblems(session.user.user_id) : null;
@@ -22,14 +22,23 @@ export default async function Homepage() {
   let datas;
   datas = problems.problem_lists;
 
+  const pendingProblems = session ? await getAllPendingProblems() : null;
+  let pendingDatas;
+  pendingDatas = pendingProblems.problem_lists;
+
+  const repliedProblems = session ? await getAllRepliedProblems() : null;
+  let repliedDatas;
+  repliedDatas = repliedProblems.problem_lists;
 
   return (
-    <main className="bg-white text-black h-full">
+    <main className="bg-white text-black">
       {session?.user.role == "ADMIN" ? (
-        <AdminSupportAndService></AdminSupportAndService>
+        <AdminSupportAndService
+          pendingDatas={pendingDatas}
+          repliedDatas={repliedDatas}
+        ></AdminSupportAndService>
       ) : (
-        <UserSupportAndService datas={datas} >
-        </UserSupportAndService>
+        <UserSupportAndService datas={datas}></UserSupportAndService>
       )}
     </main>
   );
