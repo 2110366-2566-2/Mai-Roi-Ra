@@ -3194,11 +3194,29 @@ const docTemplate = `{
         "structure.GetPostListsByEventIdResponse": {
             "type": "object",
             "properties": {
+                "average_rate": {
+                    "type": "number"
+                },
+                "five_rate": {
+                    "type": "integer"
+                },
+                "four_rate": {
+                    "type": "integer"
+                },
+                "one_rate": {
+                    "type": "integer"
+                },
                 "post_lists": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/structure.PostList"
                     }
+                },
+                "three_rate": {
+                    "type": "integer"
+                },
+                "two_rate": {
+                    "type": "integer"
                 }
             }
         },
@@ -3403,6 +3421,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "b21d43c3-1a0a-4f36-b38b-81d0e57af681"
                 },
+                "organizer_response": {
+                    "type": "string",
+                    "example": "Response1"
+                },
                 "post_id": {
                     "type": "string",
                     "example": "1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"
@@ -3414,6 +3436,10 @@ const docTemplate = `{
                 "user_id": {
                     "type": "string",
                     "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "User001"
                 }
             }
         },

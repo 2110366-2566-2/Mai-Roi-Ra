@@ -477,10 +477,22 @@ definitions:
     type: object
   structure.GetPostListsByEventIdResponse:
     properties:
+      average_rate:
+        type: number
+      five_rate:
+        type: integer
+      four_rate:
+        type: integer
+      one_rate:
+        type: integer
       post_lists:
         items:
           $ref: '#/definitions/structure.PostList'
         type: array
+      three_rate:
+        type: integer
+      two_rate:
+        type: integer
     type: object
   structure.GetProblemListsResponse:
     properties:
@@ -617,6 +629,9 @@ definitions:
       event_id:
         example: b21d43c3-1a0a-4f36-b38b-81d0e57af681
         type: string
+      organizer_response:
+        example: Response1
+        type: string
       post_id:
         example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
         type: string
@@ -625,6 +640,9 @@ definitions:
         type: integer
       user_id:
         example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
+        type: string
+      username:
+        example: User001
         type: string
     type: object
   structure.ProblemList:
