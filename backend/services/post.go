@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+	"math"
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
@@ -66,21 +67,25 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 
 func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) (*st.GetPostListsByEventIdResponse, error) {
 	log.Println("[Service: GetPostListsByEventId] Called")
-	postLists, onerate, tworate, threerate, fourrate, fiverate, avgrate, err := s.RepositoryGateway.PostRepository.GetPostListsByEventId(req)
+	postLists, err := s.RepositoryGateway.PostRepository.GetPostListsByEventId(req)
 	if err != nil {
 		return nil, err
 	}
-	res := &st.GetPostListsByEventIdResponse{
-		PostLists:   make([]st.PostList, 0),
-		OneRate:     onerate,
-		TwoRate:     tworate,
-		ThreeRate:   threerate,
-		FourRate:    fourrate,
-		FiveRate:    fiverate,
-		AverageRate: avgrate,
-	}
+
+	postlists := make([]st.PostList, 0)
+	var countRatings [6]int // Index 0 for posts with no ratings, 1-5 for respective ratings
+	var totalRatings int
+	var totalCount int
 
 	for _, v := range postLists {
+
+		if v.RatingScore >= 1 && v.RatingScore <= 5 {
+			countRatings[v.RatingScore]++
+			totalRatings += v.RatingScore
+		} else {
+			countRatings[0]++
+		}
+		totalCount++
 
 		Organizerresponse := ""
 		resrespose, err := s.RepositoryGateway.ResponseRepository.GetResponseByPostId(v.PostId)
@@ -108,8 +113,26 @@ func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest
 			OrganizerResponse: Organizerresponse,
 		}
 
-		res.PostLists = append(res.PostLists, post)
+		postlists = append(postlists, post)
 	}
+
+	// Calculate average rating
+	var avgRating float64
+	if totalCount > 0 {
+		avgRating = float64(totalRatings) / float64(totalCount)
+		avgRating = math.Round(avgRating*10) / 10
+	}
+
+	res := &st.GetPostListsByEventIdResponse{
+		PostLists:   postlists,
+		OneRate:     countRatings[1],
+		TwoRate:     countRatings[2],
+		ThreeRate:   countRatings[3],
+		FourRate:    countRatings[4],
+		FiveRate:    countRatings[5],
+		AverageRate: avgRating,
+	}
+
 	return res, nil
 }
 
