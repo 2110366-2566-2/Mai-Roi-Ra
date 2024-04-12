@@ -276,32 +276,29 @@ const CreateEventForm = () => {
                      border-gray-300 rounded-md flex justify-center items-center relative border-dashed">
 
                        {preview ? 
-                            <div className="w-full h-full relative">
-                                <Image className="h-full w-full absolute top-0 left-0 opacity-60" width={1000} height={1000} src={preview} alt="Preview"
-                                onClick={triggerFileInput}/>
-                            
-                                <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center absolute">
-                                    <input
-                                        type="file"
-                                        name="event_image"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                        ref={fileInputRef}
-                                        className="hidden"
-                                    />
-                            
-                                    <div className="cursor-pointer text-gray-500 border-gray-500 border-dashed border-[3px]  w-[120px] h-[120px] 
-                                    hover:text-black hover:border-black flex flex-col items-center justify-center absolute" onClick={triggerFileInput}>
-                                        <div className="w-fit">
-                                            <EditIcon style={{ fontSize: "60px", color: "yelllow"}}/>
-                                        </div>
-
-                                        <div className="text-[15px]">
-                                            Edit Image
-                                        </div>
+                            <div>
+                                <div className="w-full h-full">
+                                    <Image className="h-full w-full absolute top-0 left-0 opacity-60" width={1000} height={1000} src={preview} alt="Preview"
+                                    onClick={triggerFileInput}/>
+                                
+                                    <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center">
+                                        <input
+                                            type="file"
+                                            name="event_image"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            ref={fileInputRef}
+                                            className="hidden"
+                                        />
                                     </div>
-                                </div>
-                            </div> : 
+                                    </div> 
+                                                                
+                                    <div className="absolute top-[-10px] right-[-10px] rounded-xl cursor-pointer border-black border-[1px] bg-white text-gray-500 md:w-[45px] md:h-[45px]
+                                        w-[30px] h-[30px] hover:text-black hover:border-black flex flex-row justify-center items-center" onClick={triggerFileInput}>
+                                            <EditIcon className="md:text-[30px] text-[20px]"/>
+                                    </div> 
+                            </div>
+                            : 
 
                             <div className="w-full h-full">
                                 <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center">

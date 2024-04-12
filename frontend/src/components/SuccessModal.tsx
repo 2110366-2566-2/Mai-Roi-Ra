@@ -19,7 +19,7 @@ const SuccessModal = ({topic,isVisible} : Props) => {
 
     return (
         <div className="w-screen h-screen fixed inset-0 flex flex-row justify-center items-center 
-        bg-opacity-25 bg-black">
+        bg-opacity-25 bg-black z-40">
             <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[15px] px-[15px] z-40">
                 <div className="relative top-[-5px] right-[-5px] text-end">
                     <CancelOutlinedIcon className="text-3xl icon-large cursor-pointer" onClick={handlerClose}/>

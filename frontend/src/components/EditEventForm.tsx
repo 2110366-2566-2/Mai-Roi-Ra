@@ -12,6 +12,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import Image from "next/image";
 import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
 import LoadingCircular from "./LoadingCircular";
+import updateEventImage from "@/libs/updateEventImage";
+import { useSession } from "next-auth/react";
 
 interface Props {
     Id:string
@@ -29,6 +31,10 @@ interface Props {
 }
 
 const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,District,Province,Description,ImgSrc,Status} : Props) => {
+    const session = useSession();
+    const user = session.data?.user;
+    if (!user) return null;
+    console.log(user);
     const isMobile = useMediaQuery('(max-width:768px)');
 
     const [loading,setLoading] = useState(false);
@@ -67,22 +73,31 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
             if (loading) {
                 const startTmp = dayjs(startDate);
                 const endTmp = dayjs(endDate);
-                const formData = new FormData();
-                formData.append('event_name', name);
-                formData.append('activities', activity);
-                formData.append('city', province);
-                formData.append('description', description);
-                formData.append('district', district);
-                formData.append('start_date', startTmp.format('YYYY/MM/DD'));
-                formData.append('end_date', endTmp.format('YYYY/MM/DD'));
+
                 if (selectedImage) {
+                    const formData = new FormData();
+                    formData.append('event_id', Id); 
                     formData.append('event_image', selectedImage);
+                    console.log(formData);
+                    await updateEventImage(Id,formData,user.token);
                 } 
-                formData.append('location_name', location);
-                formData.append('participant_fee', price.toString());
-                formData.append('status', Status);
-                console.log(formData);
-                await HandleUpdateEvent(Id,formData);
+
+                console.log("handle update event hello world");
+                await HandleUpdateEvent(
+                    Id,
+                    name,
+                    activity,
+                    startTmp.format('YYYY/MM/DD'),
+                    endTmp.format('YYYY/MM/DD'),
+                    price,
+                    location,
+                    district,
+                    province,
+                    description,
+                    Status,
+                    user.token
+                );
+
                 setShowModal(true);
                 setLoading(false);
             }
@@ -274,11 +289,11 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                     {/* Right Form */}
                     <div className="lg:h-auto md:h-[300px] sm:h-[200px] h-[200px] lg:w-[47%] w-[full] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
                      border-gray-300 rounded-md flex justify-center items-center relative">
-                        <div className="w-full h-full relative">
+                        <div className="w-full h-full ">
                                 <Image className="h-full w-full absolute top-0 left-0 opacity-60" width={1000} height={1000} src={preview} alt="Preview"
                                 onClick={triggerFileInput}/>
                             
-                                <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center absolute">
+                                <div className="w-full h-full overflow-hidden flex flex-row justify-center items-center">
                                     <input
                                         type="file"
                                         name="event_image"
@@ -287,19 +302,13 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                         ref={fileInputRef}
                                         className="hidden"
                                     />
-                            
-                                    <div className="absolute cursor-pointer text-gray-500 border-gray-500 border-dashed border-[3px]  w-[120px] h-[120px] 
-                                    hover:text-black hover:border-black flex flex-col items-center justify-center" onClick={triggerFileInput}>
-                                        <div className="w-fit">
-                                            <EditIcon style={{ fontSize: "60px", color: "yelllow"}}/>
-                                        </div>
-
-                                        <div className="text-[15px]">
-                                            Edit Image
-                                        </div>
-                                    </div>
                                 </div>
                         </div> 
+                                                    
+                        <div className="absolute top-[-10px] right-[-10px] rounded-xl cursor-pointer border-black border-[1px] bg-white text-gray-500 md:w-[45px] md:h-[45px]
+                            w-[30px] h-[30px] hover:text-black hover:border-black flex flex-row justify-center items-center" onClick={triggerFileInput}>
+                                <EditIcon className="md:text-[30px] text-[20px]"/>
+                        </div>
                     </div>
 
                 </div>
