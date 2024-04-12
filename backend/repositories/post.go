@@ -54,6 +54,7 @@ func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdR
 		log.Println("[Repo: GetPostListsByEventId] Error finding posts:", err)
 		return nil, err
 	}
+	
 	return posts, nil
 }
 
