@@ -1,16 +1,22 @@
 version: '3.9'
 
 services:
-  web:
-    container_name: mai-roi-ra
-    build: .
+
+  backend:
+    container_name: backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     env_file:
-      - .env
+      - backend/.env
     ports: 
       - "8080:8080"
     volumes:
-      - .:/usr/src/app
+      - ./backend:/usr/src/app
     command: air main.go -b 127.0.0.1
+    depends_on:
+      pg_db:
+        condition: service_healthy
 
   pg_db:
     container_name: pg_container
@@ -24,6 +30,11 @@ services:
       - "5432:5432"
     volumes:
       - pg-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   pg_admin:
     container_name: pg_admin
@@ -36,11 +47,13 @@ services:
       - "5050:80"
     depends_on:
       - pg_db
+    logging:
+      driver: none
 
   pg_migration:
     container_name: pg_migration
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile.migration
     environment:
       - POSTGRES_USER=root
