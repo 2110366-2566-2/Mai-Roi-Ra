@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"log"
+	"math"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
@@ -16,7 +17,7 @@ type PostRepository struct {
 
 type IPostRepository interface {
 	GetPostById(postID string) (*models.Post, error)
-	GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, error)
+	GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, int, int, int, int, int, float64, error)
 	CreatePost(req *models.Post) (*st.CreatePostResponse, error)
 	DeletePostById(req *st.DeletePostRequest) (*st.DeletePostResponse, error)
 }
@@ -41,7 +42,7 @@ func (repo *PostRepository) GetPostById(postID string) (*models.Post, error) {
 	return &post, nil
 }
 
-func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, error) {
+func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, int, int, int, int, int, float64, error) {
 	log.Println("[Repo: GetPostListsByEventId] Called")
 
 	var posts []models.Post
@@ -52,9 +53,30 @@ func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdR
 
 	if err := query.Find(&posts).Error; err != nil {
 		log.Println("[Repo: GetPostListsByEventId] Error finding posts:", err)
-		return nil, err
+		return nil, 0, 0, 0, 0, 0, 0, err
 	}
-	return posts, nil
+
+	var countRatings [6]int // Index 0 for posts with no ratings, 1-5 for respective ratings
+	var totalRatings int
+	var totalCount int
+	for _, post := range posts {
+		if post.RatingScore >= 1 && post.RatingScore <= 5 {
+			countRatings[post.RatingScore]++
+			totalRatings += post.RatingScore
+		} else {
+			countRatings[0]++
+		}
+		totalCount++
+	}
+
+	// Calculate average rating
+	var avgRating float64
+	if totalCount > 0 {
+		avgRating = float64(totalRatings) / float64(totalCount)
+		avgRating = math.Round(avgRating*10) / 10
+	}
+
+	return posts, countRatings[1], countRatings[2], countRatings[3], countRatings[4], countRatings[5], avgRating, nil
 }
 
 func (r *PostRepository) CreatePost(req *models.Post) (*st.CreatePostResponse, error) {

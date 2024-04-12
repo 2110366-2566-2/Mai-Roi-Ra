@@ -66,21 +66,46 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 
 func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) (*st.GetPostListsByEventIdResponse, error) {
 	log.Println("[Service: GetPostListsByEventId] Called")
-	postLists, err := s.RepositoryGateway.PostRepository.GetPostListsByEventId(req)
+	postLists, onerate, tworate, threerate, fourrate, fiverate, avgrate, err := s.RepositoryGateway.PostRepository.GetPostListsByEventId(req)
 	if err != nil {
 		return nil, err
 	}
 	res := &st.GetPostListsByEventIdResponse{
-		PostLists: make([]st.PostList, 0),
+		PostLists:   make([]st.PostList, 0),
+		OneRate:     onerate,
+		TwoRate:     tworate,
+		ThreeRate:   threerate,
+		FourRate:    fourrate,
+		FiveRate:    fiverate,
+		AverageRate: avgrate,
 	}
 
 	for _, v := range postLists {
+
+		Organizerresponse := ""
+		resrespose, err := s.RepositoryGateway.ResponseRepository.GetResponseByPostId(v.PostId)
+		if err == nil && resrespose != nil {
+			Organizerresponse = resrespose.Detail
+		}
+
+		requser := &st.GetUserByUserIdRequest{
+			UserId: v.UserId,
+		}
+
+		UserName := ""
+		resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
+		if err == nil && resuser != nil {
+			UserName = resuser.Username
+		}
+
 		post := st.PostList{
-			PostId:      v.PostId,
-			UserId:      v.UserId,
-			EventId:     v.EventId,
-			Caption:     v.Caption,
-			RatingScore: v.RatingScore,
+			PostId:            v.PostId,
+			UserId:            v.UserId,
+			Username:          UserName,
+			EventId:           v.EventId,
+			Caption:           v.Caption,
+			RatingScore:       v.RatingScore,
+			OrganizerResponse: Organizerresponse,
 		}
 
 		res.PostLists = append(res.PostLists, post)
