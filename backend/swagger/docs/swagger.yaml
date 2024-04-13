@@ -118,46 +118,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  structure.CreateEventRequest:
-    properties:
-      activities:
-        type: string
-      city:
-        type: string
-      description:
-        type: string
-      district:
-        type: string
-      end_date:
-        type: string
-      event_image:
-        type: string
-      event_name:
-        type: string
-      location_name:
-        type: string
-      organizer_id:
-        type: string
-      participant_fee:
-        type: number
-      start_date:
-        type: string
-      status:
-        type: string
-    required:
-    - activities
-    - city
-    - description
-    - district
-    - end_date
-    - event_image
-    - event_name
-    - location_name
-    - organizer_id
-    - participant_fee
-    - start_date
-    - status
-    type: object
   structure.CreateEventResponse:
     properties:
       event_id:
@@ -839,8 +799,6 @@ definitions:
         type: string
       event_id:
         type: string
-      event_image:
-        type: string
       event_name:
         type: string
       location_name:
@@ -1187,15 +1145,64 @@ paths:
       - events
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Create a new event with the provided details.
       parameters:
-      - description: Create Event Request
-        in: body
-        name: request
+      - description: Name of the event
+        in: formData
+        name: event_name
         required: true
-        schema:
-          $ref: '#/definitions/structure.CreateEventRequest'
+        type: string
+      - description: Activity of the event
+        in: formData
+        name: activities
+        required: true
+        type: string
+      - description: City of the event
+        in: formData
+        name: city
+        required: true
+        type: string
+      - description: description for the event
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: district of the event
+        in: formData
+        name: district
+        required: true
+        type: string
+      - description: start_date
+        in: formData
+        name: start_date
+        required: true
+        type: string
+      - description: end date
+        in: formData
+        name: end_date
+        required: true
+        type: string
+      - description: Event image
+        in: formData
+        name: event_image
+        required: true
+        type: file
+      - description: location name
+        in: formData
+        name: location_name
+        required: true
+        type: string
+      - description: organizer_id
+        in: formData
+        name: organizer_id
+        required: true
+        type: string
+      - description: participant fee
+        in: formData
+        name: participant_fee
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1276,12 +1283,7 @@ paths:
       - application/json
       description: Update an existing event with the provided details.
       parameters:
-      - description: Event ID
-        in: path
-        name: event_id
-        required: true
-        type: string
-      - description: Update Event Request
+      - description: Create Event Request
         in: body
         name: request
         required: true
@@ -1378,6 +1380,40 @@ paths:
           schema:
             type: object
       summary: GetParticipantLists
+      tags:
+      - events
+  /events/upload/{event_id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing event with the provided details.
+      parameters:
+      - description: Event Id
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Event image
+        in: formData
+        name: event_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.UpdateEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing event's image
       tags:
       - events
   /locations/{location_id}:

@@ -9,27 +9,26 @@ export default async function updateEvent(
     province:string,
     price: number,
     description: string,
-    imageSrc: string,
     start_date: string,
     end_date: string,
+    status: string,
     token: string
 ) {
 
     try {
-        console.log(id,  name, activity, location_name, district , province, description, imageSrc, start_date, end_date);
+        console.log(id,  name, activity, location_name, district , province, description, start_date, end_date);
         const jsonBody = JSON.stringify({
             "activities": activity,
+            "city": province,
             "description": description,
+            "district": district,
             "end_date": end_date,
-            "event_image": imageSrc,
+            "event_id": id,
             "event_name": name,
             "location_name": location_name,
-            "district": district,
-            "event_id": id,
-            "city": province,
             "participant_fee": Number(price),
             "start_date": start_date,
-            "status": "Waiting"
+            "status": status
         })
 
         console.log(jsonBody);

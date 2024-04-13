@@ -1,7 +1,7 @@
-import styles from "@/styles/FontPage.module.css"
 import CreateEventForm from "@/components/CreateEventForm";
 
 const CreateEvent = () => {
+
     return (
         <div className='lg:pt-8 pt-2 px-10 text-black'>
             {/* Topic */}

@@ -1,20 +1,16 @@
-import { revalidatePath, revalidateTag } from "next/cache";
 import { apiBackUrl } from "../constants";
 
-export default async function createEvent(formData:FormData, token:string) {
+export default async function createEvent(formData:FormData,token:string) {
     try {
         console.log(formData);
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        console.log(formData.get('image'));
         
-        const response = await fetch(`${apiBackUrl}/events/`, {
+        const response = await fetch(`${apiBackUrl}/upload`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`
             },
-            body: formData,
+            body: formData
         });
 
         if (!response.ok) {
@@ -22,8 +18,7 @@ export default async function createEvent(formData:FormData, token:string) {
             throw new Error(
                 `Failed to create event: ${response.status} - ${errorData.message || "Unknown error"}`
             );
-        } 
-        console.log("Success To Create Event");
+        } console.log("Success To Create Event");
         return await response.json();
 
     } catch (error) {

@@ -364,7 +364,7 @@ const docTemplate = `{
             "post": {
                 "description": "Create a new event with the provided details.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -375,13 +375,81 @@ const docTemplate = `{
                 "summary": "Create new event",
                 "parameters": [
                     {
-                        "description": "Create Event Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.CreateEventRequest"
-                        }
+                        "type": "string",
+                        "description": "Name of the event",
+                        "name": "event_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Activity of the event",
+                        "name": "activities",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "City of the event",
+                        "name": "city",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "description for the event",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "district of the event",
+                        "name": "district",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "start_date",
+                        "name": "start_date",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "end date",
+                        "name": "end_date",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Event image",
+                        "name": "event_image",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location name",
+                        "name": "location_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "participant fee",
+                        "name": "participant_fee",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -462,6 +530,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/events/upload/{event_id}": {
+            "put": {
+                "description": "Update an existing event with the provided details.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Update existing event's image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event Id",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Event image",
+                        "name": "event_image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.UpdateEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/events/{event_id}": {
             "get": {
                 "description": "Get a test message",
@@ -519,14 +638,7 @@ const docTemplate = `{
                 "summary": "Update existing event",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Event ID",
-                        "name": "event_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Update Event Request",
+                        "description": "Create Event Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2668,61 +2780,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.CreateEventRequest": {
-            "type": "object",
-            "required": [
-                "activities",
-                "city",
-                "description",
-                "district",
-                "end_date",
-                "event_image",
-                "event_name",
-                "location_name",
-                "organizer_id",
-                "participant_fee",
-                "start_date",
-                "status"
-            ],
-            "properties": {
-                "activities": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "district": {
-                    "type": "string"
-                },
-                "end_date": {
-                    "type": "string"
-                },
-                "event_image": {
-                    "type": "string"
-                },
-                "event_name": {
-                    "type": "string"
-                },
-                "location_name": {
-                    "type": "string"
-                },
-                "organizer_id": {
-                    "type": "string"
-                },
-                "participant_fee": {
-                    "type": "number"
-                },
-                "start_date": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.CreateEventResponse": {
             "type": "object",
             "properties": {
@@ -3752,9 +3809,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "event_id": {
-                    "type": "string"
-                },
-                "event_image": {
                     "type": "string"
                 },
                 "event_name": {
