@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+	"math"
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
@@ -37,12 +38,30 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 		return nil, err
 	}
 
+	Organizerresponse := ""
+	resrespose, err := s.RepositoryGateway.ResponseRepository.GetResponseByPostId(req.PostId)
+	if err == nil && resrespose != nil {
+		Organizerresponse = resrespose.Detail
+	}
+
+	requser := &st.GetUserByUserIdRequest{
+		UserId: res.UserId,
+	}
+
+	UserName := ""
+	resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
+	if err == nil && resuser != nil {
+		UserName = resuser.Username
+	}
+
 	return &st.GetPostByIdResponse{
-		PostId:      req.PostId,
-		UserId:      res.UserId,
-		EventId:     res.EventId,
-		Caption:     res.Caption,
-		RatingScore: res.RatingScore,
+		PostId:            req.PostId,
+		UserId:            res.UserId,
+		Username:          UserName,
+		EventId:           res.EventId,
+		Caption:           res.Caption,
+		RatingScore:       res.RatingScore,
+		OrganizerResponse: Organizerresponse,
 	}, nil
 }
 
@@ -52,21 +71,68 @@ func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest
 	if err != nil {
 		return nil, err
 	}
-	res := &st.GetPostListsByEventIdResponse{
-		PostLists: make([]st.PostList, 0),
-	}
+
+	postlists := make([]st.PostList, 0)
+	var countRatings [6]int // Index 0 for posts with no ratings, 1-5 for respective ratings
+	var totalRatings int
+	var totalCount int
 
 	for _, v := range postLists {
-		post := st.PostList{
-			PostId:      v.PostId,
-			UserId:      v.UserId,
-			EventId:     v.EventId,
-			Caption:     v.Caption,
-			RatingScore: v.RatingScore,
+
+		if v.RatingScore >= 1 && v.RatingScore <= 5 {
+			countRatings[v.RatingScore]++
+			totalRatings += v.RatingScore
+		} else {
+			countRatings[0]++
+		}
+		totalCount++
+
+		Organizerresponse := ""
+		resrespose, err := s.RepositoryGateway.ResponseRepository.GetResponseByPostId(v.PostId)
+		if err == nil && resrespose != nil {
+			Organizerresponse = resrespose.Detail
 		}
 
-		res.PostLists = append(res.PostLists, post)
+		requser := &st.GetUserByUserIdRequest{
+			UserId: v.UserId,
+		}
+
+		UserName := ""
+		resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
+		if err == nil && resuser != nil {
+			UserName = resuser.Username
+		}
+
+		post := st.PostList{
+			PostId:            v.PostId,
+			UserId:            v.UserId,
+			Username:          UserName,
+			EventId:           v.EventId,
+			Caption:           v.Caption,
+			RatingScore:       v.RatingScore,
+			OrganizerResponse: Organizerresponse,
+		}
+
+		postlists = append(postlists, post)
 	}
+
+	// Calculate average rating
+	var avgRating float64
+	if totalCount > 0 {
+		avgRating = float64(totalRatings) / float64(totalCount)
+		avgRating = math.Round(avgRating*10) / 10
+	}
+
+	res := &st.GetPostListsByEventIdResponse{
+		PostLists:   postlists,
+		OneRate:     countRatings[1],
+		TwoRate:     countRatings[2],
+		ThreeRate:   countRatings[3],
+		FourRate:    countRatings[4],
+		FiveRate:    countRatings[5],
+		AverageRate: avgRating,
+	}
+
 	return res, nil
 }
 

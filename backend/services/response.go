@@ -14,6 +14,7 @@ type ResponseService struct {
 }
 
 type IResponseService interface {
+	GetResponseByPostId(req *st.GetResponseByPostIdRequest) (*st.GetResponseByPostIdResponse, error)
 	CreateResponse(req *st.CreateResponseRequest) (*st.CreateResponseResponse, error)
 }
 
@@ -23,6 +24,20 @@ func NewResponseService(
 	return &ResponseService{
 		RepositoryGateway: repoGateway,
 	}
+}
+
+func (s *ResponseService) GetResponseByPostId(req *st.GetResponseByPostIdRequest) (*st.GetResponseByPostIdResponse, error) {
+	log.Println("[Service: GetResponseByPostId] Called")
+	res, err := s.RepositoryGateway.ResponseRepository.GetResponseByPostId(req.PostId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &st.GetResponseByPostIdResponse{
+		OrganizerId: res.OrganizerId,
+		PostId:      res.PostId,
+		Detail:      res.Detail,
+	}, nil
 }
 
 func (s *ResponseService) CreateResponse(req *st.CreateResponseRequest) (*st.CreateResponseResponse, error) {
