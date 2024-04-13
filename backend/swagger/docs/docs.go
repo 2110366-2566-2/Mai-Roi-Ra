@@ -2086,7 +2086,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2132,7 +2132,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2359,7 +2359,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -3554,7 +3554,7 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.RegisterEventResponse": {
+        "structure.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {

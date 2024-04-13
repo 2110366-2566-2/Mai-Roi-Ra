@@ -44,7 +44,7 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 		Organizerresponse = resrespose.Detail
 	}
 
-	requser := &st.GetUserByUserIdRequest{
+	requser := &st.UserIdRequest{
 		UserId: res.UserId,
 	}
 
@@ -93,7 +93,7 @@ func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest
 			Organizerresponse = resrespose.Detail
 		}
 
-		requser := &st.GetUserByUserIdRequest{
+		requser := &st.UserIdRequest{
 			UserId: v.UserId,
 		}
 

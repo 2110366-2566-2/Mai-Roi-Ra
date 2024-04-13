@@ -90,7 +90,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 
 	var userRes *models.User
 	if adminId != "" {
-		userRes, err = s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+		userRes, err = s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 			UserId: adminId,
 		})
 		if err != nil {
@@ -101,7 +101,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	if err != nil {
 		return nil, err
 	}
-	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgUserId,
 	})
 	if err != nil {
@@ -230,7 +230,7 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	if err != nil {
 		return nil, err
 	}
-	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgId,
 	})
 	if err != nil {
@@ -347,7 +347,7 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 	if err != nil {
 		return nil, err
 	}
-	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgId,
 	})
 	if err != nil {

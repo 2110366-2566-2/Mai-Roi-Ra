@@ -2080,7 +2080,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2126,7 +2126,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2353,7 +2353,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -3548,7 +3548,7 @@
                 }
             }
         },
-        "structure.RegisterEventResponse": {
+        "structure.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {

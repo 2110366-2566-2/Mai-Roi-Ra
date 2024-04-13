@@ -641,7 +641,7 @@ definitions:
     - num_participant
     - user_id
     type: object
-  structure.RegisterEventResponse:
+  structure.MessageResponse:
     properties:
       message:
         type: string
@@ -2222,7 +2222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.RegisterEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2438,7 +2438,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.RegisterEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2468,7 +2468,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.RegisterEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:

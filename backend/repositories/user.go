@@ -25,16 +25,17 @@ type IUserRepository interface {
 	CreateUser(req *st.CreateUserRequest, registerType string, isVerified bool) (*string, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
 	GetUserByToken(token string) (*models.User, error)
-	GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error)
+	GetUserByID(req *st.UserIdRequest) (*models.User, error)
 	UpdateUserToken(userID string, token string) error
 	GetAllUsers() ([]models.User, error)
 	GetUserDataForEvents(userList []*models.Participate) (*st.GetParticipantListsResponse, error)
-	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
+	ToggleNotifications(req *st.UserIdRequest) (*st.MessageResponse, error)
 	IsEnableNotification(userId string) (*bool, *string, error)
 	GetRandomAdmin() (*models.User, error)
 	GetAllAdmins() ([]*models.User, error)
 	UpdateVerified(userId *string) error
-	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
+	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.MessageResponse, error)
+	UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -177,10 +178,6 @@ func (r *UserRepository) UpdateUserInformation(req *st.UpdateUserInformationRequ
 		modelUser.Province = req.Province
 	}
 
-	if req.UserImage != nil {
-		modelUser.UserImage = *req.UserImage
-	}
-
 	// Save the updated version
 	if err := r.DB.Save(&modelUser).Error; err != nil {
 		log.Println("[Repo: UpdateUserInformation] Error updating in the database:", err)
@@ -191,7 +188,7 @@ func (r *UserRepository) UpdateUserInformation(req *st.UpdateUserInformationRequ
 }
 
 // GetUserByID retrieves a user by their ID.
-func (r *UserRepository) GetUserByID(req *st.GetUserByUserIdRequest) (*models.User, error) {
+func (r *UserRepository) GetUserByID(req *st.UserIdRequest) (*models.User, error) {
 	log.Println("[REPO: GetUserByID]: Called")
 	var user models.User
 	if err := r.DB.Where("user_id = ?", req.UserId).Find(&user).Error; err != nil {
@@ -258,7 +255,7 @@ func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*
 	return resLists, nil
 }
 
-func (r *UserRepository) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error) {
+func (r *UserRepository) ToggleNotifications(req *st.UserIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: ToggleNotifications] Called")
 
 	// find the user by user_id
@@ -276,7 +273,7 @@ func (r *UserRepository) ToggleNotifications(req *st.GetUserByUserIdRequest) (*s
 		return nil, err
 	}
 
-	return &st.RegisterEventResponse{
+	return &st.MessageResponse{
 		Message: "Toggle Successful",
 	}, nil
 }
@@ -332,7 +329,7 @@ func (r *UserRepository) UpdateVerified(userId *string) error {
 	return nil
 }
 
-func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error) {
+func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: UpdateUserRole] Called")
 
 	var modelUser models.User
@@ -340,11 +337,11 @@ func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.User
 		log.Print("[Repo: UpdateUserRole] user_id not found")
 		return nil, err
 	}
-	response := &st.UserResponse{
-		Response: "Update role successful",
+	response := &st.MessageResponse{
+		Message: "Update role successful",
 	}
-	if (modelUser.Username != "") {
-		response.Response = "Role has already been updated. The change won't be saved"
+	if modelUser.Username != "" {
+		response.Message = "Role has already been updated. The change won't be saved"
 		return response, nil
 	}
 	role := constant.USER
@@ -358,10 +355,27 @@ func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.User
 	if req.Username != "" {
 		modelUser.Username = req.Username
 	}
-	
+
 	if err := r.DB.Save(&modelUser).Error; err != nil {
 		log.Println("[Repo: UpdateUserRole] Error updating in the database:", err)
 		return nil, err
 	}
 	return response, nil
+}
+
+func (r *UserRepository) UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error) {
+	var userModel models.User
+	if err := r.DB.Where("user_id = ?", userId).First(&userModel).Error; err != nil {
+		log.Println("[Repo: UpdateUserProfileImage] event_id not found")
+		return nil, err
+	}
+
+	userModel.UserImage = url
+	if err := r.DB.Save(&userModel).Error; err != nil {
+		log.Println("[Repo: UpdateUserProfileImage] Error updating in the database:", err)
+		return nil, err
+	}
+	return &st.MessageResponse{
+		Message: "Update Successful",
+	}, nil
 }

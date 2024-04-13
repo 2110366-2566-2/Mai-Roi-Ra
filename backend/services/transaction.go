@@ -132,7 +132,7 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 			UserID:          transModel.UserID,
 			TransactionID:   transModel.TransactionID,
 			Amount:          paymentAmount,
-			TransactionDate: utils.ToDateString(time.Now()), 
+			TransactionDate: utils.ToDateString(time.Now()),
 			EventID:         transModel.EventID,
 		}
 		_, emailErr := s.SendTransactionEmail(emailReq)
@@ -293,7 +293,7 @@ func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequ
 	}
 
 	// Send email notification to the organizer
-	organizer, _ := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{UserId: userId})
+	organizer, _ := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{UserId: userId})
 	if organizer != nil && organizer.IsEnableNotification {
 		emailRequest := &st.SendTransactionEmailRequest{
 			UserID:          userId,
@@ -324,7 +324,7 @@ func (s *TransactionService) ConfirmPaymentIntent(req string) error {
 func (s *TransactionService) IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error) {
 	log.Println("[Service: IsPaid]: Called")
 
-	resUser , err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(req.OrganizerId)
+	resUser, err := s.RepositoryGateway.OrganizerRepository.GetUserIdFromOrganizerId(req.OrganizerId)
 	if err != nil {
 		return nil, err
 	}

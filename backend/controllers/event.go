@@ -85,7 +85,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
 	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, req.EventId)
-	if err != nil {
+	if uploadErr != nil {
 		log.Println("[CTRL: CreateEvent] Called SaveFile to S3 Error: ", uploadErr)
 		return
 	}
@@ -201,7 +201,7 @@ func (c *EventController) UpdateEventImage(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [delete]
 func (c *EventController) DeleteEventById(ctx *gin.Context) {
-	req := &st.DeleteEventRequest{
+	req := &st.EventIdRequest{
 		EventId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: DeleteEventById] Input:", req)
@@ -271,7 +271,7 @@ func (c *EventController) GetEventLists(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [get]
 func (c *EventController) GetEventDataById(ctx *gin.Context) {
-	req := st.GetEventDataByIdRequest{
+	req := st.EventIdRequest{
 		EventId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetEventDataById] Input:", req)
