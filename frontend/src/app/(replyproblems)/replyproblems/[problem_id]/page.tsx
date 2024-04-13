@@ -10,7 +10,7 @@ import isRegisteredEvent from "@/libs/isRegisteredEvent";
 import { getServerSession } from "next-auth";
 import getProblem from "@/libs/getProblem";
 import ReplyForm from "@/components/ReplyForm";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 
 interface Props {
   params: { problem_id: string };

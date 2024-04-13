@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import NextAuthProvider from '@/provider/NextAuthProvider'
 import { getServerSession } from 'next-auth'
-import { authOptions } from './api/auth/[...nextauth]/route'
+import { authOptions } from './api/auth/[...nextauth]/auth'
 // import ReduxProvider from '@/redux/ReduxProvider'
 
 export const metadata: Metadata = {

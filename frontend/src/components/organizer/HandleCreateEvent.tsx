@@ -3,16 +3,15 @@ import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import createEvent from "@/libs/createEvent"
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth"
 
 
-export async function HandleCreateEvent(name:string,activity:string, startdate:string, endDate:string, price:number, location:string, district:string, 
-    province:string, description:string, imageSrc:string){
+export async function HandleCreateEvent(name: string, activity: string, startdate: string, endDate: string, price: number, location: string, district: string,
+    province: string, description: string, imageSrc: string) {
     const session = await getServerSession(authOptions);
-    const user = session?.user;
-
+    if (!session || !session.user.token) return null
     try {
-        const res = await createEvent(user?.organizer_id,name,activity,location,district,province,price,description,imageSrc,startdate,endDate,user.token);
+        const res = await createEvent(session.user.organizer_id, name, activity, location, district, province, price, description, imageSrc, startdate, endDate, session.user.token);
         console.log(res);
         console.log("Create Event successful");
     } catch (err) {

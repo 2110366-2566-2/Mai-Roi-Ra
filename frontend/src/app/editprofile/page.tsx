@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import getProfile from "@/libs/getProfile";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/auth";
 import EditProfileFormSkeleton from "@/components/skeletons/EditProfileFormSkeleton";
 import showLoadingOverlay, {
   hideLoadingOverlay,

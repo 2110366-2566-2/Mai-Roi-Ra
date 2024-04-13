@@ -11,7 +11,7 @@ import getMyUserEvents from "@/libs/getMyUserEvents";
 import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/auth";
 import EventsList from "@/components/EventsList";
 import isEmailVerified from "@/libs/isEmailVerified";
 import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";

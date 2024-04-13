@@ -8,11 +8,10 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Modal from "./Modal";
 import isRegisteredEvent from "@/libs/isRegisteredEvent";
-import verifyEvent from "@/libs/VerifyEvent";
+import verifyEvent from "@/libs/verifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
 import { useRouter } from "next/navigation";
 import LoadingLine from "./LoadingLine";
-import { FaLastfmSquare } from "react-icons/fa";
 
 //Payment
 import createPaymentIntent from "@/libs/createPaymentIntent";

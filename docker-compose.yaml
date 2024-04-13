@@ -1,7 +1,22 @@
 version: '3.9'
 
 services:
-
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - frontend/.env.local
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend:/usr/src/app
+  #   command: pnpm run dev
+  #   depends_on:
+  #     pg_db:
+  #       condition: service_healthy
+  
   backend:
     container_name: backend
     build: 
@@ -23,9 +38,9 @@ services:
     image: postgres:alpine
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: test_db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=test_db
     ports:
       - "5432:5432"
     volumes:

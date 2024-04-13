@@ -2,7 +2,7 @@ import Image from "next/image";
 import EventItem from "@/components/EventItem";
 import getEvents from "@/libs/getEvents";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import AdminHomepage from "@/components/AdminHomepage";
 import UserHomepage from "@/components/UserHomepage";
 import AdminSupportAndService from "@/components/AdminSupportAndService";
