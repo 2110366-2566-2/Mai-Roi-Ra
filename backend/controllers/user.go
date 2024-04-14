@@ -439,7 +439,7 @@ func (c *UserController) ToggleNotifications(ctx *gin.Context) {
 // @Produce json
 // @Param user_id path string true "user_id"
 // @Param search query string true "search"
-// @Success 200 {object} structure.SearchEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/{user_id}/searchevent [post]
@@ -529,7 +529,7 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.SendOTPEmailRequest true "Send OTP Email Request"
-// @Success 200 {object} st.SendOTPEmailResponse "OTP email successfully sent"
+// @Success 200 {object} st.MessageResponse "OTP email successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the OTP email"
 // @Router /users/send_otp_email [put]
 func (c *UserController) SendOTPEmail(ctx *gin.Context) {
@@ -580,7 +580,7 @@ func (c *UserController) VerifyOTP(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.UpdateUserRoleRequest true "Update User Role Request"
-// @Success 200 {object} st.UserResponse "User successfully updated"
+// @Success 200 {object} st.MessageResponse "User successfully updated"
 // @Failure 400 {object} object "Bad request - error in updating user role"
 // @Router /users/update_user_role [put]
 func (c *UserController) UpdateUserRole(ctx *gin.Context) {

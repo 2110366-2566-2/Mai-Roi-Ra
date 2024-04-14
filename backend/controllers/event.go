@@ -109,7 +109,7 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body structure.UpdateEventRequest true "Create Event Request"
-// @Success 200 {object} structure.UpdateEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [put]
@@ -139,7 +139,7 @@ func (c *EventController) UpdateEvent(ctx *gin.Context) {
 // @Produce json
 // @Param event_id path string True "Event Id"
 // @Param event_image formData file True "Event image"
-// @Success 200 {object} structure.UpdateEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/upload/{event_id} [put]
@@ -333,7 +333,7 @@ func (c *EventController) GetParticipantLists(ctx *gin.Context) {
 // @Param event_id path string true "Event ID" example:"event123"
 // @Param status query string true "Status" example:"Approved or Rejected"
 // @Param admin_id query string trie "Admin ID"
-// @Success 200 {object} structure.VerifyEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id}/verify [put]

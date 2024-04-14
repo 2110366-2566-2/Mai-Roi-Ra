@@ -522,6 +522,11 @@ definitions:
       username:
         type: string
     type: object
+  structure.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
   structure.Participant:
     properties:
       address:
@@ -641,16 +646,6 @@ definitions:
     - num_participant
     - user_id
     type: object
-  structure.MessageResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  structure.SearchEventResponse:
-    properties:
-      message:
-        type: string
-    type: object
   structure.SearchHistory:
     properties:
       search_name:
@@ -693,11 +688,6 @@ definitions:
       email:
         type: string
       user_id:
-        type: string
-    type: object
-  structure.SendOTPEmailResponse:
-    properties:
-      message:
         type: string
     type: object
   structure.SendRefundEmailRequest:
@@ -821,11 +811,6 @@ definitions:
     - start_date
     - status
     type: object
-  structure.UpdateEventResponse:
-    properties:
-      event_id:
-        type: string
-    type: object
   structure.UpdateProblemRequest:
     properties:
       admin_username:
@@ -859,8 +844,6 @@ definitions:
         type: string
       user_id:
         type: string
-      user_image:
-        type: string
     required:
     - address
     - birth_date
@@ -882,16 +865,6 @@ definitions:
     - role
     - user_id
     - username
-    type: object
-  structure.UserResponse:
-    properties:
-      response:
-        type: string
-    type: object
-  structure.VerifyEventResponse:
-    properties:
-      message:
-        type: string
     type: object
   structure.VerifyOTPRequest:
     properties:
@@ -1295,7 +1268,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.UpdateEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1333,7 +1306,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.VerifyEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1404,7 +1377,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.UpdateEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1547,7 +1520,7 @@ paths:
         "200":
           description: Confirms the user has been logged out.
           schema:
-            $ref: '#/definitions/structure.UserResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Returns an error if logout fails.
           schema:
@@ -2314,7 +2287,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.SearchEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2498,7 +2471,7 @@ paths:
         "200":
           description: OTP email successfully sent
           schema:
-            $ref: '#/definitions/structure.SendOTPEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the OTP email
           schema:
@@ -2524,12 +2497,51 @@ paths:
         "200":
           description: User successfully updated
           schema:
-            $ref: '#/definitions/structure.UserResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in updating user role
           schema:
             type: object
       summary: Update User Role
+      tags:
+      - users
+  /users/upload/{user_id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: updates an user's profile image
+      parameters:
+      - description: User Id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Is user already have a picture?
+        in: formData
+        name: is_profiled
+        required: true
+        type: string
+      - description: Profile image
+        in: formData
+        name: user_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing user's image
       tags:
       - users
   /users/verification_status:

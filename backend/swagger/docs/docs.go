@@ -563,7 +563,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.UpdateEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -651,7 +651,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.UpdateEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -750,7 +750,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.VerifyEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -967,7 +967,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Confirms the user has been logged out.",
                         "schema": {
-                            "$ref": "#/definitions/structure.UserResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2178,7 +2178,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OTP email successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendOTPEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2218,11 +2218,69 @@ const docTemplate = `{
                     "200": {
                         "description": "User successfully updated",
                         "schema": {
-                            "$ref": "#/definitions/structure.UserResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request - error in updating user role",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/upload/{user_id}": {
+            "put": {
+                "description": "updates an user's profile image",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update existing user's image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Is user already have a picture?",
+                        "name": "is_profiled",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Profile image",
+                        "name": "user_image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -2498,7 +2556,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SearchEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -3383,6 +3441,14 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.Participant": {
             "type": "object",
             "required": [
@@ -3554,22 +3620,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SearchEventResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.SearchHistory": {
             "type": "object",
             "required": [
@@ -3634,14 +3684,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SendOTPEmailResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
                     "type": "string"
                 }
             }
@@ -3828,14 +3870,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.UpdateEventResponse": {
-            "type": "object",
-            "properties": {
-                "event_id": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.UpdateProblemRequest": {
             "type": "object",
             "required": [
@@ -3894,9 +3928,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
-                },
-                "user_image": {
-                    "type": "string"
                 }
             }
         },
@@ -3915,22 +3946,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.UserResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.VerifyEventResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
                     "type": "string"
                 }
             }
