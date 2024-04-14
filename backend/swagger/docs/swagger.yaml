@@ -2241,7 +2241,7 @@ paths:
       - application/json
       description: Update User information with the desired input
       parameters:
-      - description: Create Event Request
+      - description: Update User Request
         in: body
         name: request
         required: true

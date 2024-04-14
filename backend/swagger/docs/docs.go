@@ -2492,7 +2492,7 @@ const docTemplate = `{
                 "summary": "UpdateUserInformation",
                 "parameters": [
                     {
-                        "description": "Create Event Request",
+                        "description": "Update User Request",
                         "name": "request",
                         "in": "body",
                         "required": true,

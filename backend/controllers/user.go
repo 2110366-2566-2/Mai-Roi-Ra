@@ -87,7 +87,7 @@ func (c *UserController) GetAllUsers(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param request body structure.UpdateUserInformationRequest true "Create Event Request"
+// @Param request body structure.UpdateUserInformationRequest true "Update User Request"
 // @Success 200 {object} models.User
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
