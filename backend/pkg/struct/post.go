@@ -1,9 +1,5 @@
 package structure
 
-type GetPostByIdRequest struct {
-	PostId string `json:"post_id" binding:"required"`
-}
-
 type GetPostByIdResponse struct {
 	PostId            string  `json:"post_id" example:"1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"`
 	UserId            string  `json:"user_id" example:"9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"`
@@ -22,10 +18,6 @@ type PostList struct {
 	Caption           *string `json:"caption" example:"Caption (Max Length 1000)"`
 	RatingScore       int     `json:"rating_score" example:"4"`
 	OrganizerResponse string  `json:"organizer_response" example:"Response1"`
-}
-
-type GetPostListsByEventIdRequest struct {
-	EventId string `json:"event_id" binding:"required" example:"b21d43c3-1a0a-4f36-b38b-81d0e57af681"`
 }
 
 type GetPostListsByEventIdResponse struct {
@@ -47,12 +39,4 @@ type CreatePostRequest struct {
 
 type CreatePostResponse struct {
 	PostId string `json:"post_id" binding:"required" example:"1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"`
-}
-
-type DeletePostRequest struct {
-	PostId string `json:"post_id" binding:"required" example:"1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"`
-}
-
-type DeletePostResponse struct {
-	Message string `json:"message" example:"Delete Successful"`
 }

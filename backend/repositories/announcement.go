@@ -13,7 +13,7 @@ type AnnouncementRepository struct {
 }
 
 type IAnnouncementRepository interface {
-	GetAnnouncementsForEvent(req *st.GetAnnouncementListsRequest) (*st.GetAnnouncementListsResponse, error)
+	GetAnnouncementsForEvent(req *st.EventIdRequest) (*st.GetAnnouncementListsResponse, error)
 	CreateAnnouncement(req *models.Announcement) error
 }
 
@@ -25,7 +25,7 @@ func NewAnnouncementRepository(
 	}
 }
 
-func (r *AnnouncementRepository) GetAnnouncementsForEvent(req *st.GetAnnouncementListsRequest) (*st.GetAnnouncementListsResponse, error) {
+func (r *AnnouncementRepository) GetAnnouncementsForEvent(req *st.EventIdRequest) (*st.GetAnnouncementListsResponse, error) {
 	log.Println("[Repo: GetAnnouncementsForEvent]: Called")
 	var AnnouncementLists []*models.Announcement
 	query := r.DB

@@ -16,9 +16,9 @@ type PostRepository struct {
 
 type IPostRepository interface {
 	GetPostById(postID string) (*models.Post, error)
-	GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, error)
+	GetPostListsByEventId(req *st.EventIdRequest) ([]models.Post, error)
 	CreatePost(req *models.Post) (*st.CreatePostResponse, error)
-	DeletePostById(req *st.DeletePostRequest) (*st.DeletePostResponse, error)
+	DeletePostById(req *st.PostIdRequest) (*st.MessageResponse, error)
 }
 
 func NewPostRepository(
@@ -41,7 +41,7 @@ func (repo *PostRepository) GetPostById(postID string) (*models.Post, error) {
 	return &post, nil
 }
 
-func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) ([]models.Post, error) {
+func (repo *PostRepository) GetPostListsByEventId(req *st.EventIdRequest) ([]models.Post, error) {
 	log.Println("[Repo: GetPostListsByEventId] Called")
 
 	var posts []models.Post
@@ -54,7 +54,7 @@ func (repo *PostRepository) GetPostListsByEventId(req *st.GetPostListsByEventIdR
 		log.Println("[Repo: GetPostListsByEventId] Error finding posts:", err)
 		return nil, err
 	}
-	
+
 	return posts, nil
 }
 
@@ -76,7 +76,7 @@ func (r *PostRepository) CreatePost(req *models.Post) (*st.CreatePostResponse, e
 	}, nil
 }
 
-func (r *PostRepository) DeletePostById(req *st.DeletePostRequest) (*st.DeletePostResponse, error) {
+func (r *PostRepository) DeletePostById(req *st.PostIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: DeletePostById]: Called")
 	postModel := models.Post{}
 
@@ -97,7 +97,7 @@ func (r *PostRepository) DeletePostById(req *st.DeletePostRequest) (*st.DeletePo
 	}
 
 	// Return a success message
-	return &st.DeletePostResponse{
-		Message: "success",
+	return &st.MessageResponse{
+		Response: "success",
 	}, nil
 }

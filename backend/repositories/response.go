@@ -16,7 +16,7 @@ type ResponseRepository struct {
 
 type IResponseRepository interface {
 	GetResponseByPostId(postID string) (*models.Response, error)
-	CreateResponse(req *models.Response) (*st.CreateResponseResponse, error)
+	CreateResponse(req *models.Response) (*st.MessageResponse, error)
 }
 
 func NewResponseRepository(
@@ -39,7 +39,7 @@ func (repo *ResponseRepository) GetResponseByPostId(postID string) (*models.Resp
 	return &response, nil
 }
 
-func (r *ResponseRepository) CreateResponse(req *models.Response) (*st.CreateResponseResponse, error) {
+func (r *ResponseRepository) CreateResponse(req *models.Response) (*st.MessageResponse, error) {
 	log.Println("[Repo: CreateResponse]: Called")
 	trans := r.db.Begin().Debug()
 	if err := trans.Create(&req).Error; err != nil {
@@ -52,7 +52,7 @@ func (r *ResponseRepository) CreateResponse(req *models.Response) (*st.CreateRes
 		log.Println("[Repo: CreateResponse]: Call orm DB Commit error:", err)
 		return nil, err
 	}
-	return &st.CreateResponseResponse{
-		Message: fmt.Sprintf(`Response Created Succesful for PostID : %s`, req.PostId),
+	return &st.MessageResponse{
+		Response: fmt.Sprintf(`Response Created Succesful for PostID : %s`, req.PostId),
 	}, nil
 }

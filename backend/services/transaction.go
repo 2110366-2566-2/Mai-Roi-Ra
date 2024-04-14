@@ -24,7 +24,7 @@ type TransactionService struct {
 type ITransactionService interface {
 	CreatePayment(req *st.CreatePaymentRequest) (*st.CreatePaymentResponse, error)
 	GetPaymentIntentById(req *st.GetPaymentIntentByIdRequest) (*st.GetPaymentIntentByIdResponse, error)
-	SendTransactionEmail(req *st.SendTransactionEmailRequest) (*st.SendTransactionEmailResponse, error)
+	SendTransactionEmail(req *st.SendTransactionEmailRequest) (*st.MessageResponse, error)
 	TransferToOrganizer(req *st.TransferToOrganizerRequest) (*models.Transaction, error)
 	ConfirmPaymentIntent(req string) error
 	IsPaid(req *st.IsPaidRequest) (*st.IsPaidResponse, error)
@@ -146,7 +146,7 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 }
 
 // SendTransactionEmail implements ITransactionService.
-func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRequest) (*st.SendTransactionEmailResponse, error) {
+func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SendTransactionEmail]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
@@ -241,8 +241,8 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	}
 
 	res := fmt.Sprintf("Transaction email sent successfully from %s to %s", cfg.Email.Address, to)
-	return &st.SendTransactionEmailResponse{
-		SendStatus: res,
+	return &st.MessageResponse{
+		Response: res,
 	}, nil
 }
 

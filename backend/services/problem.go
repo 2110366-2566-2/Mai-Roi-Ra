@@ -17,10 +17,10 @@ type ProblemService struct {
 
 type IProblemService interface {
 	CreateProblem(req *st.CreateProblemRequest) (*st.CreateProblemResponse, error)
-	GetProblemDetailById(req *st.GetProblemDetailByIdRequest) (*st.GetProblemDetailByIdResponse, error)
+	GetProblemDetailById(req *st.ProblemIdRequest) (*st.GetProblemDetailByIdResponse, error)
 	GetProblemLists(req *st.GetProblemListsRequest) (*st.GetProblemListsResponse, error)
-	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
-	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
+	UpdateProblem(req *st.UpdateProblemRequest) (*st.MessageResponse, error)
+	DeleteProblemById(req *st.ProblemIdRequest) (*st.MessageResponse, error)
 	SendReplyEmail(problemId string) error
 	SendEmailToAdmin(problemType string, description string) error
 }
@@ -49,7 +49,7 @@ func (s *ProblemService) CreateProblem(req *st.CreateProblemRequest) (*st.Create
 	}, nil
 }
 
-func (s *ProblemService) GetProblemDetailById(req *st.GetProblemDetailByIdRequest) (*st.GetProblemDetailByIdResponse, error) {
+func (s *ProblemService) GetProblemDetailById(req *st.ProblemIdRequest) (*st.GetProblemDetailByIdResponse, error) {
 	log.Println("[Service: GetProblemDetailById] Called")
 	res, err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(req.ProblemId)
 	if err != nil {
@@ -109,7 +109,7 @@ func (s *ProblemService) GetProblemLists(req *st.GetProblemListsRequest) (*st.Ge
 	return res, nil
 }
 
-func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error) {
+func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: UpdateProblem] Called")
 	res, err := s.RepositoryGateway.ProblemRepository.UpdateProblem(req)
 	if err != nil {
@@ -126,7 +126,7 @@ func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.Proble
 	return res, nil
 }
 
-func (s *ProblemService) DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error) {
+func (s *ProblemService) DeleteProblemById(req *st.ProblemIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: DeleteProblemById] Called")
 	res, err := s.RepositoryGateway.ProblemRepository.DeleteProblemById(req)
 	if err != nil {

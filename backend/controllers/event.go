@@ -212,7 +212,7 @@ func (c *EventController) DeleteEventById(ctx *gin.Context) {
 	}
 
 	log.Println("[CTRL: DeleteEvent] Output:", deleteMessage)
-	ctx.JSON(http.StatusOK, gin.H{"message": deleteMessage})
+	ctx.JSON(http.StatusOK, gin.H{"response": deleteMessage})
 }
 
 // @Summary GetEventLists

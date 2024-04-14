@@ -367,7 +367,7 @@ func (s *UserService) LogoutUser(req *st.UserIdRequest) (*st.MessageResponse, er
 
 	log.Printf("[Service: LogoutUser]: Token removed successfully for UserID: %s", req.UserId)
 	res := &st.MessageResponse{
-		Message: "Logout successful",
+		Response: "Logout successful",
 	}
 	return res, nil
 }
@@ -515,7 +515,7 @@ func (s *UserService) SearchEvent(req *st.SearchEventRequest) (*st.MessageRespon
 	}
 
 	return &st.MessageResponse{
-		Message: *res,
+		Response: *res,
 	}, nil
 }
 
@@ -687,7 +687,7 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.MessageResp
 	}
 
 	return &st.MessageResponse{
-		Message: "OTP email sent successfully",
+		Response: "OTP email sent successfully",
 	}, nil
 }
 

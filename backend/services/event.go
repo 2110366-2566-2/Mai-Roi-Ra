@@ -177,7 +177,7 @@ func (s *EventService) GetEventDataById(req st.EventIdRequest) (*st.GetEventData
 	if resEvent.EventImage != nil {
 		eventImage = *resEvent.EventImage
 	}
-	announcementreq := &st.GetAnnouncementListsRequest{
+	announcementreq := &st.EventIdRequest{
 		EventId: req.EventId,
 	}
 	resAnnouncement, err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
@@ -361,7 +361,7 @@ func (s *EventService) DeleteEventById(req *st.EventIdRequest) (*st.MessageRespo
 	}
 
 	res := &st.MessageResponse{
-		Message: "Delete Successful",
+		Response: "Delete Successful",
 	}
 
 	return res, nil

@@ -52,7 +52,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Announcement successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -92,7 +92,7 @@ const docTemplate = `{
                     "200": {
                         "description": "CancelledEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -132,7 +132,7 @@ const docTemplate = `{
                     "200": {
                         "description": "RegisteredEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -172,7 +172,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ReminderEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1190,7 +1190,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.DeletePostResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1327,7 +1327,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Problem"
+                            "$ref": "#/definitions/structure.GetProblemDetailByIdResponse"
                         }
                     },
                     "400": {
@@ -1378,7 +1378,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.ProblemResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1420,7 +1420,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.ProblemResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1558,7 +1558,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.CreateResponseResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1722,7 +1722,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.TransactionResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1766,7 +1766,7 @@ const docTemplate = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1856,7 +1856,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Transaction email successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendTransactionEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2661,42 +2661,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Problem": {
-            "type": "object",
-            "required": [
-                "problem_id",
-                "user_id"
-            ],
-            "properties": {
-                "admin_username": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "problem": {
-                    "type": "string"
-                },
-                "problem_id": {
-                    "type": "string"
-                },
-                "reply": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Response": {
             "type": "object",
             "required": [
@@ -2996,15 +2960,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.CreateResponseResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "Create Respose for PostID : 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6 successful"
-                }
-            }
-        },
         "structure.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -3061,15 +3016,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
-                }
-            }
-        },
-        "structure.DeletePostResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "Delete Successful"
                 }
             }
         },
@@ -3335,6 +3281,29 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.GetProblemDetailByIdResponse": {
+            "type": "object",
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "structure.GetProblemListsResponse": {
             "type": "object",
             "properties": {
@@ -3444,7 +3413,7 @@ const docTemplate = `{
         "structure.MessageResponse": {
             "type": "object",
             "properties": {
-                "message": {
+                "response": {
                     "type": "string"
                 }
             }
@@ -3589,14 +3558,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.ProblemResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.RegisterEventRequest": {
             "type": "object",
             "required": [
@@ -3631,14 +3592,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SendAnnounceResponse": {
-            "type": "object",
-            "properties": {
-                "announce_status": {
                     "type": "string"
                 }
             }
@@ -3721,14 +3674,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.SendRegisteredEmailResponse": {
-            "type": "object",
-            "properties": {
-                "announce_status": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.SendReminderEmailRequest": {
             "type": "object",
             "properties": {
@@ -3748,14 +3693,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SendReminderEmailResponse": {
-            "type": "object",
-            "properties": {
-                "announce_status": {
                     "type": "string"
                 }
             }
@@ -3780,26 +3717,10 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.SendTransactionEmailResponse": {
-            "type": "object",
-            "properties": {
-                "send_status": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.TestResponse": {
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.TransactionResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
                     "type": "string"
                 }
             }

@@ -274,7 +274,7 @@ func (r *UserRepository) ToggleNotifications(req *st.UserIdRequest) (*st.Message
 	}
 
 	return &st.MessageResponse{
-		Message: "Toggle Successful",
+		Response: "Toggle Successful",
 	}, nil
 }
 
@@ -338,10 +338,10 @@ func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.Mess
 		return nil, err
 	}
 	response := &st.MessageResponse{
-		Message: "Update role successful",
+		Response: "Update role successful",
 	}
 	if modelUser.Username != "" {
-		response.Message = "Role has already been updated. The change won't be saved"
+		response.Response = "Role has already been updated. The change won't be saved"
 		return response, nil
 	}
 	role := constant.USER
@@ -376,6 +376,6 @@ func (r *UserRepository) UpdateUserProfileImage(userId string, url string) (*st.
 		return nil, err
 	}
 	return &st.MessageResponse{
-		Message: "Update Successful",
+		Response: "Update Successful",
 	}, nil
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ func NewPostController(
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/{post_id} [get]
 func (c *PostController) GetPostById(ctx *gin.Context) {
-	req := &st.GetPostByIdRequest{
+	req := &st.PostIdRequest{
 		PostId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetPostById] Input:", req)
@@ -57,7 +58,7 @@ func (c *PostController) GetPostById(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/events/{event_id} [get]
 func (c *PostController) GetPostListsByEventId(ctx *gin.Context) {
-	req := &st.GetPostListsByEventIdRequest{
+	req := &st.EventIdRequest{
 		EventId: ctx.Query("event_id"),
 	}
 	log.Println("[CTRL: GetPostListsByEventId] Input:", req)
@@ -104,12 +105,12 @@ func (c *PostController) CreatePost(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param post_id path string true "Post ID" example:"post123"
-// @Success 200 {object} st.DeletePostResponse
+// @Success 200 {object} st.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/{post_id} [delete]
 func (c *PostController) DeletePostById(ctx *gin.Context) {
-	req := &st.DeletePostRequest{
+	req := &st.PostIdRequest{
 		PostId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: DeletePost] Input:", req)

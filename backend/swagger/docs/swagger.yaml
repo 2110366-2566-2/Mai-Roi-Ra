@@ -1,29 +1,5 @@
 basePath: /api/v1
 definitions:
-  models.Problem:
-    properties:
-      admin_username:
-        type: string
-      created_at:
-        type: string
-      description:
-        type: string
-      problem:
-        type: string
-      problem_id:
-        type: string
-      reply:
-        type: string
-      status:
-        type: string
-      updated_at:
-        type: string
-      user_id:
-        type: string
-    required:
-    - problem_id
-    - user_id
-    type: object
   models.Response:
     properties:
       created_at:
@@ -227,12 +203,6 @@ definitions:
     - organizer_id
     - post_id
     type: object
-  structure.CreateResponseResponse:
-    properties:
-      message:
-        example: 'Create Respose for PostID : 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6 successful'
-        type: string
-    type: object
   structure.CreateUserRequest:
     properties:
       address:
@@ -273,12 +243,6 @@ definitions:
         type: string
     required:
     - user_id
-    type: object
-  structure.DeletePostResponse:
-    properties:
-      message:
-        example: Delete Successful
-        type: string
     type: object
   structure.GetAllUsersResponse:
     properties:
@@ -454,6 +418,21 @@ definitions:
       two_rate:
         type: integer
     type: object
+  structure.GetProblemDetailByIdResponse:
+    properties:
+      admin_username:
+        type: string
+      description:
+        type: string
+      problem:
+        type: string
+      problem_id:
+        type: string
+      reply:
+        type: string
+      status:
+        type: string
+    type: object
   structure.GetProblemListsResponse:
     properties:
       problem_lists:
@@ -524,7 +503,7 @@ definitions:
     type: object
   structure.MessageResponse:
     properties:
-      message:
+      response:
         type: string
     type: object
   structure.Participant:
@@ -625,11 +604,6 @@ definitions:
       status:
         type: string
     type: object
-  structure.ProblemResponse:
-    properties:
-      response:
-        type: string
-    type: object
   structure.RegisterEventRequest:
     properties:
       amount:
@@ -655,11 +629,6 @@ definitions:
     required:
     - search_name
     - user_id
-    type: object
-  structure.SendAnnounceResponse:
-    properties:
-      announce_status:
-        type: string
     type: object
   structure.SendAnnouncementRequest:
     properties:
@@ -711,11 +680,6 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendRegisteredEmailResponse:
-    properties:
-      announce_status:
-        type: string
-    type: object
   structure.SendReminderEmailRequest:
     properties:
       event_date:
@@ -731,11 +695,6 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendReminderEmailResponse:
-    properties:
-      announce_status:
-        type: string
-    type: object
   structure.SendTransactionEmailRequest:
     properties:
       amount:
@@ -749,19 +708,9 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendTransactionEmailResponse:
-    properties:
-      send_status:
-        type: string
-    type: object
   structure.TestResponse:
     properties:
       message:
-        type: string
-    type: object
-  structure.TransactionResponse:
-    properties:
-      response:
         type: string
     type: object
   structure.TransferToOrganizerRequest:
@@ -913,7 +862,7 @@ paths:
         "200":
           description: Announcement successfully sent
           schema:
-            $ref: '#/definitions/structure.SendAnnounceResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the announcement
           schema:
@@ -939,7 +888,7 @@ paths:
         "200":
           description: CancelledEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.SendCancelledEmailRequest'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the CancelledEmail
           schema:
@@ -965,7 +914,7 @@ paths:
         "200":
           description: RegisteredEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.SendRegisteredEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the RegisteredEmail
           schema:
@@ -991,7 +940,7 @@ paths:
         "200":
           description: ReminderEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.SendReminderEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the ReminderEmail
           schema:
@@ -1611,7 +1560,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.DeletePostResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1757,7 +1706,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.ProblemResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1785,7 +1734,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Problem'
+            $ref: '#/definitions/structure.GetProblemDetailByIdResponse'
         "400":
           description: Bad Request
           schema:
@@ -1819,7 +1768,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.ProblemResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1909,7 +1858,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateResponseResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2017,7 +1966,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.TransactionResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2075,7 +2024,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2105,7 +2054,7 @@ paths:
         "200":
           description: Transaction email successfully sent
           schema:
-            $ref: '#/definitions/structure.SendTransactionEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the transaction email
           schema:

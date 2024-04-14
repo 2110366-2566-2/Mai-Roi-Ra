@@ -55,7 +55,7 @@ func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st
 	}
 
 	message := st.MessageResponse{
-		Message: "Registered Successful",
+		Response: "Registered Successful",
 	}
 
 	return &message, nil
@@ -75,7 +75,7 @@ func (r *ParticipateRepository) CancelRegisterEvent(req *st.CancelRegisterEventR
 	}
 
 	return &st.MessageResponse{
-		Message: "Cancel successful",
+		Response: "Cancel successful",
 	}, nil
 }
 

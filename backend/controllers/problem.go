@@ -53,12 +53,12 @@ func (c *ProblemController) CreateProblem(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param problem_id path string true "Problem ID"
-// @Success 200 {object} models.Problem
+// @Success 200 {object} st.GetProblemDetailByIdResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems/{problem_id} [get]
 func (c *ProblemController) GetProblemDetailById(ctx *gin.Context) {
-	req := &st.GetProblemDetailByIdRequest{
+	req := &st.ProblemIdRequest{
 		ProblemId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetProblemDetail] Input:", req)
@@ -106,7 +106,7 @@ func (c *ProblemController) GetProblemLists(ctx *gin.Context) {
 // @Produce json
 // @Param problem_id path string true "Problem ID" example:"problem123"
 // @Param request body st.UpdateProblemRequest true "Update Problem Request"
-// @Success 200 {object} st.ProblemResponse
+// @Success 200 {object} st.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems/{problem_id} [put]
@@ -135,12 +135,12 @@ func (c *ProblemController) UpdateProblem(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param problem_id path string true "Problem ID" example:"problem123"
-// @Success 200 {object} st.ProblemResponse
+// @Success 200 {object} st.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /problems/{problem_id} [delete]
 func (c *ProblemController) DeleteProblemById(ctx *gin.Context) {
-	req := &st.DeleteProblemByIdRequest{
+	req := &st.ProblemIdRequest{
 		ProblemId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: DeleteProblem] Input:", req)

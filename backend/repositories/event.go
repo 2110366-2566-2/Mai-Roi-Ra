@@ -108,7 +108,7 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.MessageResponse, e
 	}
 
 	return &st.MessageResponse{
-		Message: req.EventId,
+		Response: req.EventId,
 	}, nil
 }
 
@@ -134,7 +134,7 @@ func (r *EventRepository) DeleteEventById(req *st.EventIdRequest) (*st.MessageRe
 
 	// Return a success message
 	return &st.MessageResponse{
-		Message: "success",
+		Response: "success",
 	}, nil
 }
 
@@ -239,7 +239,7 @@ func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.MessageRe
 		return nil, err
 	}
 	res := &st.MessageResponse{
-		Message: "Verify Event Successful",
+		Response: "Verify Event Successful",
 	}
 	return res, nil
 }
