@@ -6,9 +6,6 @@ import getProfile from "@/libs/getProfile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import EditProfileFormSkeleton from "@/components/skeletons/EditProfileFormSkeleton";
-import showLoadingOverlay, {
-  hideLoadingOverlay,
-} from "@/components/GlobalLoading";
 
 export default async function EditProfile() {
   const session = await getServerSession(authOptions);

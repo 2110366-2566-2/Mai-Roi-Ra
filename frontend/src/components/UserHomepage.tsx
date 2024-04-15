@@ -17,10 +17,7 @@ export default async function UserHomepage({page,limit,search} : Props) {
   const datas = events.event_lists;
   const session = await getServerSession(authOptions);
   const user = session?.user;
-  console.log(events);
-  console.log(user);
   const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id);
-  console.log(history.search_history);
 
   return (
     <main className="text-black flex flex-col h-screen overflow-hidden">

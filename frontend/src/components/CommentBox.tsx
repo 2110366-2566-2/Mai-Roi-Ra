@@ -22,12 +22,6 @@ const CommentBox = ({post_lists} : Props) => {
         setCurr((curr) => (curr === post_lists.length - 1 ? 0 : curr + 1));
     }
 
-    // useEffect(() => {
-    //     if (!autoSlide) return
-    //     const slideInterval = setInterval(next, autoSlideInterval)
-    //     return () => clearInterval(slideInterval)
-    // }, [])
-
     return (
         <div className="w-full h-full space-y-[2%]">
             <div className="w-full h-[70%] flex flex-row justify-center">

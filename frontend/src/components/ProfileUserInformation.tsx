@@ -45,15 +45,10 @@ export default function ProfileUserInformation({
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
   const [lastName, setLastName] = useState(lastNameProp);
-  const [address, setAddress] = useState(addressProp);
-  const [district, setDistrict] = useState(districtProp);
   const [province, setProvince] = useState(provinceProp);
   const [phoneNumber, setPhoneNumber] = useState(phoneNumberProp);
   const [email, setEmail] = useState(emailProp);
   const [birthDate, setBirthDate] = useState(birthDateProp);
-  const [profilePicture, setProfilePicture] = useState();
-  const [backgroundPicture, setBackgroundPicture] = useState();
-
   const [username, setUsername] = useState(usernameProp);
 
   const reformatDate = (dateStr: string) => {

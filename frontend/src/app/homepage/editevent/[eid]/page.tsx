@@ -7,7 +7,6 @@ interface Props {
 }
 
 export default async function EditEvent({params}: Props) {
-    console.log(params.eid);
     const event = await getEvent(params.eid);
 
     console.log(event);

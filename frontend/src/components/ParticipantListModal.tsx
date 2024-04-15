@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { useState } from "react";
 import Modal from "./Modal";
 import GroupsIcon from "@mui/icons-material/Groups";

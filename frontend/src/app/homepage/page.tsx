@@ -18,8 +18,6 @@ export default async function Homepage({
   const search = searchParams.search ?? '';
 
   const session = await getServerSession(authOptions);
-  console.log("successfully");
-  // console.log(session);
 
   const waitingEvents = await getWaitingEvents();
   const waitingEventsDatas = waitingEvents.event_lists;
