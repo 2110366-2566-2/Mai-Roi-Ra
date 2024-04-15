@@ -14,10 +14,6 @@ type CreateProblemResponse struct {
 	Status      string `json:"status"`
 }
 
-type GetProblemDetailByIdRequest struct {
-	ProblemId string `json:"problem_id" binding:"required"`
-}
-
 type GetProblemDetailByIdResponse struct {
 	ProblemId     string `json:"problem_id"`
 	AdminUsername string `json:"admin_username"`
@@ -52,12 +48,4 @@ type UpdateProblemRequest struct {
 	Description   string  `json:"description"`
 	Reply         *string `json:"reply"`
 	Status        string  `json:"status"`
-}
-type DeleteProblemByIdRequest struct {
-	ProblemId string `json:"problem_id" binding:"required"`
-}
-
-// Use on Update, Delete
-type ProblemResponse struct {
-	Response string `json:"response"`
 }

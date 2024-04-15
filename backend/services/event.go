@@ -24,12 +24,12 @@ type IEventService interface {
 	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error)
 	GetEventListsByStartDate(req *st.GetEventListsByStartDateRequest) (*st.GetEventListsByStartDateResponse, error)
-	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
-	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
-	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	GetEventDataById(st.EventIdRequest) (*st.GetEventDataByIdResponse, error)
+	UpdateEvent(req *st.UpdateEventRequest) (*st.MessageResponse, error)
+	DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
-	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
-	UpdateEventImage(eventId string, imageUrl string) (*st.UpdateEventResponse, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error)
+	UpdateEventImage(eventId string, imageUrl string) (*st.MessageResponse, error)
 }
 
 func NewEventService(
@@ -163,7 +163,7 @@ func (s *EventService) GetEventListsByStartDate(req *st.GetEventListsByStartDate
 	return resLists, nil
 }
 
-func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error) {
+func (s *EventService) GetEventDataById(req st.EventIdRequest) (*st.GetEventDataByIdResponse, error) {
 	log.Println("[Service: GetEventDataById]: Called")
 	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	if err != nil {
@@ -177,7 +177,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if resEvent.EventImage != nil {
 		eventImage = *resEvent.EventImage
 	}
-	announcementreq := &st.GetAnnouncementListsRequest{
+	announcementreq := &st.EventIdRequest{
 		EventId: req.EventId,
 	}
 	resAnnouncement, err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
@@ -188,7 +188,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if err != nil {
 		return nil, err
 	}
-	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgUserId,
 	})
 	if err != nil {
@@ -220,7 +220,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	return res, nil
 }
 
-func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
+func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: UpdateEvent]: Called")
 
 	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
@@ -288,7 +288,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	return res, nil
 }
 
-func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
+func (s *EventService) DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: DeleteEvent]: Called")
 
 	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
@@ -360,8 +360,8 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 		return nil, err
 	}
 
-	res := &st.DeleteEventResponse{
-		Message: "Delete Successful",
+	res := &st.MessageResponse{
+		Response: "Delete Successful",
 	}
 
 	return res, nil
@@ -413,7 +413,7 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 		return err
 	}
 
-	reqId := st.GetUserByUserIdRequest{
+	reqId := st.UserIdRequest{
 		UserId: resUserId,
 	}
 
@@ -504,7 +504,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 		return err
 	}
 
-	reqId := st.GetUserByUserIdRequest{
+	reqId := st.UserIdRequest{
 		UserId: resUserId,
 	}
 
@@ -566,7 +566,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	return nil
 }
 
-func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: VerifyEvent]: Called")
 	if req.Status == constant.APPROVED {
 		err := s.SendApprovalEmail(req.EventId)
@@ -593,7 +593,7 @@ func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventR
 	return res, nil
 }
 
-func (s *EventService) UpdateEventImage(eventId string, imageUrl string) (*st.UpdateEventResponse, error) {
+func (s *EventService) UpdateEventImage(eventId string, imageUrl string) (*st.MessageResponse, error) {
 	log.Println("[Service: UpdateEventImage] Called")
 	eventModel := models.Event{
 		EventImage: &imageUrl,

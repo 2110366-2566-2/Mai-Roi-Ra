@@ -5,10 +5,10 @@ import (
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	con "github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	mail "github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils/mail"
-	con "github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 )
 
 type ProblemService struct {
@@ -17,10 +17,10 @@ type ProblemService struct {
 
 type IProblemService interface {
 	CreateProblem(req *st.CreateProblemRequest) (*st.CreateProblemResponse, error)
-	GetProblemDetailById(req *st.GetProblemDetailByIdRequest) (*st.GetProblemDetailByIdResponse, error)
+	GetProblemDetailById(req *st.ProblemIdRequest) (*st.GetProblemDetailByIdResponse, error)
 	GetProblemLists(req *st.GetProblemListsRequest) (*st.GetProblemListsResponse, error)
-	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
-	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
+	UpdateProblem(req *st.UpdateProblemRequest) (*st.MessageResponse, error)
+	DeleteProblemById(req *st.ProblemIdRequest) (*st.MessageResponse, error)
 	SendReplyEmail(problemId string) error
 	SendEmailToAdmin(problemType string, description string) error
 }
@@ -49,7 +49,7 @@ func (s *ProblemService) CreateProblem(req *st.CreateProblemRequest) (*st.Create
 	}, nil
 }
 
-func (s *ProblemService) GetProblemDetailById(req *st.GetProblemDetailByIdRequest) (*st.GetProblemDetailByIdResponse, error) {
+func (s *ProblemService) GetProblemDetailById(req *st.ProblemIdRequest) (*st.GetProblemDetailByIdResponse, error) {
 	log.Println("[Service: GetProblemDetailById] Called")
 	res, err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(req.ProblemId)
 	if err != nil {
@@ -109,14 +109,14 @@ func (s *ProblemService) GetProblemLists(req *st.GetProblemListsRequest) (*st.Ge
 	return res, nil
 }
 
-func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error) {
+func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: UpdateProblem] Called")
 	res, err := s.RepositoryGateway.ProblemRepository.UpdateProblem(req)
 	if err != nil {
 		return nil, err
 	}
 
-	if(req.Status == con.REPLIED) {
+	if req.Status == con.REPLIED {
 		err := s.SendReplyEmail(req.ProblemId)
 		if err != nil {
 			return nil, err
@@ -126,7 +126,7 @@ func (s *ProblemService) UpdateProblem(req *st.UpdateProblemRequest) (*st.Proble
 	return res, nil
 }
 
-func (s *ProblemService) DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error) {
+func (s *ProblemService) DeleteProblemById(req *st.ProblemIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: DeleteProblemById] Called")
 	res, err := s.RepositoryGateway.ProblemRepository.DeleteProblemById(req)
 	if err != nil {
@@ -137,7 +137,7 @@ func (s *ProblemService) DeleteProblemById(req *st.DeleteProblemByIdRequest) (*s
 
 func (s *ProblemService) SendReplyEmail(problemId string) error {
 	log.Println("[Service: SendReplyEmail]: Called")
-	resProblem , err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(problemId)
+	resProblem, err := s.RepositoryGateway.ProblemRepository.GetProblemDetailById(problemId)
 	if err != nil {
 		log.Println("[Service: Call Repo Error]:", err)
 		return err
@@ -159,7 +159,7 @@ func (s *ProblemService) SendReplyEmail(problemId string) error {
 	bcc := make([]string, 0)
 	attachFiles := make([]string, 0)
 
-	reqUser := &st.GetUserByUserIdRequest{
+	reqUser := &st.UserIdRequest{
 		UserId: resProblem.UserId,
 	}
 	resUser, err := s.RepositoryGateway.UserRepository.GetUserByID(reqUser)
