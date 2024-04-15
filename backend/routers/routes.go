@@ -64,6 +64,7 @@ func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventControlle
 	{
 		eventRoutes.POST("/", controller.CreateEvent)
 		eventRoutes.GET("/", controller.GetEventLists)
+		eventRoutes.GET("/end/:id", controller.GetEndedEventLists)
 		eventRoutes.GET("/:id", controller.GetEventDataById)
 		eventRoutes.PUT("/:id", controller.UpdateEvent)
 		eventRoutes.PUT("/upload/:id", controller.UpdateEventImage)

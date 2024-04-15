@@ -260,6 +260,33 @@ func (c *EventController) GetEventLists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// @Summary GetEndedEventLists
+// @Description Get list of events that are ended by userid
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param user_id path string true "User ID" example:"user123"
+// @Success 200 {object} structure.GetEndedEventListsResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/end/{user_id} [get]
+func (c *EventController) GetEndedEventLists(ctx *gin.Context) {
+	req := &st.GetEndedEventListsRequest{
+		UserId: ctx.Param("id"),
+	}
+
+	log.Println("[CTRL: GetEndedEventLists] Input:", req)
+
+	res, err := c.ServiceGateway.EventService.GetEndedEventLists(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: GetEndedEventLists] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
 // @Summary GetEventDataById
 // @Description Get a test message
 // @Tags events
