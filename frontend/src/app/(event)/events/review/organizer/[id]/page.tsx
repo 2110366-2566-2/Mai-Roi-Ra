@@ -6,6 +6,9 @@ import LinearProgress from '@mui/joy/LinearProgress';
 import CommentBox from "@/components/CommentBox";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import getReviewEventById from "@/libs/getReviewEventById";
 
 interface Props {
     params: {id:string}
@@ -13,6 +16,14 @@ interface Props {
 
 export default async function OrganizerReviewEventById({ params }: Props) {
     const event = await getEvent(params.id);
+    const session = await getServerSession(authOptions);
+
+    if (!session) return;
+
+    const rating = await getReviewEventById(params.id,session?.user.user_id);
+    const count_post = rating.one_rate + rating.two_rate + rating.three_rate + rating.four_rate + rating.five_rate;
+    console.log(rating);
+    console.log(session);
     console.log(event);
 
     return (
@@ -45,8 +56,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                         <div className="border-gray-400 px-[20px] relative w-full h-full">   
 
                             <div className="text-[20px] pt-[40px] pb-[20px] overflow-hidden text-wrap">
-                                Songkran in Thailand, April 13-15, features water fights, family blessings, 
-                                temple visits, and vibrant street parties, symbolizing renewal and community spirit.
+                                {event.description}
                             </div>
 
                         </div>
@@ -67,10 +77,10 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                             Review & Rating
                         </div>
                         <div className="w-full h-[4%] text-center text-[3.5vh]">
-                            2.4
+                            {rating.average_rate}
                         </div>
                         <div className="py-[7px] h-[4%]">
-                            <Rating className="text-[3vh]" value={2.4} precision={0.01} readOnly />
+                            <Rating className="text-[3vh]" value={rating.average_rate} precision={0.01} readOnly />
                         </div>
                     </div>
 
@@ -82,12 +92,12 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                             <div className="w-[70%]">
                                 <LinearProgress sx={{
                                         backgroundColor: 'rgb(242, 213, 126)',
-                                        '& .MuiLinearProgress-bar1Determinate': { // Increased specificity for determinate variant
+                                        '& .MuiLinearProgress-bar1Determinate': {
                                         backgroundColor: 'rgb(255, 174, 39)',
                                         },
                                     }}
                                 determinate
-                                value={75}/>
+                                value={(rating.five_rate / count_post) * 100}/>
                             </div>
                         </div>
                             
@@ -103,7 +113,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                                         },
                                     }}
                                 determinate
-                                value={5}/>
+                                value={(rating.four_rate / count_post) * 100}/>
                             </div>
                         </div>
 
@@ -119,7 +129,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                                     },
                                 }}
                                 determinate
-                                value={10}/>
+                                value={(rating.three_rate / count_post) * 100}/>
                             </div>
                         </div>
 
@@ -135,7 +145,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                                         },
                                     }}
                                 determinate
-                                value={8}/>
+                                value={(rating.two_rate / count_post) * 100}/>
                             </div>
                         </div>
 
@@ -151,17 +161,17 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                                         },
                                     }}
                                 determinate
-                                value={7}/>
+                                value={(rating.one_rate / count_post) * 100}/>
                             </div>
                         </div>
 
                         <div className="w-full flex flex-row justify-end pr-[10px] h-[16%]">
-                            143 Ratings
+                            {count_post} Ratings
                         </div>
                     </div>
 
                     <div className="h-[53%] lg:mt-[0] mt-[2%]">
-                        <CommentBox/>
+                        <CommentBox post_lists={rating.post_lists}/>
                     </div>
                 </div>
             </div>

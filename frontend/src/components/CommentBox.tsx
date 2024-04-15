@@ -6,55 +6,20 @@ import Rating from '@mui/material/Rating';
 import Image from 'next/image';
 import { useState } from 'react';
 
-const CommentBox = () => {
-    const post_list = {
-        "post_lists": [
-          {
-            "caption": "Amazing event experience!",
-            "event_id": "550e8400-e29b-41d4-a716-446655440400",
-            "post_id": "1a2b3c4d",
-            "rating_score": 5,
-            "user_id": "e9e8f4a6-69c5-41e0-90b9-081a2b9299ea"
-          },
-          {
-            "caption": "Loved the speakers and the setup.",
-            "event_id": "550e8400-e29b-41d4-a716-446655440400",
-            "post_id": "2e3f4g5h",
-            "rating_score": 4,
-            "user_id": "e9e8f4a6-69c5-41e0-90b9-081a2b9299ea"
-          },
-          {
-            "caption": "Great networking opportunities at this conference.",
-            "event_id": "550e8400-e29b-41d4-a716-446655440400",
-            "post_id": "3h4i5j6k",
-            "rating_score": 4,
-            "user_id": "e9e8f4a6-69c5-41e0-90b9-081a2b9299ea"
-          },
-          {
-            "caption": "Would definitely attend again next year!",
-            "event_id": "550e8400-e29b-41d4-a716-446655440400",
-            "post_id": "4l5m6n7o",
-            "rating_score": 5,
-            "user_id": "e9e8f4a6-69c5-41e0-90b9-081a2b9299ea"
-          },
-          {
-            "caption": "Good event, but some sessions started late.",
-            "event_id": "550e8400-e29b-41d4-a716-446655440400",
-            "post_id": "5p6q7r8s",
-            "rating_score": 3,
-            "user_id": "e9e8f4a6-69c5-41e0-90b9-081a2b9299ea"
-          }
-        ]
-    };
+interface Props {
+    post_lists:Array<Object>;
+}
+
+const CommentBox = ({post_lists} : Props) => {
 
     const [curr, setCurr] = useState(0);
 
     const prev = () => {
-        setCurr((curr) => (curr === 0 ? post_list.post_lists.length - 1 : curr - 1));
+        setCurr((curr) => (curr === 0 ? post_lists.length - 1 : curr - 1));
     }
 
     const next = () => {
-        setCurr((curr) => (curr === post_list.post_lists.length - 1 ? 0 : curr + 1));
+        setCurr((curr) => (curr === post_lists.length - 1 ? 0 : curr + 1));
     }
 
     // useEffect(() => {
@@ -74,7 +39,7 @@ const CommentBox = () => {
 
                 <div className="border-black rounded-2xl border-[1px] h-full w-[80%] overflow-hidden relative flex transition duration-150 ease-in-out">
                     <div style={{ transform: `translateX(-${curr * 100}%)` }} className="flex transition-transform duration-150 ease-linear w-full">
-                        {post_list.post_lists.map((post, index) => (
+                        {post_lists.map((post, index) => (
                         <div key={post.post_id} className="flex-1 flex-wrap min-w-full flex p-4 text-lg font-medium">
                             <div className="w-full h-[20%] flex flex-row justify-start">
 
@@ -88,7 +53,7 @@ const CommentBox = () => {
 
                                 <div>
                                     <div>
-                                        Chanagun
+                                        {post.username}
                                     </div>
 
                                     <div>
@@ -107,7 +72,7 @@ const CommentBox = () => {
                                     Organizers Response:
                                 </div>
                                 <div>
-                                    {post.caption}
+                                    {post.organizer_response}
                                 </div>
                             </div>
                         </div>
