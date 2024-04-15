@@ -4,7 +4,8 @@ import Rating from '@mui/material/Rating';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LinearProgress from '@mui/joy/LinearProgress';
 import CommentBox from "@/components/CommentBox";
-import RouterBackReviewButton from "@/components/RouterBackReviewButton";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import Link from "next/link";
 
 interface Props {
     params: {id:string}
@@ -15,8 +16,14 @@ export default async function OrganizerReviewEventById({ params }: Props) {
     console.log(event);
 
     return (
-        <div className="w-screen h-screen">
-            <RouterBackReviewButton/>
+        <div className="w-screen md:h-screen">
+            <div className="w-full h-[7%] pl-[3%] pt-[30px] pb-[10px]">
+                <Link href="/review">
+                    <div className="w-fit h-fit">
+                        <ArrowBackIosNewIcon className="text-[#1DA1F2] hover:scale-105 cursor-pointer" />
+                    </div>
+                </Link>
+            </div>  
 
             <div className="font-bold h-[7%] text-[30px] w-full px-[5%] pb-[1%]">
                 {event.event_name}
@@ -24,7 +31,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
 
             <div className="flex flex-row flex-wrap h-[84%] mx-[5%] lg:space-x-[4%] lg:space-y-[0] space-y-[20px]">
                 <div className="lg:w-[63%] w-full h-full space-y-[4%]">
-                    <div className="relative h-[75%] w-full max-h-[75%]">
+                    <div className="relative md:h-[75%] h-[300px] w-full max-h-[75%]">
                         <Image
                             src={event.event_image}
                             layout="fill"
@@ -34,19 +41,21 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                         /> 
                     </div>
 
-                    <div className="fex-grow overflow-auto h-[21%] w-full items-center border-[1px]">
+                    <div className="fex-grow h-[21%] w-full items-center border-[1px] relative">
                         <div className="border-gray-400 px-[20px] relative w-full h-full">   
-                            <div className="absolute py-[5px] px-[10px] top-[-20px] left-4 bg-[#F2D57E] rounded-xl flex flex-row justify-center space-x-2">
-                                <DescriptionIcon className="text-[30px]"/>
-                                <div className="text-[20px]">
-                                    Description
-                                </div>
-                            </div>
-                            
+
                             <div className="text-[20px] pt-[40px] pb-[20px] overflow-hidden text-wrap">
                                 Songkran in Thailand, April 13-15, features water fights, family blessings, 
                                 temple visits, and vibrant street parties, symbolizing renewal and community spirit.
                             </div>
+
+                        </div>
+
+                        <div className="absolute py-[5px] px-[10px] top-[-20px] left-4 bg-[#F2D57E] rounded-xl flex flex-row justify-center space-x-2 z-20">
+                                <DescriptionIcon className="text-[30px]"/>
+                                <div className="text-[20px]">
+                                    Description
+                                </div>
                         </div>
                     </div>
 
