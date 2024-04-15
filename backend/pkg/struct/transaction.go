@@ -24,10 +24,6 @@ type CreateTransactionRequest struct {
 	Status            string  `json:"status" binding:"required"`
 }
 
-type CreateTransactionResponse struct {
-	TransactionId string `json:"transaction_id"`
-}
-
 type UpdateTransactionRequest struct {
 	TransactionId string `json:"transaction_id" binding:"required"`
 	Status        string `json:"status" binding:"required"`
@@ -39,18 +35,6 @@ type SendTransactionEmailRequest struct {
 	EventID         string  `json:"event_id"`
 	Amount          float64 `json:"amount"`
 	TransactionDate string  `json:"transaction_date"`
-}
-
-type SendTransactionEmailResponse struct {
-	SendStatus string `json:"send_status"`
-}
-
-// ? Use for ...
-/*
-	UpdateTransactionResponse, CreateQRPromptPayResponse
-*/
-type TransactionResponse struct {
-	Response string
 }
 
 type TransferToOrganizerRequest struct {
@@ -67,8 +51,8 @@ type CreateOrganizerTransferRecordRequest struct {
 }
 
 type IsPaidRequest struct {
-	OrganizerId  string `json:"organizer_id" binding:"required"`
-	EventId string `json:"event_id" binding:"required"`
+	OrganizerId string `json:"organizer_id" binding:"required"`
+	EventId     string `json:"event_id" binding:"required"`
 }
 
 type IsPaidResponse struct {

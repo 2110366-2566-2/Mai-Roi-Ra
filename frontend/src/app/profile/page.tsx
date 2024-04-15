@@ -23,7 +23,7 @@ export default async function Profile() {
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
   const profile = session ? await getProfile(session.user.user_id) : null;
-
+  console.log(profile);
   let events;
   let datas;
   let role;
@@ -60,8 +60,8 @@ export default async function Profile() {
           <div className="relative bg-white w-full h-[200px]">
             <div className="absolute top-[-50px] px-2 left-8">
               <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center">
-                <Image
-                  src="/img/profile_picture.png"
+                <Image className="w-full h-full"
+                  src={profile.user_image ? profile.user_image : "/img/profile_picture.png"}
                   alt="Profile Image"
                   width={96}
                   height={96}

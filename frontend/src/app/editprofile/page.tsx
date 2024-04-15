@@ -16,9 +16,9 @@ export default async function EditProfile() {
   const profile = session ? await getProfile(session.user.user_id) : null;
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white p-8">
+    <div className="flex flex-col items-center justify-center bg-white p-8">
       <Suspense fallback={<EditProfileFormSkeleton />}>
-        <div className="flex flex-col items-center justify-center bg-white p-8 w-full sm:w-4/5 lg:w-3/5 xl:w-2/5 h-auto">
+        <div className="flex flex-col items-center justify-center p-8 w-full sm:w-4/5 lg:w-3/5 xl:w-2/5 h-auto">
           <div className="">
             <div className="w-[60px] h-[60px]">
               <Image
@@ -30,7 +30,7 @@ export default async function EditProfile() {
             </div>
           </div>
           <div className="w-full">
-            <div className={`${styles.Roboto} text-3xl my-6 text-gray-800`}>
+            <div className={`${styles.Roboto} text-3xl text-gray-800`}>
               Information
             </div>
           </div>
@@ -47,6 +47,7 @@ export default async function EditProfile() {
             userId={session.user.user_id}
             token={session.user.token}
             firstRegister={false}
+            user_image={profile.user_image}
           ></EditProfileForm>
         </div>
       </Suspense>

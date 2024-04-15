@@ -34,18 +34,6 @@ type UpdateEventRequest struct {
 	City           string  `json:"city" binding:"required"`
 }
 
-type UpdateEventResponse struct {
-	EventId string `json:"event_id"`
-}
-
-type DeleteEventRequest struct {
-	EventId string `json:"event_id"`
-}
-
-type DeleteEventResponse struct {
-	Message string
-}
-
 type GetEventList struct {
 	EventId     string `json:"event_id"`
 	EventName   string `json:"event_name"`
@@ -114,10 +102,6 @@ type GetEventListsByStartDateResponse struct {
 	EventLists []GetEventListByStartDate `json:"event_lists"`
 }
 
-type GetEventDataByIdRequest struct {
-	EventId string `json:"event_id"`
-}
-
 type GetEventDataByIdResponse struct {
 	EventId          string         `json:"event_id"`
 	OrganizerId      string         `json:"organizer_id"`
@@ -171,8 +155,4 @@ type VerifyEventRequest struct {
 	EventId string `json:"event_id" binding:"required"`
 	Status  string `json:"status" binding:"required"`
 	AdminId string `json:"admin_id" binding:"required"`
-}
-
-type VerifyEventResponse struct {
-	Message string `json:"message"`
 }
