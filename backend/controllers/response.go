@@ -33,7 +33,7 @@ func NewResponseController(
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /responses/{post_id} [get]
 func (c *ResponseController) GetResponseByPostId(ctx *gin.Context) {
-	req := &st.GetResponseByPostIdRequest{
+	req := &st.PostIdRequest{
 		PostId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetResponseByPostId] Input:", req)
@@ -53,7 +53,7 @@ func (c *ResponseController) GetResponseByPostId(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.CreateResponseRequest true "CreateResponse Request"
-// @Success 200 {object} st.CreateResponseResponse
+// @Success 200 {object} st.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /responses [post]

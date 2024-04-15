@@ -27,7 +27,7 @@ func NewAnnouncementController(
 // @Accept json
 // @Produce json
 // @Param request body st.SendAnnouncementRequest true "Send Announcement Request"
-// @Success 200 {object} st.SendAnnounceResponse "Announcement successfully sent"
+// @Success 200 {object} st.MessageResponse "Announcement successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the announcement"
 // @Router /announcements [post]
 func (c *AnnouncementController) SendAnnouncement(ctx *gin.Context) {
@@ -52,7 +52,7 @@ func (c *AnnouncementController) SendAnnouncement(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.SendRegisteredEmailRequest true "Send RegisteredEmail Request"
-// @Success 200 {object} st.SendRegisteredEmailResponse "RegisteredEmail successfully sent"
+// @Success 200 {object} st.MessageResponse "RegisteredEmail successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the RegisteredEmail"
 // @Router /announcements/registered_email [post]
 func (c *AnnouncementController) SendRegisteredEmail(ctx *gin.Context) {
@@ -77,7 +77,7 @@ func (c *AnnouncementController) SendRegisteredEmail(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.SendReminderEmailRequest true "Send ReminderEmail Request"
-// @Success 200 {object} st.SendReminderEmailResponse "ReminderEmail successfully sent"
+// @Success 200 {object} st.MessageResponse "ReminderEmail successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the ReminderEmail"
 // @Router /announcements/reminder_email [post]
 func (c *AnnouncementController) SendReminderEmail(ctx *gin.Context) {
@@ -102,7 +102,7 @@ func (c *AnnouncementController) SendReminderEmail(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.SendCancelledEmailRequest true "Send CancelledEmail Request"
-// @Success 200 {object} st.SendCancelledEmailRequest "CancelledEmail successfully sent"
+// @Success 200 {object} st.MessageResponse "CancelledEmail successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the CancelledEmail"
 // @Router /announcements/cancelled_email [post]
 func (c *AnnouncementController) SendCancelledEmail(ctx *gin.Context) {
