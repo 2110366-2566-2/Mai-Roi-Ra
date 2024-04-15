@@ -90,10 +90,6 @@ type GetEndedEventList struct {
 	AverageRate float64 `json:"average_rate"`
 }
 
-type GetEndedEventListsRequest struct {
-	UserId string `json:"user_id"`
-}
-
 type GetEndedEventListsResponse struct {
 	EventLists []GetEndedEventList `json:"event_lists"`
 }
