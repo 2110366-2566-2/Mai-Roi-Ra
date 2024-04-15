@@ -32,6 +32,7 @@ interface Props {
   birthDateProp: string;
   userId: string;
   token: string;
+  user_image: string;
 }
 
 export default function EditProfileForm({
@@ -46,6 +47,7 @@ export default function EditProfileForm({
   birthDateProp,
   userId,
   token,
+  user_image
 }: Props) {
   const isMobile = useMediaQuery("(max-width:768px)");
 
@@ -64,7 +66,8 @@ export default function EditProfileForm({
   const [profilePicture, setProfilePicture] = useState();
   const [backgroundPicture, setBackgroundPicture] = useState();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>("");
+  const [preview, setPreview] = useState<string>(user_image);
+  const [is_profile,set_is_profile] = useState<string>(user_image? "True" : "False");
   const fileInputRef = useRef(null);
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -130,7 +133,7 @@ export default function EditProfileForm({
         if (selectedImage) {
           const formData = new FormData();
           formData.append("user_id",userId);
-          formData.append("is_profiled", "False");
+          formData.append("is_profiled", is_profile);
           formData.append("user_image",selectedImage);
           await uploadProfileImage(formData,token);
         }

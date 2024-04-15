@@ -47,6 +47,7 @@ export default async function EditProfile() {
             userId={session.user.user_id}
             token={session.user.token}
             firstRegister={false}
+            user_image={profile.user_image}
           ></EditProfileForm>
         </div>
       </Suspense>
