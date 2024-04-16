@@ -4,11 +4,13 @@ import { Fragment } from "react";
 type ModalProps = {
   successModal: boolean;
   setSuccessModal: (value: boolean) => void;
+  text: string;
 };
 
 export default function SuccessReviewEventModal({
   successModal,
   setSuccessModal,
+  text,
 }: ModalProps) {
   return (
     <Transition show={successModal} as={Fragment}>
@@ -43,9 +45,7 @@ export default function SuccessReviewEventModal({
               {/* Old style modal box */}
               <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg w-2/5 h-auto">
                 <div className="bg-white p-7 flex justify-center items-center">
-                  <div className="text-gray-600">
-                    Your review has been successfully posted !
-                  </div>
+                  <div className="text-gray-600">{text}</div>
                 </div>
               </div>
             </Transition.Child>

@@ -221,6 +221,7 @@ export default async function UserReviewEventById({ params }: Props) {
               user_id={session.user.user_id}
               event_id={event.event_id}
               token={session.user.token}
+              organizer_id={session.user.organizer_id}
             />
           </div>
         </div>

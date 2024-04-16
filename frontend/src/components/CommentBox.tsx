@@ -12,13 +12,14 @@ import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
 import { useRouter } from "next/navigation";
 import SuccessReviewEventModal from "./SuccessReviewEventModal";
 import ResponseReviewModal from "./ResponseReviewModal";
+import responsePost from "@/libs/responsePost";
 
 interface Responses {
   [key: string]: string; // This means the object can have any number of properties, all with string keys and string values.
 }
 
 interface Post {
-  post_id: string; // Assuming post_id is a string
+  post_id: string;
   user_image: string;
   username: string;
   rating_score: number;
@@ -32,9 +33,17 @@ interface Props {
   user_id: string;
   event_id: string;
   token: string;
+  organizer_id: string;
 }
 
-const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
+const CommentBox = ({
+  post_lists,
+  role,
+  user_id,
+  event_id,
+  token,
+  organizer_id,
+}: Props) => {
   console.log(role);
   //   console.log(user_id);
   const [curr, setCurr] = useState(0);
@@ -76,6 +85,8 @@ const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
     }
   };
 
+  const [successModalText, setSuccessModalText] = useState("");
+
   const [isWrongInputs, setIsWrongInputs] = useState(false);
 
   const submitReview = async () => {
@@ -94,7 +105,9 @@ const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
         console.log("Review submitted successfully:", response);
         // Additional logic for handling successful submission
         closeWriteReviewModal();
+
         setTimeout(() => {
+          setSuccessModalText("Your review has been posted !");
           setSuccessModal(true);
         }, 500);
         setTimeout(() => {
@@ -102,10 +115,12 @@ const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
           router.refresh();
         }, 4000);
         setIsSubmitLoading(false);
+        setSuccessModalText("");
       } catch (error) {
         console.error("Failed to submit review:", error);
       } finally {
         setIsSubmitLoading(false);
+        setSuccessModalText("");
       }
     } else {
       setIsWrongInputs(true);
@@ -126,11 +141,50 @@ const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
 
   const [isWrongResponseInputs, setIsWrongInputsResponse] = useState(false);
 
+  const currentPostId = post_lists.length > 0 ? post_lists[curr].post_id : null;
+  const currentCaption =
+    post_lists.length > 0 ? post_lists[curr].caption : null;
+
+  const submitResponse = async (postId: string, responseText: string) => {
+    if (responseText) {
+      setIsSubmitResponseLoading(true);
+      setIsWrongInputsResponse(false);
+      try {
+        // Assuming you have the required variables `organizer_id` and `token`
+        const response = await responsePost(
+          responseText,
+          organizer_id, // assuming `user_id` is the organizer's ID in this context
+          postId,
+          token
+        );
+        console.log("Response submitted successfully:", response);
+        // Additional logic for handling successful submission
+        setSuccessModalText("Your response has been posted !");
+        setTimeout(() => {
+          setSuccessModal(true);
+        }, 500);
+        setTimeout(() => {
+          setSuccessModal(false);
+          router.refresh(); // Refresh the page or data
+        }, 4000);
+      } catch (error) {
+        console.error("Failed to submit response:", error);
+        setIsWrongInputsResponse(true); // Update state to indicate error in inputs
+      } finally {
+        setIsSubmitResponseLoading(false);
+      }
+    } else {
+      setIsWrongInputsResponse(true);
+      console.log("Response field must be filled");
+    }
+  };
+
   return (
     <div className="w-full h-full space-y-[2%]">
       <SuccessReviewEventModal
         successModal={successModal}
         setSuccessModal={setSuccessModal}
+        text={successModalText}
       ></SuccessReviewEventModal>
 
       <ReviewModal
@@ -237,14 +291,29 @@ const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
                   <div className="flex flex-row justify-between">
                     <div className="text-gray-400">Organizers Response:</div>
                     {role == "ORGANIZER" && !post.organizer_response && (
-                      <button className="bg-[#F2D22E] hover:bg-yellow-500 text-sm px-8 rounded-lg space-x-2 mr-2">
+                      <button
+                        onClick={() =>
+                          submitResponse(
+                            post.post_id,
+                            responses[post.post_id] || ""
+                          )
+                        }
+                        disabled={isSubmitResponseLoading}
+                        className="bg-[#F2D22E] hover:bg-yellow-500 text-sm px-8 rounded-lg space-x-2 mr-2"
+                      >
                         Send
                       </button>
                     )}
                   </div>
-                  <div className="text-md text-base font-normal">
+                  <div className="text-md text-base font-normal ml-2">
                     {post.organizer_response}
                   </div>
+                  {isSubmitResponseLoading && (
+                    <div className="mt-2 px-2">
+                      <LoadingLine></LoadingLine>
+                    </div>
+                  )}
+
                   {role == "ORGANIZER" && !post.organizer_response && (
                     <textarea
                       key={`response ${post.post_id}`}
