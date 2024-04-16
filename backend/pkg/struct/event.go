@@ -77,6 +77,23 @@ type GetEventListsByStartDateRequest struct {
 	StartDate string `json:"start_date"`
 }
 
+type GetEndedEventList struct {
+	EventId     string  `json:"event_id"`
+	EventName   string  `json:"event_name"`
+	StartDate   string  `json:"start_date"`
+	EndDate     string  `json:"end_date"`
+	Description string  `json:"description"`
+	Status      string  `json:"status"`
+	EventImage  string  `json:"event_image"`
+	City        string  `json:"city"`
+	District    string  `json:"district"`
+	AverageRate float64 `json:"average_rate"`
+}
+
+type GetEndedEventListsResponse struct {
+	EventLists []GetEndedEventList `json:"event_lists"`
+}
+
 type GetEventListsByStartDateResponse struct {
 	EventLists []GetEventListByStartDate `json:"event_lists"`
 }

@@ -474,6 +474,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/events/end/{user_id}": {
+            "get": {
+                "description": "Get list of events that are ended by userid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "GetEndedEventLists",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetEndedEventListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/events/participant": {
             "get": {
                 "description": "Get list of all participant in the events",
@@ -3031,6 +3075,52 @@ const docTemplate = `{
                 }
             }
         },
+        "structure.GetEndedEventList": {
+            "type": "object",
+            "properties": {
+                "average_rate": {
+                    "type": "number"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_image": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.GetEndedEventListsResponse": {
+            "type": "object",
+            "properties": {
+                "event_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.GetEndedEventList"
+                    }
+                }
+            }
+        },
         "structure.GetEventDataByIdResponse": {
             "type": "object",
             "properties": {
@@ -3245,6 +3335,9 @@ const docTemplate = `{
                 "user_id": {
                     "type": "string",
                     "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
+                },
+                "user_image": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string",
@@ -3528,6 +3621,10 @@ const docTemplate = `{
                 "user_id": {
                     "type": "string",
                     "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
+                },
+                "user_image": {
+                    "type": "string",
+                    "example": "picture123"
                 },
                 "username": {
                     "type": "string",
