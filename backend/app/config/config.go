@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -14,27 +13,21 @@ import (
 
 type Config struct {
 	App        *App
-	MongoDB    *MongoDB
 	PgDB       *PgDB
 	Email      *Email
 	GoogleAuth *GoogleAuth
 	S3         *S3
-	Omise      *Omise
 	Stripe     *Stripe
 }
 
 type App struct {
-	Url     string
-	AppName string
-}
-
-type MongoDB struct {
-	Uri      string
-	Username string
-	Password string
+	Url         string
+	FrontendURL string
+	AppName     string
 }
 
 type PgDB struct {
+	Host     string
 	Username string
 	Password string
 	DbName   string
@@ -60,11 +53,6 @@ type S3 struct {
 	AwsBucketEventName   string
 }
 
-type Omise struct {
-	PublicKey string
-	SecretKey string
-}
-
 type Stripe struct {
 	PublicKey string
 	SecretKey string
@@ -77,8 +65,8 @@ func NewConfig(path string) (*Config, error) {
 	}
 
 	// Retrieve the secret values from AWS Secrets Manager
-	secretName := os.Getenv("AWS_SECRET_MANAGER_SECRET_NAME")
-	region := os.Getenv("AWS_SECRET_MANAGER_REGION")
+	secretName := "Mairoira"
+	region := "ap-southeast-2"
 
 	// Load AWS configuration
 	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
@@ -109,15 +97,12 @@ func NewConfig(path string) (*Config, error) {
 	// Now, replace the hard-coded values with the secret values
 	return &Config{
 		App: &App{
-			Url:     secretData["SERVER_HOST"],
-			AppName: secretData["APP_NAME"],
-		},
-		MongoDB: &MongoDB{
-			Uri:      os.Getenv("MONGODB_URI"),
-			Username: os.Getenv("MONGODB_USERNAME"),
-			Password: os.Getenv("MONGODB_PASSWORD"),
+			Url:         secretData["SERVER_HOST"],
+			FrontendURL: secretData["FRONTEND_URL"],
+			AppName:     secretData["APP_NAME"],
 		},
 		PgDB: &PgDB{
+			Host:     secretData["PG_HOST"],
 			Username: secretData["PG_USER"],
 			Password: secretData["PG_PASSWORD"],
 			DbName:   secretData["PG_DB"],
@@ -139,10 +124,6 @@ func NewConfig(path string) (*Config, error) {
 			AwsSecretKey:         secretData["AWS_SECRET_ACCESS_KEY"],
 			AwsBucketProfileName: secretData["AWS_BUCKET_PROFILE_NAME"],
 			AwsBucketEventName:   secretData["AWS_BUCKET_EVENT_NAME"],
-		},
-		Omise: &Omise{
-			PublicKey: secretData["OMISE_PUBLIC_KEY"],
-			SecretKey: secretData["OMISE_SECRET_KEY"],
 		},
 		Stripe: &Stripe{
 			PublicKey: secretData["STRIPE_PUBLIC_KEY"],
