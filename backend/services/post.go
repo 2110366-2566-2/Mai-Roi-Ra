@@ -49,15 +49,18 @@ func (s *PostService) GetPostById(req *st.PostIdRequest) (*st.GetPostByIdRespons
 	}
 
 	UserName := ""
+	UserImage := ""
 	resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
 	if err == nil && resuser != nil {
 		UserName = resuser.Username
+		UserImage = resuser.UserImage
 	}
 
 	return &st.GetPostByIdResponse{
 		PostId:            req.PostId,
 		UserId:            res.UserId,
 		Username:          UserName,
+		UserImage:         UserImage,
 		EventId:           res.EventId,
 		Caption:           res.Caption,
 		RatingScore:       res.RatingScore,
@@ -98,15 +101,18 @@ func (s *PostService) GetPostListsByEventId(req *st.EventIdRequest) (*st.GetPost
 		}
 
 		UserName := ""
+		UserImage := ""
 		resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
 		if err == nil && resuser != nil {
 			UserName = resuser.Username
+			UserImage = resuser.UserImage
 		}
 
 		post := st.PostList{
 			PostId:            v.PostId,
 			UserId:            v.UserId,
 			Username:          UserName,
+			UserImage:         UserImage,
 			EventId:           v.EventId,
 			Caption:           v.Caption,
 			RatingScore:       v.RatingScore,
