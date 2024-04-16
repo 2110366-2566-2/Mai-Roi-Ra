@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
