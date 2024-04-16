@@ -2,10 +2,11 @@ package cloud
 
 import (
 	"context"
+	"os"
+
 	//"fmt"
 	"log"
 	"mime/multipart"
-	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
@@ -20,10 +21,6 @@ type awsService struct {
 	service    *s3.S3
 	bucketName string
 }
-
-const (
-	filePreSignExpireDuration = time.Hour * 12
-)
 
 type CloudService interface {
 	SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader) (uploadId string, err error)
@@ -83,36 +80,16 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 	}
 	log.Println("File Saved Successfully")
 
-	req, _ := c.service.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(c.bucketName),
-		Key:    aws.String(id),
-	})
-
-	url, err := req.Presign(filePreSignExpireDuration)
-	if err != nil {
-		log.Println("Error open file", err)
-		return "", err
+	var url string
+	if c.bucketName == constant.EVENT {
+		url = os.Getenv("AWS_EVENT_URL")
+	} else {
+		url = os.Getenv("AWS_PROFILE_URL")
 	}
 
-	log.Println("File Url Extracted Successfully")
+	url = url + id
 	return url, nil
 }
-
-// func (c *awsService) GetFileUrl(ctx context.Context, uploadID string) (string, error) {
-
-// 	req, _ := c.service.GetObjectRequest(&s3.GetObjectInput{
-// 		Bucket: aws.String(c.bucketName),
-// 		Key:    aws.String(uploadID),
-// 	})
-
-// 	url, err := req.Presign(filePreSignExpireDuration)
-// 	if err != nil {
-// 		log.Println("Error open file", err)
-// 		return "", err
-// 	}
-
-// 	return url, nil
-// }
 
 func (c *awsService) DeleteFile(ctx *gin.Context, uploadID string) error {
 	log.Println("[Service: awsService]: Called to delete file with ID:", uploadID)
