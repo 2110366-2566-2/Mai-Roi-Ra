@@ -3495,7 +3495,7 @@ const docTemplate = `{
         "structure.IsReviewedResponse": {
             "type": "object",
             "properties": {
-                "is_registered": {
+                "is_reviewed": {
                     "type": "boolean"
                 }
             }

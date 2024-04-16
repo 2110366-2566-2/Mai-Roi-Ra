@@ -495,7 +495,7 @@ definitions:
     type: object
   structure.IsReviewedResponse:
     properties:
-      is_registered:
+      is_reviewed:
         type: boolean
     type: object
   structure.LoginUserEmailRequest:
