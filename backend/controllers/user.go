@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
@@ -515,7 +515,14 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	redirectURL := fmt.Sprintf("%s/auth/handle-login", constant.FRONT_END_URL)
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	redirectURL := fmt.Sprintf("%s/auth/handle-login", cfg.App.FrontendURL)
 	log.Println("User token at the end:", *token)
 
 	ctx.SetCookie("token", *token, middleware.MaxAge, "/", "localhost", false, true)
