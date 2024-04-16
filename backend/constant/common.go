@@ -16,8 +16,8 @@ const PENDING = "Pending"
 const REPLIED = "Replied"
 const CANCELLED = "Cancelled"
 
-const PROFILE = "profile"
-const EVENT = "event"
+const PROFILE = "mai-roi-ra-profile"
+const EVENT = "mai-roi-ra-event"
 
 const THB = "thb"
 
