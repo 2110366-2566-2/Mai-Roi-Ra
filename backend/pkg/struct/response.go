@@ -11,12 +11,3 @@ type CreateResponseRequest struct {
 	PostId      string `json:"post_id" binding:"required" example:"1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"`
 	Detail      string `json:"detail" example:"Response Detail"`
 }
-
-type IsReviewedRequest struct {
-	UserId  string `json:"user_id" binding:"required"`
-	EventId string `json:"event_id" binding:"required"`
-}
-
-type IsReviewedResponse struct {
-	IsReviewed bool `json:"is_registered"`
-}
