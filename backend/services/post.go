@@ -19,6 +19,7 @@ type PostService struct {
 type IPostService interface {
 	GetPostById(*st.PostIdRequest) (*st.GetPostByIdResponse, error)
 	GetPostListsByEventId(req *st.EventIdRequest) (*st.GetPostListsByEventIdResponse, error)
+	IsReviewed(req *st.IsReviewedRequest) (*st.IsReviewedResponse, error)
 	CreatePost(*st.CreatePostRequest) (*st.CreatePostResponse, error)
 	DeletePostById(req *st.PostIdRequest) (*st.MessageResponse, error)
 }
@@ -140,6 +141,16 @@ func (s *PostService) GetPostListsByEventId(req *st.EventIdRequest) (*st.GetPost
 	}
 
 	return res, nil
+}
+
+func (s *PostService) IsReviewed(req *st.IsReviewedRequest) (*st.IsReviewedResponse, error) {
+	log.Println("[Service: IsReviewed]: Called")
+	res, err := s.RepositoryGateway.PostRepository.IsReviewed(req)
+	if err != nil {
+		log.Println("[Service: Call Repo Error]:", err)
+		return nil, err
+	}
+	return res, err
 }
 
 func (s *PostService) CreatePost(req *st.CreatePostRequest) (*st.CreatePostResponse, error) {

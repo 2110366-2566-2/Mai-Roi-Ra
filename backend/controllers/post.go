@@ -71,6 +71,32 @@ func (c *PostController) GetPostListsByEventId(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// @Summary IsReviewed
+// @Description Determine that whether the user has reviewed in this events
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Param event_id query string true "event_id"
+// @Success 200 {object} structure.IsReviewedResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /posts/is_reviewed [get]
+func (c *PostController) IsReviewed(ctx *gin.Context) {
+	req := &st.IsReviewedRequest{
+		EventId: ctx.Query("event_id"),
+		UserId:  ctx.Query("user_id"),
+	}
+	log.Println("[CTRL: IsReviewed] Input:", req)
+	res, err := c.ServiceGateway.PostService.IsReviewed(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: IsReviewed] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
 // CreatePost endpoint
 // @Summary Create a new post
 // @Description Create a new post with the provided details
