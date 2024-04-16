@@ -1,113 +1,304 @@
-'use client'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
-import Rating from '@mui/material/Rating';
-import Image from 'next/image';
-import { useState } from 'react';
+"use client";
+import reviewEvent from "@/libs/reviewEvent";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
+import Rating from "@mui/material/Rating";
+import Image from "next/image";
+import { useState, ChangeEvent, SyntheticEvent } from "react";
+import LoadingLine from "./LoadingLine";
+import ReviewModal from "./ReviewModal";
+import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
+import { useRouter } from "next/navigation";
+import SuccessReviewEventModal from "./SuccessReviewEventModal";
+import ResponseReviewModal from "./ResponseReviewModal";
+
+interface Responses {
+  [key: string]: string; // This means the object can have any number of properties, all with string keys and string values.
+}
+
+interface Post {
+  post_id: string; // Assuming post_id is a string
+  user_image: string;
+  username: string;
+  rating_score: number;
+  caption: string;
+  organizer_response?: string; // Optional property
+}
 
 interface Props {
-    post_lists:Array<Object>;
-    role:string
+  post_lists: Post[]; // Array of Post objects
+  role: string;
+  user_id: string;
+  event_id: string;
+  token: string;
 }
 
-const CommentBox = ({post_lists,role} : Props) => {
-    console.log(role);
-    const [curr, setCurr] = useState(0);
+const CommentBox = ({ post_lists, role, user_id, event_id, token }: Props) => {
+  console.log(role);
+  //   console.log(user_id);
+  const [curr, setCurr] = useState(0);
 
-    const prev = () => {
-        setCurr((curr) => (curr === 0 ? post_lists.length - 1 : curr - 1));
+  const router = useRouter();
+
+  const prev = () => {
+    setCurr((curr) => (curr === 0 ? post_lists.length - 1 : curr - 1));
+  };
+
+  const next = () => {
+    setCurr((curr) => (curr === post_lists.length - 1 ? 0 : curr + 1));
+  };
+  /////////////////////////    User   //////////////////////////////////
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+
+  const [isWriteReviewModal, setIsWriteReviewModal] = useState(false);
+
+  const closeWriteReviewModal = () => {
+    setIsWriteReviewModal(false);
+  };
+  const openWriteReviewModal = () => {
+    setIsWriteReviewModal(true);
+  };
+
+  const [ratingScore, setRatingScore] = useState(0);
+  const [reviewText, SetReviewText] = useState("");
+
+  const handleTextChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+    SetReviewText(event.target.value);
+  };
+
+  const handleRatingChange = (
+    event: SyntheticEvent<Element, Event>,
+    newValue: number | null
+  ): void => {
+    if (newValue !== null) {
+      setRatingScore(newValue);
     }
+  };
 
-    const next = () => {
-        setCurr((curr) => (curr === post_lists.length - 1 ? 0 : curr + 1));
+  const [isWrongInputs, setIsWrongInputs] = useState(false);
+
+  const submitReview = async () => {
+    if (reviewText && ratingScore != 0) {
+      setIsWrongInputs(false);
+      setIsSubmitLoading(true);
+      try {
+        // Assuming you have the required variables `event_id`, `user_id`, and `token`
+        const response = await reviewEvent(
+          reviewText,
+          event_id,
+          Math.round(ratingScore),
+          user_id,
+          token
+        );
+        console.log("Review submitted successfully:", response);
+        // Additional logic for handling successful submission
+        closeWriteReviewModal();
+        setTimeout(() => {
+          setSuccessModal(true);
+        }, 500);
+        setTimeout(() => {
+          setSuccessModal(false);
+          router.refresh();
+        }, 4000);
+        setIsSubmitLoading(false);
+      } catch (error) {
+        console.error("Failed to submit review:", error);
+      } finally {
+        setIsSubmitLoading(false);
+      }
+    } else {
+      setIsWrongInputs(true);
+      console.log("all field must be filled");
     }
+  };
+  const [successModal, setSuccessModal] = useState(false);
 
-    return (
-        <div className="w-full h-full space-y-[2%]">
-            <div className="w-full h-[70%] flex flex-row justify-center">
-                <div className="flex flex-row justify-center items-center h-full w-[10%]">
-                    <div className="w-fit h-fit" onClick={prev}>
-                        <ArrowBackIosIcon className="cursor-pointer"/>
-                    </div>
-                </div>
+  //////// Organizer ////////
 
-                <div className="border-black rounded-2xl border-[1px] h-full w-[80%] overflow-hidden relative flex transition duration-150 ease-in-out">
-                    <div style={{ transform: `translateX(-${curr * 100}%)` }} className="flex transition-transform duration-150 ease-linear w-full">
-                        {post_lists.map((post, index) => (
-                        <div key={post.post_id} className="flex-1 flex-wrap min-w-full flex p-4 text-lg font-medium">
-                            <div className="w-full h-[20%] flex flex-row justify-start">
+  const [isSubmitResponseLoading, setIsSubmitResponseLoading] = useState(false);
 
-                                <div className="h-full w-[20%] flex items-center justify-center">
-                                    <Image className="w-[40px] h-[40px] rounded-full"
-                                    src={post.user_image ? post.user_image : "/img/profile_picture.png"}
-                                    alt="profile image"
-                                    width={1000}
-                                    height={1000}/>
-                                </div>
+  const [responses, setResponses] = useState<Responses>({}); // Initialize with an empty object.
 
-                                <div>
-                                    <div>
-                                        {post.username}
-                                    </div>
+  const handleResponseChange = (postId: string, value: string) => {
+    setResponses((prev) => ({ ...prev, [postId]: value })); // Update the response for the specific post
+  };
 
-                                    <div>
-                                        <Rating className="text-[17px]" defaultValue={post.rating_score} precision={0.01} max={5} readOnly/>
-                                    </div>
-                                </div>
+  const [isWrongResponseInputs, setIsWrongInputsResponse] = useState(false);
 
-                            </div>
+  return (
+    <div className="w-full h-full space-y-[2%]">
+      <SuccessReviewEventModal
+        successModal={successModal}
+        setSuccessModal={setSuccessModal}
+      ></SuccessReviewEventModal>
 
-                            <div className="w-full">
-                                {post.caption}
-                            </div>
-
-                            <div className="w-full">
-                                <div className="text-gray-400">
-                                    Organizers Response:
-                                </div>
-                                <div>
-                                    {post.organizer_response}
-                                </div>
-                            </div>
-                        </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="flex flex-row justify-center items-center h-full w-[10%]">
-                    <div className="w-fit h-fit" onClick={next}>
-                        <ArrowForwardIosIcon className="cursor-pointer"/>
-                    </div>
-                </div>
+      <ReviewModal
+        isOpen={isWriteReviewModal}
+        closeModal={closeWriteReviewModal}
+        title="Write your review"
+      >
+        <div className="mt-8">
+          <div className="flex flex-col justify-center items-center">
+            <div className="">
+              <Rating
+                className="text-4xl"
+                value={ratingScore}
+                precision={1}
+                onChange={handleRatingChange}
+              />
             </div>
+            <div className="w-full px-4">
+              <textarea
+                id="review"
+                name="review"
+                value={reviewText}
+                onChange={handleTextChange}
+                className="mt-4 border border-slate-400 rounded-xl h-[200px] w-full focus:outline-none p-4 resize-none"
+                placeholder="Write your review here ... (< 100 words)"
+              ></textarea>
+              {isWrongInputs && (
+                <div className="mt-4" style={{ color: "#F16E1E" }}>
+                  All field must be filled correctly !
+                </div>
+              )}
 
-            <div className="flex flex-row justify-center lg:items-end items-center h-[28%] cursor-pointer">
-                    {
-                        role === "USER" ?
-                        <div className="flex flex-row justify-center items-center bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]">
-                             <div>
-                                <QuestionAnswerIcon className="text-[30px]"/>
-                            </div>
-
-                            <div className="text-[20px]">
-                                Write your reviews
-                            </div>
-                        </div>
-                         : 
-                        <div className="flex flex-row justify-center items-center bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]">
-                            <div>
-                                <QuestionAnswerIcon className="text-[40px]"/>
-                            </div>
-
-                            <div className="text-[30px]">
-                                Answer
-                            </div>
-                        </div>
-                    }
+              <div className="flex justify-center items-center pb-4 pt-8">
+                <button
+                  className="bg-[#F2D22E] hover:bg-yellow-500 rounded-lg text-gray-700 py-2 px-16"
+                  onClick={submitReview}
+                >
+                  Submit Review
+                </button>
+              </div>
+              {isSubmitLoading && (
+                <div className="px-8 py-4">
+                  <LoadingLine></LoadingLine>
+                </div>
+              )}
             </div>
+          </div>
         </div>
-    )
-}
+      </ReviewModal>
+      <div
+        className={`w-full ${
+          role === "ORGANIZER" ? "h-[90%]" : "h-[70%]"
+        } flex flex-row justify-center`}
+      >
+        <div className="flex flex-row justify-center items-center h-full w-[10%]">
+          <div className="w-fit h-fit" onClick={prev}>
+            <ArrowBackIosIcon className="cursor-pointer" />
+          </div>
+        </div>
+
+        <div className="border-black rounded-2xl border-[1px] h-full w-[80%] overflow-hidden relative flex transition duration-300 ease-in-out">
+          <div
+            style={{ transform: `translateX(-${curr * 100}%)` }}
+            className="flex transition-transform duration-300 ease-linear w-full"
+          >
+            {post_lists.map((post, index) => (
+              <div
+                key={post.post_id}
+                className="flex-1 flex-col space-y-4 min-w-full flex p-4 text-lg font-medium"
+              >
+                <div className="w-full h-[20%] flex flex-row justify-start">
+                  <div className="h-full w-[20%] flex items-center justify-center">
+                    <Image
+                      className="w-[40px] h-[40px] rounded-full"
+                      src={
+                        post.user_image
+                          ? post.user_image
+                          : "/img/profile_picture.png"
+                      }
+                      alt="profile image"
+                      width={1000}
+                      height={1000}
+                    />
+                  </div>
+
+                  <div>
+                    <div>{post.username}</div>
+
+                    <div>
+                      <Rating
+                        className="text-[17px]"
+                        defaultValue={post.rating_score}
+                        precision={0.01}
+                        max={5}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="w-full">{post.caption}</div>
+
+                <div className="w-full">
+                  <div className="flex flex-row justify-between">
+                    <div className="text-gray-400">Organizers Response:</div>
+                    {role == "ORGANIZER" && !post.organizer_response && (
+                      <button className="bg-[#F2D22E] hover:bg-yellow-500 text-sm px-8 rounded-lg space-x-2 mr-2">
+                        Send
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-md text-base font-normal">
+                    {post.organizer_response}
+                  </div>
+                  {role == "ORGANIZER" && !post.organizer_response && (
+                    <textarea
+                      key={`response ${post.post_id}`}
+                      id={`response ${post.post_id}`}
+                      name="response"
+                      value={responses[post.post_id] || ""}
+                      onChange={(e) =>
+                        handleResponseChange(post.post_id, e.target.value)
+                      }
+                      placeholder="Write your response here ... (< 100 words)"
+                      className="!text-md text-base font-normal mt-4 border border-slate-400 rounded-xl h-auto w-full focus:outline-none p-4 resize-none"
+                    ></textarea>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-center items-center h-full w-[10%]">
+          <div className="w-fit h-fit" onClick={next}>
+            <ArrowForwardIosIcon className="cursor-pointer" />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-row justify-center lg:items-end items-center h-[28%] cursor-pointer">
+        {role === "USER" ? (
+          <button
+            onClick={openWriteReviewModal}
+            className="flex flex-row justify-center items-center bg-[#F2D22E] hover:bg-yellow-500 py-3 px-2 rounded-2xl space-x-2 w-[70%]"
+          >
+            <div>
+              <QuestionAnswerIcon className="text-[30px]" />
+            </div>
+
+            <div className="text-[20px]">Write your reviews</div>
+          </button>
+        ) : (
+          //   <button
+          //     onClick={openResponseModal}
+          //     className="flex flex-row justify-center items-center hover:bg-yellow-500 bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]"
+          //   >
+          //     <div>
+          //       <QuestionAnswerIcon className="text-[40px]" />
+          //     </div>
+
+          //     <div className="text-[30px]">Answer</div>
+          //   </button>
+          <div />
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default CommentBox;

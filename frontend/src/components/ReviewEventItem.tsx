@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Rating from '@mui/material/Rating';
+import Rating from "@mui/material/Rating";
 import LoadingCircular from "./LoadingCircular";
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
   description: string;
   imgSrc: string;
   district: string;
-  average_rating:number;
+  average_rating: number;
   role: string;
 }
 
@@ -26,7 +26,7 @@ export default function ReviewEventItem({
   imgSrc,
   district,
   average_rating,
-  role
+  role,
 }: Props) {
   const router = useRouter();
 
@@ -67,7 +67,12 @@ export default function ReviewEventItem({
           setIsLoading(true);
           e.stopPropagation();
           e.preventDefault();
-          router.push(`/events/review/organizer/${id}`);
+          if (role == "ORGANIZER") {
+            router.push(`/events/review/organizer/${id}`);
+          }
+          if (role == "USER") {
+            router.push(`/events/review/user/${id}`);
+          }
         }}
       >
         <div className="flex-shrink-0 mr-4 h-full lg:w-[200px] md:w-[160px] w-[120px]">
@@ -83,53 +88,65 @@ export default function ReviewEventItem({
 
         <div className="h-full flex flex-row justify-between w-full space-y-[7px]">
           <div className="w-[70%]">
-              <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">
-                {name}
-              </h2>
+            <h2 className="lg:text-2xl md:text-xl sm:text-md text-md  font-semibold">
+              {name}
+            </h2>
 
-              <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-1 sm:space-y-2 w-full text-gray-500 sm:!mt-2 !mt-0">
-                <div className="text-nowrap	hidden xl:block">{`${formattedStartDate} - ${formattedEndDate}`}</div>
-                    <div className="text-nowrap hidden xl:block">
-                    Location: {district}
-                    </div>
-                </div>
-
-                <div className="xl:block hidden">
-                    {description && (
-                    <div className="hidden lg:block break-words 2xl:pr-96 xl:pr-64 lg:pr-48 md:pr-24 pr-4 mt-1">
-                        <p>Event Description:</p>
-                        <p className="ml-2 text-wrap break-words">
-                        {description.length > 150
-                           ? `${description.substring(0, 150)}...`
-                            : description}
-                        </p>
-                    </div>
-                    )}
-                </div>
+            <div className="lg:flex lg:flex-row lg:flex-wrap h-fit lg:justify-between lg:space-y-0 space-y-1 sm:space-y-2 w-full text-gray-500 sm:!mt-2 !mt-0">
+              <div className="text-nowrap	hidden xl:block">{`${formattedStartDate} - ${formattedEndDate}`}</div>
+              <div className="text-nowrap hidden xl:block">
+                Location: {district}
+              </div>
             </div>
+
+            <div className="xl:block hidden">
+              {description && (
+                <div className="hidden lg:block break-words 2xl:pr-96 xl:pr-64 lg:pr-48 md:pr-24 pr-4 mt-1">
+                  <p>Event Description:</p>
+                  <p className="ml-2 text-wrap break-words">
+                    {description.length > 150
+                      ? `${description.substring(0, 150)}...`
+                      : description}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="w-[30%] h-full">
-            <div className="w-full flex flex-row justify-end items-start">
-                {role == 'USER' ?
-                    <button className="text-xs sm:text-sm border border-slate-400 rounded-full h-[24px] sm:h-[30px] 
+          <div className="w-full flex flex-row justify-end items-start">
+            {role == "USER" ? (
+              <button
+                className="text-xs sm:text-sm border border-slate-400 rounded-full h-[24px] sm:h-[30px] 
                     w-fit px-[10px] hover:scale-105 duration-300"
-                    onClick={() => {router.push('/')}}>
-                        Review
-                    </button> :
-
-                    <button className="text-xs sm:text-sm border border-slate-400 rounded-full h-[24px] sm:h-[30px] 
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
+                Review
+              </button>
+            ) : (
+              <button
+                className="text-xs sm:text-sm border border-slate-400 rounded-full h-[24px] sm:h-[30px] 
                     w-fit px-[10px] hover:scale-105 duration-300"
-                    onClick={() => {router.push(`/events/review/organizer/${id}`)}}>
-                        Review
-                    </button>
-                }
+                onClick={() => {
+                  router.push(`/events/review/organizer/${id}`);
+                }}
+              >
+                Review
+              </button>
+            )}
+          </div>
 
-            </div>
-
-            <div className="w-full flex flex-row justify-end items-start mt-3">
-                <Rating name="read-only" value={average_rating} precision={0.01} readOnly />
-            </div>
+          <div className="w-full flex flex-row justify-end items-start mt-3">
+            <Rating
+              name="read-only"
+              value={average_rating}
+              precision={0.01}
+              readOnly
+            />
+          </div>
         </div>
       </div>
     </div>

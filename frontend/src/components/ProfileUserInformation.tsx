@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, ChangeEvent, SyntheticEvent } from "react";
 import { FaLessThanEqual, FaPhone } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { PiBalloonBold } from "react-icons/pi";
@@ -14,6 +14,9 @@ import OTPInput from "./OTPInput";
 import sendOTP from "@/libs/sendOTP";
 import SuccessSignupModal from "./SuccessSignupModal";
 import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
+import ReviewModal from "./ReviewModal";
+import Rating from "@mui/material/Rating";
+import LoadingLine from "./LoadingLine";
 
 interface Props {
   firstNameProp: string;
@@ -88,6 +91,8 @@ export default function ProfileUserInformation({
   };
 
   const [successModal, setSuccessModal] = useState(false);
+
+ 
 
   return (
     <div className="w-full">
