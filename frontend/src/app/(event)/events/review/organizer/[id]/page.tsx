@@ -20,10 +20,11 @@ export default async function OrganizerReviewEventById({ params }: Props) {
 
     if (!session) return;
 
-    const rating = await getReviewEventById(params.id,session?.user.user_id);
+    const user = session.user;
+    const rating = await getReviewEventById(params.id,user.user_id);
     const count_post = rating.one_rate + rating.two_rate + rating.three_rate + rating.four_rate + rating.five_rate;
     console.log(rating);
-    console.log(session);
+    console.log(user);
     console.log(event);
 
     return (
@@ -171,7 +172,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
                     </div>
 
                     <div className="h-[53%] lg:mt-[0] mt-[2%]">
-                        <CommentBox post_lists={rating.post_lists}/>
+                        <CommentBox post_lists={rating.post_lists} role={user.role}/>
                     </div>
                 </div>
             </div>

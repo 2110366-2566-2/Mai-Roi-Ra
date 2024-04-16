@@ -8,10 +8,11 @@ import { useState } from 'react';
 
 interface Props {
     post_lists:Array<Object>;
+    role:string
 }
 
-const CommentBox = ({post_lists} : Props) => {
-
+const CommentBox = ({post_lists,role} : Props) => {
+    console.log(role);
     const [curr, setCurr] = useState(0);
 
     const prev = () => {
@@ -82,16 +83,28 @@ const CommentBox = ({post_lists} : Props) => {
             </div>
 
             <div className="flex flex-row justify-center lg:items-end items-center h-[28%] cursor-pointer">
-                <div className="flex flex-row justify-center items-center bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]">
-                    <div>
-                        <QuestionAnswerIcon className="text-[40px]"/>
-                    </div>
-                    
-                    <div className="text-[30px]">
-                        Answer
-                    </div>
+                    {
+                        role === "USER" ?
+                        <div className="flex flex-row justify-center items-center bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]">
+                             <div>
+                                <QuestionAnswerIcon className="text-[30px]"/>
+                            </div>
 
-                </div>
+                            <div className="text-[20px]">
+                                Write your reviews
+                            </div>
+                        </div>
+                         : 
+                        <div className="flex flex-row justify-center items-center bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]">
+                            <div>
+                                <QuestionAnswerIcon className="text-[40px]"/>
+                            </div>
+
+                            <div className="text-[30px]">
+                                Answer
+                            </div>
+                        </div>
+                    }
             </div>
         </div>
     )
