@@ -1,7 +1,7 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getReviewEventById(event_id:string,token:string) {
-  const response = await fetch(`${apiBackUrl}/posts/events/${event_id}`, {
+export default async function getReviewEvents(user_id:string,token:string) {
+  const response = await fetch(`${apiBackUrl}/events/end/${user_id}`, {
     method: "GET",
     next: { tags: ["review_event"] },
     headers: {
@@ -10,7 +10,7 @@ export default async function getReviewEventById(event_id:string,token:string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch review events by id");
+    throw new Error("Failed to fetch review events");
   }
   console.log("success");
   return await response.json();

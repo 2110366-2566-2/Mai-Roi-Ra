@@ -39,7 +39,7 @@ const CommentBox = ({post_lists} : Props) => {
 
                                 <div className="h-full w-[20%] flex items-center justify-center">
                                     <Image className="w-[40px] h-[40px] rounded-full"
-                                    src="/img/profile_picture.png"
+                                    src={post.user_image ? post.user_image : "/img/profile_picture.png"}
                                     alt="profile image"
                                     width={1000}
                                     height={1000}/>

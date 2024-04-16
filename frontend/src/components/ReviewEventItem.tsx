@@ -13,6 +13,7 @@ interface Props {
   description: string;
   imgSrc: string;
   district: string;
+  average_rating:number;
   role: string;
 }
 
@@ -24,7 +25,8 @@ export default function ReviewEventItem({
   description,
   imgSrc,
   district,
-  role,
+  average_rating,
+  role
 }: Props) {
   const router = useRouter();
 
@@ -126,7 +128,7 @@ export default function ReviewEventItem({
             </div>
 
             <div className="w-full flex flex-row justify-end items-start mt-3">
-                <Rating name="read-only" value={2.4} precision={0.01} readOnly />
+                <Rating name="read-only" value={average_rating} precision={0.01} readOnly />
             </div>
         </div>
       </div>
