@@ -16,7 +16,7 @@ import updateEventImage from "@/libs/updateEventImage";
 import { useSession } from "next-auth/react";
 
 interface Props {
-    Id:string
+    Id:string,
     Name:string,
     Activity:string,
     StartDate:string,
@@ -51,7 +51,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
     const [description,setDescription] = useState(Description);
     const [selectedImage, setSelectedImage] = useState<File|null>(null);
     const [preview, setPreview] = useState<string>(ImgSrc);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [error,setError] = useState("");
 
     const triggerFileInput = () => {
