@@ -3,7 +3,7 @@ import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import createProblem from "@/libs/createProblem"
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth"
 
 
 export async function HandleCreateProblem(problem:string, description:string){
@@ -11,7 +11,7 @@ export async function HandleCreateProblem(problem:string, description:string){
     const user = session?.user;
 
     try {
-        const res = await createProblem(user?.user_id,problem,description);
+        const res = await createProblem(user?.user_id || "Untitle Problem",problem,description);
         console.log(res);
         console.log("Create Problem successful");
     } catch (err) {
