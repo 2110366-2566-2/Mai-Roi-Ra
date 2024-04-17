@@ -1,29 +1,5 @@
 basePath: /api/v1
 definitions:
-  models.Problem:
-    properties:
-      admin_username:
-        type: string
-      created_at:
-        type: string
-      description:
-        type: string
-      problem:
-        type: string
-      problem_id:
-        type: string
-      reply:
-        type: string
-      status:
-        type: string
-      updated_at:
-        type: string
-      user_id:
-        type: string
-    required:
-    - problem_id
-    - user_id
-    type: object
   models.Response:
     properties:
       created_at:
@@ -117,46 +93,6 @@ definitions:
         type: string
       updated_at:
         type: string
-    type: object
-  structure.CreateEventRequest:
-    properties:
-      activities:
-        type: string
-      city:
-        type: string
-      description:
-        type: string
-      district:
-        type: string
-      end_date:
-        type: string
-      event_image:
-        type: string
-      event_name:
-        type: string
-      location_name:
-        type: string
-      organizer_id:
-        type: string
-      participant_fee:
-        type: number
-      start_date:
-        type: string
-      status:
-        type: string
-    required:
-    - activities
-    - city
-    - description
-    - district
-    - end_date
-    - event_image
-    - event_name
-    - location_name
-    - organizer_id
-    - participant_fee
-    - start_date
-    - status
     type: object
   structure.CreateEventResponse:
     properties:
@@ -267,12 +203,6 @@ definitions:
     - organizer_id
     - post_id
     type: object
-  structure.CreateResponseResponse:
-    properties:
-      message:
-        example: 'Create Respose for PostID : 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6 successful'
-        type: string
-    type: object
   structure.CreateUserRequest:
     properties:
       address:
@@ -314,18 +244,42 @@ definitions:
     required:
     - user_id
     type: object
-  structure.DeletePostResponse:
-    properties:
-      message:
-        example: Delete Successful
-        type: string
-    type: object
   structure.GetAllUsersResponse:
     properties:
       users:
         description: FIXME should not use struct from models
         items:
           $ref: '#/definitions/models.User'
+        type: array
+    type: object
+  structure.GetEndedEventList:
+    properties:
+      average_rate:
+        type: number
+      city:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      end_date:
+        type: string
+      event_id:
+        type: string
+      event_image:
+        type: string
+      event_name:
+        type: string
+      start_date:
+        type: string
+      status:
+        type: string
+    type: object
+  structure.GetEndedEventListsResponse:
+    properties:
+      event_lists:
+        items:
+          $ref: '#/definitions/structure.GetEndedEventList'
         type: array
     type: object
   structure.GetEventDataByIdResponse:
@@ -471,6 +425,8 @@ definitions:
       user_id:
         example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
         type: string
+      user_image:
+        type: string
       username:
         example: User001
         type: string
@@ -493,6 +449,21 @@ definitions:
         type: integer
       two_rate:
         type: integer
+    type: object
+  structure.GetProblemDetailByIdResponse:
+    properties:
+      admin_username:
+        type: string
+      description:
+        type: string
+      problem:
+        type: string
+      problem_id:
+        type: string
+      reply:
+        type: string
+      status:
+        type: string
     type: object
   structure.GetProblemListsResponse:
     properties:
@@ -560,6 +531,11 @@ definitions:
       user_id:
         type: string
       username:
+        type: string
+    type: object
+  structure.MessageResponse:
+    properties:
+      response:
         type: string
     type: object
   structure.Participant:
@@ -641,6 +617,9 @@ definitions:
       user_id:
         example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
         type: string
+      user_image:
+        example: picture123
+        type: string
       username:
         example: User001
         type: string
@@ -660,11 +639,6 @@ definitions:
       status:
         type: string
     type: object
-  structure.ProblemResponse:
-    properties:
-      response:
-        type: string
-    type: object
   structure.RegisterEventRequest:
     properties:
       amount:
@@ -681,16 +655,6 @@ definitions:
     - num_participant
     - user_id
     type: object
-  structure.RegisterEventResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  structure.SearchEventResponse:
-    properties:
-      message:
-        type: string
-    type: object
   structure.SearchHistory:
     properties:
       search_name:
@@ -700,11 +664,6 @@ definitions:
     required:
     - search_name
     - user_id
-    type: object
-  structure.SendAnnounceResponse:
-    properties:
-      announce_status:
-        type: string
     type: object
   structure.SendAnnouncementRequest:
     properties:
@@ -735,11 +694,6 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendOTPEmailResponse:
-    properties:
-      message:
-        type: string
-    type: object
   structure.SendRefundEmailRequest:
     properties:
       refund_id:
@@ -761,11 +715,6 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendRegisteredEmailResponse:
-    properties:
-      announce_status:
-        type: string
-    type: object
   structure.SendReminderEmailRequest:
     properties:
       event_date:
@@ -781,11 +730,6 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendReminderEmailResponse:
-    properties:
-      announce_status:
-        type: string
-    type: object
   structure.SendTransactionEmailRequest:
     properties:
       amount:
@@ -799,19 +743,9 @@ definitions:
       user_id:
         type: string
     type: object
-  structure.SendTransactionEmailResponse:
-    properties:
-      send_status:
-        type: string
-    type: object
   structure.TestResponse:
     properties:
       message:
-        type: string
-    type: object
-  structure.TransactionResponse:
-    properties:
-      response:
         type: string
     type: object
   structure.TransferToOrganizerRequest:
@@ -839,8 +773,6 @@ definitions:
         type: string
       event_id:
         type: string
-      event_image:
-        type: string
       event_name:
         type: string
       location_name:
@@ -862,11 +794,6 @@ definitions:
     - participant_fee
     - start_date
     - status
-    type: object
-  structure.UpdateEventResponse:
-    properties:
-      event_id:
-        type: string
     type: object
   structure.UpdateProblemRequest:
     properties:
@@ -901,8 +828,6 @@ definitions:
         type: string
       user_id:
         type: string
-      user_image:
-        type: string
     required:
     - address
     - birth_date
@@ -924,16 +849,6 @@ definitions:
     - role
     - user_id
     - username
-    type: object
-  structure.UserResponse:
-    properties:
-      response:
-        type: string
-    type: object
-  structure.VerifyEventResponse:
-    properties:
-      message:
-        type: string
     type: object
   structure.VerifyOTPRequest:
     properties:
@@ -982,7 +897,7 @@ paths:
         "200":
           description: Announcement successfully sent
           schema:
-            $ref: '#/definitions/structure.SendAnnounceResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the announcement
           schema:
@@ -1008,7 +923,7 @@ paths:
         "200":
           description: CancelledEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.SendCancelledEmailRequest'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the CancelledEmail
           schema:
@@ -1034,7 +949,7 @@ paths:
         "200":
           description: RegisteredEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.SendRegisteredEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the RegisteredEmail
           schema:
@@ -1060,7 +975,7 @@ paths:
         "200":
           description: ReminderEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.SendReminderEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the ReminderEmail
           schema:
@@ -1187,15 +1102,64 @@ paths:
       - events
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Create a new event with the provided details.
       parameters:
-      - description: Create Event Request
-        in: body
-        name: request
+      - description: Name of the event
+        in: formData
+        name: event_name
         required: true
-        schema:
-          $ref: '#/definitions/structure.CreateEventRequest'
+        type: string
+      - description: Activity of the event
+        in: formData
+        name: activities
+        required: true
+        type: string
+      - description: City of the event
+        in: formData
+        name: city
+        required: true
+        type: string
+      - description: description for the event
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: district of the event
+        in: formData
+        name: district
+        required: true
+        type: string
+      - description: start_date
+        in: formData
+        name: start_date
+        required: true
+        type: string
+      - description: end date
+        in: formData
+        name: end_date
+        required: true
+        type: string
+      - description: Event image
+        in: formData
+        name: event_image
+        required: true
+        type: file
+      - description: location name
+        in: formData
+        name: location_name
+        required: true
+        type: string
+      - description: organizer_id
+        in: formData
+        name: organizer_id
+        required: true
+        type: string
+      - description: participant fee
+        in: formData
+        name: participant_fee
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1276,12 +1240,7 @@ paths:
       - application/json
       description: Update an existing event with the provided details.
       parameters:
-      - description: Event ID
-        in: path
-        name: event_id
-        required: true
-        type: string
-      - description: Update Event Request
+      - description: Create Event Request
         in: body
         name: request
         required: true
@@ -1293,7 +1252,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.UpdateEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1331,7 +1290,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.VerifyEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1341,6 +1300,35 @@ paths:
           schema:
             type: object
       summary: VerifyEvent
+      tags:
+      - events
+  /events/end/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get list of events that are ended by userid
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.GetEndedEventListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: GetEndedEventLists
       tags:
       - events
   /events/participant:
@@ -1378,6 +1366,40 @@ paths:
           schema:
             type: object
       summary: GetParticipantLists
+      tags:
+      - events
+  /events/upload/{event_id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing event with the provided details.
+      parameters:
+      - description: Event Id
+        in: path
+        name: event_id
+        required: true
+        type: string
+      - description: Event image
+        in: formData
+        name: event_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing event's image
       tags:
       - events
   /locations/{location_id}:
@@ -1511,7 +1533,7 @@ paths:
         "200":
           description: Confirms the user has been logged out.
           schema:
-            $ref: '#/definitions/structure.UserResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Returns an error if logout fails.
           schema:
@@ -1602,7 +1624,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.DeletePostResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1748,7 +1770,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.ProblemResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1776,7 +1798,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Problem'
+            $ref: '#/definitions/structure.GetProblemDetailByIdResponse'
         "400":
           description: Bad Request
           schema:
@@ -1810,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.ProblemResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1900,7 +1922,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateResponseResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2008,7 +2030,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.TransactionResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2066,7 +2088,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2096,7 +2118,7 @@ paths:
         "200":
           description: Transaction email successfully sent
           schema:
-            $ref: '#/definitions/structure.SendTransactionEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the transaction email
           schema:
@@ -2186,7 +2208,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.RegisterEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2232,7 +2254,7 @@ paths:
       - application/json
       description: Update User information with the desired input
       parameters:
-      - description: Create Event Request
+      - description: Update User Request
         in: body
         name: request
         required: true
@@ -2278,7 +2300,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.SearchEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2402,7 +2424,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.RegisterEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2432,7 +2454,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.RegisterEventResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2462,7 +2484,7 @@ paths:
         "200":
           description: OTP email successfully sent
           schema:
-            $ref: '#/definitions/structure.SendOTPEmailResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in sending the OTP email
           schema:
@@ -2488,12 +2510,51 @@ paths:
         "200":
           description: User successfully updated
           schema:
-            $ref: '#/definitions/structure.UserResponse'
+            $ref: '#/definitions/structure.MessageResponse'
         "400":
           description: Bad request - error in updating user role
           schema:
             type: object
       summary: Update User Role
+      tags:
+      - users
+  /users/upload/{user_id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: updates an user's profile image
+      parameters:
+      - description: User Id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Is user already have a picture?
+        in: formData
+        name: is_profiled
+        required: true
+        type: string
+      - description: Profile image
+        in: formData
+        name: user_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structure.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Update existing user's image
       tags:
       - users
   /users/verification_status:

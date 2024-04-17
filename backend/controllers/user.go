@@ -8,11 +8,14 @@ import (
 
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -85,7 +88,7 @@ func (c *UserController) GetAllUsers(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param request body structure.UpdateUserInformationRequest true "Create Event Request"
+// @Param request body structure.UpdateUserInformationRequest true "Update User Request"
 // @Success 200 {object} models.User
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
@@ -107,6 +110,68 @@ func (c *UserController) UpdateUserInformation(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// @Summary Update existing user's image
+// @Description updates an user's profile image
+// @Tags users
+// @Accept multipart/form-data
+// @Produce json
+// @Param user_id path string True "User Id"
+// @Param is_profiled formData string True "Is user already have a picture?"Enum ("Yes", "No")
+// @Param user_image formData file True "Profile image"
+// @Success 200 {object} structure.MessageResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /users/upload/{user_id} [put]
+func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
+	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userId := ctx.Param("id")
+	isProfiled := ctx.Request.FormValue("is_profiled")
+
+	// S3
+	fileHeader, err := ctx.FormFile("user_image")
+	if err != nil {
+		log.Println("[CTRL: UpdateUserProfileImage] Called and read header failed: ", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	if utils.IsNilHeader(fileHeader) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "FileHeader Is nil"})
+	}
+
+	Cloud := cloud.NewAWSCloudService(constant.PROFILE) // or try changing to constant.PROFILE
+	log.Println("FILEHEADER: ", fileHeader.Header)
+
+	if isProfiled == "Yes" {
+		// delete the existing image in the bucket
+		deleteErr := Cloud.DeleteFile(ctx, userId)
+		if deleteErr != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
+			return
+		}
+	}
+
+	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, userId)
+	if uploadErr != nil {
+		log.Println("[CTRL: UpdateUserProfileImage] Called SaveFile to S3 Error: ", uploadErr)
+		return
+	}
+
+	res, err := c.ServiceGateway.UserService.UpdateUserProfileImage(userId, url)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: UpdateUserProfileImage] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
 // @Summary GetUserByUserId
 // @Description Get User from given field (user_id)
 // @Tags users
@@ -118,7 +183,7 @@ func (c *UserController) UpdateUserInformation(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/{user_id} [get]
 func (c *UserController) GetUserByUserId(ctx *gin.Context) {
-	req := &st.GetUserByUserIdRequest{
+	req := &st.UserIdRequest{
 		UserId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetUser] Input:", req)
@@ -215,13 +280,13 @@ func (c *UserController) LoginUserPhone(ctx *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Success 200 {object} st.UserResponse "Confirms the user has been logged out."
+// @Success 200 {object} st.MessageResponse "Confirms the user has been logged out."
 // @Failure 400 {object} map[string]string "Returns an error if logout fails."
 // @Router /logout [post]
 func (c *UserController) LogoutUser(ctx *gin.Context) {
 	userId := ctx.GetString(middleware.KeyUserID)
-	req := &st.LogoutUserRequest{
-		UserID: userId,
+	req := &st.UserIdRequest{
+		UserId: userId,
 	}
 	log.Println("[CTRL: LogoutUser] Input:", req)
 	res, err := c.ServiceGateway.UserService.LogoutUser(req)
@@ -253,7 +318,7 @@ func (c *UserController) ValidateToken(token string) (*models.User, error) {
 // @Accept json
 // @Produce json
 // @Param request body structure.RegisterEventRequest true "Create User Request"
-// @Success 200 {object} structure.RegisterEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/participate [post]
@@ -280,7 +345,7 @@ func (c *UserController) RegisterEvent(ctx *gin.Context) {
 // @Produce json
 // @Param user_id query string true "user_id"
 // @Param event_id path string true "event_id"
-// @Success 200 {object} structure.RegisterEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/{event_id} [delete]
@@ -350,12 +415,12 @@ func (c *UserController) GetParticipatedEventLists(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id query string true "user_id"
-// @Success 200 {object} structure.RegisterEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/notification [put]
 func (c *UserController) ToggleNotifications(ctx *gin.Context) {
-	req := &st.GetUserByUserIdRequest{
+	req := &st.UserIdRequest{
 		UserId: ctx.Query("user_id"),
 	}
 	log.Println("[CTRL: ToggleNotifications] Input:", req)
@@ -375,7 +440,7 @@ func (c *UserController) ToggleNotifications(ctx *gin.Context) {
 // @Produce json
 // @Param user_id path string true "user_id"
 // @Param search query string true "search"
-// @Success 200 {object} structure.SearchEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /users/{user_id}/searchevent [post]
@@ -451,7 +516,14 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	redirectURL := fmt.Sprintf("%s/auth/handle-login", constant.FRONT_END_URL)
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	redirectURL := fmt.Sprintf("%s/auth/handle-login", cfg.App.FrontendURL)
 	log.Println("User token at the end:", *token)
 
 	ctx.SetCookie("token", *token, middleware.MaxAge, "/", "localhost", false, true)
@@ -465,7 +537,7 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.SendOTPEmailRequest true "Send OTP Email Request"
-// @Success 200 {object} st.SendOTPEmailResponse "OTP email successfully sent"
+// @Success 200 {object} st.MessageResponse "OTP email successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the OTP email"
 // @Router /users/send_otp_email [put]
 func (c *UserController) SendOTPEmail(ctx *gin.Context) {
@@ -516,7 +588,7 @@ func (c *UserController) VerifyOTP(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.UpdateUserRoleRequest true "Update User Role Request"
-// @Success 200 {object} st.UserResponse "User successfully updated"
+// @Success 200 {object} st.MessageResponse "User successfully updated"
 // @Failure 400 {object} object "Bad request - error in updating user role"
 // @Router /users/update_user_role [put]
 func (c *UserController) UpdateUserRole(ctx *gin.Context) {

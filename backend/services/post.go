@@ -17,10 +17,10 @@ type PostService struct {
 }
 
 type IPostService interface {
-	GetPostById(*st.GetPostByIdRequest) (*st.GetPostByIdResponse, error)
-	GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) (*st.GetPostListsByEventIdResponse, error)
+	GetPostById(*st.PostIdRequest) (*st.GetPostByIdResponse, error)
+	GetPostListsByEventId(req *st.EventIdRequest) (*st.GetPostListsByEventIdResponse, error)
 	CreatePost(*st.CreatePostRequest) (*st.CreatePostResponse, error)
-	DeletePostById(req *st.DeletePostRequest) (*st.DeletePostResponse, error)
+	DeletePostById(req *st.PostIdRequest) (*st.MessageResponse, error)
 }
 
 func NewPostService(
@@ -31,7 +31,7 @@ func NewPostService(
 	}
 }
 
-func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdResponse, error) {
+func (s *PostService) GetPostById(req *st.PostIdRequest) (*st.GetPostByIdResponse, error) {
 	log.Println("[Service: GetPostById] Called")
 	res, err := s.RepositoryGateway.PostRepository.GetPostById(req.PostId)
 	if err != nil {
@@ -44,20 +44,23 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 		Organizerresponse = resrespose.Detail
 	}
 
-	requser := &st.GetUserByUserIdRequest{
+	requser := &st.UserIdRequest{
 		UserId: res.UserId,
 	}
 
 	UserName := ""
+	UserImage := ""
 	resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
 	if err == nil && resuser != nil {
 		UserName = resuser.Username
+		UserImage = resuser.UserImage
 	}
 
 	return &st.GetPostByIdResponse{
 		PostId:            req.PostId,
 		UserId:            res.UserId,
 		Username:          UserName,
+		UserImage:         UserImage,
 		EventId:           res.EventId,
 		Caption:           res.Caption,
 		RatingScore:       res.RatingScore,
@@ -65,7 +68,7 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 	}, nil
 }
 
-func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest) (*st.GetPostListsByEventIdResponse, error) {
+func (s *PostService) GetPostListsByEventId(req *st.EventIdRequest) (*st.GetPostListsByEventIdResponse, error) {
 	log.Println("[Service: GetPostListsByEventId] Called")
 	postLists, err := s.RepositoryGateway.PostRepository.GetPostListsByEventId(req)
 	if err != nil {
@@ -93,20 +96,23 @@ func (s *PostService) GetPostListsByEventId(req *st.GetPostListsByEventIdRequest
 			Organizerresponse = resrespose.Detail
 		}
 
-		requser := &st.GetUserByUserIdRequest{
+		requser := &st.UserIdRequest{
 			UserId: v.UserId,
 		}
 
 		UserName := ""
+		UserImage := ""
 		resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
 		if err == nil && resuser != nil {
 			UserName = resuser.Username
+			UserImage = resuser.UserImage
 		}
 
 		post := st.PostList{
 			PostId:            v.PostId,
 			UserId:            v.UserId,
 			Username:          UserName,
+			UserImage:         UserImage,
 			EventId:           v.EventId,
 			Caption:           v.Caption,
 			RatingScore:       v.RatingScore,
@@ -156,7 +162,7 @@ func (s *PostService) CreatePost(req *st.CreatePostRequest) (*st.CreatePostRespo
 	return res, nil
 }
 
-func (s *PostService) DeletePostById(req *st.DeletePostRequest) (*st.DeletePostResponse, error) {
+func (s *PostService) DeletePostById(req *st.PostIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: DeletePostById] Called")
 	res, err := s.RepositoryGateway.PostRepository.DeletePostById(req)
 	if err != nil {

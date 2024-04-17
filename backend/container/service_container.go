@@ -57,10 +57,6 @@ func (c *Container) ServiceProvider() {
 		c.Error = err
 	}
 
-	if err := c.Container.Provide(payment.NewOmiseService); err != nil {
-		c.Error = err
-	}
-
 	if err := c.Container.Provide(payment.NewStripeService); err != nil {
 		c.Error = err
 	}

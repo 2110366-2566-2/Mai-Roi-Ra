@@ -20,10 +20,10 @@ type IEventRepository interface {
 	GetEventLists(req *st.GetEventListsRequest) ([]*models.Event, *int, *int, error)
 	GetEventListsByStartDate(endDate string) ([]*models.Event, error)
 	GetEventDataById(string) (*models.Event, error)
-	UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error)
-	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	UpdateEvent(req *models.Event) (*st.MessageResponse, error)
+	DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error)
 	GetAdminAndOrganizerEventById(eventId string) (*string, *string, error)
-	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error)
 }
 
 func NewEventRepository(
@@ -52,7 +52,7 @@ func (r *EventRepository) CreateEvent(req *models.Event) (*st.CreateEventRespons
 	}, nil
 }
 
-func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventResponse, error) {
+func (r *EventRepository) UpdateEvent(req *models.Event) (*st.MessageResponse, error) {
 	log.Println("[Repo: UpdateEvent]: Called")
 
 	// Find the event by event_id
@@ -107,12 +107,12 @@ func (r *EventRepository) UpdateEvent(req *models.Event) (*st.UpdateEventRespons
 		return nil, err
 	}
 
-	return &st.UpdateEventResponse{
-		EventId: req.EventId,
+	return &st.MessageResponse{
+		Response: req.EventId,
 	}, nil
 }
 
-func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
+func (r *EventRepository) DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: DeleteEventById]: Called")
 	eventModel := models.Event{}
 
@@ -133,8 +133,8 @@ func (r *EventRepository) DeleteEventById(req *st.DeleteEventRequest) (*st.Delet
 	}
 
 	// Return a success message
-	return &st.DeleteEventResponse{
-		Message: "success",
+	return &st.MessageResponse{
+		Response: "success",
 	}, nil
 }
 
@@ -227,7 +227,7 @@ func (r *EventRepository) GetAdminAndOrganizerEventById(eventId string) (*string
 	return &eventModel.AdminId, &eventModel.OrganizerId, nil
 }
 
-func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: VerifyEvent]: Called")
 	if err := r.db.Model(&models.Event{}).Where("event_id = ?", req.EventId).
 		Updates(map[string]interface{}{
@@ -238,8 +238,8 @@ func (r *EventRepository) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEve
 		log.Println("[Repo: UpdateEvent] Error updating event in Events table:", err)
 		return nil, err
 	}
-	res := &st.VerifyEventResponse{
-		Message: "Verify Event Successful",
+	res := &st.MessageResponse{
+		Response: "Verify Event Successful",
 	}
 	return res, nil
 }

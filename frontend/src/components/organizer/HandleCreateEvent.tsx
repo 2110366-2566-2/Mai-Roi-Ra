@@ -1,17 +1,11 @@
 'use server'
 import { revalidatePath, revalidateTag } from "next/cache"
-import { redirect } from "next/navigation"
 import createEvent from "@/libs/createEvent"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth"
 
+export default async function HandleCreateEvent(formData:FormData,token:string){
 
-export async function HandleCreateEvent(name: string, activity: string, startdate: string, endDate: string, price: number, location: string, district: string,
-    province: string, description: string, imageSrc: string) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user.token) return null
     try {
-        const res = await createEvent(session.user.organizer_id, name, activity, location, district, province, price, description, imageSrc, startdate, endDate, session.user.token);
+        const res = await createEvent(formData,token);
         console.log(res);
         console.log("Create Event successful");
     } catch (err) {
@@ -20,7 +14,6 @@ export async function HandleCreateEvent(name: string, activity: string, startdat
     revalidateTag(`events`);
     revalidatePath('/homepage');
     revalidatePath("/profile");
-    redirect(`/profile`);
 }
 
 
