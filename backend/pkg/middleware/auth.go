@@ -80,7 +80,6 @@ func GoogleAuth() gin.HandlerFunc {
 			log.Println("[Config]: Error initializing .env")
 			return
 		}
-		log.Println("Config path from PG:", cfg)
 		// Cookies
 		store := sessions.NewCookieStore([]byte(SecretKey))
 		store.MaxAge(MaxAge)

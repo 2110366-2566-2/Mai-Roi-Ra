@@ -18,6 +18,11 @@ const (
 	Saturday
 )
 
+type LanguageStruct struct {
+	Th string `json:"th"`
+	En string `json:"en"`
+}
+
 func (w Weekday) String() string {
 	return [...]string{
 		"SUN",
