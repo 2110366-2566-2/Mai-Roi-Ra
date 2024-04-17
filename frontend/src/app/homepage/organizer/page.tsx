@@ -43,6 +43,8 @@ export default async function UserHomepage() {
             district={eventItem.district}
             imgSrc={eventItem.event_image}
             page={1}
+            role={null}
+            status={null}
           />
         ))}
       </div>
