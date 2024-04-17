@@ -230,7 +230,7 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="number" placeholder="Price"
-                                value={price || ""} onChange={(e) => setPrice(e.target.value)} min={0} step={10}/>
+                                value={price || 0} onChange={(e) => setPrice(Number(e.target.value))} min={0} step={10}/>
 
                                 {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
