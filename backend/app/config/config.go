@@ -69,8 +69,8 @@ func NewConfig(path string) (*Config, error) {
 	}
 
 	// Retrieve the secretName and region from environment variables
-	secretName := os.Getenv("SECRET_NAME")
-	region := os.Getenv("REGION")
+	secretName := os.Getenv("AWS_SECRET_NAME")
+	region := os.Getenv("AWS_SECRET_REGION")
 
 	// Load AWS configuration
 	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
