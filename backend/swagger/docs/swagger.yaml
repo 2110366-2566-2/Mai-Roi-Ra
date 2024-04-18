@@ -2568,11 +2568,6 @@ paths:
         name: user_id
         required: true
         type: string
-      - description: Is user already have a picture?
-        in: formData
-        name: is_profiled
-        required: true
-        type: string
       - description: Profile image
         in: formData
         name: user_image

@@ -116,7 +116,6 @@ func (c *UserController) UpdateUserInformation(ctx *gin.Context) {
 // @Accept multipart/form-data
 // @Produce json
 // @Param user_id path string True "User Id"
-// @Param is_profiled formData string True "Is user already have a picture?"Enum ("Yes", "No")
 // @Param user_image formData file True "Profile image"
 // @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
@@ -130,7 +129,6 @@ func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
 	}
 
 	userId := ctx.Param("id")
-	isProfiled := ctx.Request.FormValue("is_profiled")
 
 	// S3
 	fileHeader, err := ctx.FormFile("user_image")
@@ -146,15 +144,6 @@ func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
 
 	Cloud := cloud.NewAWSCloudService(constant.PROFILE) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
-
-	if isProfiled == "Yes" {
-		// delete the existing image in the bucket
-		deleteErr := Cloud.DeleteFile(ctx, userId)
-		if deleteErr != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
-			return
-		}
-	}
 
 	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, userId)
 	if uploadErr != nil {
