@@ -5,7 +5,6 @@ import (
 
 	container "github.com/2110366-2566-2/Mai-Roi-Ra/backend/container"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/routers"
-	
 	//uncomment to start scheduler
 	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/scheduler"
 )
@@ -22,7 +21,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      localhost:80
 // @BasePath  /api/v1
 
 // @securityDefinitions.basic  BasicAuth
@@ -37,7 +36,7 @@ func main() {
 	//uncomment to start scheduler
 	//go scheduler.StartReminderEmailJob()
 
-	if err := r.Run(":8080"); err != nil {
+	if err := r.Run(":80"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }

@@ -46,7 +46,7 @@ const SignInForm = () => {
   };
 
   const handleLoginGoogle = () => {
-    window.location.href = 'http://localhost:8080/api/v1/auth/google/login';
+    window.location.href = 'http://localhost:80/api/v1/auth/google/login';
   }
 
   return (
