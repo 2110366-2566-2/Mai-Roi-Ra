@@ -11,7 +11,7 @@ export default function CheckoutForm() {
   const elements = useElements();
 
 
-  const [message, setMessage] = React.useState<string | null>(null);
+  const [message, setMessage] = React.useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -28,7 +28,7 @@ export default function CheckoutForm() {
     }
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      switch (paymentIntent.status) {
+      switch (paymentIntent?.status) {
         case "succeeded":
           setMessage("Payment succeeded!");
           break;
@@ -79,7 +79,7 @@ export default function CheckoutForm() {
     setIsLoading(false);
   };
 
-  const paymentElementOptions = {
+  const paymentElementOptions: any = {
     layout: "tabs",
   };
 
