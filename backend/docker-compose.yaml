@@ -13,7 +13,6 @@ services:
       - "80:80"
     volumes:
       - ./:/usr/src/app
-    command: air main.go -b 127.0.0.1
     depends_on:
       pg_db:
         condition: service_healthy
