@@ -178,6 +178,7 @@ func setupPostRoutes(r *gin.RouterGroup, controller *controllers.PostController)
 	{
 		postRoutes.GET("/:id", controller.GetPostById)
 		postRoutes.GET("/events/:id", controller.GetPostListsByEventId)
+		postRoutes.GET("/is_reviewed", controller.IsReviewed)
 		postRoutes.POST("/", controller.CreatePost)
 		postRoutes.DELETE("/:id", controller.DeletePostById)
 	}

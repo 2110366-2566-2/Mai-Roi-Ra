@@ -32,6 +32,15 @@ type GetPostListsByEventIdResponse struct {
 	AverageRate float64    `json:"average_rate"`
 }
 
+type IsReviewedRequest struct {
+	UserId  string `json:"user_id" binding:"required"`
+	EventId string `json:"event_id" binding:"required"`
+}
+
+type IsReviewedResponse struct {
+	IsReviewed bool `json:"is_reviewed"`
+}
+
 type CreatePostRequest struct {
 	UserId      string  `json:"user_id" binding:"required" example:"9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"`
 	EventId     string  `json:"event_id" binding:"required" example:"b21d43c3-1a0a-4f36-b38b-81d0e57af681"`

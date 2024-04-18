@@ -17,6 +17,7 @@ type PostRepository struct {
 type IPostRepository interface {
 	GetPostById(postID string) (*models.Post, error)
 	GetPostListsByEventId(req *st.EventIdRequest) ([]models.Post, error)
+	IsReviewed(req *st.IsReviewedRequest) (*st.IsReviewedResponse, error)
 	CreatePost(req *models.Post) (*st.CreatePostResponse, error)
 	DeletePostById(req *st.PostIdRequest) (*st.MessageResponse, error)
 }
@@ -56,6 +57,27 @@ func (repo *PostRepository) GetPostListsByEventId(req *st.EventIdRequest) ([]mod
 	}
 
 	return posts, nil
+}
+
+func (r *PostRepository) IsReviewed(req *st.IsReviewedRequest) (*st.IsReviewedResponse, error) {
+	log.Println("[Repo: IsReviewed]: Called")
+
+	response := &st.IsReviewedResponse{
+		IsReviewed: false, // Default to false
+	}
+
+	query := r.db.Where("event_id = ? AND user_id = ?", req.EventId, req.UserId)
+	var count int64
+	if err := query.Model(&models.Post{}).Count(&count).Error; err != nil {
+		log.Println("[Repo: IsReviewed]: cannot query for existing rows:", err)
+		return nil, err
+	}
+
+	if count > 0 {
+		response.IsReviewed = true
+	}
+
+	return response, nil
 }
 
 func (r *PostRepository) CreatePost(req *models.Post) (*st.CreatePostResponse, error) {
