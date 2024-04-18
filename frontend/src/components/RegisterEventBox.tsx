@@ -61,13 +61,14 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   useEffect(() => {
     const fetchIsRegisterable = async () => {
       try {
+        if(!session?.user?.user_id) return ;
         const response = await isRegisteredEvent(
-          session?.user?.user_id,
+          session?.user?.user_id ,
           event.event_id
         );
         setIsRegisterable(!response.is_registered);
         console.log("isRegistered:", response.is_registered);
-      } catch (error) {
+      } catch (error : any) {
         // Handle the error
         console.log("Error fetching isRegisterable:", error.message);
       }
@@ -87,7 +88,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
           );
           setIsOrganizerGotMoney(response.is_paid);
           console.log("isOrganizerGotMoney:", response.is_paid);
-        } catch (error) {
+        } catch (error : any) {
           // Handle the error
           console.log("Error fetching isOrganizerGotMoney:", error.message);
         }
@@ -190,13 +191,10 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   };
 
   //Payment
-  const [clientSecret, setClientSecret] = useState(null);
-  const appearance = {
-    theme: "stripe",
-  };
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const options = {
-    clientSecret,
-    appearance,
+    clientSecret: clientSecret || undefined,
+    appearance: { theme: 'stripe' as const},
   };
 
   async function handleCreatePaymentIntent(
@@ -227,6 +225,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
 
   const handleCreateTransferToOrganizer = async () => {
     try {
+      if(!session?.user?.organizer_id) return ;
       const res = await createTransferToOrganizer(
         session?.user.organizer_id,
         event.event_id
@@ -248,6 +247,9 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         style={null}
         allowOuterclose={true}
         modalsize="h-[50%] w-full"
+        MarginTop={null}
+        canScroll={null}
+        isNotRound={null}
       >
         <p>The Registeration cannot be cancel in the future.</p>
         <div>
@@ -267,6 +269,11 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         closeModal={closeAdminVerifyModal}
         title="Are you sure to verify to this event?"
         style={null}
+        isNotRound={null}
+        canScroll={null}
+        MarginTop={null}
+        modalsize={null}
+        allowOuterclose={null}
       >
         <p>The event cannot be rejected in the future.</p>
         {isVerifyLoading && (
@@ -300,6 +307,11 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         closeModal={closeAdminRejectModal}
         title="Are you sure to reject to this event?"
         style={null}
+        isNotRound={null}
+        canScroll={null}
+        MarginTop={null}
+        modalsize={null}
+        allowOuterclose={null}
       >
         <p>The event cannot be verified in the future.</p>
         {isVerifyLoading && (
