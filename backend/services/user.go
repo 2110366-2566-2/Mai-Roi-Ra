@@ -386,7 +386,14 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 // GenerateJWTToken generates a new JWT token for authenticated users
 func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
-	var secretKey = []byte("YourSecretKey")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return "", err
+	}
+	secretKey := cfg.App.TokenSecretKey
 
 	claims := jwt.MapClaims{
 		"user_id":      user.UserID,
@@ -405,7 +412,15 @@ func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 }
 
 func validateToken(signedToken string) (string, error) {
-	var secretKey = []byte("secret-key")
+	log.Println("[Service: validateToken]: Called")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return "", err
+	}
+	secretKey := cfg.App.TokenSecretKey
 	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})

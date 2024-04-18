@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -21,9 +22,10 @@ type Config struct {
 }
 
 type App struct {
-	Url         string
-	FrontendURL string
-	AppName     string
+	Url            string
+	FrontendURL    string
+	AppName        string
+	TokenSecretKey string
 }
 
 type PgDB struct {
@@ -51,6 +53,8 @@ type S3 struct {
 	AwsSecretKey         string
 	AwsBucketProfileName string
 	AwsBucketEventName   string
+	secretName           string
+	region               string
 }
 
 type Stripe struct {
@@ -64,9 +68,9 @@ func NewConfig(path string) (*Config, error) {
 		return nil, err
 	}
 
-	// Retrieve the secret values from AWS Secrets Manager
-	secretName := "Mairoira"
-	region := "ap-southeast-2"
+	// Retrieve the secretName and region from environment variables
+	secretName := os.Getenv("SECRET_NAME")
+	region := os.Getenv("REGION")
 
 	// Load AWS configuration
 	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
@@ -97,9 +101,10 @@ func NewConfig(path string) (*Config, error) {
 	// Now, replace the hard-coded values with the secret values
 	return &Config{
 		App: &App{
-			Url:         secretData["SERVER_HOST"],
-			FrontendURL: secretData["FRONTEND_URL"],
-			AppName:     secretData["APP_NAME"],
+			Url:            secretData["SERVER_HOST"],
+			FrontendURL:    secretData["FRONTEND_URL"],
+			AppName:        secretData["APP_NAME"],
+			TokenSecretKey: secretData["TOKEN_SECRET_KEY"],
 		},
 		PgDB: &PgDB{
 			Host:     secretData["PG_HOST"],
@@ -124,6 +129,8 @@ func NewConfig(path string) (*Config, error) {
 			AwsSecretKey:         secretData["AWS_SECRET_ACCESS_KEY"],
 			AwsBucketProfileName: secretData["AWS_BUCKET_PROFILE_NAME"],
 			AwsBucketEventName:   secretData["AWS_BUCKET_EVENT_NAME"],
+			secretName:           secretData["secretName"],
+			region:               secretData["region"],
 		},
 		Stripe: &Stripe{
 			PublicKey: secretData["STRIPE_PUBLIC_KEY"],
