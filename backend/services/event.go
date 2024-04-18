@@ -418,7 +418,7 @@ func (s *EventService) DeleteEventById(req *st.EventIdRequest) (*st.MessageRespo
 			UserId:    v.UserId,
 			EventId:   resevent.EventId,
 			EventName: resevent.EventName,
-			EventDate: resevent.StartDate.Format("2006-01-02"),
+			EventDate: utils.TimeToString(resevent.StartDate),
 		}
 		if _, err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
 			log.Println("[Service: Call SendCancelledEmail]:", err)

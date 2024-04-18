@@ -81,3 +81,7 @@ func StringToTime(timeStr string) (time.Time, error) {
 func GetDateCalendarFormat(ct time.Time) string {
 	return time.Time(ct).In(time.Now().Location()).Format("2006/01/02")
 }
+
+func TimeToString(t time.Time) string {
+	return t.Format("2006/02/01")
+}

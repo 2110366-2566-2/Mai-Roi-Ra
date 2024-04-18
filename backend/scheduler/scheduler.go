@@ -1,13 +1,15 @@
 package scheduler
 
 import (
+	"log"
+	"time"
+
 	db "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/db"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	repository "github.com/2110366-2566-2/Mai-Roi-Ra/backend/repositories"
 	service "github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/robfig/cron/v3"
-	"log"
-	"time"
 )
 
 func StartReminderEmailJob() {
@@ -52,7 +54,7 @@ func SendReminderEmail() error {
 		ParticipateRepository: participaterepository,
 	})
 	reqEvent := &st.GetEventListsByStartDateRequest{
-		StartDate: Tomorrow.Format("2006-01-02"),
+		StartDate: utils.TimeToString(Tomorrow),
 	}
 	resEvents, err := EventService.GetEventListsByStartDate(reqEvent)
 	if err != nil {
@@ -80,7 +82,7 @@ func SendReminderEmail() error {
 				OrganizerId:   event.OrganizerId,
 				EventId:       event.EventId,
 				EventName:     event.EventName,
-				EventDate:     startDate.Format("2006-01-02"),
+				EventDate:     utils.TimeToString(startDate),
 				EventLocation: event.LocationName,
 			}
 			_, err := AnnouncementService.SendReminderEmail(reqreminder)

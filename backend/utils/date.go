@@ -81,10 +81,6 @@ var ShortDayMapToFullDay = map[string]LanguageStruct{
 	},
 }
 
-func ToDateString(t time.Time) string {
-	return t.Format("20060102")
-}
-
 func GetString(s *string) string {
 	if s != nil {
 		return *s

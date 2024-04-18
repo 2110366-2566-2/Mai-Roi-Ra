@@ -500,8 +500,8 @@ func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventList
 		eventData := st.ParticipatedEvent{
 			EventId:      res.EventId,
 			EventName:    res.EventName,
-			StartDate:    res.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
-			EndDate:      res.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
+			StartDate:    utils.TimeToString(res.StartDate),
+			EndDate:      utils.TimeToString(res.EndDate), // Format the date as "YYYY/DD/MM"
 			EventImage:   res.EventImage,
 			LocationName: locName.LocationName,
 			Description:  res.Description,
