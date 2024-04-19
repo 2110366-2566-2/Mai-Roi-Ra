@@ -90,19 +90,3 @@ func (c *awsService) SaveFile(ctx *gin.Context, fileHeader *multipart.FileHeader
 	url = url + id
 	return url, nil
 }
-
-func (c *awsService) DeleteFile(ctx *gin.Context, uploadID string) error {
-	log.Println("[Service: awsService]: Called to delete file with ID:", uploadID)
-
-	_, err := c.service.DeleteObject(&s3.DeleteObjectInput{
-		Bucket: aws.String(c.bucketName),
-		Key:    aws.String(uploadID),
-	})
-	if err != nil {
-		log.Println("Error deleting file", err)
-		return err
-	}
-
-	log.Println("File deleted successfully")
-	return nil
-}

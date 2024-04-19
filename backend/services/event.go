@@ -31,7 +31,6 @@ type IEventService interface {
 	DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
 	VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error)
-	UpdateEventImage(eventId string, imageUrl string) (*st.MessageResponse, error)
 }
 
 func NewEventService(
@@ -695,21 +694,5 @@ func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.MessageRespo
 		log.Println("[Service: VerifyEvent]: Called Repo Error: ", err)
 		return nil, err
 	}
-	return res, nil
-}
-
-func (s *EventService) UpdateEventImage(eventId string, imageUrl string) (*st.MessageResponse, error) {
-	log.Println("[Service: UpdateEventImage] Called")
-	eventModel := models.Event{
-		EventImage: &imageUrl,
-		EventId:    eventId,
-	}
-
-	res, err := s.RepositoryGateway.EventRepository.UpdateEvent(&eventModel)
-	if err != nil {
-		log.Println("[Service: UpdateEventImage] Called repo updateEvent error", err)
-		return nil, err
-	}
-
 	return res, nil
 }

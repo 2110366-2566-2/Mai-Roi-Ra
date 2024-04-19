@@ -151,14 +151,8 @@ func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
 		return
 	}
 
-	res, err := c.ServiceGateway.UserService.UpdateUserProfileImage(userId, url)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	log.Println("[CTRL: UpdateUserProfileImage] Output:", res)
-	ctx.JSON(http.StatusOK, res)
+	log.Println("[CTRL: UpdateUserProfileImage] Output:", url)
+	ctx.JSON(http.StatusOK, gin.H{"Message": "Update Successful"})
 }
 
 // @Summary GetUserByUserId

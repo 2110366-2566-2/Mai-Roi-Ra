@@ -57,7 +57,6 @@ type IUserService interface {
 	GetUserOTP(userId *string) (*string, *time.Time, error)
 	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.MessageResponse, error)
 	GetUserByEmail(email string) (*models.User, error)
-	UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -752,16 +751,6 @@ func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	user, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
 	if err != nil {
 		log.Println("[Service: GetUserByEmail]: Error retrieving user by email", err)
-		return nil, err
-	}
-	return user, nil
-}
-
-func (s *UserService) UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error) {
-	log.Println("[Service: UpdateUserProfileImage] Called")
-	user, err := s.RepositoryGateway.UserRepository.UpdateUserProfileImage(userId, url)
-	if err != nil {
-		log.Println("[Service: UpdateUserProfileImage] Error calling repo: ", err)
 		return nil, err
 	}
 	return user, nil
