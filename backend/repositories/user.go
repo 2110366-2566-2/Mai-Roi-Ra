@@ -35,6 +35,7 @@ type IUserRepository interface {
 	GetAllAdmins() ([]*models.User, error)
 	UpdateVerified(userId *string) error
 	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.MessageResponse, error)
+	UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error)
 }
 
 // NewUserRepository creates a new instance of the UserRepository.
@@ -360,4 +361,21 @@ func (r *UserRepository) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.Mess
 		return nil, err
 	}
 	return response, nil
+}
+
+func (r *UserRepository) UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error) {
+	var userModel models.User
+	if err := r.DB.Where("user_id = ?", userId).First(&userModel).Error; err != nil {
+		log.Println("[Repo: UpdateUserProfileImage] event_id not found")
+		return nil, err
+	}
+
+	userModel.UserImage = url
+	if err := r.DB.Save(&userModel).Error; err != nil {
+		log.Println("[Repo: UpdateUserProfileImage] Error updating in the database:", err)
+		return nil, err
+	}
+	return &st.MessageResponse{
+		Response: "Update Successful",
+	}, nil
 }
