@@ -4,7 +4,7 @@ import EventItem from "@/components/EventItem";
 import Image from "next/image";
 import getProfile from "@/libs/getProfile";
 import EditProfileButton from "@/components/EditProfileButton";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import ProfileUserInformation from "@/components/ProfileUserInformation";
 import getMyOrganizerEvents from "@/libs/getMyOrganizerEvents";
 import getMyUserEvents from "@/libs/getMyUserEvents";
@@ -18,6 +18,7 @@ import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";
 
 export default async function Profile() {
   revalidateTag("profile");
+  revalidatePath("/profile");
 
   // get user profile from user_id from session
   const session = await getServerSession(authOptions);

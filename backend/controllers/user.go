@@ -157,7 +157,7 @@ func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
 		return
 	}
 
-	log.Println("[CTRL: UpdateUserProfileImage] Output:", res)
+	log.Println("[CTRL: UpdateUserProfileImage] Output:", url)
 	ctx.JSON(http.StatusOK, res)
 }
 
