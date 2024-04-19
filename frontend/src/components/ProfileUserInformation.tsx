@@ -25,7 +25,7 @@ interface Props {
   emailProp: string;
   birthDateProp: string;
   usernameProp: string;
-  user_id: string;
+  user_id: string | null;
   emailIsVerified: boolean;
 }
 
@@ -80,7 +80,7 @@ export default function ProfileUserInformation({
   const handleVerifyClick = async () => {
     toggleIsShowFirstSendOtp();
     try {
-      await sendOTP(email, user_id);
+      await sendOTP(email, user_id || "");
     } catch (err) {
       setError("send verify fail!");
       console.log("Err: ", err);
@@ -109,7 +109,7 @@ export default function ProfileUserInformation({
         <div className="mt-8">
           {!isShowFirstSendOtp ? (
             <OTPInput
-              user_id={user_id}
+              user_id={user_id || ""}
               email={email}
               openModal={openOtpModal}
               closeModal={closeOtpModal}

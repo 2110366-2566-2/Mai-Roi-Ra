@@ -47,6 +47,7 @@ export default function ParticipantListModal({
         canScroll={true}
         title={null}
         MarginTop=""
+        allowOuterclose={null}
       >
         <button
           onClick={closeModal}
