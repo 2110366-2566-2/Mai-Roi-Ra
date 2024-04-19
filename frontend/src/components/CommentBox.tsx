@@ -5,7 +5,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import Rating from "@mui/material/Rating";
 import Image from "next/image";
-import { useState, ChangeEvent, SyntheticEvent } from "react";
+import { useState, ChangeEvent, SyntheticEvent, useEffect } from "react";
 import LoadingLine from "./LoadingLine";
 import ReviewModal from "./ReviewModal";
 import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import SuccessReviewEventModal from "./SuccessReviewEventModal";
 import ResponseReviewModal from "./ResponseReviewModal";
 import responsePost from "@/libs/responsePost";
+import isReviewedEvent from "@/libs/isReviewedEvent";
 
 interface Responses {
   [key: string]: string; // This means the object can have any number of properties, all with string keys and string values.
@@ -46,6 +47,21 @@ const CommentBox = ({
 }: Props) => {
   console.log(role);
   //   console.log(user_id);
+  const [isReviewed, setIsReviewed] = useState(false);
+
+  const fetchIsReviewed = async () => {
+    try {
+      const response = await isReviewedEvent(user_id, event_id);
+      setIsReviewed(response.is_reviewed);
+    } catch (error) {
+      console.error("Failed to fetch isReviewedEvent:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchIsReviewed();
+  }, []);
+
   const [curr, setCurr] = useState(0);
 
   const router = useRouter();
@@ -340,8 +356,8 @@ const CommentBox = ({
         </div>
       </div>
 
-      <div className="flex flex-row justify-center lg:items-end items-center h-[28%] cursor-pointer">
-        {role === "USER" ? (
+      <div className="flex flex-row justify-center lg:items-end items-center h-[28%]">
+        {!isReviewed && role === "USER" && (
           <button
             onClick={openWriteReviewModal}
             className="flex flex-row justify-center items-center bg-[#F2D22E] hover:bg-yellow-500 py-3 px-2 rounded-2xl space-x-2 w-[70%]"
@@ -352,18 +368,18 @@ const CommentBox = ({
 
             <div className="text-[20px]">Write your reviews</div>
           </button>
-        ) : (
-          //   <button
-          //     onClick={openResponseModal}
-          //     className="flex flex-row justify-center items-center hover:bg-yellow-500 bg-[#F2D22E] py-3 px-2 rounded-2xl space-x-2 w-[70%]"
-          //   >
-          //     <div>
-          //       <QuestionAnswerIcon className="text-[40px]" />
-          //     </div>
+        )}
+        {isReviewed && (
+          <button
+            // onClick={openWriteReviewModal}
+            className="text-gray-800 flex flex-row justify-center items-center bg-gray-200 cursor-default py-3 px-2 rounded-2xl space-x-2 w-[70%]"
+          >
+            <div>
+              <QuestionAnswerIcon className="text-[30px]" />
+            </div>
 
-          //     <div className="text-[30px]">Answer</div>
-          //   </button>
-          <div />
+            <div className="text-[20px]">You have already reviewed</div>
+          </button>
         )}
       </div>
     </div>
