@@ -21,9 +21,10 @@ type Config struct {
 }
 
 type App struct {
-	Url         string
-	FrontendURL string
-	AppName     string
+	Url            string
+	AppName        string
+	FrontendURL    string
+	TokenSecretKey string
 }
 
 type PgDB struct {
@@ -97,37 +98,37 @@ func NewConfig(path string) (*Config, error) {
 	// Now, replace the hard-coded values with the secret values
 	return &Config{
 		App: &App{
-			Url:         secretData["SERVER_HOST"],
-			FrontendURL: secretData["FRONTEND_URL"],
-			AppName:     secretData["APP_NAME"],
+			Url:            os.Getenv("SERVER_HOST"),
+			AppName:        os.Getenv("APP_NAME"),
+			TokenSecretKey: os.Getenv("TOKEN_SECRET_KEY"),
 		},
 		PgDB: &PgDB{
-			Host:     secretData["PG_HOST"],
-			Username: secretData["PG_USER"],
-			Password: secretData["PG_PASSWORD"],
-			DbName:   secretData["PG_DB"],
+			Host:     os.Getenv("PG_HOST"),
+			Username: os.Getenv("PG_USER"),
+			Password: os.Getenv("PG_PASSWORD"),
+			DbName:   os.Getenv("PG_DB"),
 		},
 		Email: &Email{
-			Name:     secretData["EMAIL_SENDER_NAME"],
-			Address:  secretData["EMAIL_SENDER_ADDRESS"],
-			Password: secretData["EMAIL_SENDER_PASSWORD"],
+			Name:     os.Getenv("EMAIL_SENDER_NAME"),
+			Address:  os.Getenv("EMAIL_SENDER_ADDRESS"),
+			Password: os.Getenv("EMAIL_SENDER_PASSWORD"),
 		},
 
 		GoogleAuth: &GoogleAuth{
-			ClientId:     secretData["GOOGLE_CLIENT_ID"],
-			ClientSecret: secretData["GOOGLE_CLIENT_SECRET"],
-			CallbackURL:  secretData["GOOGLE_CALLBACK_URL"],
+			ClientId:     os.Getenv("GOOGLE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			CallbackURL:  os.Getenv("GOOGLE_CALLBACK_URL"),
 		},
 		S3: &S3{
-			AwsRegion:            secretData["AWS_REGION"],
-			AwsAccessKeyID:       secretData["AWS_ACCESS_KEY_ID"],
-			AwsSecretKey:         secretData["AWS_SECRET_ACCESS_KEY"],
-			AwsBucketProfileName: secretData["AWS_BUCKET_PROFILE_NAME"],
-			AwsBucketEventName:   secretData["AWS_BUCKET_EVENT_NAME"],
+			AwsRegion:            os.Getenv("AWS_REGION"),
+			AwsAccessKeyID:       os.Getenv("AWS_ACCESS_KEY_ID"),
+			AwsSecretKey:         os.Getenv("AWS_SECRET_ACCESS_KEY"),
+			AwsBucketProfileName: os.Getenv("AWS_BUCKET_PROFILE_NAME"),
+			AwsBucketEventName:   os.Getenv("AWS_BUCKET_EVENT_NAME"),
 		},
 		Stripe: &Stripe{
-			PublicKey: secretData["STRIPE_PUBLIC_KEY"],
-			SecretKey: secretData["STRIPE_SECRET_KEY"],
+			PublicKey: os.Getenv("STRIPE_PUBLIC_KEY"),
+			SecretKey: os.Getenv("STRIPE_SECRET_KEY"),
 		},
 	}, nil
 }
