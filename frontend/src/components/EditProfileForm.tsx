@@ -49,7 +49,6 @@ export default function EditProfileForm({
   token,
   user_image
 }: Props) {
-  const isMobile = useMediaQuery("(max-width:768px)");
 
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
@@ -63,11 +62,8 @@ export default function EditProfileForm({
   const initialBirthDate = dayjs(birthDateProp);
   const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
   const [role, setRole] = useState("User");
-  const [profilePicture, setProfilePicture] = useState();
-  const [backgroundPicture, setBackgroundPicture] = useState();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>(user_image);
-  const [is_profile,set_is_profile] = useState<string>(user_image? "True" : "False");
   const fileInputRef = useRef(null);
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -133,10 +129,15 @@ export default function EditProfileForm({
         if (selectedImage) {
           const formData = new FormData();
           formData.append("user_id",userId);
-          formData.append("is_profiled", is_profile);
           formData.append("user_image",selectedImage);
           await uploadProfileImage(formData,token);
         }
+
+        setAllInputsFilled(true);
+        setError("");
+        if (firstRegister) {
+          setOpenChooseRoleForm(true);
+        } 
 
         await updateProfileAction(
           userId,
@@ -147,18 +148,7 @@ export default function EditProfileForm({
           province,
           formattedBirthDate
         );
-        setAllInputsFilled(true);
-        setError("");
-        // setSuccessModal(true);
-        // setTimeout(() => {
-        //   setSuccessModal(false);
-        //   router.push("/profile");
-        // }, 4000);
-        if (firstRegister) {
-          setOpenChooseRoleForm(true);
-        } else {
-          router.push("/profile");
-        }
+      
       } catch (err) {
         setError("Update error. Server Failed ?");
         console.log("Err: ", err);

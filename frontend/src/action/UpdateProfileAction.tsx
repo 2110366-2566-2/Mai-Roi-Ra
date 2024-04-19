@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import updateProfile from "@/libs/updateProfile";
+import { redirect } from "next/navigation";
 
 export default async function UpdateProfileAction(
   user_id: string,
@@ -11,7 +12,6 @@ export default async function UpdateProfileAction(
   province: string,
   birthDate: string
 ) {
-  //   console.log(token);
 
   try {
     console.log(firstName);
@@ -29,9 +29,8 @@ export default async function UpdateProfileAction(
   } catch (err) {
     console.log("Error during action: ", err);
   }
-  revalidateTag(`profile/${user_id}`);
+  revalidatePath(`/editprofile`);
   revalidateTag(`profile`);
   revalidatePath("/profile");
-
-  
+  redirect("/profile");  
 }
