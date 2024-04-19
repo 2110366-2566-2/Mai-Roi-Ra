@@ -2347,13 +2347,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Is user already have a picture?",
-                        "name": "is_profiled",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
                         "type": "file",
                         "description": "Profile image",
                         "name": "user_image",
