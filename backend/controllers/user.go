@@ -8,6 +8,7 @@ import (
 
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/models"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
@@ -115,7 +116,6 @@ func (c *UserController) UpdateUserInformation(ctx *gin.Context) {
 // @Accept multipart/form-data
 // @Produce json
 // @Param user_id path string True "User Id"
-// @Param is_profiled formData string True "Is user already have a picture?"Enum ("Yes", "No")
 // @Param user_image formData file True "Profile image"
 // @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
@@ -129,7 +129,6 @@ func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
 	}
 
 	userId := ctx.Param("id")
-	isProfiled := ctx.Request.FormValue("is_profiled")
 
 	// S3
 	fileHeader, err := ctx.FormFile("user_image")
@@ -145,15 +144,6 @@ func (c *UserController) UpdateUserProfileImage(ctx *gin.Context) {
 
 	Cloud := cloud.NewAWSCloudService(constant.PROFILE) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
-
-	if isProfiled == "Yes" {
-		// delete the existing image in the bucket
-		deleteErr := Cloud.DeleteFile(ctx, userId)
-		if deleteErr != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
-			return
-		}
-	}
 
 	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, userId)
 	if uploadErr != nil {
@@ -515,7 +505,14 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	redirectURL := fmt.Sprintf("%s/auth/handle-login", constant.FRONT_END_URL)
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	redirectURL := fmt.Sprintf("%s/auth/handle-login", cfg.App.FrontendURL)
 	log.Println("User token at the end:", *token)
 
 	ctx.SetCookie("token", *token, middleware.MaxAge, "/", "localhost", false, true)

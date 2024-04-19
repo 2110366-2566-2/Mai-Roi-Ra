@@ -1166,6 +1166,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/posts/is_reviewed": {
+            "get": {
+                "description": "Determine that whether the user has reviewed in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "IsReviewed",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsReviewedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/posts/{post_id}": {
             "get": {
                 "description": "Get the details of a specific post by its ID.",
@@ -2293,13 +2344,6 @@ const docTemplate = `{
                         "description": "User Id",
                         "name": "user_id",
                         "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Is user already have a picture?",
-                        "name": "is_profiled",
-                        "in": "formData",
                         "required": true
                     },
                     {
@@ -3437,6 +3481,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "is_registered": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "structure.IsReviewedResponse": {
+            "type": "object",
+            "properties": {
+                "is_reviewed": {
                     "type": "boolean"
                 }
             }

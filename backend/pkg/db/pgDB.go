@@ -3,7 +3,6 @@ package db
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	"gorm.io/driver/postgres"
@@ -11,7 +10,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func InitPgDB() (*gorm.DB) {
+func InitPgDB() *gorm.DB {
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
 	}())
@@ -22,10 +21,11 @@ func InitPgDB() (*gorm.DB) {
 	log.Println("Config path from PG:", cfg)
 
 	dsn := fmt.Sprintf(
-		"host=pg_db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Bangkok",
-		os.Getenv("PG_USER"),
-		os.Getenv("PG_PASSWORD"),
-		os.Getenv("PG_DB"),
+		"host=%s user=%s password=%s dbname=%s port=5432 sslmode=require TimeZone=Asia/Bangkok",
+		cfg.PgDB.Host,
+		cfg.PgDB.Username,
+		cfg.PgDB.Password,
+		cfg.PgDB.DbName,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
