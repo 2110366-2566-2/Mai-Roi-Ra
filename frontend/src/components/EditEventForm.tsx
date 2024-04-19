@@ -51,7 +51,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
     const [description,setDescription] = useState(Description);
     const [selectedImage, setSelectedImage] = useState<File|null>(null);
     const [preview, setPreview] = useState<string>(ImgSrc);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [error,setError] = useState("");
 
     const triggerFileInput = () => {
@@ -351,7 +351,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Save Changes" isVisible={showModal} id={Id}/>
+                <SuccessModal topic="Save Changes" isVisible={showModal} />
             </form>
             {loading &&
                 <div className={`w-screen z-30 h-screen fixed inset-0 top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>

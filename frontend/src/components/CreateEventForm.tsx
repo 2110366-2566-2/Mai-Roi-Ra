@@ -37,7 +37,7 @@ const CreateEventForm = () => {
     const [description,setDescription] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const createEvent = async () => {
@@ -55,10 +55,10 @@ const CreateEventForm = () => {
                 formData.append('end_date', endTmp.format('YYYY/MM/DD'));
                 formData.append('event_image', selectedImage);
                 formData.append('location_name', location);
-                formData.append('organizer_id', user?.organizer_id);
+                formData.append('organizer_id', user?.organizer_id || "");
                 formData.append('participant_fee', price.toString());
                 console.log(formData);
-                await HandleCreateEvent(formData,user.token);
+                await HandleCreateEvent(formData,user?.token || "");
                 setShowModal(true);
                 setLoading(false);
             }

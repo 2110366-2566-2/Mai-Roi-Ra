@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"encoding/json"
+	"os"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"

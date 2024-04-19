@@ -1,21 +1,21 @@
 version: '3.9'
 
 services:
-  # frontend:
-  #   container_name: frontend
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - frontend/.env.local
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend:/usr/src/app
-  #   command: pnpm run dev
-  #   depends_on:
-  #     pg_db:
-  #       condition: service_healthy
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - frontend/.env.local
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+    command: pnpm run dev
+    depends_on:
+      pg_db:
+        condition: service_healthy
   
   backend:
     container_name: backend
