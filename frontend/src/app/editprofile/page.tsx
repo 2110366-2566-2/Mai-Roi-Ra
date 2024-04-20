@@ -16,7 +16,9 @@ export default async function EditProfile() {
   revalidateTag("profile");
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
-  const profile = session ? await getProfile(session.user.user_id) : null;
+  const profile = session
+    ? await getProfile(session.user.user_id, session.user.token)
+    : null;
 
   return (
     <div className="flex flex-col items-center justify-center bg-white p-8">

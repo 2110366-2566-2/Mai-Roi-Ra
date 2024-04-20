@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import EditProfileForm from "@/components/EditProfileForm";
 import React from "react";
 import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import getProfile from "@/libs/getProfile";
-import { useSession } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import LoadingLine from "@/components/LoadingLine";
@@ -22,9 +22,12 @@ export default function OAuthFirstRegister() {
         setLoading(true); // Start loading
 
         // Simulate a delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        const profileData = await getProfile(session.user.user_id);
+        const profileData = await getProfile(
+          session.user.user_id,
+          session.user.token
+        );
         setProfile(profileData);
         setLoading(false); // End loading
       }
@@ -32,12 +35,11 @@ export default function OAuthFirstRegister() {
 
     fetchProfile();
   }, [session]);
-
   if (session?.user?.username !== "") {
     if (session) {
-      router.push('/homepage');
+      router.push("/homepage");
     } else {
-      router.push('/auth/signin');
+      router.push("/auth/signin");
     }
     return (
       <div className="w-screen h-screen flex items-center justify-center text-center flex-col">
@@ -61,26 +63,29 @@ export default function OAuthFirstRegister() {
           </div>
         </div>
         <div className="w-full">
-          <div className={`${styles.Roboto} text-3xl mt-6 text-gray-800 font-bold text-center`}>
+          <div
+            className={`${styles.Roboto} text-3xl mt-6 text-gray-800 font-bold text-center`}
+          >
             Please Enter your information.
           </div>
         </div>
-        {!loading ? <EditProfileForm
-          firstRegister={true}
-          firstNameProp={profile?.first_name}
-          lastNameProp={profile?.last_name}
-          addressProp={profile?.address}
-          districtProp={profile?.district}
-          provinceProp={profile?.province}
-          phoneNumberProp={profile?.phone_number}
-          emailProp={profile?.email}
-          birthDateProp={profile?.birth_date}
-          userId={session?.user?.user_id}
-          token={session?.user?.token}
-        ></EditProfileForm>
-          :
+        {!loading ? (
+          <EditProfileForm
+            firstRegister={true}
+            firstNameProp={profile?.first_name}
+            lastNameProp={profile?.last_name}
+            addressProp={profile?.address}
+            districtProp={profile?.district}
+            provinceProp={profile?.province}
+            phoneNumberProp={profile?.phone_number}
+            emailProp={profile?.email}
+            birthDateProp={profile?.birth_date}
+            userId={session?.user?.user_id}
+            token={session?.user?.token}
+          ></EditProfileForm>
+        ) : (
           <LoadingLine></LoadingLine>
-        }
+        )}
       </div>
     </div>
   );
