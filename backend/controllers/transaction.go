@@ -55,7 +55,7 @@ func (c *TransactionController) GetPaymentIntentById(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.CreatePaymentRequest true "Get PromptPay"
-// @Success 200 {object} st.TransactionResponse
+// @Success 200 {object} st.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /transactions/payment [post]
@@ -82,7 +82,7 @@ func (c *TransactionController) CreatePayment(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body st.SendTransactionEmailRequest true "Send Transaction Email Request"
-// @Success 200 {object} st.SendTransactionEmailResponse "Transaction email successfully sent"
+// @Success 200 {object} st.MessageResponse "Transaction email successfully sent"
 // @Failure 400 {object} object "Bad request - error in sending the transaction email"
 // @Router /transactions/send_email [post]
 func (c *TransactionController) SendTransactionEmail(ctx *gin.Context) {
@@ -135,7 +135,7 @@ func (c *TransactionController) TransferToOrganizer(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Payment Intent ID"
-// @Success 200 {object} st.GetPaymentIntentByIdResponse "success"
+// @Success 200 {object} st.MessageResponse "success"
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /transactions/payment-intent/confirm/{id} [get]
@@ -144,11 +144,11 @@ func (c *TransactionController) ConfirmPaymentIntent(ctx *gin.Context) {
 	log.Println("[CTRL: ConfirmPaymentIntent] Input:", paymentIntentId)
 	err := c.ServiceGateway.TransactionService.ConfirmPaymentIntent(paymentIntentId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to transfer money to organizer", "error": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"response": "Failed to transfer money to organizer", "error": err})
 		return
 	}
 	log.Println("[CTRL: TransferToOrganizer] Output:")
-	ctx.JSON(http.StatusOK, gin.H{"message": "SUCCESS"})
+	ctx.JSON(http.StatusOK, gin.H{"response": "SUCCESS"})
 }
 
 // @Summary IsPaid
@@ -164,8 +164,8 @@ func (c *TransactionController) ConfirmPaymentIntent(ctx *gin.Context) {
 // @Router /transactions/is_paid [get]
 func (c *TransactionController) IsPaid(ctx *gin.Context) {
 	req := &st.IsPaidRequest{
-		EventId: ctx.Query("event_id"),
-		OrganizerId:  ctx.Query("organizer_id"),
+		EventId:     ctx.Query("event_id"),
+		OrganizerId: ctx.Query("organizer_id"),
 	}
 	log.Println("[CTRL: IsPaid] Input:", req)
 	res, err := c.ServiceGateway.TransactionService.IsPaid(req)

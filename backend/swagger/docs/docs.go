@@ -52,7 +52,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Announcement successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendAnnounceResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -92,7 +92,7 @@ const docTemplate = `{
                     "200": {
                         "description": "CancelledEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendCancelledEmailRequest"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -132,7 +132,7 @@ const docTemplate = `{
                     "200": {
                         "description": "RegisteredEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendRegisteredEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -172,7 +172,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ReminderEmail successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendReminderEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -364,7 +364,7 @@ const docTemplate = `{
             "post": {
                 "description": "Create a new event with the provided details.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -375,13 +375,81 @@ const docTemplate = `{
                 "summary": "Create new event",
                 "parameters": [
                     {
-                        "description": "Create Event Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/structure.CreateEventRequest"
-                        }
+                        "type": "string",
+                        "description": "Name of the event",
+                        "name": "event_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Activity of the event",
+                        "name": "activities",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "City of the event",
+                        "name": "city",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "description for the event",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "district of the event",
+                        "name": "district",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "start_date",
+                        "name": "start_date",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "end date",
+                        "name": "end_date",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Event image",
+                        "name": "event_image",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location name",
+                        "name": "location_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "organizer_id",
+                        "name": "organizer_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "participant fee",
+                        "name": "participant_fee",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -389,6 +457,50 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.CreateEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/end/{user_id}": {
+            "get": {
+                "description": "Get list of events that are ended by userid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "GetEndedEventLists",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.GetEndedEventListsResponse"
                         }
                     },
                     "400": {
@@ -445,6 +557,57 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structure.GetParticipantListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/upload/{event_id}": {
+            "put": {
+                "description": "Update an existing event with the provided details.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Update existing event's image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event Id",
+                        "name": "event_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Event image",
+                        "name": "event_image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -519,14 +682,7 @@ const docTemplate = `{
                 "summary": "Update existing event",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Event ID",
-                        "name": "event_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Update Event Request",
+                        "description": "Create Event Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -539,7 +695,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.UpdateEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -638,7 +794,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.VerifyEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -855,7 +1011,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Confirms the user has been logged out.",
                         "schema": {
-                            "$ref": "#/definitions/structure.UserResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1010,6 +1166,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/posts/is_reviewed": {
+            "get": {
+                "description": "Determine that whether the user has reviewed in this events",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "IsReviewed",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "event_id",
+                        "name": "event_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.IsReviewedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/posts/{post_id}": {
             "get": {
                 "description": "Get the details of a specific post by its ID.",
@@ -1078,7 +1285,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.DeletePostResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1215,7 +1422,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Problem"
+                            "$ref": "#/definitions/structure.GetProblemDetailByIdResponse"
                         }
                     },
                     "400": {
@@ -1266,7 +1473,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.ProblemResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1308,7 +1515,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.ProblemResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1446,7 +1653,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.CreateResponseResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1610,7 +1817,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.TransactionResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1654,7 +1861,7 @@ const docTemplate = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/structure.GetPaymentIntentByIdResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1744,7 +1951,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Transaction email successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendTransactionEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -1974,7 +2181,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2020,7 +2227,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2066,7 +2273,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OTP email successfully sent",
                         "schema": {
-                            "$ref": "#/definitions/structure.SendOTPEmailResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2106,11 +2313,62 @@ const docTemplate = `{
                     "200": {
                         "description": "User successfully updated",
                         "schema": {
-                            "$ref": "#/definitions/structure.UserResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request - error in updating user role",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/upload/{user_id}": {
+            "put": {
+                "description": "updates an user's profile image",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update existing user's image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Profile image",
+                        "name": "user_image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structure.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object"
                         }
@@ -2247,7 +2505,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.RegisterEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2322,7 +2580,7 @@ const docTemplate = `{
                 "summary": "UpdateUserInformation",
                 "parameters": [
                     {
-                        "description": "Create Event Request",
+                        "description": "Update User Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2386,7 +2644,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structure.SearchEventResponse"
+                            "$ref": "#/definitions/structure.MessageResponse"
                         }
                     },
                     "400": {
@@ -2491,42 +2749,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Problem": {
-            "type": "object",
-            "required": [
-                "problem_id",
-                "user_id"
-            ],
-            "properties": {
-                "admin_username": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "problem": {
-                    "type": "string"
-                },
-                "problem_id": {
-                    "type": "string"
-                },
-                "reply": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Response": {
             "type": "object",
             "required": [
@@ -2664,61 +2886,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.CreateEventRequest": {
-            "type": "object",
-            "required": [
-                "activities",
-                "city",
-                "description",
-                "district",
-                "end_date",
-                "event_image",
-                "event_name",
-                "location_name",
-                "organizer_id",
-                "participant_fee",
-                "start_date",
-                "status"
-            ],
-            "properties": {
-                "activities": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "district": {
-                    "type": "string"
-                },
-                "end_date": {
-                    "type": "string"
-                },
-                "event_image": {
-                    "type": "string"
-                },
-                "event_name": {
-                    "type": "string"
-                },
-                "location_name": {
-                    "type": "string"
-                },
-                "organizer_id": {
-                    "type": "string"
-                },
-                "participant_fee": {
-                    "type": "number"
-                },
-                "start_date": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 }
             }
@@ -2881,15 +3048,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.CreateResponseResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "Create Respose for PostID : 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6 successful"
-                }
-            }
-        },
         "structure.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -2949,15 +3107,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.DeletePostResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "Delete Successful"
-                }
-            }
-        },
         "structure.GetAllUsersResponse": {
             "type": "object",
             "properties": {
@@ -2966,6 +3115,52 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.User"
+                    }
+                }
+            }
+        },
+        "structure.GetEndedEventList": {
+            "type": "object",
+            "properties": {
+                "average_rate": {
+                    "type": "number"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "event_image": {
+                    "type": "string"
+                },
+                "event_name": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.GetEndedEventListsResponse": {
+            "type": "object",
+            "properties": {
+                "event_lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/structure.GetEndedEventList"
                     }
                 }
             }
@@ -3185,6 +3380,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
                 },
+                "user_image": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string",
                     "example": "User001"
@@ -3194,11 +3392,52 @@ const docTemplate = `{
         "structure.GetPostListsByEventIdResponse": {
             "type": "object",
             "properties": {
+                "average_rate": {
+                    "type": "number"
+                },
+                "five_rate": {
+                    "type": "integer"
+                },
+                "four_rate": {
+                    "type": "integer"
+                },
+                "one_rate": {
+                    "type": "integer"
+                },
                 "post_lists": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/structure.PostList"
                     }
+                },
+                "three_rate": {
+                    "type": "integer"
+                },
+                "two_rate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "structure.GetProblemDetailByIdResponse": {
+            "type": "object",
+            "properties": {
+                "admin_username": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "problem": {
+                    "type": "string"
+                },
+                "problem_id": {
+                    "type": "string"
+                },
+                "reply": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },
@@ -3242,6 +3481,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "is_registered": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "structure.IsReviewedResponse": {
+            "type": "object",
+            "properties": {
+                "is_reviewed": {
                     "type": "boolean"
                 }
             }
@@ -3304,6 +3551,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "structure.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }
@@ -3403,6 +3658,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "b21d43c3-1a0a-4f36-b38b-81d0e57af681"
                 },
+                "organizer_response": {
+                    "type": "string",
+                    "example": "Response1"
+                },
                 "post_id": {
                     "type": "string",
                     "example": "1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6"
@@ -3414,6 +3673,14 @@ const docTemplate = `{
                 "user_id": {
                     "type": "string",
                     "example": "9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3"
+                },
+                "user_image": {
+                    "type": "string",
+                    "example": "picture123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "User001"
                 }
             }
         },
@@ -3436,14 +3703,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.ProblemResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
                     "type": "string"
                 }
             }
@@ -3471,22 +3730,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.RegisterEventResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SearchEventResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.SearchHistory": {
             "type": "object",
             "required": [
@@ -3498,14 +3741,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SendAnnounceResponse": {
-            "type": "object",
-            "properties": {
-                "announce_status": {
                     "type": "string"
                 }
             }
@@ -3555,14 +3790,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.SendOTPEmailResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.SendRefundEmailRequest": {
             "type": "object",
             "properties": {
@@ -3596,14 +3823,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.SendRegisteredEmailResponse": {
-            "type": "object",
-            "properties": {
-                "announce_status": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.SendReminderEmailRequest": {
             "type": "object",
             "properties": {
@@ -3623,14 +3842,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.SendReminderEmailResponse": {
-            "type": "object",
-            "properties": {
-                "announce_status": {
                     "type": "string"
                 }
             }
@@ -3655,26 +3866,10 @@ const docTemplate = `{
                 }
             }
         },
-        "structure.SendTransactionEmailResponse": {
-            "type": "object",
-            "properties": {
-                "send_status": {
-                    "type": "string"
-                }
-            }
-        },
         "structure.TestResponse": {
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.TransactionResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
                     "type": "string"
                 }
             }
@@ -3728,9 +3923,6 @@ const docTemplate = `{
                 "event_id": {
                     "type": "string"
                 },
-                "event_image": {
-                    "type": "string"
-                },
                 "event_name": {
                     "type": "string"
                 },
@@ -3744,14 +3936,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.UpdateEventResponse": {
-            "type": "object",
-            "properties": {
-                "event_id": {
                     "type": "string"
                 }
             }
@@ -3814,9 +3998,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
-                },
-                "user_image": {
-                    "type": "string"
                 }
             }
         },
@@ -3835,22 +4016,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.UserResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "type": "string"
-                }
-            }
-        },
-        "structure.VerifyEventResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
                     "type": "string"
                 }
             }

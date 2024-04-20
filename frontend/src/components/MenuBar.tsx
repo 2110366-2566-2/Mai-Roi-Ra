@@ -3,12 +3,11 @@ import React from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import HomeIcon from "@mui/icons-material/HomeOutlined";
-import NotificationsIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import PersonIcon from "@mui/icons-material/Person";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import LoadingCircular from "./LoadingCircular";
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import showLoadingOverlay, { hideLoadingOverlay } from "./GlobalLoading";
 
 export default function MenuBar() {
@@ -16,6 +15,7 @@ export default function MenuBar() {
   const pathname = usePathname();
   const router = useRouter();
   console.log(pathname);
+  console.log(session);
 
   const handleClick = (path: string) => () => {
     if (pathname != path) {
@@ -51,13 +51,6 @@ export default function MenuBar() {
               Home
             </div>
 
-            <div
-              className={`px-4 py-2 flex items-center w-full hover:bg-gray-200`}
-            >
-              <NotificationsIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
-              Notifications
-            </div>
-
             {session ? (
               <div
                 className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
@@ -78,6 +71,15 @@ export default function MenuBar() {
               <SupportAgentIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
               Support and Service
             </div>
+
+            <div
+                className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
+              ${pathname === "/review" ? "text-[#FFAE27]" : ""}`}
+                onClick={handleClick("/review")}
+              >
+                <RateReviewIcon className="pt-1 md:mr-6 mr-3 md:text-[30px] text-[20px]" />
+                Review
+              </div>
           </div>
         </div>
       </div>

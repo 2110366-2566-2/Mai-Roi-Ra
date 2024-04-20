@@ -23,18 +23,13 @@ type CreateUserResponse struct {
 }
 
 type UpdateUserInformationRequest struct {
-	UserId    string  `json:"user_id" binding:"required"`
-	FirstName string  `json:"first_name" binding:"required"`
-	LastName  string  `json:"last_name" binding:"required"`
-	Address   string  `json:"address" binding:"required"`
-	District  string  `json:"district" binding:"required"`
-	Province  string  `json:"province" binding:"required"`
-	BirthDate string  `json:"birth_date" binding:"required"`
-	UserImage *string `json:"user_image"`
-}
-
-type GetUserByUserIdRequest struct {
-	UserId string `json:"user_id" binding:"required"`
+	UserId    string `json:"user_id" binding:"required"`
+	FirstName string `json:"first_name" binding:"required"`
+	LastName  string `json:"last_name" binding:"required"`
+	Address   string `json:"address" binding:"required"`
+	District  string `json:"district" binding:"required"`
+	Province  string `json:"province" binding:"required"`
+	BirthDate string `json:"birth_date" binding:"required"`
 }
 
 type LoginUserRequest struct {
@@ -51,11 +46,6 @@ type LoginUserResponse struct {
 	Token       string `json:"token"`
 	OrganizerId string `json:"organizer_id"`
 	Role        string `json:"role"`
-}
-type LogoutUserRequest struct {
-	UserID string `json:"user_id" binding:"required"`
-	//Token  string
-
 }
 
 // email login
@@ -91,14 +81,6 @@ type GetAllUsersResponse struct {
 	Users []models.User `json:"users"` //FIXME should not use struct from models
 }
 
-// type AuthMeRequest struct {
-// 	Token string `json:"token"`
-// }
-
-// type AuthMeResponse struct {
-// 	Users []models.User `json:"users"`
-// }
-
 type RegisterEventRequest struct {
 	UserId         string `json:"user_id" binding:"required"`
 	EventId        string `json:"event_id" binding:"required"`
@@ -109,10 +91,6 @@ type RegisterEventRequest struct {
 type CancelRegisterEventRequest struct {
 	UserId  string `json:"user_id" binding:"required"`
 	EventId string `json:"event_id" binding:"required"`
-}
-
-type RegisterEventResponse struct {
-	Message string `json:"message"`
 }
 
 type ParticipatedEvent struct {
@@ -140,10 +118,6 @@ type SearchEventRequest struct {
 	Search string `json:"search"`
 }
 
-type SearchEventResponse struct {
-	Message string `json:"message"`
-}
-
 type SearchHistory struct {
 	SearchId   string `json:"user_id" binding:"required"`
 	SearchName string `json:"search_name" binding:"required"`
@@ -156,10 +130,6 @@ type GetSearchHistoriesResponse struct {
 type SendOTPEmailRequest struct {
 	UserId string `json:"user_id"`
 	Email  string `json:"email"`
-}
-
-type SendOTPEmailResponse struct {
-	Message string `json:"message"`
 }
 
 type VerifyOTPRequest struct {
@@ -175,10 +145,6 @@ type UpdateUserRoleRequest struct {
 	UserId   string `json:"user_id" binding:"required"`
 	Username string `json:"username" binding:"required"`
 	Role     string `json:"role" binding:"required"`
-}
-
-type UserResponse struct {
-	Response string `json:"response"`
 }
 
 type GetUserVerificationStatusResponse struct {

@@ -16,12 +16,10 @@ const PENDING = "Pending"
 const REPLIED = "Replied"
 const CANCELLED = "Cancelled"
 
-const PROFILE = "profile"
-const EVENT = "event"
+const PROFILE = "mai-roi-ra-profile"
+const EVENT = "mai-roi-ra-event"
 
 const THB = "thb"
-
-const FRONT_END_URL = "http://localhost:3000"
 
 const PAYMENT_REQUIRED = "requires_payment_method"
 const PAYMENT_PROCESSING = "processing"

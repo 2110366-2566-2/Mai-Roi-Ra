@@ -51,11 +51,11 @@ const ProblemPopUp = ({ isVisible, onClose, id, problem , description,reply}) =>
                     </div>
                 </div>
                 <div className="px-5">
-                    <div className="text-5xl md:text-4xl sm:text-3xl text-lg font-medium w-fit flex items-center rounded-3xl px-4 py-2 relative flex-row">
+                    <div className="text-5xl md:text-4xl sm:text-3xl font-medium w-fit flex items-center rounded-3xl px-4 py-2 relative flex-row">
                         {problem}
                     </div>
                     <hr className="w-1/2 border-black my-2 ml-5"></hr>
-                    <div className="text-xl md:text-xl sm:text-xl text-base w-fit flex items-center rounded-3xl px-4 py-2 relative flex-row">
+                    <div className="text-xl md:text-xl sm:text-xl w-fit flex items-center rounded-3xl px-4 py-2 relative flex-row">
                         {description}
                     </div>
                     <div className="flex justify-end">
@@ -63,7 +63,7 @@ const ProblemPopUp = ({ isVisible, onClose, id, problem , description,reply}) =>
                             <span className="text-xl text-black">Reply from Admin</span>
                         </div>
                     </div>
-                    <div className="text-xl md:text-xl sm:text-xl text-base flex flex-col flex-grow">
+                    <div className="text-xl md:text-xl sm:text-xl flex flex-col flex-grow">
                         <div className="border border-gray-300 rounded-xl p-4 mb-2 flex-grow">
                         {/* Temporary Reply */}
                         {reply}

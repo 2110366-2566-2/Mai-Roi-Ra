@@ -18,10 +18,10 @@ type AnnouncementService struct {
 }
 
 type IAnnouncementService interface {
-	SendAnnouncement(req *st.SendAnnouncementRequest) (*st.SendAnnounceResponse, error)
-	SendRegisteredEmail(req *st.SendRegisteredEmailRequest) (*st.SendRegisteredEmailResponse, error)
-	SendReminderEmail(req *st.SendReminderEmailRequest) (*st.SendReminderEmailResponse, error)
-	SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.SendCancelledEmailResponse, error)
+	SendAnnouncement(req *st.SendAnnouncementRequest) (*st.MessageResponse, error)
+	SendRegisteredEmail(req *st.SendRegisteredEmailRequest) (*st.MessageResponse, error)
+	SendReminderEmail(req *st.SendReminderEmailRequest) (*st.MessageResponse, error)
+	SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.MessageResponse, error)
 }
 
 func NewAnnouncementService(
@@ -32,7 +32,7 @@ func NewAnnouncementService(
 	}
 }
 
-func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) (*st.SendAnnounceResponse, error) {
+func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SendAnnouncement]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
@@ -90,7 +90,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 
 	var userRes *models.User
 	if adminId != "" {
-		userRes, err = s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+		userRes, err = s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 			UserId: adminId,
 		})
 		if err != nil {
@@ -101,7 +101,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	if err != nil {
 		return nil, err
 	}
-	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgUserId,
 	})
 	if err != nil {
@@ -188,12 +188,12 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	}
 
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
-	return &st.SendAnnounceResponse{
-		AnnounceStatus: res,
+	return &st.MessageResponse{
+		Response: res,
 	}, nil
 }
 
-func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailRequest) (*st.SendRegisteredEmailResponse, error) {
+func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SendRegisteredEmail]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
@@ -230,7 +230,7 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	if err != nil {
 		return nil, err
 	}
-	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgId,
 	})
 	if err != nil {
@@ -305,12 +305,12 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 		return nil, err
 	}
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
-	return &st.SendRegisteredEmailResponse{
-		SendStatus: res,
+	return &st.MessageResponse{
+		Response: res,
 	}, nil
 }
 
-func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest) (*st.SendReminderEmailResponse, error) {
+func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SendReminderEmail]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
@@ -347,7 +347,7 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 	if err != nil {
 		return nil, err
 	}
-	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgRes, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgId,
 	})
 	if err != nil {
@@ -412,12 +412,12 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 		return nil, err
 	}
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
-	return &st.SendReminderEmailResponse{
-		SendStatus: res,
+	return &st.MessageResponse{
+		Response: res,
 	}, nil
 }
 
-func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.SendCancelledEmailResponse, error) {
+func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SendCancelledEmail]: Called")
 	cfg, err := config.NewConfig(func() string {
 		return ".env"
@@ -505,7 +505,7 @@ func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailReque
 		return nil, err
 	}
 	res := fmt.Sprintf("Email Send from %s to %s successful", cfg.Email.Address, to)
-	return &st.SendCancelledEmailResponse{
-		SendStatus: res,
+	return &st.MessageResponse{
+		Response: res,
 	}, nil
 }

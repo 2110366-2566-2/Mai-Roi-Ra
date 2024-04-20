@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/cloud"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,19 +29,69 @@ func NewEventController(
 // @Summary Create new event
 // @Description Create a new event with the provided details.
 // @Tags events
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param request body structure.CreateEventRequest true "Create Event Request"
+// @Param event_name formData string true "Name of the event"
+// @Param activities formData string true "Activity of the event" Enum ("Entertainment", "Exercise", "Volunteer", "Meditation", "Cooking")
+// @Param city formData string true "City of the event"
+// @Param description formData string true "description for the event"
+// @Param district formData string true "district of the event"
+// @Param start_date formData string true "start_date"
+// @Param end_date formData string true "end date"
+// @Param event_image formData file true "Event image"
+// @Param location_name formData string true "location name"
+// @Param organizer_id formData string true "organizer_id"
+// @Param participant_fee formData string true "participant fee"
 // @Success 200 {object} structure.CreateEventResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events [post]
 func (c *EventController) CreateEvent(ctx *gin.Context) {
-	var req *st.CreateEventRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	fee, _ := strconv.Atoi(ctx.Request.FormValue("participant_fee"))
+
+	req := &st.CreateEventRequest{
+		OrganizerId:    ctx.Request.FormValue("organizer_id"),
+		Activities:     ctx.Request.FormValue("activities"),
+		City:           ctx.Request.FormValue("city"),
+		District:       ctx.Request.FormValue("district"),
+		StartDate:      ctx.Request.FormValue("start_date"),
+		EndDate:        ctx.Request.FormValue("end_date"),
+		EventName:      ctx.Request.FormValue("event_name"),
+		Description:    ctx.Request.FormValue("description"),
+		LocationName:   ctx.Request.FormValue("location_name"),
+		ParticipantFee: float64(fee),
+		Status:         constant.WAITING,
+		EventId:        utils.GenerateUUID(),
+	}
+
+	// S3
+	fileHeader, err := ctx.FormFile("event_image")
+	if err != nil {
+		log.Println("[CTRL: CreateEvent] Called and read header failed: ", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	if utils.IsNilHeader(fileHeader) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "FileHeader Is nil"})
+	}
+
+	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
+	log.Println("FILEHEADER: ", fileHeader.Header)
+	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, req.EventId)
+	if uploadErr != nil {
+		log.Println("[CTRL: CreateEvent] Called SaveFile to S3 Error: ", uploadErr)
+		return
+	}
+
+	req.EventImage = url
+
 	log.Println("[CTRL: CreateEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.CreateEvent(req)
 	if err != nil {
@@ -55,19 +108,18 @@ func (c *EventController) CreateEvent(ctx *gin.Context) {
 // @Tags events
 // @Accept json
 // @Produce json
-// @Param event_id path string true "Event ID" example:"event123"
-// @Param request body structure.UpdateEventRequest true "Update Event Request"
-// @Success 200 {object} structure.UpdateEventResponse
+// @Param request body structure.UpdateEventRequest true "Create Event Request"
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [put]
 func (c *EventController) UpdateEvent(ctx *gin.Context) {
 	var req *st.UpdateEventRequest
-	if err := ctx.BindJSON(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	req.EventId = ctx.Param("id")
+
 	log.Println("[CTRL: UpdateEvent] Input:", req)
 	res, err := c.ServiceGateway.EventService.UpdateEvent(req)
 	if err != nil {
@@ -77,6 +129,51 @@ func (c *EventController) UpdateEvent(ctx *gin.Context) {
 
 	log.Println("[CTRL: UpdateEvent] Output:", res)
 	ctx.JSON(http.StatusOK, res)
+}
+
+// UpdateEventImage updates an existing event's image.
+// @Summary Update existing event's image
+// @Description Update an existing event with the provided details.
+// @Tags events
+// @Accept multipart/form-data
+// @Produce json
+// @Param event_id path string True "Event Id"
+// @Param event_image formData file True "Event image"
+// @Success 200 {object} structure.MessageResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/upload/{event_id} [put]
+func (c *EventController) UpdateEventImage(ctx *gin.Context) {
+	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB max file size
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	eventId := ctx.Param("id")
+
+	// S3
+	fileHeader, err := ctx.FormFile("event_image")
+	if err != nil {
+		log.Println("[CTRL: UpdateEventImage] Called and read header failed: ", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	if utils.IsNilHeader(fileHeader) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "FileHeader Is nil"})
+	}
+	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
+	log.Println("FILEHEADER: ", fileHeader.Header)
+
+	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, eventId)
+	if uploadErr != nil {
+		log.Println("[CTRL: UpdateEventImage] Called SaveFile to S3 Error: ", uploadErr)
+		return
+	}
+
+	log.Println("[CTRL: UpdateEventImage] Output:", url)
+	ctx.JSON(http.StatusOK, gin.H{"Message": "Update Successful"})
 }
 
 // DeleteEventById deletes an event by its ID.
@@ -91,7 +188,7 @@ func (c *EventController) UpdateEvent(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [delete]
 func (c *EventController) DeleteEventById(ctx *gin.Context) {
-	req := &st.DeleteEventRequest{
+	req := &st.EventIdRequest{
 		EventId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: DeleteEventById] Input:", req)
@@ -102,7 +199,7 @@ func (c *EventController) DeleteEventById(ctx *gin.Context) {
 	}
 
 	log.Println("[CTRL: DeleteEvent] Output:", deleteMessage)
-	ctx.JSON(http.StatusOK, gin.H{"message": deleteMessage})
+	ctx.JSON(http.StatusOK, gin.H{"response": deleteMessage})
 }
 
 // @Summary GetEventLists
@@ -150,6 +247,33 @@ func (c *EventController) GetEventLists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// @Summary GetEndedEventLists
+// @Description Get list of events that are ended by userid
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param user_id path string true "User ID" example:"user123"
+// @Success 200 {object} structure.GetEndedEventListsResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /events/end/{user_id} [get]
+func (c *EventController) GetEndedEventLists(ctx *gin.Context) {
+	req := &st.UserIdRequest{
+		UserId: ctx.Param("id"),
+	}
+
+	log.Println("[CTRL: GetEndedEventLists] Input:", req)
+
+	res, err := c.ServiceGateway.EventService.GetEndedEventLists(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("[CTRL: GetEndedEventLists] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
 // @Summary GetEventDataById
 // @Description Get a test message
 // @Tags events
@@ -161,7 +285,7 @@ func (c *EventController) GetEventLists(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id} [get]
 func (c *EventController) GetEventDataById(ctx *gin.Context) {
-	req := st.GetEventDataByIdRequest{
+	req := st.EventIdRequest{
 		EventId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetEventDataById] Input:", req)
@@ -223,7 +347,7 @@ func (c *EventController) GetParticipantLists(ctx *gin.Context) {
 // @Param event_id path string true "Event ID" example:"event123"
 // @Param status query string true "Status" example:"Approved or Rejected"
 // @Param admin_id query string trie "Admin ID"
-// @Success 200 {object} structure.VerifyEventResponse
+// @Success 200 {object} structure.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /events/{event_id}/verify [put]

@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/services"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ func NewPostController(
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/{post_id} [get]
 func (c *PostController) GetPostById(ctx *gin.Context) {
-	req := &st.GetPostByIdRequest{
+	req := &st.PostIdRequest{
 		PostId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetPostById] Input:", req)
@@ -57,7 +58,7 @@ func (c *PostController) GetPostById(ctx *gin.Context) {
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/events/{event_id} [get]
 func (c *PostController) GetPostListsByEventId(ctx *gin.Context) {
-	req := &st.GetPostListsByEventIdRequest{
+	req := &st.EventIdRequest{
 		EventId: ctx.Query("event_id"),
 	}
 	log.Println("[CTRL: GetPostListsByEventId] Input:", req)
@@ -67,6 +68,32 @@ func (c *PostController) GetPostListsByEventId(ctx *gin.Context) {
 		return
 	}
 	log.Println("[CTRL: GetPostListsByEventId] Output:", res)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// @Summary IsReviewed
+// @Description Determine that whether the user has reviewed in this events
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param user_id query string true "user_id"
+// @Param event_id query string true "event_id"
+// @Success 200 {object} structure.IsReviewedResponse
+// @Failure 400 {object} object "Bad Request"
+// @Failure 500 {object} object "Internal Server Error"
+// @Router /posts/is_reviewed [get]
+func (c *PostController) IsReviewed(ctx *gin.Context) {
+	req := &st.IsReviewedRequest{
+		EventId: ctx.Query("event_id"),
+		UserId:  ctx.Query("user_id"),
+	}
+	log.Println("[CTRL: IsReviewed] Input:", req)
+	res, err := c.ServiceGateway.PostService.IsReviewed(req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("[CTRL: IsReviewed] Output:", res)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -104,12 +131,12 @@ func (c *PostController) CreatePost(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param post_id path string true "Post ID" example:"post123"
-// @Success 200 {object} st.DeletePostResponse
+// @Success 200 {object} st.MessageResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/{post_id} [delete]
 func (c *PostController) DeletePostById(ctx *gin.Context) {
-	req := &st.DeletePostRequest{
+	req := &st.PostIdRequest{
 		PostId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: DeletePost] Input:", req)

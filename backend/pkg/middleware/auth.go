@@ -63,8 +63,14 @@ func Authentication() gin.HandlerFunc {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 				return
 			}
+			keyrole, ok := claims["role"].(string)
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+				return
+			}
 			c.Set(KeyToken, tokenString)
 			c.Set(KeyUserID, userID)
+			c.Set(KeyRole, keyrole)
 			fmt.Println("Authentication successful")
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token_2"})
@@ -97,57 +103,16 @@ func Authorization() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "CasbinEnforcer is not initialized"})
 			return
 		}
-		user_role := ""
-		const BearerSchema = "Bearer "
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" || !strings.HasPrefix(authHeader, BearerSchema){
-			user_role = "VISITOR"
-		} else {
-			tokenString := authHeader[len(BearerSchema):]
-		
-			if(tokenString == "") {
-				user_role = "VISITOR"
-			} else {
-				// Parse JWT token
-				token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				// Make sure token's algorithm is what you expect
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-				}
-				return []byte(SecretKey), nil
-				})
-
-				if err != nil {
-					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token " + err.Error()})
-					return
-				}
-
-				if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-					user_role, ok = claims["role"].(string)
-					if !ok {
-						c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-						return
-					}
-
-				} else {
-					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-					return
-				}
-			}
-		}
-
-		// Store user's role in the context
-		c.Set(KeyRole, user_role)
 
 		path := c.Request.URL.Path
 		request := c.Request.Method
 
-		fmt.Println(user_role)
+		fmt.Println(KeyRole)
 		fmt.Println(path)
 		fmt.Println(request)
 
 		// Check if the user's role is allowed
-		if res, _ := CasbinEnforcer.Enforce(user_role, path, request); !res {
+		if res, _ := CasbinEnforcer.Enforce(KeyRole, path, request); !res {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 			return
 		} 

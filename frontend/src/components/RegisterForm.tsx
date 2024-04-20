@@ -6,8 +6,6 @@ import Image from "next/image";
 import RegisterInformationForm from "./RegisterInformationForm";
 import RegisterAccountForm from "./RegisterAccountForm";
 import userRegister from "@/libs/userRegister";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
 import SuccessSignupModal from "./SuccessSignupModal";
 import CircularIndeterminate from "./LoadingLine";
 

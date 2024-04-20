@@ -18,8 +18,8 @@ type TransactionRepository struct {
 type ITransactionRepository interface {
 	GetTransactionDataById(transactionId string) (*models.Transaction, error)
 	GetTransactionListByEventId(eventId string) ([]*models.Transaction, error)
-	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error)
-	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error)
+	CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.MessageResponse, error)
+	UpdateTransaction(req *st.UpdateTransactionRequest) (*st.MessageResponse, error)
 	// GetTransactionDataByPaymentId(paymentIntentId string) (*models.Transaction, error)
 	CreateOrganizerTransferRecord(req *st.CreateOrganizerTransferRecordRequest) (*models.Transaction, error)
 	IsPaid(event_id string, user_id string) (*st.IsPaidResponse, error)
@@ -60,7 +60,7 @@ func (r *TransactionRepository) GetTransactionListByEventId(eventId string) ([]*
 	return transactionLists, nil
 }
 
-func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.CreateTransactionResponse, error) {
+func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionRequest, paymentIntentId string) (*st.MessageResponse, error) {
 	log.Println("[Repo: CreateTransaction]: Called")
 	transactionModel := models.Transaction{
 		TransactionID:     paymentIntentId,
@@ -85,12 +85,12 @@ func (r *TransactionRepository) CreateTransaction(req *st.CreateTransactionReque
 		log.Println("[Repo: CreateTransaction]: Call orm DB Commit error:", err)
 		return nil, err
 	}
-	return &st.CreateTransactionResponse{
-		TransactionId: transactionModel.TransactionID,
+	return &st.MessageResponse{
+		Response: transactionModel.TransactionID,
 	}, nil
 }
 
-func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionRequest) (*st.TransactionResponse, error) {
+func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: UpdateTransaction] Called")
 
 	var transaction models.Transaction
@@ -113,7 +113,7 @@ func (r *TransactionRepository) UpdateTransaction(req *st.UpdateTransactionReque
 		log.Println("[Repo: UpdateTransaction] Error updating in the database:", err)
 		return nil, err
 	}
-	return &st.TransactionResponse{
+	return &st.MessageResponse{
 		Response: "Update Transaction Successful",
 	}, nil
 }
@@ -164,7 +164,7 @@ func (r *TransactionRepository) CreateOrganizerTransferRecord(req *st.CreateOrga
 func (r *TransactionRepository) IsPaid(event_id string, user_id string) (*st.IsPaidResponse, error) {
 	log.Println("[Repo: IsPaid]: Called")
 
-	query := r.db.Where("event_id = ? AND user_id = ? AND status = ?", event_id, user_id,constant.COMPLETED)
+	query := r.db.Where("event_id = ? AND user_id = ? AND status = ?", event_id, user_id, constant.COMPLETED)
 	var count int64
 	if err := query.Model(&models.Transaction{}).Count(&count).Error; err != nil {
 		log.Println("[Repo: IsPaid]: cannot query for existing rows:", err)
