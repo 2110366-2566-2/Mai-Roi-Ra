@@ -1,7 +1,10 @@
 "use server";
 import { apiBackUrl } from "../constants";
 
-export default async function updateEnableNotification(user_id: string) {
+export default async function updateEnableNotification(
+  user_id: string,
+  token: string
+) {
   try {
     const response = await fetch(
       `${apiBackUrl}/users/notification?user_id=${encodeURIComponent(user_id)}`,
@@ -9,9 +12,8 @@ export default async function updateEnableNotification(user_id: string) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`, // Uncomment if needed
+          Authorization: `Bearer ${token}`,
         },
-        // No need for 'next: { tags: ["updateEnableNotification"] }' or 'body: jsonBody' here, since you're not sending a request body
       }
     );
     if (!response.ok) {

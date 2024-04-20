@@ -1,11 +1,4 @@
 "use server";
-import Image from "next/image";
-import StarIcon from "@mui/icons-material/Star";
-import getEvent from "@/libs/getEvent";
-import RegisterEventBox from "@/components/RegisterEventBox";
-import RouterBackEventButton from "@/components/RouterBackEventButton";
-import getEventParticipants from "@/libs/getEventParticipants";
-import ParticipantListModal from "@/components/ParticipantListModal";
 import { getServerSession } from "next-auth";
 import getProblem from "@/libs/getProblem";
 import ReplyForm from "@/components/ReplyForm";
@@ -17,10 +10,10 @@ interface Props {
 
 export default async function ReplyProblemPage({ params }: Props) {
   // This is for ADMIN only
-  const problem = await getProblem(params.problem_id);
+
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
-
+  const problem = await getProblem(params.problem_id, session.user.token);
   return (
     <main className="h-auto w-full text-black">
       <ReplyForm

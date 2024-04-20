@@ -51,7 +51,7 @@ const CommentBox = ({
 
   const fetchIsReviewed = async () => {
     try {
-      const response = await isReviewedEvent(user_id, event_id);
+      const response = await isReviewedEvent(user_id, event_id, token);
       setIsReviewed(response.is_reviewed);
     } catch (error) {
       console.error("Failed to fetch isReviewedEvent:", error);

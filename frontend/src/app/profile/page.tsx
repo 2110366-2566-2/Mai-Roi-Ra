@@ -23,24 +23,29 @@ export default async function Profile() {
   // get user profile from user_id from session
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
-  const profile = session ? await getProfile(session.user.user_id) : null;
+  const profile = session
+    ? await getProfile(session.user.user_id, session.user.token)
+    : null;
   console.log(profile);
   let events;
   let datas;
   let role;
   if (session.user.organizer_id?.length == 0) {
-    events = await getMyUserEvents(session.user.user_id);
+    events = await getMyUserEvents(session.user.user_id, session.user.token);
     datas = events?.event_list;
     role = "USER";
   } else {
-    events = await getMyOrganizerEvents(session.user.organizer_id);
+    events = await getMyOrganizerEvents(
+      session.user.organizer_id,
+      session.user.token
+    );
     datas = events?.event_lists;
     role = "ORGANIZER";
   }
 
   let emailIsVerified = false;
   if (profile.email) {
-    const response = await isEmailVerified(profile.email);
+    const response = await isEmailVerified(profile.email, session.user.token);
     emailIsVerified = response ? true : false;
   }
 
@@ -61,8 +66,13 @@ export default async function Profile() {
           <div className="relative bg-white w-full h-[200px]">
             <div className="absolute top-[-50px] px-2 left-8">
               <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center">
-                <Image className="w-full h-full"
-                  src={profile.user_image ? profile.user_image : "/img/profile_picture.png"}
+                <Image
+                  className="w-full h-full"
+                  src={
+                    profile.user_image
+                      ? profile.user_image
+                      : "/img/profile_picture.png"
+                  }
                   alt="Profile Image"
                   width={96}
                   height={96}
@@ -83,10 +93,12 @@ export default async function Profile() {
                 usernameProp={profile.username}
                 user_id={session.user.user_id}
                 emailIsVerified={emailIsVerified}
+                token={session.user.token}
               ></ProfileUserInformation>
               <EditProfileButton
                 isEnableNotificationProp={profile.is_enable_notification}
                 userIDProp={session.user.user_id}
+                token={session.user.token}
               ></EditProfileButton>
             </div>
           </div>

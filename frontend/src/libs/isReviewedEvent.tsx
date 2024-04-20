@@ -2,14 +2,17 @@ import { apiBackUrl } from "../constants";
 
 export default async function isReviewedEvent(
   user_id: string,
-  event_id: string
+  event_id: string,
+  token: string
 ) {
   if (!user_id || !event_id) return { is_registered: true };
   const response = await fetch(
     `${apiBackUrl}/posts/is_reviewed?user_id=${user_id}&&event_id=${event_id}`,
     {
       method: "GET",
-      headers: {},
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     }
   );
 
