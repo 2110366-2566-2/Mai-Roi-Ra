@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import ProblemPopUp from "./ProblemPopUp";
-import getProblem from "@/libs/getProblem";
 import LoadingCircular from "./LoadingCircular";
 
 interface Props {
