@@ -2,7 +2,6 @@
 import React, { useState, FormEvent, useRef, ChangeEvent } from "react";
 import styles from "@/styles/FontPage.module.css";
 import { useRouter } from "next/navigation";
-import updateProfile from "@/libs/updateProfile";
 import updateProfileAction from "@/action/UpdateProfileAction";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
@@ -47,9 +46,8 @@ export default function EditProfileForm({
   birthDateProp,
   userId,
   token,
-  user_image
+  user_image,
 }: Props) {
-
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
   const [lastName, setLastName] = useState(lastNameProp);
@@ -64,7 +62,7 @@ export default function EditProfileForm({
   const [role, setRole] = useState("User");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>(user_image);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
 
@@ -124,20 +122,28 @@ export default function EditProfileForm({
 
     const formattedBirthDate = birthDate ? birthDate.format("YYYY/MM/DD") : "";
 
-    if (firstName && lastName && address && district && province && birthDate && preview) {
+    if (
+      firstName &&
+      lastName &&
+      address &&
+      district &&
+      province &&
+      birthDate &&
+      preview
+    ) {
       try {
         if (selectedImage) {
           const formData = new FormData();
-          formData.append("user_id",userId);
-          formData.append("user_image",selectedImage);
-          await uploadProfileImage(formData,token);
+          formData.append("user_id", userId);
+          formData.append("user_image", selectedImage);
+          await uploadProfileImage(formData, token);
         }
 
         setAllInputsFilled(true);
         setError("");
         if (firstRegister) {
           setOpenChooseRoleForm(true);
-        } 
+        }
 
         await updateProfileAction(
           userId,
@@ -146,9 +152,9 @@ export default function EditProfileForm({
           address,
           district,
           province,
-          formattedBirthDate
+          formattedBirthDate,
+          token
         );
-      
       } catch (err) {
         setError("Update error. Server Failed ?");
         console.log("Err: ", err);
@@ -330,8 +336,10 @@ export default function EditProfileForm({
             </LocalizationProvider>
           </div>
 
-          <div className="w-full h-[40vh] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
-                     border-gray-300 rounded-md flex justify-center items-center relative border-dashed">
+          <div
+            className="w-full h-[40vh] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
+                     border-gray-300 rounded-md flex justify-center items-center relative border-dashed"
+          >
             {preview ? (
               <div>
                 <div className="w-full h-full">
@@ -396,14 +404,15 @@ export default function EditProfileForm({
           </div>
 
           <div className="pt-5 flex items-center justify-center">
-            { !firstRegister &&
+            {!firstRegister && (
               <button
-              type="button"
-              className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4 xl:mr-6 mr-6 rounded-full bg-gray-300 hover:bg-gray-400"
-              onClick={handleCancleClick}
-            >
-              Cancel
-            </button>}
+                type="button"
+                className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4 xl:mr-6 mr-6 rounded-full bg-gray-300 hover:bg-gray-400"
+                onClick={handleCancleClick}
+              >
+                Cancel
+              </button>
+            )}
             <button
               type="submit"
               className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4  xl:ml-8 ml-6 rounded-full bg-[#F2D22E] hover:bg-yellow-500"
