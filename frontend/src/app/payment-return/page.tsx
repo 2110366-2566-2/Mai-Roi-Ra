@@ -22,18 +22,7 @@ const StripeReturnPage = () => {
     const payment_intent = urlParams.get('payment_intent');
     const payment_intent_client_secret = urlParams.get('payment_intent_client_secret');
     const redirect_status = urlParams.get('redirect_status');
-
-    console.log('Payment Intent ID:', payment_intent);
-    console.log('Payment Intent Client Secret:', payment_intent_client_secret);
-    console.log('Redirect Status:', redirect_status);
-
-    if (redirect_status === 'succeeded') {
-      // Handle successful payment
-      console.log('Payment succeeded');
-    } else {
-      // Handle failed payment
-      console.log('Payment failed');
-    }
+    
     // Define an async function
     const fetchPaymentIntent = async () => {
       // Get the payment intent ID from the URL

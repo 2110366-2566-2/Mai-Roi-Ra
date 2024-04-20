@@ -7,7 +7,8 @@ export default function ChooseRoleForm({ role, setRole, setOpenChooseRoleForm, h
     const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newUsername = event.target.value;
         setUsername(newUsername);
-      };
+    };
+
     return (
         <>
             <h1 className="text-center my-2 mb-4">Select your role</h1>
@@ -33,10 +34,10 @@ export default function ChooseRoleForm({ role, setRole, setOpenChooseRoleForm, h
                     <div
                         className={`text-center w-[150px] h-[150px] bg-white cursor-pointer flex items-center justify-center text-black hover:bg-yellow-200 rounded-lg shadow-xl ${role == "User" ? "!bg-[#FFAE27] !text-white" : ""}`}
                         onClick={() => setRole("User")}
-                    >   
+                    >
                         <div className="flex flex-col items-center justify-between">
-                        <UserIcon className="text-6xl"/>
-                        <span className="mt-2">User</span>
+                            <UserIcon className="text-6xl" />
+                            <span className="mt-2">User</span>
                         </div>
                     </div>
                     <div
@@ -44,32 +45,42 @@ export default function ChooseRoleForm({ role, setRole, setOpenChooseRoleForm, h
                         onClick={() => setRole("Organizer")}
                     >
                         <div className="flex flex-col items-center justify-between">
-                        <OrganizerIcon className="text-6xl"/>
-                        <span className="mt-2">Organizer</span>
+                            <OrganizerIcon className="text-6xl" />
+                            <span className="mt-2">Organizer</span>
                         </div>
                     </div>
                 </div>
                 <p className="text-center mt-4 text-gray-400">Please note, you can only make a selection once.</p>
             </div>
             <div className="flex justify-center items-center gap-3 mt-2">
-                <button className="bg-white hover:bg-[#F2D22E]0 text-black font-bold py-2 px-4 rounded text-center border border-[#F2D22E]"
+                <Button
                     onClick={() => setOpenChooseRoleForm(false)}
+                    className="bg-white hover:bg-[#F2D22E]0 text-black font-bold py-2 px-4 rounded text-center border border-[#F2D22E]"
                 >
-                    <KeyboardBackspaceIcon className="text-sm mr-2"/> Back
-                </button>
-                {username === "" 
-                ? 
-                <button className="bg-gray-300 text-white font-bold py-2 px-4 rounded cursor-not-allowed w-32 ml-32" disabled>
-                    Done
-                </button>
-                :
-                <button className="bg-[#F2D22E] hover:bg-[#FFAE27] text-white font-bold py-2 px-4 rounded w-32 ml-32"
+                    <KeyboardBackspaceIcon className="text-sm mr-2" /> Back
+                </Button>
+
+                <Button
+                    disabled={username === ""}
                     onClick={() => handleUpdateRole()}
+                    className={`font-bold py-2 px-4 rounded w-32 ml-32 ${username === ""
+                        ? "bg-gray-300 text-white cursor-not-allowed"
+                        : "bg-[#F2D22E] hover:bg-[#FFAE27] text-white"
+                        }`}
                 >
                     Done
-                </button>}
-                
+                </Button>
             </div>
         </>
     );
 }
+
+const Button = ({ disabled, onClick, children, className }: any) => (
+    <button
+        className={className}
+        disabled={disabled}
+        onClick={onClick}
+    >
+        {children}
+    </button>
+);

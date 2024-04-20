@@ -9,39 +9,34 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import LoadingLine from "@/components/LoadingLine";
 
-
-
 export default function OAuthFirstRegister() {
   const router = useRouter();
-  // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
-
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchProfile = async () => {
       if (session) {
         setProfile(null); // Reset profile data
         setLoading(true); // Start loading
-  
+
         // Simulate a delay
         await new Promise(resolve => setTimeout(resolve, 2000));
-  
+
         const profileData = await getProfile(session.user.user_id);
         setProfile(profileData);
         setLoading(false); // End loading
       }
     };
-  
+
     fetchProfile();
   }, [session]);
-  console.log("profile",profile)
+
   if (session?.user?.username !== "") {
-    if(session){
+    if (session) {
       router.push('/homepage');
-    }else{
+    } else {
       router.push('/auth/signin');
     }
     return (
@@ -83,8 +78,8 @@ export default function OAuthFirstRegister() {
           userId={session?.user?.user_id}
           token={session?.user?.token}
         ></EditProfileForm>
-        :
-        <LoadingLine></LoadingLine>
+          :
+          <LoadingLine></LoadingLine>
         }
       </div>
     </div>

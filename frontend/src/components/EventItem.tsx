@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import AnnouncementPopup from "./AnnouncementPopup";
 import LoadingCircular from "./LoadingCircular";
+import { formatDate } from '../action/FormatEventDate';
+
 
 interface Props {
   id: string;
@@ -35,28 +37,9 @@ export default function EventItem({
   const eventPath = role == "ADMIN" ? "verifyevents" : "events";
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-
-  const startyear = startDate.substring(0, 4);
-  const startmonth = startDate.substring(4, 6);
-  const startday = startDate.substring(6, 8);
-
-  const startdateObj = new Date(`${startyear}-${startmonth}-${startday}`);
-  const formattedStartDate = startdateObj.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  const endyear = endDate.substring(0, 4);
-  const endmonth = endDate.substring(4, 6);
-  const endday = endDate.substring(6, 8);
-
-  const enddateObj = new Date(`${endyear}-${endmonth}-${endday}`);
-  const formattedEndDate = enddateObj.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  
+  const formattedStartDate = formatDate(startDate);
+  const formattedEndDate = formatDate(endDate);
 
   // if status = "Waiting" then set to "Pending"
   const [shownStatus, setShownStatus] = useState(status);

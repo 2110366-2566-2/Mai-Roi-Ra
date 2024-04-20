@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
@@ -10,24 +9,17 @@ const HandleLogin = () => {
   const { data: session } = useSession();
 
   useEffect(() => {
-    // Check if the user is already authenticated
-    // if (session) {
-    //   router.replace("/homepage");
-    //   return;
-    // }
-
     const initiateLogin = async () => {
       const result = await signIn("credentials", {
         redirect: false,
         callbackUrl: "/homepage",
       });
-      console.log("HELLO", result)
+
       if (result?.url) {
         // Successfully authenticated, redirect to the callbackUrl or home
-        console.log(session?.user?.username,'skdjfhlasjdhflajsdh')
-        if(session?.user?.username == ""){
+        if (session?.user?.username === "") {
           router.replace("/auth/Oauth-register");
-          return ;
+          return;
         }
         router.replace(result.url);
       } else {
@@ -36,14 +28,17 @@ const HandleLogin = () => {
       }
     };
 
-    initiateLogin();
+    // Only initiate login if there is no current session
+    if (!session) {
+      initiateLogin();
+    }
   }, [router, session]);
 
   return (
     <div className="w-screen h-screen flex items-center justify-center text-center flex-col">
-        <h1 className="mb-5">Loading...</h1>
-        <LoadingLine />
-      </div> // Show a loading message or spinner while processing
+      <h1 className="mb-5">Loading...</h1>
+      <LoadingLine />
+    </div> // Show a loading message or spinner while processing
   );
 };
 

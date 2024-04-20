@@ -12,9 +12,7 @@ export async function HandleLoginGoogle(){
     }
 
     try {
-        console.log("HELHLEHLELHELLELH")
         const res = await getGoogleLoginInfo(code)
-        console.log(res)
         console.log("Get Google Info successfully")
     } catch (err) {
         console.log("Error during creating booking: ", err)
