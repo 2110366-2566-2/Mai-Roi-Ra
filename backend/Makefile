@@ -9,7 +9,7 @@ run:
 	docker-compose -f docker-compose.prod.yaml up
 
 docker_build:
-	docker-compose -f docker-compose.prod.yaml up -d --build --no-deps
+	docker-compose -f docker-compose.prod.yaml build
 
 docker_down:
 	docker-compose -f docker-compose.prod.yaml down
