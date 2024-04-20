@@ -46,7 +46,10 @@ interface Event {
   status: string;
 }
 
-export default function RegisterEventBox({ event }: { event: Event }) {
+export default function RegisterEventBox(
+  { event }: { event: Event },
+  token: string
+) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
   const [isOrganizerGotMoney, setIsOrganizerGotMoney] = useState(true);
@@ -101,7 +104,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   const handleVerifyEventButton = async () => {
     setIsVerifyLoading(true);
     try {
-      const verificationResult = await verifyEvent(event.event_id);
+      const verificationResult = await verifyEvent(event.event_id, token);
       // Handle successful registration
       setIsVerifyLoading(false);
       closeAdminVerifyModal();
@@ -118,7 +121,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   const handleRejectEventButton = async () => {
     setIsVerifyLoading(true);
     try {
-      const rejectedResult = await rejectEvent(event.event_id);
+      const rejectedResult = await rejectEvent(event.event_id, token);
       // Handle successful registration
       setIsVerifyLoading(false);
       closeAdminVerifyModal();

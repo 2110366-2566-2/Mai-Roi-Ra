@@ -1,6 +1,10 @@
 import { apiBackUrl } from "../constants";
 
-export default async function sendOTP(email: string, user_id: string) {
+export default async function sendOTP(
+  email: string,
+  user_id: string,
+  token: string
+) {
   try {
     const jsonBody = JSON.stringify({
       email: email,
@@ -10,7 +14,7 @@ export default async function sendOTP(email: string, user_id: string) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${token}`, // Uncomment and use token if required
+        Authorization: `Bearer ${token}`,
       },
       body: jsonBody,
     });
