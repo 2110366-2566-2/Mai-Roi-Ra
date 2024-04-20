@@ -37,12 +37,30 @@ func (s *PostService) GetPostById(req *st.GetPostByIdRequest) (*st.GetPostByIdRe
 		return nil, err
 	}
 
+	Organizerresponse := ""
+	resrespose, err := s.RepositoryGateway.ResponseRepository.GetResponseByPostId(req.PostId)
+	if err == nil && resrespose != nil {
+		Organizerresponse = resrespose.Detail
+	}
+
+	requser := &st.GetUserByUserIdRequest{
+		UserId: res.UserId,
+	}
+
+	UserName := ""
+	resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(requser)
+	if err == nil && resuser != nil {
+		UserName = resuser.Username
+	}
+
 	return &st.GetPostByIdResponse{
-		PostId:      req.PostId,
-		UserId:      res.UserId,
-		EventId:     res.EventId,
-		Caption:     res.Caption,
-		RatingScore: res.RatingScore,
+		PostId:            req.PostId,
+		UserId:            res.UserId,
+		Username:          UserName,
+		EventId:           res.EventId,
+		Caption:           res.Caption,
+		RatingScore:       res.RatingScore,
+		OrganizerResponse: Organizerresponse,
 	}, nil
 }
 

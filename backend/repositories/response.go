@@ -15,6 +15,7 @@ type ResponseRepository struct {
 }
 
 type IResponseRepository interface {
+	GetResponseByPostId(postID string) (*models.Response, error)
 	CreateResponse(req *models.Response) (*st.CreateResponseResponse, error)
 }
 
@@ -24,6 +25,18 @@ func NewResponseRepository(
 	return &ResponseRepository{
 		db: db,
 	}
+}
+
+func (repo *ResponseRepository) GetResponseByPostId(postID string) (*models.Response, error) {
+	log.Println("[Repo: GetResponseByPostId] Called")
+
+	var response models.Response
+	if err := repo.db.Where("post_id = ?", postID).First(&response).Error; err != nil {
+		log.Println("[Repo: GetResponseByPostId] Error finding response:", err)
+		return nil, err
+	}
+
+	return &response, nil
 }
 
 func (r *ResponseRepository) CreateResponse(req *models.Response) (*st.CreateResponseResponse, error) {
@@ -40,6 +53,6 @@ func (r *ResponseRepository) CreateResponse(req *models.Response) (*st.CreateRes
 		return nil, err
 	}
 	return &st.CreateResponseResponse{
-		Message: fmt.Sprintf(`Response Created Succesful for PostID : %s`,req.PostId),
+		Message: fmt.Sprintf(`Response Created Succesful for PostID : %s`, req.PostId),
 	}, nil
 }

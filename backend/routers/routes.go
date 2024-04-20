@@ -184,6 +184,7 @@ func setupPostRoutes(r *gin.RouterGroup, controller *controllers.PostController)
 func setupResponseRoutes(r *gin.RouterGroup, controller *controllers.ResponseController) {
 	responseRoutes := r.Group("/responses")
 	{
+		responseRoutes.GET("/:id", controller.GetResponseByPostId)
 		responseRoutes.POST("/", controller.CreateResponse)
 	}
 }
