@@ -3,7 +3,6 @@ import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { HandleLoginGoogle } from "./HandleLoginGoogle";
 
 export default function HomePage() {
   const [isPhoneScreen, setIsPhoneScreen] = useState(false);

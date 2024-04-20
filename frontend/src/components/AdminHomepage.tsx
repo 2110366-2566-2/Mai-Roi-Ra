@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import EventItem from "@/components/EventItem";
-// Other imports...
 
 interface EventItem {
   event_id: string;
@@ -12,7 +11,6 @@ interface EventItem {
   city: string;
   district: string;
   event_image: string;
-  // Add other fields as necessary
 }
 
 interface AdminSupportAndServiceProps {

@@ -80,8 +80,7 @@ const CreateEventForm = () => {
         }
     };
 
-    const handleSubmit = async (/*e: React.FormEvent<HTMLFormElement>*/) => {
-        // e.preventDefault();
+    const handleSubmit = async () => {
         try {
             if (name == "") {
                 setError("Event Name Required ! ");
@@ -319,17 +318,8 @@ const CreateEventForm = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
+                            </div>   
                         }
-                        
-                        {/* <textarea className="text-black w-full h-full indent-4 pt-[15px] px-[15px] lg:text-[17px] md:text-[15px] text-[13px]"
-                        placeholder="Add Picture" value={imageSrc} onChange={(e)=>setImageSrc(e.target.value)}/>
-                         {imageSrc.length != 0 && (
-                                <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
-                                    Image Src
-                                </div>
-                            )} */}
                     </div>
 
                 </div>
