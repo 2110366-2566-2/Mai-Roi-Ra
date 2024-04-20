@@ -1,2 +1,2 @@
-export const apiBackUrl = `http://backend/api/v1`;
+export const apiBackUrl = `${process.env.BACKEND_URL}/api/v1`;
 export const provider = `google`;
