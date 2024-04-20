@@ -104,15 +104,17 @@ func Authorization() gin.HandlerFunc {
 			return
 		}
 
+		// Store user's role in the context
+		user_role , _ := c.Get(KeyRole)
 		path := c.Request.URL.Path
 		request := c.Request.Method
 
-		fmt.Println(KeyRole)
+		fmt.Println(user_role)
 		fmt.Println(path)
 		fmt.Println(request)
 
 		// Check if the user's role is allowed
-		if res, _ := CasbinEnforcer.Enforce(KeyRole, path, request); !res {
+		if res, _ := CasbinEnforcer.Enforce(user_role, path, request); !res {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 			return
 		} 

@@ -63,15 +63,15 @@ func SetupRouter(c *dig.Container) *gin.Engine {
 func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventController) {
 	eventRoutes := r.Group("/events")
 	{
-		eventRoutes.POST("/", controller.CreateEvent)                   // Organizer , Admin
-		eventRoutes.GET("/", controller.GetEventLists)                  // All
-		eventRoutes.GET("/end/:id", controller.GetEndedEventLists)      // All
-		eventRoutes.GET("/:id", controller.GetEventDataById)            // All
-		eventRoutes.PUT("/:id", controller.UpdateEvent)                 // Organizer , Admin
-		eventRoutes.PUT("/upload/:id", controller.UpdateEventImage)     // Organizer , Admin
-		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)          // Admin
-		eventRoutes.DELETE("/:id", controller.DeleteEventById)          // Organizer , Admin
-		eventRoutes.GET("/participant", controller.GetParticipantLists) // All
+		eventRoutes.POST("/", middleware.Authentication(), middleware.Authorization(), controller.CreateEvent)               // Organizer , Admin
+		eventRoutes.GET("/", controller.GetEventLists)                                                                       // All
+		eventRoutes.GET("/end/:id", controller.GetEndedEventLists)                                                           // All
+		eventRoutes.GET("/:id", controller.GetEventDataById)                                                                 // All
+		eventRoutes.PUT("/:id", middleware.Authentication(), middleware.Authorization(), controller.UpdateEvent)             // Organizer , Admin
+		eventRoutes.PUT("/upload/:id", middleware.Authentication(), middleware.Authorization(), controller.UpdateEventImage) // Organizer , Admin
+		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)                                                               // Admin
+		eventRoutes.DELETE("/:id", middleware.Authentication(), middleware.Authorization(), controller.DeleteEventById)      // Organizer , Admin
+		eventRoutes.GET("/participant", controller.GetParticipantLists)                                                      // All
 	}
 }
 
@@ -85,20 +85,20 @@ func setupLocationRoutes(r *gin.RouterGroup, controller *controllers.LocationCon
 func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController) {
 	userRoutes := r.Group("/users")
 	{
-		userRoutes.POST("/", controller.CreateUser)                                  // All
-		userRoutes.POST("/participate", controller.RegisterEvent)                    // User
-		userRoutes.GET("/:id", controller.GetUserByUserId)                           // All
-		userRoutes.GET("/events", controller.GetParticipatedEventLists)              // All
-		userRoutes.POST("/:id/searchevent", controller.SearchEvent)                  // All
-		userRoutes.GET("/:id/searchhistory", controller.GetSearchHistories)          // All
-		userRoutes.PUT("/:id", controller.UpdateUserInformation)                     // All
-		userRoutes.PUT("/upload/:id", controller.UpdateUserProfileImage)             // All
-		userRoutes.PUT("/notification", controller.ToggleNotifications)              // All
-		userRoutes.DELETE("/:event_id", controller.CancelRegisterEvent)              // User , Admin
-		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)                   // All
-		userRoutes.PUT("/verify_otp", controller.VerifyOTP)                          // All
-		userRoutes.PUT("/update_user_role", controller.UpdateUserRole)               // Admin
-		userRoutes.GET("/verification_status", controller.GetUserVerificationStatus) // All
+		userRoutes.POST("/", controller.CreateUser)                                                                              // All
+		userRoutes.POST("/participate", middleware.Authentication(), middleware.Authorization(), controller.RegisterEvent)       // User
+		userRoutes.GET("/:id", controller.GetUserByUserId)                                                                       // All
+		userRoutes.GET("/events", controller.GetParticipatedEventLists)                                                          // All
+		userRoutes.POST("/:id/searchevent", controller.SearchEvent)                                                              // All
+		userRoutes.GET("/:id/searchhistory", controller.GetSearchHistories)                                                      // All
+		userRoutes.PUT("/:id", controller.UpdateUserInformation)                                                                 // All
+		userRoutes.PUT("/upload/:id", controller.UpdateUserProfileImage)                                                         // All
+		userRoutes.PUT("/notification", controller.ToggleNotifications)                                                          // All
+		userRoutes.DELETE("/:event_id", middleware.Authentication(), middleware.Authorization(), controller.CancelRegisterEvent) // User , Admin
+		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)                                                               // All
+		userRoutes.PUT("/verify_otp", controller.VerifyOTP)                                                                      // All
+		userRoutes.PUT("/update_user_role", controller.UpdateUserRole)                                                           // Admin
+		userRoutes.GET("/verification_status", controller.GetUserVerificationStatus)                                             // All
 	}
 	loginRoutes := r.Group("")
 	{
@@ -169,26 +169,26 @@ func setupTransactionRoutes(r *gin.RouterGroup, controller *controllers.Transact
 func setupRefundRoutes(r *gin.RouterGroup, controller *controllers.RefundController) {
 	refundRoutes := r.Group("/refunds")
 	{
-		refundRoutes.POST("/", controller.CreateRefund)         // User , Admin
-		refundRoutes.POST("/email", controller.SendRefundEmail) // All
+		refundRoutes.POST("/", middleware.Authentication(), middleware.Authorization(), controller.CreateRefund) // User , Admin
+		refundRoutes.POST("/email", controller.SendRefundEmail)                                                  // All
 	}
 }
 
 func setupPostRoutes(r *gin.RouterGroup, controller *controllers.PostController) {
 	postRoutes := r.Group("/posts")
 	{
-		postRoutes.GET("/:id", controller.GetPostById)                  // All
-		postRoutes.GET("/events/:id", controller.GetPostListsByEventId) // All
-		postRoutes.GET("/is_reviewed", controller.IsReviewed)           // User , Admin
-		postRoutes.POST("/", controller.CreatePost)                     // User , Admin
-		postRoutes.DELETE("/:id", controller.DeletePostById)            // Admin
+		postRoutes.GET("/:id", controller.GetPostById)                                                                 // All
+		postRoutes.GET("/events/:id", controller.GetPostListsByEventId)                                                // All
+		postRoutes.GET("/is_reviewed", middleware.Authentication(), middleware.Authorization(), controller.IsReviewed) // User , Admin
+		postRoutes.POST("/", middleware.Authentication(), middleware.Authorization(), controller.CreatePost)           // User , Admin
+		postRoutes.DELETE("/:id", controller.DeletePostById)                                                           // Admin
 	}
 }
 
 func setupResponseRoutes(r *gin.RouterGroup, controller *controllers.ResponseController) {
 	responseRoutes := r.Group("/responses")
 	{
-		responseRoutes.GET("/:id", controller.GetResponseByPostId) // All
-		responseRoutes.POST("/", controller.CreateResponse)        // Organizer , Admin
+		responseRoutes.GET("/:id", controller.GetResponseByPostId)                                                   // All
+		responseRoutes.POST("/", middleware.Authentication(), middleware.Authorization(), controller.CreateResponse) // Organizer , Admin
 	}
 }

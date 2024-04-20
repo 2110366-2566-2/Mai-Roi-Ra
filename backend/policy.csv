@@ -1,38 +1,13 @@
-p, USER,/api/v1/events/, GET
-p, USER,/api/v1/events/end/:id, GET
-p, USER,/api/v1/events/:id, GET
-p, USER,/api/v1/events/participant, GET
 p, USER,/api/v1/users/participate, POST
-p, USER,/api/v1/users/:id, (GET)|(PUT)
-p, USER,/api/v1/users/events, (GET)
-p, USER,/api/v1/users/:id/searchevent, GET
-p, USER,/api/v1/users/:id/searchhistory, GET
-p, USER,/api/v1/users/notification, PUT
 p, USER,/api/v1/users/:event_id, DELETE
-p, USER,/api/v1/logout, POST
-p, USER,/api/v1/auth/users,GET
-p, USER,/api/v1/upload, POST
-p, USER,/api/v1/participate/is_registered, GET
-p, USER,/api/v1/problems/, (GET)|(POST)
-p, USER,/api/v1/problems/:id, (GET)|(PUT)|(DELETE)
-p, ORGANIZER,/api/v1/events/, (GET)|(POST)
-p, ORGANIZER,/api/v1/events/:id, (GET)|(PUT)|(DELETE)
-p, ORGANIZER,/api/v1/events/participate, GET
-p, ORGANIZER,/api/v1/locations/:id, GET
-p, ORGANIZER,/api/v1/users/participate, POST
-p, ORGANIZER,/api/v1/users/:id, (GET)|(PUT)
-p, ORGANIZER,/api/v1/users/events, (GET)
-p, ORGANIZER,/api/v1/users/:id/searchevent, GET
-p, ORGANIZER,/api/v1/users/:id/searchhistory, GET
-p, ORGANIZER,/api/v1/users/notification, PUT
-p, ORGANIZER,/api/v1/users/:event_id, DELETE
-p, ORGANIZER,/api/v1/logout, POST
-p, ORGANIZER,/api/v1/auth/users,GET
-p, ORGANIZER,/api/v1/upload, POST
-p, ORGANIZER,/api/v1/announcements/, POST
-p, ORGANIZER,/api/v1/participate/is_registered, GET
-p, ORGANIZER,/api/v1/problems/, (GET)|(POST)
-p, ORGANIZER,/api/v1/problems/:id, (GET)|(DELETE)
+p, USER,/api/v1/refunds/, POST
+p, USER,/api/v1/posts/is_reviewed, GET
+p, USER,/api/v1/posts/, POST
+p, ORGANIZER,/api/v1/events/, POST
+p, ORGANIZER,/api/v1/events/:id, (PUT)|(DELETE)
+p, ORGANIZER,/api/v1/events/:id, (PUT)|(DELETE)
+p, ORGANIZER,/api/v1/events/upload/:id, PUT
+p, ORGANIZER,/api/v1/responses/, POST
 p, ADMIN,/api/v1/*, *
 g, USER,USER
 g, ORGANIZER,ORGANIZER
