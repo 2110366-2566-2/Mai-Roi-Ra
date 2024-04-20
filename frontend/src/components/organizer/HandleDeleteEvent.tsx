@@ -10,12 +10,11 @@ export async function HandleDeleteEvent(id: string){
     const session = await getServerSession(authOptions);
 
     try {
-        const res = await deleteEvent(id,session.user.token);
+        const res = await deleteEvent(id,session? session.user.token : "");
         console.log(res)
         console.log("Delete Event successful")
     } catch (err) {
-        alert("Not match constraint Ja")
-         console.log("Error during creating booking: ", err)
+        console.log("Error during delete event: ", err)
     }
     
     revalidateTag(`events`);

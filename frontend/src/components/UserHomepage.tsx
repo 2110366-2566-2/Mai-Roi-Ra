@@ -17,7 +17,7 @@ export default async function UserHomepage({page,limit,search} : Props) {
   const datas = events.event_lists;
   const session = await getServerSession(authOptions);
   const user = session?.user;
-  const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id);
+  const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id,user.token);
 
   return (
     <main className="text-black flex flex-col h-screen overflow-hidden">
@@ -30,18 +30,18 @@ export default async function UserHomepage({page,limit,search} : Props) {
               <div className='py-[5px] md:mt-[20px] mt-[5px] overflow-y-auto'>
               {datas.map((eventItem:any) => (
               <EventItem
-              key={eventItem.event_id}
-              id={eventItem.event_id}
-              name={eventItem.event_name}
-              startDate={eventItem.start_date}
-              endDate={eventItem.end_date}
-              description={eventItem.description}
-              city={eventItem.city}
-              district={eventItem.district}
-              imgSrc={eventItem.event_image}
-              page={0}
-              role="USER"
-              status={eventItem.item}
+                key={eventItem.event_id}
+                id={eventItem.event_id}
+                name={eventItem.event_name}
+                startDate={eventItem.start_date}
+                endDate={eventItem.end_date}
+                description={eventItem.description}
+                city={eventItem.city}
+                district={eventItem.district}
+                imgSrc={eventItem.event_image}
+                page={0}
+                role="USER"
+                status={eventItem.item}
             />
               ))}
               </div> :

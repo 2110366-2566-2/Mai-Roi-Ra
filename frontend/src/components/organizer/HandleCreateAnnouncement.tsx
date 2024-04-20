@@ -8,7 +8,7 @@ export async function HandleCreateAnnouncement(id:string,name:string,subject:str
     const user = session?.user;
 
     try {
-        const res = await createAnnouncement(id,name,subject,content,user.token);
+        const res = await createAnnouncement(id,name,subject,content,user? user.token : "");
         console.log(res)
         console.log("Create Announcement successful")
     } catch (err) {
