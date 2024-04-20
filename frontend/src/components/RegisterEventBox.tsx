@@ -64,7 +64,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
       try {
         const response = await isRegisteredEvent(
           session?.user?.user_id,
-          event.event_id
+          event.event_id,
+          session?.user?.token || ""
         );
         setIsRegisterable(!response.is_registered);
         console.log("isRegistered:", response.is_registered);
@@ -84,7 +85,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         try {
           const response = await getIsOrganizerGotMoney(
             session?.user?.user_id,
-            event.event_id
+            event.event_id,
+            session?.user?.token || ""
           );
           setIsOrganizerGotMoney(response.is_paid);
           console.log("isOrganizerGotMoney:", response.is_paid);
@@ -211,7 +213,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         transaction_amount,
         user_id,
         event_id,
-        2
+        2,
+        session?.user?.token || ""
       );
       console.log(result);
       // Handle the response
@@ -230,7 +233,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
     try {
       const res = await createTransferToOrganizer(
         session?.user.organizer_id,
-        event.event_id
+        event.event_id,
+        session?.user.token || "",
       );
       console.log(res);
       setIsOrganizerGotMoney(true);
