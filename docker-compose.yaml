@@ -5,48 +5,45 @@ services:
     container_name: frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     env_file:
       - frontend/.env.local
     ports:
       - "3000:3000" 
     volumes:
       - ./frontend:/usr/src/app
-    command: pnpm start
     depends_on:
       pg_db:
         condition: service_healthy
     networks:
-      - mairoira
+      - mrr
 
   backend:
-    container_name: backend
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
-    env_file:
-      - backend/.env
-    ports: 
-      - "8080:8080"
-    volumes:
-      - ./backend:/usr/src/app
-    command: air main.go -b 0.0.0.0
-    expose:
-      - "8080"
-    depends_on:
-      pg_db:
-        condition: service_healthy
-    networks:
-      - mairoira
+      container_name: backend
+      build: 
+        context: ./backend
+        dockerfile: Dockerfile.dev
+      env_file:
+        - backend/.env
+      ports: 
+        - "8080:8080"
+      volumes:
+        - ./backend:/usr/src/app
+      command: air main.go -b 0.0.0.0
+      depends_on:
+        pg_db:
+          condition: service_healthy
+      networks:
+        - mrr
 
   pg_db:
     container_name: pg_container
     image: postgres:alpine
     restart: always
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=test_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test_db
     ports:
       - "5432:5432"
     volumes:
@@ -57,23 +54,23 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - mairoira
+      - mrr
 
-  # pg_admin:
-  #   container_name: pg_admin
-  #   image: dpage/pgadmin4
-  #   restart: always
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: root
-  #   ports:
-  #     - "5050:80"
-  #   depends_on:
-  #     - pg_db
-  #   logging:
-  #     driver: none
-  #   networks:
-  #     - mairoira
+  pg_admin:
+    container_name: pg_admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    depends_on:
+      - pg_db
+    logging:
+      driver: none
+    networks:
+      - mrr
 
   pg_migration:
     container_name: pg_migration
@@ -87,11 +84,10 @@ services:
     depends_on:
       - pg_db
     networks:
-      - mairoira
+      - mrr
 
 volumes:
   pg-db:
 
 networks:
-  mairoira:
-    driver: bridge
+  mrr: {}
