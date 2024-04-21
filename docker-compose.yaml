@@ -22,14 +22,13 @@ services:
       container_name: backend
       build: 
         context: ./backend
-        dockerfile: Dockerfile.dev
+        dockerfile: Dockerfile
       env_file:
         - backend/.env
       ports: 
         - "8080:8080"
       volumes:
         - ./backend:/usr/src/app
-      command: air main.go -b 0.0.0.0
       depends_on:
         pg_db:
           condition: service_healthy

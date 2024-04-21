@@ -1,7 +1,5 @@
-import { apiBackUrl } from "../constants"
-
 export default async function userLogout(token: string) {
-    const response = await fetch(`${apiBackUrl}/logout`, {
+    const response = await fetch(`${process.env.LOGOUT_URL}/api/v1/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -12,6 +10,5 @@ export default async function userLogout(token: string) {
     if (!response.ok) {
       throw new Error("Failed to log out");
     }
-  
     return await response.json();
   }

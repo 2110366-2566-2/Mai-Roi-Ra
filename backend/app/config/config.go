@@ -1,14 +1,9 @@
 package config
 
 import (
-	"context"
-	"encoding/json"
-	"os"
 	"log"
+	"os"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/joho/godotenv"
 )
 
@@ -22,7 +17,8 @@ type Config struct {
 }
 
 type App struct {
-	Url            string
+	AppUrl         string
+	AppPort        string
 	AppName        string
 	FrontendURL    string
 	TokenSecretKey string
@@ -65,41 +61,15 @@ func NewConfig(path string) (*Config, error) {
 		log.Println("Error loading .env file: ", err)
 		return nil, err
 	}
-
-	// Retrieve the secret values from AWS Secrets Manager
-	secretName := "Mairoira"
-	region := "ap-southeast-2"
-
-	// Load AWS configuration
-	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
-	if err != nil {
-		log.Println("Error loading AWS config: ", err)
-		return nil, err
+	appPort := os.Getenv("PROD_PORT")
+	isProd := os.Getenv("IS_PROD")
+	if isProd == "false" {
+		appPort = os.Getenv("DEV_PORT")
 	}
-
-	// Create a Secrets Manager client
-	client := secretsmanager.NewFromConfig(cfg)
-
-	input := &secretsmanager.GetSecretValueInput{
-		SecretId:     aws.String(secretName),
-		VersionStage: aws.String("AWSCURRENT"),
-	}
-	result, err := client.GetSecretValue(context.Background(), input)
-	if err != nil {
-		log.Println("Error retrieving secret from AWS Secrets Manager: ", err)
-		return nil, err
-	}
-	// Parse the secret value
-	var secretData map[string]string
-	if err := json.Unmarshal([]byte(*result.SecretString), &secretData); err != nil {
-		log.Println("Error parsing secret data: ", err)
-		return nil, err
-	}
-
-	// Now, replace the hard-coded values with the secret values
 	return &Config{
 		App: &App{
-			Url:            os.Getenv("SERVER_HOST"),
+			AppUrl:         os.Getenv("SERVER_HOST"),
+			AppPort:        appPort,
 			AppName:        os.Getenv("APP_NAME"),
 			FrontendURL:    os.Getenv("FRONTEND_URL"),
 			TokenSecretKey: os.Getenv("TOKEN_SECRET_KEY"),

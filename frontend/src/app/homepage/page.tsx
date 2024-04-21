@@ -21,6 +21,8 @@ export default async function Homepage({
 
   const session = await getServerSession(authOptions);
 
+  if (!session || !session.user.token) return null
+
   const waitingEvents = await getWaitingEvents(session!.user.token);
   const waitingEventsDatas = waitingEvents.event_lists;
 

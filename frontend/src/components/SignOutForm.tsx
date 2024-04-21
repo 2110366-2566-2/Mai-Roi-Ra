@@ -17,12 +17,11 @@ export default function SignOut() {
     if (session) {
       await userLogout(session.user.token);
       await signOut({ redirect: false });
-      router.push("/auth/login");
-      // setTimeout(() => {
-      //     window.location.reload();
-      // }, 1000);
+      router.push("/auth/signin");
+      return;
+    } else {
+      router.push("/");
     }
-    router.push("/");
   };
 
   return (
