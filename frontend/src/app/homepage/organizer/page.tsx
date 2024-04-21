@@ -5,7 +5,6 @@ import getMyEvents from "@/libs/getMyOrganizerEvents";
 
 export default async function UserHomepage() {
   const events = await getMyEvents("550e8400-e29b-41d4-a716-446655440200");
-  console.log(events);
   const datas = events.event_lists;
 
   return (

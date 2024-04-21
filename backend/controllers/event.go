@@ -166,27 +166,14 @@ func (c *EventController) UpdateEventImage(ctx *gin.Context) {
 	Cloud := cloud.NewAWSCloudService(constant.EVENT) // or try changing to constant.PROFILE
 	log.Println("FILEHEADER: ", fileHeader.Header)
 
-	// delete the existing image in the bucket
-	deleteErr := Cloud.DeleteFile(ctx, eventId)
-	if deleteErr != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": deleteErr})
-		return
-	}
-
 	url, uploadErr := Cloud.SaveFile(ctx, fileHeader, eventId)
 	if uploadErr != nil {
 		log.Println("[CTRL: UpdateEventImage] Called SaveFile to S3 Error: ", uploadErr)
 		return
 	}
 
-	res, err := c.ServiceGateway.EventService.UpdateEventImage(eventId, url)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	log.Println("[CTRL: UpdateEventImage] Output:", res)
-	ctx.JSON(http.StatusOK, res)
+	log.Println("[CTRL: UpdateEventImage] Output:", url)
+	ctx.JSON(http.StatusOK, gin.H{"Message": "Update Successful"})
 }
 
 // DeleteEventById deletes an event by its ID.

@@ -1,4 +1,3 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import ProblemItem from "./ProblemItem";
 
 import ReportProblemButton from "./ReportProblemButton";

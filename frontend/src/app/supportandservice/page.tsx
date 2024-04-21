@@ -17,16 +17,22 @@ export default async function Homepage() {
   console.log("successfully loaded Support and Service Page");
 
   if (!session || !session.user || !session.user.token) return null;
-  const problems = session ? await getProblems(session.user.user_id) : null;
+  const problems = session
+    ? await getProblems(session.user.user_id, session.user.token)
+    : null;
 
   let datas;
   datas = problems.problem_lists;
 
-  const pendingProblems = session ? await getAllPendingProblems() : null;
+  const pendingProblems = session
+    ? await getAllPendingProblems(session.user.token)
+    : null;
   let pendingDatas;
   pendingDatas = pendingProblems.problem_lists;
 
-  const repliedProblems = session ? await getAllRepliedProblems() : null;
+  const repliedProblems = session
+    ? await getAllRepliedProblems(session.user.token)
+    : null;
   let repliedDatas;
   repliedDatas = repliedProblems.problem_lists;
 

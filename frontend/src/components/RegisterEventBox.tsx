@@ -45,7 +45,10 @@ interface Event {
   status: string;
 }
 
-export default function RegisterEventBox({ event }: { event: Event }) {
+export default function RegisterEventBox(
+  { event }: { event: Event },
+  token: string
+) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
   const [isOrganizerGotMoney, setIsOrganizerGotMoney] = useState(true);
@@ -63,8 +66,9 @@ export default function RegisterEventBox({ event }: { event: Event }) {
       try {
         if(!session?.user?.user_id) return ;
         const response = await isRegisteredEvent(
-          session?.user?.user_id ,
-          event.event_id
+          session?.user?.user_id,
+          event.event_id,
+          session?.user?.token || ""
         );
         setIsRegisterable(!response.is_registered);
         console.log("isRegistered:", response.is_registered);
@@ -84,7 +88,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         try {
           const response = await getIsOrganizerGotMoney(
             session?.user?.user_id,
-            event.event_id
+            event.event_id,
+            session?.user?.token || ""
           );
           setIsOrganizerGotMoney(response.is_paid);
           console.log("isOrganizerGotMoney:", response.is_paid);
@@ -101,7 +106,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   const handleVerifyEventButton = async () => {
     setIsVerifyLoading(true);
     try {
-      const verificationResult = await verifyEvent(event.event_id);
+      const verificationResult = await verifyEvent(event.event_id, token);
       // Handle successful registration
       setIsVerifyLoading(false);
       closeAdminVerifyModal();
@@ -118,7 +123,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   const handleRejectEventButton = async () => {
     setIsVerifyLoading(true);
     try {
-      const rejectedResult = await rejectEvent(event.event_id);
+      const rejectedResult = await rejectEvent(event.event_id, token);
       // Handle successful registration
       setIsVerifyLoading(false);
       closeAdminVerifyModal();
@@ -208,7 +213,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         transaction_amount,
         user_id,
         event_id,
-        2
+        2,
+        session?.user?.token || ""
       );
       console.log(result);
       // Handle the response
@@ -228,7 +234,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
       if(!session?.user?.organizer_id) return ;
       const res = await createTransferToOrganizer(
         session?.user.organizer_id,
-        event.event_id
+        event.event_id,
+        session?.user.token || "",
       );
       console.log(res);
       setIsOrganizerGotMoney(true);

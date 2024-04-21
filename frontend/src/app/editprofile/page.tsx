@@ -9,11 +9,16 @@ import EditProfileFormSkeleton from "@/components/skeletons/EditProfileFormSkele
 import showLoadingOverlay, {
   hideLoadingOverlay,
 } from "@/components/GlobalLoading";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export default async function EditProfile() {
+  revalidatePath("/editprofile");
+  revalidateTag("profile");
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
-  const profile = session ? await getProfile(session.user.user_id) : null;
+  const profile = session
+    ? await getProfile(session.user.user_id, session.user.token)
+    : null;
 
   return (
     <div className="flex flex-col items-center justify-center bg-white p-8">

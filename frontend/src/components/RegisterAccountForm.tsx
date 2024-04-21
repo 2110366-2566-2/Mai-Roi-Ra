@@ -1,8 +1,6 @@
 "use client";
-import { divide } from "cypress/types/lodash";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styles from "@/styles/FontPage.module.css";
 
 interface RegisterAccountFormProps {
   name: string;
@@ -93,7 +91,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             onPaste={(e) => e.preventDefault()}
           />
           {name.length != 0 && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+            <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
               Username
             </div>
           )}
@@ -134,12 +132,12 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             />
           )}
           {phoneNumber.length != 0 && !useEmail && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+            <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
               Phone number
             </div>
           )}
           {email.length != 0 && useEmail && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+            <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
               Email
             </div>
           )}
@@ -156,20 +154,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             Email must be valided
           </div>
         )}
-        {/* <div className="flex flex-col">
-          <div style={{ color: "#F16E1E" }}>
-            {phoneNumberTouched &&
-            (phoneNumber.length !== 10 || !phoneNumber.startsWith("0")) &&
-            !useEmail
-              ? "Phone number must be valided"
-              : ""}
-          </div>
-          <div style={{ color: "#F16E1E" }}>
-            {!isValidEmail(email) && useEmail && emailTouched
-              ? "Email must be valided"
-              : ""}
-          </div>
-        </div> */}
+
         <div className="flex !mt-3">
           <div
             style={{ color: "#1EA1F1" }}
@@ -194,7 +179,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             onPaste={(e) => e.preventDefault()}
           />
           {password.length != 0 && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+            <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
               Password
             </div>
           )}
@@ -212,13 +197,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             Password must contain at least 6 letters
           </div>
         )}
-        {/* <div>
-          <div style={{ color: "#F16E1E" }}>
-            {passwordTouched && password.length < 6
-              ? "Password must contain at least 6 letters"
-              : ""}
-          </div>
-        </div> */}
+
         <div className="relative">
           <input
             type={showConfirmPassword ? "text" : "password"}
@@ -232,7 +211,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
             onPaste={(e) => e.preventDefault()}
           />
           {confirmPassword.length != 0 && (
-            <div className="absolute top-[-8px] px-2 left-2 bg-white left-0 transition-all text-xs text-gray-400">
+            <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
               Confirm Password
             </div>
           )}
@@ -291,7 +270,7 @@ const RegisterAccountForm: React.FC<RegisterAccountFormProps> = ({
         <div className="!mt-1 lg:!mt-2 xl:!mt-4">
           <button
             type="submit"
-            className="w-full text-white px-4 py-4 rounded-full bg-[#F2D22E] hover:bg-yellow-500 text-white"
+            className="w-full text-white px-4 py-4 rounded-full bg-[#F2D22E] hover:bg-yellow-500"
           >
             Next
           </button>

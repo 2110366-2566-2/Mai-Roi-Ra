@@ -1,18 +1,14 @@
 "use client";
 import React from "react";
-import { useState, useEffect } from "react";
-import { FaLessThanEqual, FaPhone } from "react-icons/fa";
+import { useState } from "react";
+import { FaPhone } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { PiBalloonBold } from "react-icons/pi";
 import { SlLocationPin } from "react-icons/sl";
-import { useSession } from "next-auth/react";
-import getProfile from "@/libs/getProfile";
 import { MdVerified } from "react-icons/md";
 import OTPModal from "./OTPModal";
-import OTP from "./OTPInput";
 import OTPInput from "./OTPInput";
 import sendOTP from "@/libs/sendOTP";
-import SuccessSignupModal from "./SuccessSignupModal";
 import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
 
 interface Props {
@@ -27,6 +23,7 @@ interface Props {
   usernameProp: string;
   user_id: string | null;
   emailIsVerified: boolean;
+  token: string;
 }
 
 export default function ProfileUserInformation({
@@ -41,19 +38,15 @@ export default function ProfileUserInformation({
   usernameProp,
   user_id,
   emailIsVerified,
+  token,
 }: Props) {
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
   const [lastName, setLastName] = useState(lastNameProp);
-  const [address, setAddress] = useState(addressProp);
-  const [district, setDistrict] = useState(districtProp);
   const [province, setProvince] = useState(provinceProp);
   const [phoneNumber, setPhoneNumber] = useState(phoneNumberProp);
   const [email, setEmail] = useState(emailProp);
   const [birthDate, setBirthDate] = useState(birthDateProp);
-  const [profilePicture, setProfilePicture] = useState();
-  const [backgroundPicture, setBackgroundPicture] = useState();
-
   const [username, setUsername] = useState(usernameProp);
 
   const reformatDate = (dateStr: string) => {
@@ -80,7 +73,7 @@ export default function ProfileUserInformation({
   const handleVerifyClick = async () => {
     toggleIsShowFirstSendOtp();
     try {
-      await sendOTP(email, user_id || "");
+      await sendOTP(email, user_id || "", token);
     } catch (err) {
       setError("send verify fail!");
       console.log("Err: ", err);
@@ -115,6 +108,7 @@ export default function ProfileUserInformation({
               closeModal={closeOtpModal}
               successModal={successModal}
               setSuccessModal={setSuccessModal}
+              token={token}
             ></OTPInput>
           ) : (
             <div>

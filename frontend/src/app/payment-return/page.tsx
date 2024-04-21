@@ -47,7 +47,7 @@ const StripeReturnPage = () => {
     // Define an async function
     const fetchPaymentIntent = async () => {
       // Get the payment intent ID from the URL
-      const res = await getPaymentIntent(payment_intent as string);
+      const res = await getPaymentIntent(payment_intent as string, session?.user?.token as string);
       setPaymentIntent(res);
     };
 
@@ -62,13 +62,14 @@ const StripeReturnPage = () => {
         paymentIntent?.EventId || "",
         paymentIntent?.NumParticipants || 0,
         session?.user?.user_id || "",
+        session?.user?.token || "",
       );
       console.log("Registeration result:", registrationResult);
     };
 
     const fetchIsRegisterable = async () => {
       try {
-        const response = await isRegisteredEvent(session?.user?.user_id || "", paymentIntent?.EventId || "");
+        const response = await isRegisteredEvent(session?.user?.user_id || "", paymentIntent?.EventId || "", session?.user?.token as string);
         setIsRegisterable(!response.is_registered)
         console.log("isRegistered:", response.is_registered);
         setLoading(false);

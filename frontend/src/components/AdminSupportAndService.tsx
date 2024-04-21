@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import AdminProblemList from "./AdminProblemList";
-import ProblemList from "./ProblemList";
 
 interface Props {
   pendingDatas: any[];

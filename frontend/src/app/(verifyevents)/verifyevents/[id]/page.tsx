@@ -5,7 +5,6 @@ import RegisterEventBox from "@/components/RegisterEventBox";
 import RouterBackEventButton from "@/components/RouterBackEventButton";
 import getEventParticipants from "@/libs/getEventParticipants";
 import ParticipantListModal from "@/components/ParticipantListModal";
-import isRegisteredEvent from "@/libs/isRegisteredEvent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../api/auth/[...nextauth]/auth";
 

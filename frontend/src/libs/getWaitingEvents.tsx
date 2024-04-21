@@ -1,8 +1,11 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getWaitingEvents() {
+export default async function getWaitingEvents(token: string) {
   const response = await fetch(`${apiBackUrl}/events?filter=Waiting`, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     next: { tags: ["waiting-events"] },
   });
 

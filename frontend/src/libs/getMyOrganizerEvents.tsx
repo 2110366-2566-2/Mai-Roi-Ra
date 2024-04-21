@@ -1,8 +1,11 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getMyOrganizerEvents(id: string) {
+export default async function getMyOrganizerEvents(id: string, token: string) {
   const response = await fetch(`${apiBackUrl}/events?organizer_id=${id}`, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     next: { tags: ["events"] },
   });
 

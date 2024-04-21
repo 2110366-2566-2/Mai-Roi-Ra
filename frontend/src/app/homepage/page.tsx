@@ -2,32 +2,32 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import AdminHomepage from "@/components/AdminHomepage";
 import getWaitingEvents from "@/libs/getWaitingEvents";
-import getApprovedEvents from "@/libs/GetApprovedEvents";
+import getApprovedEvents from "@/libs/getApprovedEvents";
 import getRejectedEvents from "@/libs/getRejectedEvents";
 import UserHomepage from "@/components/UserHomepage";
 
 export default async function Homepage({
   searchParams,
-} : {
-    searchParams: { offset : string | undefined , 
-      limit : string | undefined,
-      search : string | undefined}
+}: {
+  searchParams: {
+    offset: string | undefined;
+    limit: string | undefined;
+    search: string | undefined;
+  };
 }) {
-  const page = Number(searchParams.offset ?? '1');
-  const limit = Number(searchParams.limit ?? '5');
-  const search = searchParams.search ?? '';
+  const page = Number(searchParams.offset ?? "1");
+  const limit = Number(searchParams.limit ?? "5");
+  const search = searchParams.search ?? "";
 
   const session = await getServerSession(authOptions);
-  console.log("successfully");
-  // console.log(session);
 
-  const waitingEvents = await getWaitingEvents();
+  const waitingEvents = await getWaitingEvents(session!.user.token);
   const waitingEventsDatas = waitingEvents.event_lists;
 
-  const approvedEvents = await getApprovedEvents();
+  const approvedEvents = await getApprovedEvents(session!.user.token);
   const approvedEventsDatas = approvedEvents.event_lists;
 
-  const rejectedEvents = await getRejectedEvents();
+  const rejectedEvents = await getRejectedEvents(session!.user.token);
   const rejectedEventsDatas = rejectedEvents.event_lists;
 
   return (
@@ -39,7 +39,7 @@ export default async function Homepage({
           rejectedEventsDatas={rejectedEventsDatas}
         ></AdminHomepage>
       ) : (
-        <UserHomepage page={page} limit={limit} search={search}/>
+        <UserHomepage page={page} limit={limit} search={search} />
       )}
     </main>
   );

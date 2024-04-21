@@ -5,21 +5,25 @@ import createProblem from "@/libs/createProblem"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth"
 
+export async function HandleCreateProblem(
+  problem: string,
+  description: string
+) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
 
-export async function HandleCreateProblem(problem:string, description:string){
-    const session = await getServerSession(authOptions);
-    const user = session?.user;
-
-    try {
-        const res = await createProblem(user?.user_id || "Untitle Problem",problem,description);
-        console.log(res);
-        console.log("Create Problem successful");
-    } catch (err) {
-        console.log("Error during creating problem: ", err)
-    }
-    revalidateTag(`problems`);
-    redirect(`/supportandservice`);
+  try {
+    const res = await createProblem(
+      user!.user_id,
+      problem,
+      description,
+      user!.token
+    );
+    console.log(res);
+    console.log("Create Problem successful");
+  } catch (err) {
+    console.log("Error during creating problem: ", err);
+  }
+  revalidateTag(`problems`);
+  redirect(`/supportandservice`);
 }
-
-
-

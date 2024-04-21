@@ -101,6 +101,7 @@ func NewConfig(path string) (*Config, error) {
 		App: &App{
 			Url:            os.Getenv("SERVER_HOST"),
 			AppName:        os.Getenv("APP_NAME"),
+			FrontendURL:    os.Getenv("FRONTEND_URL"),
 			TokenSecretKey: os.Getenv("TOKEN_SECRET_KEY"),
 		},
 		PgDB: &PgDB{

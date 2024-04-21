@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import EditProfileForm from "@/components/EditProfileForm";
 import React from "react";
 import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import getProfile from "@/libs/getProfile";
-import { useSession } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import LoadingLine from "@/components/LoadingLine";
@@ -29,30 +29,32 @@ export default function OAuthFirstRegister() {
   const [profile, setProfile] = useState<Props | null>(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     const fetchProfile = async () => {
       if (session) {
         setProfile(null); // Reset profile data
         setLoading(true); // Start loading
-  
+
         // Simulate a delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-  
-        const profileData = await getProfile(session.user.user_id);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const profileData = await getProfile(
+          session.user.user_id,
+          session.user.token
+        );
         setProfile(profileData);
         setLoading(false); // End loading
       }
     };
-  
+
     fetchProfile();
   }, [session]);
-  console.log("profile",profile)
+  console.log("profile", profile);
   if (session?.user?.username !== "") {
-    if(session){
-      router.push('/homepage');
-    }else{
-      router.push('/auth/signin');
+    if (session) {
+      router.push("/homepage");
+    } else {
+      router.push("/auth/signin");
     }
     return (
       <div className="w-screen h-screen flex items-center justify-center text-center flex-col">
@@ -63,7 +65,7 @@ export default function OAuthFirstRegister() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white p-8">
+    <div className="flex flex-col items-center justify-center h-auto bg-white p-8">
       <div className="flex flex-col items-center justify-center bg-white p-8 w-full sm:w-4/5 lg:w-3/5 xl:w-2/5 h-auto">
         <div className="">
           <div className="w-[60px] h-[60px]">
@@ -76,7 +78,9 @@ export default function OAuthFirstRegister() {
           </div>
         </div>
         <div className="w-full">
-          <div className={`${styles.Roboto} text-3xl mt-6 text-gray-800 font-bold text-center`}>
+          <div
+            className={`${styles.Roboto} text-3xl mt-6 text-gray-800 font-bold text-center`}
+          >
             Please Enter your information.
           </div>
         </div>
@@ -91,7 +95,7 @@ export default function OAuthFirstRegister() {
           emailProp={profile?.email || null }
           birthDateProp={profile?.birth_date || null}
           userId={session?.user?.user_id || null}
-          token={session?.user?.token}
+          token={session?.user?.token || null}
           user_image={profile?.user_image || null}
         ></EditProfileForm>
         :
