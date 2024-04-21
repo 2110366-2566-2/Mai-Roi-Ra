@@ -7,7 +7,7 @@ import getEventParticipants from "@/libs/getEventParticipants";
 import ParticipantListModal from "@/components/ParticipantListModal";
 
 interface Props {
-    params: {id:string}
+    params: { id: string }
 }
 
 
@@ -23,7 +23,7 @@ export default async function EventDetailPage({ params }: Props) {
 
     return (
         <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
-            <RouterBackEventButton isEventDetailPage/>
+            <RouterBackEventButton isEventDetailPage />
 
             <div className="lg:mx-16">
                 <h1 className="text-3xl font-semibold my-4 w-full">{event.event_name}</h1>
@@ -32,7 +32,7 @@ export default async function EventDetailPage({ params }: Props) {
                         <div className="w-full lg:w-[750px] xl:w-full h-auto overflow-hidden">
                             <Image
                                 src={event.event_image}
-                                width={800} 
+                                width={800}
                                 height={400}
                                 alt='event image'
                                 className="object-cover w-full h-full rounded-lg"

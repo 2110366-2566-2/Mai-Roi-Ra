@@ -8,11 +8,10 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Modal from "./Modal";
 import isRegisteredEvent from "@/libs/isRegisteredEvent";
-import verifyEvent from "@/libs/VerifyEvent";
+import verifyEvent from "@/libs/verifyEvent";
 import rejectEvent from "@/libs/rejectEvent";
 import { useRouter } from "next/navigation";
 import LoadingLine from "./LoadingLine";
-import { FaLastfmSquare } from "react-icons/fa";
 
 //Payment
 import createPaymentIntent from "@/libs/createPaymentIntent";
@@ -46,7 +45,10 @@ interface Event {
   status: string;
 }
 
-export default function RegisterEventBox({ event }: { event: Event }) {
+export default function RegisterEventBox(
+  { event }: { event: Event },
+  token: string
+) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
   const [isOrganizerGotMoney, setIsOrganizerGotMoney] = useState(true);
@@ -62,13 +64,15 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   useEffect(() => {
     const fetchIsRegisterable = async () => {
       try {
+        if(!session?.user?.user_id) return ;
         const response = await isRegisteredEvent(
           session?.user?.user_id,
-          event.event_id
+          event.event_id,
+          session?.user?.token || ""
         );
         setIsRegisterable(!response.is_registered);
         console.log("isRegistered:", response.is_registered);
-      } catch (error) {
+      } catch (error : any) {
         // Handle the error
         console.log("Error fetching isRegisterable:", error.message);
       }
@@ -84,11 +88,12 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         try {
           const response = await getIsOrganizerGotMoney(
             session?.user?.user_id,
-            event.event_id
+            event.event_id,
+            session?.user?.token || ""
           );
           setIsOrganizerGotMoney(response.is_paid);
           console.log("isOrganizerGotMoney:", response.is_paid);
-        } catch (error) {
+        } catch (error : any) {
           // Handle the error
           console.log("Error fetching isOrganizerGotMoney:", error.message);
         }
@@ -101,7 +106,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   const handleVerifyEventButton = async () => {
     setIsVerifyLoading(true);
     try {
-      const verificationResult = await verifyEvent(event.event_id);
+      const verificationResult = await verifyEvent(event.event_id, token);
       // Handle successful registration
       setIsVerifyLoading(false);
       closeAdminVerifyModal();
@@ -118,7 +123,7 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   const handleRejectEventButton = async () => {
     setIsVerifyLoading(true);
     try {
-      const rejectedResult = await rejectEvent(event.event_id);
+      const rejectedResult = await rejectEvent(event.event_id, token);
       // Handle successful registration
       setIsVerifyLoading(false);
       closeAdminVerifyModal();
@@ -191,13 +196,10 @@ export default function RegisterEventBox({ event }: { event: Event }) {
   };
 
   //Payment
-  const [clientSecret, setClientSecret] = useState(null);
-  const appearance = {
-    theme: "stripe",
-  };
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const options = {
-    clientSecret,
-    appearance,
+    clientSecret: clientSecret || undefined,
+    appearance: { theme: 'stripe' as const},
   };
 
   async function handleCreatePaymentIntent(
@@ -211,7 +213,8 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         transaction_amount,
         user_id,
         event_id,
-        2
+        2,
+        session?.user?.token || ""
       );
       console.log(result);
       // Handle the response
@@ -228,9 +231,11 @@ export default function RegisterEventBox({ event }: { event: Event }) {
 
   const handleCreateTransferToOrganizer = async () => {
     try {
+      if(!session?.user?.organizer_id) return ;
       const res = await createTransferToOrganizer(
         session?.user.organizer_id,
-        event.event_id
+        event.event_id,
+        session?.user.token || "",
       );
       console.log(res);
       setIsOrganizerGotMoney(true);
@@ -249,6 +254,9 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         style={null}
         allowOuterclose={true}
         modalsize="h-[50%] w-full"
+        MarginTop={null}
+        canScroll={null}
+        isNotRound={null}
       >
         <p>The Registeration cannot be cancel in the future.</p>
         <div>
@@ -268,6 +276,11 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         closeModal={closeAdminVerifyModal}
         title="Are you sure to verify to this event?"
         style={null}
+        isNotRound={null}
+        canScroll={null}
+        MarginTop={null}
+        modalsize={null}
+        allowOuterclose={null}
       >
         <p>The event cannot be rejected in the future.</p>
         {isVerifyLoading && (
@@ -301,6 +314,11 @@ export default function RegisterEventBox({ event }: { event: Event }) {
         closeModal={closeAdminRejectModal}
         title="Are you sure to reject to this event?"
         style={null}
+        isNotRound={null}
+        canScroll={null}
+        MarginTop={null}
+        modalsize={null}
+        allowOuterclose={null}
       >
         <p>The event cannot be verified in the future.</p>
         {isVerifyLoading && (

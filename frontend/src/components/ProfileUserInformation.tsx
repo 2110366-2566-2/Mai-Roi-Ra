@@ -1,22 +1,15 @@
 "use client";
 import React from "react";
-import { useState, ChangeEvent, SyntheticEvent } from "react";
-import { FaLessThanEqual, FaPhone } from "react-icons/fa";
+import { useState } from "react";
+import { FaPhone } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { PiBalloonBold } from "react-icons/pi";
 import { SlLocationPin } from "react-icons/sl";
-import { useSession } from "next-auth/react";
-import getProfile from "@/libs/getProfile";
 import { MdVerified } from "react-icons/md";
 import OTPModal from "./OTPModal";
-import OTP from "./OTPInput";
 import OTPInput from "./OTPInput";
 import sendOTP from "@/libs/sendOTP";
-import SuccessSignupModal from "./SuccessSignupModal";
 import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
-import ReviewModal from "./ReviewModal";
-import Rating from "@mui/material/Rating";
-import LoadingLine from "./LoadingLine";
 
 interface Props {
   firstNameProp: string;
@@ -28,8 +21,9 @@ interface Props {
   emailProp: string;
   birthDateProp: string;
   usernameProp: string;
-  user_id: string;
+  user_id: string | null;
   emailIsVerified: boolean;
+  token: string;
 }
 
 export default function ProfileUserInformation({
@@ -44,6 +38,7 @@ export default function ProfileUserInformation({
   usernameProp,
   user_id,
   emailIsVerified,
+  token,
 }: Props) {
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
@@ -78,7 +73,7 @@ export default function ProfileUserInformation({
   const handleVerifyClick = async () => {
     toggleIsShowFirstSendOtp();
     try {
-      await sendOTP(email, user_id);
+      await sendOTP(email, user_id || "", token);
     } catch (err) {
       setError("send verify fail!");
       console.log("Err: ", err);
@@ -91,8 +86,6 @@ export default function ProfileUserInformation({
   };
 
   const [successModal, setSuccessModal] = useState(false);
-
- 
 
   return (
     <div className="w-full">
@@ -109,12 +102,13 @@ export default function ProfileUserInformation({
         <div className="mt-8">
           {!isShowFirstSendOtp ? (
             <OTPInput
-              user_id={user_id}
+              user_id={user_id || ""}
               email={email}
               openModal={openOtpModal}
               closeModal={closeOtpModal}
               successModal={successModal}
               setSuccessModal={setSuccessModal}
+              token={token}
             ></OTPInput>
           ) : (
             <div>

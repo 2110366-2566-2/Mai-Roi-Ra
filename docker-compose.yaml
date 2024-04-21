@@ -1,24 +1,39 @@
 version: '3.9'
 
 services:
-
-  backend:
-    container_name: backend
-    build: 
-      context: ./backend
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
       dockerfile: Dockerfile.dev
     env_file:
-      - backend/.env
-    ports: 
-      - "8080:8080"
+      - frontend/.env.local
+    ports:
+      - "3000:3000" 
     volumes:
-      - ./backend:/usr/src/app
-    command: air main.go -b 127.0.0.1
+      - ./frontend:/usr/src/app
     depends_on:
       pg_db:
         condition: service_healthy
     networks:
       - mrr
+
+  backend:
+      container_name: backend
+      build: 
+        context: ./backend
+        dockerfile: Dockerfile.dev
+      env_file:
+        - backend/.env
+      ports: 
+        - "8080:8080"
+      volumes:
+        - ./backend:/usr/src/app
+      depends_on:
+        pg_db:
+          condition: service_healthy
+      networks:
+        - mrr
 
   pg_db:
     container_name: pg_container
