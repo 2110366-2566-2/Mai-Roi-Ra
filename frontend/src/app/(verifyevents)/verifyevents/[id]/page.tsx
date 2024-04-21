@@ -6,7 +6,7 @@ import RouterBackEventButton from "@/components/RouterBackEventButton";
 import getEventParticipants from "@/libs/getEventParticipants";
 import ParticipantListModal from "@/components/ParticipantListModal";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../api/auth/[...nextauth]/route";
+import { authOptions } from "../../../api/auth/[...nextauth]/auth";
 
 interface Props {
   params: { id: string };
@@ -29,7 +29,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   return (
     <main className="mx-auto lg:mx-16 px-4 py-0 lg:py-4 h-screen w-full text-black">
-      <RouterBackEventButton />
+      <RouterBackEventButton isEventDetailPage={true} />
 
       <div className="lg:mx-16">
         <h1 className="text-3xl font-semibold my-4 w-full">
@@ -78,7 +78,7 @@ export default async function EventDetailPage({ params }: Props) {
             </div>
           </div>
           <div className="mt-8 lg:mt-0 w-full lg:w-[400px] flex justify-center flex-col">
-            <RegisterEventBox event={event} isRegisterable={false} />
+            <RegisterEventBox event={event} />
             {/* <ParticipantListModal
               participants={participants}
               numParticipants={numParticipants}

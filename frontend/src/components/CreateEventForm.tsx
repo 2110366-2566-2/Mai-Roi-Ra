@@ -37,7 +37,7 @@ const CreateEventForm = () => {
     const [description,setDescription] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const createEvent = async () => {
@@ -55,10 +55,10 @@ const CreateEventForm = () => {
                 formData.append('end_date', endTmp.format('YYYY/MM/DD'));
                 formData.append('event_image', selectedImage);
                 formData.append('location_name', location);
-                formData.append('organizer_id', user?.organizer_id);
+                formData.append('organizer_id', user?.organizer_id || "");
                 formData.append('participant_fee', price.toString());
                 console.log(formData);
-                await HandleCreateEvent(formData,user.token);
+                await HandleCreateEvent(formData,user?.token || "");
                 setShowModal(true);
                 setLoading(false);
             }
@@ -229,7 +229,7 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="number" placeholder="Price"
-                                value={price} onChange={(e) => setPrice(e.target.value)} min={0} step={10}/>
+                                value={price || 0} onChange={(e) => setPrice(Number(e.target.value))} min={0} step={10}/>
 
                                 {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">

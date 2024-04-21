@@ -1,9 +1,9 @@
-"use server";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
-import createProblem from "@/libs/createProblem";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+'use server'
+import { revalidatePath, revalidateTag } from "next/cache"
+import { redirect } from "next/navigation"
+import createProblem from "@/libs/createProblem"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth"
 
 export async function HandleCreateProblem(
   problem: string,

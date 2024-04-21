@@ -66,7 +66,7 @@ export default function ReplyForm({
   return (
     <main className="h-auto w-full text-black">
       <div className="px-8 pb-4">
-        <RouterBackEventButton />
+        <RouterBackEventButton isEventDetailPage={false} />
         <div className="mt-20 ml-12 flex-col ">
           <div className="flex justify-end">
             <h1 className="ml-4 text-4xl font-semibold my-4 w-full">
