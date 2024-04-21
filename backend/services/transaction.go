@@ -132,7 +132,7 @@ func (s *TransactionService) GetPaymentIntentById(req *st.GetPaymentIntentByIdRe
 			UserID:          transModel.UserID,
 			TransactionID:   transModel.TransactionID,
 			Amount:          paymentAmount,
-			TransactionDate: utils.ToDateString(time.Now()),
+			TransactionDate: utils.TimeToString(time.Now()),
 			EventID:         transModel.EventID,
 		}
 		_, emailErr := s.SendTransactionEmail(emailReq)
@@ -186,8 +186,8 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	}
 
 	// Format dates
-	formattedStartDate := utils.ToDateString(eventData.StartDate)
-	formattedEndDate := utils.ToDateString(eventData.EndDate)
+	formattedStartDate := utils.TimeToString(eventData.StartDate)
+	formattedEndDate := utils.TimeToString(eventData.EndDate)
 
 	// Update email content to include event details
 	contentHTML := fmt.Sprintf(`
@@ -234,7 +234,7 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
         <p class="signature">Best regards,<br>Mai-Roi-Ra team</p>
     </body>
     </html>
-    `, eventData.EventName, req.TransactionID, req.Amount, utils.ToDateString(time.Now()), eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, utils.GetString(eventData.EventImage))
+    `, eventData.EventName, req.TransactionID, req.Amount, utils.TimeToString(time.Now()), eventData.EventName, eventData.Description, eventData.Activities, formattedStartDate, formattedEndDate, utils.GetString(eventData.EventImage))
 
 	if err = sender.SendEmail("Transaction Successful", "", contentHTML, to, cc, bcc, attachFiles); err != nil {
 		return nil, err
@@ -299,7 +299,7 @@ func (s *TransactionService) TransferToOrganizer(req *st.TransferToOrganizerRequ
 			UserID:          userId,
 			TransactionID:   paymentIntent.PaymentIntentId,
 			Amount:          float64(paymentIntent.TransactionAmount),
-			TransactionDate: utils.ToDateString(time.Now()),
+			TransactionDate: utils.TimeToString(time.Now()),
 			EventID:         event.EventId,
 		}
 		_, emailErr := s.SendTransactionEmail(emailRequest)

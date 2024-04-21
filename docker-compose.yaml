@@ -22,7 +22,7 @@ services:
       container_name: backend
       build: 
         context: ./backend
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
       env_file:
         - backend/.env
       ports: 

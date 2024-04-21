@@ -1,6 +1,6 @@
 package constant
 
-const PORT = "8080"
+const PORT = "80"
 const ADMIN = "ADMIN"
 const ORGANIZER = "ORGANIZER"
 const USER = "USER"

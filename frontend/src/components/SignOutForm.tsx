@@ -16,7 +16,6 @@ export default function SignOut() {
     console.log(session);
     if (session) {
       await userLogout(session.user.token);
-      await signOut({ redirect: false });
       router.push("/auth/signin");
       return;
     } else {

@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: backend
+    build: 
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file:
+      - /home/ubuntu/backend/.env
+    ports: 
+      - "80:80"
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      - mrr
+
+networks:
+  mrr: {}
