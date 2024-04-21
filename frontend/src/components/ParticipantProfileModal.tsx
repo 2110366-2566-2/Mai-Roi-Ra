@@ -60,6 +60,7 @@ export default function ParticipantProfileModal({ profile, isProfileModalOpen, c
                             usernameProp={profile?.username || "Username"}
                             user_id={null}
                             emailIsVerified={false}
+                            token={""}
                         ></ProfileUserInformation>
 
                     </div>
