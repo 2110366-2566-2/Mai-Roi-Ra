@@ -1,7 +1,7 @@
 import { apiBackUrl } from "../constants";
 
 export default async function getPaymentIntent(id:string, token: string){
-    const response = await fetch(`${apiBackUrl}/transactions/payment-intent/${id}`, {
+    const response = await fetch(`http://localhost:8080/api/v1/transactions/payment-intent/${id}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`
