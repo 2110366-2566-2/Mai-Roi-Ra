@@ -396,12 +396,12 @@ func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	secretKey := cfg.App.TokenSecretKey
 
 	claims := jwt.MapClaims{
-		"user_id":      user.UserID,
+		"user_id":      user.UserID,                           // Include the user's ID
+		"username":     user.Username,                         // Include the username
+		"role":         user.Role,                             // Include user's role
+		"email":        user.Email,                            // Include the email
+		"exp":          time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
 		"organizer_id": orgId,
-		"username":     user.Username,
-		"email":        user.Email,
-		"role":         user.Role,
-		"exp":          time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secretKey))
