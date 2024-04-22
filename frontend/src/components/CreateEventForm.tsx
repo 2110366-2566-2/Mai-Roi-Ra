@@ -119,7 +119,11 @@ const CreateEventForm = () => {
         } if (province == "" ){
             setError("Province Required");
             return false;
-        } return true;
+        } if (description.length >= 1000) {
+            setError("Description cannot more than 1000 word")
+            return false;
+        }
+        return true;
     }
 
     const handleSubmit = async () => {
@@ -341,7 +345,7 @@ const CreateEventForm = () => {
                             <textarea className="border-[1px] border-gray-300 w-full lg:py-[15px] md:py-[13px] py-[11px]  h-[240px] lg:indent-4 md:indent-4 indent-3
                              lg:text-[17px] md:text-[15px] text-[13px]
                             rounded-md"
-                            placeholder="Event Description"
+                            placeholder="Event Description (Less than 1000 word)"
                             value={description} onChange={(e)=>setDescription(e.target.value)}/>
 
                             {description.length != 0 && (
