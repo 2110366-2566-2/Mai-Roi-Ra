@@ -339,7 +339,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Save Changes" isVisible={showModal} id={Id}/>
+                <SuccessModal topic="Save Changes" isVisible={showModal}/>
             </form>
             {loading &&
                 <div className={`w-screen z-30 h-screen fixed inset-0 top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>
