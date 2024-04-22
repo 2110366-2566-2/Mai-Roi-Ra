@@ -13,7 +13,7 @@ export default async function responsePost(
       post_id: post_id,
     };
 
-    const response = await fetch(`http://localhost:8080/api/v1/responses/`, {
+    const response = await fetch(`${apiBackUrl}/api/v1/responses/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

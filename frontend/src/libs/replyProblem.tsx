@@ -19,7 +19,7 @@ export default async function replyProblem(
       status,
     };
 
-    const response = await fetch(`http://localhost:8080/api/v1/problems/${problem_id}`, {
+    const response = await fetch(`${apiBackUrl}/api/v1/problems/${problem_id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

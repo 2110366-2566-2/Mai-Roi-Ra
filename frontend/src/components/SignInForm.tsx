@@ -7,7 +7,7 @@ import Image from "next/image";
 import SignInHandleSubmit from "./SignInHandleSubmit";
 import { TextField } from "@mui/material";
 import LoadingLine from "./LoadingLine";
-import { provider } from "@/constants";
+import { apiBackUrl, provider } from "@/constants";
 
 const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ const SignInForm = () => {
   };
 
   const handleLoginGoogle = () => {
-    window.location.href = `http://localhost:8080/api/v1/auth/google/login`;
+    window.location.href = `${apiBackUrl}/api/v1/auth/google/login`;
   }
 
   return (

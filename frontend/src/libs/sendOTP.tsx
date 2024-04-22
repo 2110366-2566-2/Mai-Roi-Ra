@@ -10,7 +10,7 @@ export default async function sendOTP(
       email: email,
       user_id: user_id,
     });
-    const response = await fetch(`http://localhost:8080/api/v1/users/send_otp_email`, {
+    const response = await fetch(`${apiBackUrl}/api/v1/users/send_otp_email`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

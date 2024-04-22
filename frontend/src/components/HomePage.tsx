@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { apiBackUrl }from '@/constants';
 
 export default function HomePage() {
   const [isPhoneScreen, setIsPhoneScreen] = useState(false);
@@ -22,7 +23,7 @@ export default function HomePage() {
   }, []);
 
   const handleLoginGoogle = () => {
-    window.location.href = 'http://localhost:8080/api/v1/auth/google/login';
+    window.location.href = `${apiBackUrl}/api/v1/auth/google/login`;
   }
 
   return (

@@ -7,7 +7,7 @@ export default async function isReviewedEvent(
 ) {
   if (!user_id || !event_id) return { is_registered: true };
   const response = await fetch(
-    `http://localhost:8080/api/v1/posts/is_reviewed?user_id=${user_id}&&event_id=${event_id}`,
+    `${apiBackUrl}/api/v1/posts/is_reviewed?user_id=${user_id}&&event_id=${event_id}`,
     {
       method: "GET",
       headers: {

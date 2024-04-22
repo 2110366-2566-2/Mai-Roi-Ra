@@ -3,7 +3,7 @@ import { apiBackUrl } from "../constants";
 export default async function rejectEvent(event_id: string, token: string) {
   try {
     const response = await fetch(
-      `http://localhost:8080/api/v1/events/${event_id}/verify?status=Rejected`,
+      `${apiBackUrl}/api/v1/events/${event_id}/verify?status=Rejected`,
       {
         method: "PUT",
         headers: {
