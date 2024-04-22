@@ -28,9 +28,6 @@ export default async function OrganizerReviewEventById({ params }: Props) {
     rating.three_rate +
     rating.four_rate +
     rating.five_rate;
-  console.log(rating);
-  console.log(user);
-  console.log(event);
 
   return (
     <div className="w-screen md:h-screen">

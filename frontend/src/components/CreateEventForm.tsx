@@ -106,6 +106,7 @@ const CreateEventForm = () => {
             return false;
         } if (activity == ""){
             setError("Activity Required")
+            return false;
         } if (price == null) {
             setError("Price Required");
             return false;

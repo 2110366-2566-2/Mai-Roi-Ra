@@ -12,8 +12,6 @@ const ReviewPage = async () => {
     const events = await getReviewEvents(user.user_id,user.token);
     const datas = events.event_lists;
     console.log(events);
-    console.log('Success to get Session');
-    console.log('Success to render organizer review page');
 
     return (
         <div className="w-full h-screen">

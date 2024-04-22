@@ -75,14 +75,13 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
             const search = async () => {
                 const temp = searching;
                 setError(false);
-                setSearching("");
                 setFocus(false);
                 if (user != undefined) {
                     await HandleCreateUserSearchHistory(user? user.user_id : "",temp,user? user.token : "");
                 } setLoading(false);
                 router.push(`/homepage?search=${temp}`);
             }  
-            search()
+            search();
         }
     }, [loading])
     
