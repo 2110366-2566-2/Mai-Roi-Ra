@@ -11,7 +11,8 @@ services:
     ports:
       - "3000:3000" 
     volumes:
-      - ./frontend:/usr/src/app
+      - ./frontend:/usr/src/ap
+      - /usr/src/app/node_modules
     depends_on:
       pg_db:
         condition: service_healthy
