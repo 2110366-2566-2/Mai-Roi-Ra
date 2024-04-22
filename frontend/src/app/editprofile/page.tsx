@@ -4,16 +4,21 @@ import Image from "next/image";
 import styles from "@/styles/FontPage.module.css";
 import getProfile from "@/libs/getProfile";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/auth";
 import EditProfileFormSkeleton from "@/components/skeletons/EditProfileFormSkeleton";
 import showLoadingOverlay, {
   hideLoadingOverlay,
 } from "@/components/GlobalLoading";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export default async function EditProfile() {
+  revalidatePath("/editprofile");
+  revalidateTag("profile");
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.token) return null;
-  const profile = session ? await getProfile(session.user.user_id) : null;
+  const profile = session
+    ? await getProfile(session.user.user_id, session.user.token)
+    : null;
 
   return (
     <div className="flex flex-col items-center justify-center bg-white p-8">

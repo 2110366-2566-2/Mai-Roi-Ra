@@ -1,6 +1,6 @@
 import { apiBackUrl } from "../constants";
 
-export default async function isEmailVerified(email: string) {
+export default async function isEmailVerified(email: string, token: string) {
   const url = new URL(`${apiBackUrl}/users/verification_status`);
   url.searchParams.append("email", email);
 
@@ -8,6 +8,7 @@ export default async function isEmailVerified(email: string) {
     method: "GET",
     headers: {
       Accept: "application/json",
+      authorization: `Bearer ${token}`,
     },
   });
 

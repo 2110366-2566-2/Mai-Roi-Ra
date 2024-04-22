@@ -2347,13 +2347,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Is user already have a picture?",
-                        "name": "is_profiled",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
                         "type": "file",
                         "description": "Profile image",
                         "name": "user_image",
@@ -2758,62 +2751,52 @@ const docTemplate = `{
     "definitions": {
         "models.Response": {
             "type": "object",
-            "required": [
-                "organizer_id",
-                "post_id"
-            ],
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "detail": {
                     "type": "string"
                 },
-                "organizer_id": {
+                "organizerId": {
                     "type": "string"
                 },
-                "post_id": {
+                "postId": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 }
             }
         },
         "models.Transaction": {
             "type": "object",
-            "required": [
-                "event_id",
-                "status",
-                "transaction_amount",
-                "user_id"
-            ],
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
-                "event_id": {
+                "eventID": {
                     "type": "string"
                 },
                 "status": {
                     "type": "string"
                 },
-                "transaction_amount": {
+                "transactionAmount": {
                     "type": "number"
                 },
-                "transaction_date": {
+                "transactionDate": {
                     "type": "string"
                 },
-                "transaction_id": {
+                "transactionID": {
                     "type": "string"
                 },
-                "transaction_way": {
+                "transactionWay": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
-                "user_id": {
+                "userID": {
                     "type": "string"
                 }
             }
@@ -2824,13 +2807,13 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "banner_image": {
+                "bannerImage": {
                     "type": "string"
                 },
-                "birth_date": {
+                "birthDate": {
                     "type": "string"
                 },
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "district": {
@@ -2839,40 +2822,43 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
-                "first_name": {
+                "firstName": {
                     "type": "string"
                 },
-                "is_enable_notification": {
+                "isEnableNotification": {
                     "type": "boolean"
                 },
-                "is_verified": {
+                "isVerified": {
                     "type": "boolean"
                 },
-                "last_name": {
+                "lastName": {
                     "type": "string"
                 },
-                "payment_gateway_customer_id": {
+                "password": {
                     "type": "string"
                 },
-                "phone_number": {
+                "paymentGatewayCustomerID": {
+                    "type": "string"
+                },
+                "phoneNumber": {
                     "type": "string"
                 },
                 "province": {
                     "type": "string"
                 },
-                "register_type": {
+                "registerType": {
                     "type": "string"
                 },
                 "role": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
-                "user_id": {
+                "userID": {
                     "type": "string"
                 },
-                "user_image": {
+                "userImage": {
                     "type": "string"
                 },
                 "username": {

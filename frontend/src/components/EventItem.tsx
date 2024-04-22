@@ -15,8 +15,8 @@ interface Props {
   district: string;
   imgSrc: string;
   page: number;
-  role: string;
-  status: string;
+  role: string | null;
+  status: string | null;
 }
 
 export default function EventItem({

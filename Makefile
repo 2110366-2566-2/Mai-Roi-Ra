@@ -3,7 +3,7 @@
 all: build run
 
 swagger:
-	cd backend && swag init -o ./swagger/docs
+	swag init -o ./swagger/docs
 
 run:
 	docker compose up

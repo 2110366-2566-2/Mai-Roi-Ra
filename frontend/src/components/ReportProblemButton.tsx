@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import styles from "@/styles/FontPage.module.css";
 import ReportPopup from "@/components/ReportPopup";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import ProblemList from "./ProblemList";
 
 const ReportProblemButton = () => {
   const [showModal, setShowModal] = useState(false);

@@ -2,7 +2,6 @@
 import React, { useState, FormEvent, useRef, ChangeEvent } from "react";
 import styles from "@/styles/FontPage.module.css";
 import { useRouter } from "next/navigation";
-import updateProfile from "@/libs/updateProfile";
 import updateProfileAction from "@/action/UpdateProfileAction";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
@@ -21,18 +20,18 @@ import BackupIcon from "@mui/icons-material/Backup";
 import uploadProfileImage from "@/libs/uploadProfileImage";
 
 interface Props {
-  firstRegister: boolean;
-  firstNameProp: string;
-  lastNameProp: string;
-  addressProp: string;
-  districtProp: string;
-  provinceProp: string;
-  phoneNumberProp: string;
-  emailProp: string;
-  birthDateProp: string;
-  userId: string;
-  token: string;
-  user_image: string;
+  firstRegister: boolean | null;
+  firstNameProp: string | null;
+  lastNameProp: string | null;
+  addressProp: string | null;
+  districtProp: string | null;
+  provinceProp: string | null;
+  phoneNumberProp: string | null;
+  emailProp: string | null;
+  birthDateProp: string | null;
+  userId: string | null;
+  token: string | null;
+  user_image: string | null;
 }
 
 export default function EditProfileForm({
@@ -47,10 +46,8 @@ export default function EditProfileForm({
   birthDateProp,
   userId,
   token,
-  user_image
+  user_image,
 }: Props) {
-  const isMobile = useMediaQuery("(max-width:768px)");
-
   // USER FIELDS
   const [firstName, setFirstName] = useState(firstNameProp);
   const [lastName, setLastName] = useState(lastNameProp);
@@ -63,12 +60,9 @@ export default function EditProfileForm({
   const initialBirthDate = dayjs(birthDateProp);
   const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
   const [role, setRole] = useState("User");
-  const [profilePicture, setProfilePicture] = useState();
-  const [backgroundPicture, setBackgroundPicture] = useState();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>(user_image);
-  const [is_profile,set_is_profile] = useState<string>(user_image? "True" : "False");
-  const fileInputRef = useRef(null);
+  const [preview, setPreview] = useState<string | null>(user_image);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
 
@@ -76,7 +70,7 @@ export default function EditProfileForm({
 
   const triggerFileInput = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click();
+      fileInputRef.current?.click();
     }
   };
 
@@ -128,37 +122,41 @@ export default function EditProfileForm({
 
     const formattedBirthDate = birthDate ? birthDate.format("YYYY/MM/DD") : "";
 
-    if (firstName && lastName && address && district && province && birthDate && preview) {
+    if (
+      firstName &&
+      lastName &&
+      address &&
+      district &&
+      province &&
+      birthDate &&
+      preview
+    ) {
       try {
         if (selectedImage) {
           const formData = new FormData();
-          formData.append("user_id",userId);
-          formData.append("is_profiled", is_profile);
-          formData.append("user_image",selectedImage);
-          await uploadProfileImage(formData,token);
+          if (userId) {
+            formData.append("user_id", userId);
+          }
+          formData.append("user_image", selectedImage);
+          await uploadProfileImage(formData, token || "");
+        }
+
+        setAllInputsFilled(true);
+        setError("");
+        if (firstRegister) {
+          setOpenChooseRoleForm(true);
         }
 
         await updateProfileAction(
-          userId,
+          userId || "",
           firstName,
           lastName,
           address,
           district,
           province,
-          formattedBirthDate
+          formattedBirthDate,
+          token || ""
         );
-        setAllInputsFilled(true);
-        setError("");
-        // setSuccessModal(true);
-        // setTimeout(() => {
-        //   setSuccessModal(false);
-        //   router.push("/profile");
-        // }, 4000);
-        if (firstRegister) {
-          setOpenChooseRoleForm(true);
-        } else {
-          router.push("/profile");
-        }
       } catch (err) {
         setError("Update error. Server Failed ?");
         console.log("Err: ", err);
@@ -177,7 +175,7 @@ export default function EditProfileForm({
     console.log(role, userId, username);
 
     try {
-      await updateRole(role, userId, username);
+      await updateRole(role, userId || "", username);
       // handle success, e.g. show a success message or redirect
       await signOut({ redirect: false });
       alert("Please login again");
@@ -202,7 +200,7 @@ export default function EditProfileForm({
                 type="text"
                 id="firstname"
                 name="firstname"
-                value={firstName}
+                value={firstName || ""}
                 onChange={handleFirstNameChange}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="First name"
@@ -218,7 +216,7 @@ export default function EditProfileForm({
                 type="text"
                 id="lastname"
                 name="lastname"
-                value={lastName}
+                value={lastName || ""}
                 onChange={handleLastNameChange}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Last name"
@@ -235,7 +233,7 @@ export default function EditProfileForm({
               type="text"
               id="address"
               name="address"
-              value={address}
+              value={address || ""}
               onChange={handleAddressChange}
               className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Address"
@@ -252,7 +250,7 @@ export default function EditProfileForm({
                 type="text"
                 id="district"
                 name="district"
-                value={district}
+                value={district || ""}
                 onChange={handleDistrictChange}
                 className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="District"
@@ -268,7 +266,7 @@ export default function EditProfileForm({
                 type="text"
                 id="province"
                 name="province"
-                value={province}
+                value={province || "" }
                 onChange={handleProvinceChange}
                 className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Province"
@@ -301,7 +299,7 @@ export default function EditProfileForm({
                 type="text"
                 id="email"
                 name="email"
-                value={email}
+                value={email || ""}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Email"
                 readOnly
@@ -340,8 +338,10 @@ export default function EditProfileForm({
             </LocalizationProvider>
           </div>
 
-          <div className="w-full h-[40vh] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
-                     border-gray-300 rounded-md flex justify-center items-center relative border-dashed">
+          <div
+            className="w-full h-[40vh] lg:mt-[0] md:mt-[25px] mt-[20px] border-[1px]
+                     border-gray-300 rounded-md flex justify-center items-center relative border-dashed"
+          >
             {preview ? (
               <div>
                 <div className="w-full h-full">
@@ -406,13 +406,15 @@ export default function EditProfileForm({
           </div>
 
           <div className="pt-5 flex items-center justify-center">
-            <button
-              type="button"
-              className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4 xl:mr-6 mr-6 rounded-full bg-gray-300 hover:bg-gray-400"
-              onClick={handleCancleClick}
-            >
-              Cancel
-            </button>
+            {!firstRegister && (
+              <button
+                type="button"
+                className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4 xl:mr-6 mr-6 rounded-full bg-gray-300 hover:bg-gray-400"
+                onClick={handleCancleClick}
+              >
+                Cancel
+              </button>
+            )}
             <button
               type="submit"
               className="text-white 2xl:px-28 xl:px-20 md:px-20 px-12 py-4  xl:ml-8 ml-6 rounded-full bg-[#F2D22E] hover:bg-yellow-500"

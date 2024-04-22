@@ -1,12 +1,13 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getAllRepliedProblems() {
+export default async function getAllRepliedProblems(token: string) {
   const url = new URL(`${apiBackUrl}/problems?status=Replied`);
 
   const response = await fetch(url.toString(), {
     method: "GET",
     headers: {
       Accept: "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 

@@ -31,6 +31,7 @@ export default async function getEvents({
 		url.searchParams.append('filter',filter);
 	}
 
+	console.log(url.toString());
 	const response = await fetch(url.toString(), {
 		method: "GET",
 		headers: {

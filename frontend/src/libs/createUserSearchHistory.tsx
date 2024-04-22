@@ -28,7 +28,7 @@ export default async function createUserSearchHistory(
             throw new Error(
                 `Failed to create search history: ${response.status} - ${errorData.message || "Unknown error"}`
             );
-        } console.log("Success To Create User");
+        } console.log("Success To Create Search History");
         return await response.json();
 
     } catch (error) {

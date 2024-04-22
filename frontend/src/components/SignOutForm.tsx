@@ -4,6 +4,7 @@ import { signOut, getSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import Image from "next/image";
 import LoadingLine from "./LoadingLine";
+import userLogout from "@/libs/userLogout";
 
 export default function SignOut() {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -12,14 +13,14 @@ export default function SignOut() {
   const handleSignOut = async () => {
     setIsLoading(true);
     const session = await getSession();
+    console.log(session);
     if (session) {
-      await signOut({ redirect: false });
-      router.push("/auth/login");
-      // setTimeout(() => {
-      //     window.location.reload();
-      // }, 1000);
+      await userLogout(session.user.token);
+      router.push("/auth/signin");
+      return;
+    } else {
+      router.push("/");
     }
-    router.push("/");
   };
 
   return (

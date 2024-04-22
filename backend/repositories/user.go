@@ -244,7 +244,7 @@ func (r *UserRepository) GetUserDataForEvents(userList []*models.Participate) (*
 			NumParticipant: v.NumParticipant,
 			PhoneNumber:    tmpUser.PhoneNumber,
 			Email:          tmpUser.Email,
-			BirthDate:      tmpUser.BirthDate.Format("2006/02/01"),
+			BirthDate:      utils.TimeToString(tmpUser.BirthDate),
 			Address:        tmpUser.Address,
 			District:       tmpUser.District,
 			Province:       tmpUser.Province,
