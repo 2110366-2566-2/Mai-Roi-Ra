@@ -3,7 +3,7 @@ import { apiBackUrl } from "../constants";
 export default async function createTransferToOrganizer(
     organizer_id: string,
     event_id: string,
-    // token: string
+    token: string
 ) {
     try {
         const jsonBody = JSON.stringify({
@@ -14,7 +14,7 @@ export default async function createTransferToOrganizer(
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },next: {tags: ['createTransferToOrganizer']},
             body: jsonBody,
         });

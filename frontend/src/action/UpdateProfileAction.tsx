@@ -10,9 +10,9 @@ export default async function UpdateProfileAction(
   address: string,
   district: string,
   province: string,
-  birthDate: string
+  birthDate: string,
+  token: string
 ) {
-
   try {
     console.log(firstName);
     const res = await updateProfile(
@@ -22,7 +22,8 @@ export default async function UpdateProfileAction(
       address,
       district,
       province,
-      birthDate
+      birthDate,
+      token
     );
     console.log("Update Booking successful (in Action)");
     console.log(res);
@@ -32,5 +33,5 @@ export default async function UpdateProfileAction(
   revalidatePath(`/editprofile`);
   revalidateTag(`profile`);
   revalidatePath("/profile");
-  redirect("/profile");  
+  redirect("/profile");
 }

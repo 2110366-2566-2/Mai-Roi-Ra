@@ -1,8 +1,3 @@
-// export {default} from 'next-auth/middleware'
-
-// export const config = {
-//     mathcher: ["/homepage/createvent","/editprofile","hompage/organizer"]
-// };
 import { NextRequest } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { JWT } from "next-auth/jwt";

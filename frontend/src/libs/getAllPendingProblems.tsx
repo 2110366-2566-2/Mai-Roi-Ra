@@ -1,12 +1,13 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getAllPendingProblems() {
+export default async function getAllPendingProblems(token: string) {
   const url = new URL(`${apiBackUrl}/problems?status=Pending`);
 
   const response = await fetch(url.toString(), {
     method: "GET",
     headers: {
       Accept: "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 

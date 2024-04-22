@@ -5,6 +5,10 @@ export default async function createEvent(formData:FormData, token:string) {
     try {
         console.log(formData);
 
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        
         const response = await fetch(`${apiBackUrl}/events/`, {
             method: "POST",
             headers: {

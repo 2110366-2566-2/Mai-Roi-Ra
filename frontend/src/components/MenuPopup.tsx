@@ -14,6 +14,7 @@ interface Props {
 
 const MenuPopup = ({isVisible,onClose} : Props) => {
     const session = useSession();
+    if (!session || !session.data?.user) return null
     const user = session.data?.user;
     const pathname = usePathname(); 
     const router = useRouter();
@@ -60,7 +61,7 @@ const MenuPopup = ({isVisible,onClose} : Props) => {
                              <div className="md:text-[30px] text-[15px] mt-[10px]">
                                 {
                                     session?
-                                     user?.first_name:
+                                     user?.username:
                                      "Guest"
                                 }
                              </div>
@@ -69,7 +70,7 @@ const MenuPopup = ({isVisible,onClose} : Props) => {
                                 session?
                                     <div className="text-gray-400 md:text-[15px] text-[12px]">
                                      {
-                                        user?.email == "" ? user.phone_number :
+                                        user?.email == "" ? "Phone number" :
                                         user?.email
                                      } 
                                     </div>

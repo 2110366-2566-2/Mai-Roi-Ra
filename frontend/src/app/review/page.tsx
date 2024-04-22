@@ -1,4 +1,4 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import ReviewEventItem from "@/components/ReviewEventItem";
 import getReviewEvents from "@/libs/getReviewEvents";
 import SearchOffIcon from '@mui/icons-material/SearchOff';
@@ -19,7 +19,11 @@ const ReviewPage = async () => {
         <div className="w-full h-screen">
             <div className="w-full lg:border-b lg:pt-[120px]"></div>
             <div className="w-full px-[20px]">
+<<<<<<< HEAD
                 { events.event_lists.length != 0 ?
+=======
+                { events.event_lists.length !== 0 ?
+>>>>>>> develop
                     <div className='py-[5px] md:mt-[15px] overflow-y-auto'>
                         {datas.map((eventItem:any) => (
                         <ReviewEventItem

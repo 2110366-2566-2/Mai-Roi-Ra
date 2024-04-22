@@ -1,4 +1,4 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import EventItem from '@/components/EventItem';
 import SearchBar from '@/components/SearchBar';
 import getEvents from '@/libs/getEvents';

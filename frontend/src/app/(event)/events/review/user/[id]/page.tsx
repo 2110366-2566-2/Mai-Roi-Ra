@@ -7,7 +7,7 @@ import CommentBox from "@/components/CommentBox";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import getReviewEventById from "@/libs/getReviewEventById";
 
 interface Props {

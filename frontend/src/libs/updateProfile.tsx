@@ -7,7 +7,8 @@ export default async function updateProfile(
   address: string,
   district: string,
   province: string,
-  birthDate: string
+  birthDate: string,
+  token: string
 ) {
   try {
     const jsonBody = JSON.stringify({
@@ -16,16 +17,14 @@ export default async function updateProfile(
       district: district,
       first_name: firstName,
       last_name: lastName,
-      phone_number: "0968800127",
       province: province,
       user_id: user_id,
-      user_image: "https://example.com/user1.jpg",
     });
     const response = await fetch(`${apiBackUrl}/users/${user_id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       next: { tags: ["updateProfile"] },
       body: jsonBody,
