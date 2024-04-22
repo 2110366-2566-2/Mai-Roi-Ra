@@ -25,7 +25,7 @@ export default function OAuthFirstRegister() {
   const router = useRouter();
   // const profile = await getProfile("550e8400-e29b-41d4-a716-446655440100");
 
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const [profile, setProfile] = useState<Props | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -84,23 +84,24 @@ export default function OAuthFirstRegister() {
             Please Enter your information.
           </div>
         </div>
-        {!loading ? <EditProfileForm
-          firstRegister={true}
-          firstNameProp={profile?.first_name || null }
-          lastNameProp={profile?.last_name || null }
-          addressProp={profile?.address || null }
-          districtProp={profile?.district || null }
-          provinceProp={profile?.province || null }
-          phoneNumberProp={profile?.phone_number || null }
-          emailProp={profile?.email || null }
-          birthDateProp={profile?.birth_date || null}
-          userId={session?.user?.user_id || null}
-          token={session?.user?.token || null}
-          user_image={profile?.user_image || null}
-        ></EditProfileForm>
-        :
-        <LoadingLine></LoadingLine>
-        }
+        {!loading ? (
+          <EditProfileForm
+            firstRegister={true}
+            firstNameProp={profile?.first_name || null}
+            lastNameProp={profile?.last_name || null}
+            addressProp={profile?.address || null}
+            districtProp={profile?.district || null}
+            provinceProp={profile?.province || null}
+            phoneNumberProp={profile?.phone_number || null}
+            emailProp={profile?.email || null}
+            birthDateProp={profile?.birth_date || null}
+            userId={session?.user?.user_id || null}
+            token={session?.user?.token || null}
+            user_image={profile?.user_image || null}
+          ></EditProfileForm>
+        ) : (
+          <LoadingLine></LoadingLine>
+        )}
       </div>
     </div>
   );
