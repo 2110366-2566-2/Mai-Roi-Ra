@@ -55,11 +55,11 @@ const CommentBox = ({
       console.error("Failed to fetch isReviewedEvent:", error);
     }
   };
-
-  useEffect(() => {
-    fetchIsReviewed();
-  }, []);
-
+  if (role == "USER") {
+    useEffect(() => {
+      fetchIsReviewed();
+    }, []);
+  }
   const [curr, setCurr] = useState(0);
 
   const router = useRouter();
@@ -365,7 +365,7 @@ const CommentBox = ({
             <div className="text-[20px]">Write your reviews</div>
           </button>
         )}
-        {isReviewed && (
+        {isReviewed && role === "USER" && (
           <button
             // onClick={openWriteReviewModal}
             className="text-gray-800 flex flex-row justify-center items-center bg-gray-200 cursor-default py-3 px-2 rounded-2xl space-x-2 w-[70%]"
