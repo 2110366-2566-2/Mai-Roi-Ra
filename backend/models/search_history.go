@@ -5,10 +5,10 @@ import (
 )
 
 type SearchHistory struct {
-	SearchID        string    `gorm:"column:search_id;primaryKey" json:"search_id"`
-	UserID          string    `gorm:"column:user_id;not null" json:"user_id" binding:"required"`
-	SearchName      string    `gorm:"column:search_name;not null" json:"search_name" binding:"required"`
-	SearchTimestamp time.Time `gorm:"column:search_timestamp;not null;autoCreateTime" json:"search_timestamp"`
+	SearchID        string    `gorm:"column:search_id;primaryKey"`
+	UserID          string    `gorm:"column:user_id;not null"`
+	SearchName      string    `gorm:"column:search_name;not null"`
+	SearchTimestamp time.Time `gorm:"column:search_timestamp;not null;autoCreateTime"`
 }
 
 func (SearchHistory) TableName() string {

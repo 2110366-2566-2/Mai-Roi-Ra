@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import AdminHomepage from "@/components/AdminHomepage";
 import getWaitingEvents from "@/libs/getWaitingEvents";
 import getApprovedEvents from "@/libs/getApprovedEvents";
@@ -20,6 +20,8 @@ export default async function Homepage({
   const search = searchParams.search ?? "";
 
   const session = await getServerSession(authOptions);
+
+  if (!session || !session.user.token) return null
 
   const waitingEvents = await getWaitingEvents(session!.user.token);
   const waitingEventsDatas = waitingEvents.event_lists;

@@ -20,18 +20,18 @@ import BackupIcon from "@mui/icons-material/Backup";
 import uploadProfileImage from "@/libs/uploadProfileImage";
 
 interface Props {
-  firstRegister: boolean;
-  firstNameProp: string;
-  lastNameProp: string;
-  addressProp: string;
-  districtProp: string;
-  provinceProp: string;
-  phoneNumberProp: string;
-  emailProp: string;
-  birthDateProp: string;
-  userId: string;
-  token: string;
-  user_image: string;
+  firstRegister: boolean | null;
+  firstNameProp: string | null;
+  lastNameProp: string | null;
+  addressProp: string | null;
+  districtProp: string | null;
+  provinceProp: string | null;
+  phoneNumberProp: string | null;
+  emailProp: string | null;
+  birthDateProp: string | null;
+  userId: string | null;
+  token: string | null;
+  user_image: string | null;
 }
 
 export default function EditProfileForm({
@@ -61,7 +61,7 @@ export default function EditProfileForm({
   const [birthDate, setBirthDate] = useState<Dayjs | null>(initialBirthDate);
   const [role, setRole] = useState("User");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>(user_image);
+  const [preview, setPreview] = useState<string | null>(user_image);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -70,7 +70,7 @@ export default function EditProfileForm({
 
   const triggerFileInput = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click();
+      fileInputRef.current?.click();
     }
   };
 
@@ -134,9 +134,11 @@ export default function EditProfileForm({
       try {
         if (selectedImage) {
           const formData = new FormData();
-          formData.append("user_id", userId);
+          if (userId) {
+            formData.append("user_id", userId);
+          }
           formData.append("user_image", selectedImage);
-          await uploadProfileImage(formData, token);
+          await uploadProfileImage(formData, token || "");
         }
 
         setAllInputsFilled(true);
@@ -146,14 +148,14 @@ export default function EditProfileForm({
         }
 
         await updateProfileAction(
-          userId,
+          userId || "",
           firstName,
           lastName,
           address,
           district,
           province,
           formattedBirthDate,
-          token
+          token || ""
         );
       } catch (err) {
         setError("Update error. Server Failed ?");
@@ -173,7 +175,7 @@ export default function EditProfileForm({
     console.log(role, userId, username);
 
     try {
-      await updateRole(role, userId, username);
+      await updateRole(role, userId || "", username);
       // handle success, e.g. show a success message or redirect
       await signOut({ redirect: false });
       alert("Please login again");
@@ -198,7 +200,7 @@ export default function EditProfileForm({
                 type="text"
                 id="firstname"
                 name="firstname"
-                value={firstName}
+                value={firstName || ""}
                 onChange={handleFirstNameChange}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="First name"
@@ -214,7 +216,7 @@ export default function EditProfileForm({
                 type="text"
                 id="lastname"
                 name="lastname"
-                value={lastName}
+                value={lastName || ""}
                 onChange={handleLastNameChange}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Last name"
@@ -231,7 +233,7 @@ export default function EditProfileForm({
               type="text"
               id="address"
               name="address"
-              value={address}
+              value={address || ""}
               onChange={handleAddressChange}
               className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
               placeholder="Address"
@@ -248,7 +250,7 @@ export default function EditProfileForm({
                 type="text"
                 id="district"
                 name="district"
-                value={district}
+                value={district || ""}
                 onChange={handleDistrictChange}
                 className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="District"
@@ -264,7 +266,7 @@ export default function EditProfileForm({
                 type="text"
                 id="province"
                 name="province"
-                value={province}
+                value={province || "" }
                 onChange={handleProvinceChange}
                 className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Province"
@@ -297,7 +299,7 @@ export default function EditProfileForm({
                 type="text"
                 id="email"
                 name="email"
-                value={email}
+                value={email || ""}
                 className="w-full px-4 py-4 border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Email"
                 readOnly

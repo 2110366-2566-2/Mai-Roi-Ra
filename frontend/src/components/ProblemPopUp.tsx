@@ -12,7 +12,7 @@ interface Props {
     reply: string;
 }
 
-const ProblemPopUp = ({ isVisible, onClose, id, problem , description,reply}) => {
+const ProblemPopUp = ({ isVisible, onClose, id, problem , description,reply}:{isVisible:boolean, onClose:any, id:string, problem:any, description:any, reply:any}) => {
     const [error, setError] = useState(0);
     const [iconSize, setIconSize] = useState('100px');
 

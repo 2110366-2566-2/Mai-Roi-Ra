@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	container "github.com/2110366-2566-2/Mai-Roi-Ra/backend/container"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/routers"
-	
 	//uncomment to start scheduler
 	//"github.com/2110366-2566-2/Mai-Roi-Ra/backend/scheduler"
 )
@@ -30,14 +31,23 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return
+	}
+
 	c := container.NewContainer()
 
 	r := routers.SetupRouter(c.Container)
 
 	//uncomment to start scheduler
 	//go scheduler.StartReminderEmailJob()
-
-	if err := r.Run(":8080"); err != nil {
+	
+	port := fmt.Sprintf(":%s", cfg.App.AppPort)
+	if err := r.Run(port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }

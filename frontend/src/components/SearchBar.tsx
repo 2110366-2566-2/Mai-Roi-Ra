@@ -140,13 +140,13 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
 
                     {focus && (
                         <div className="absolute top-full w-full bg-white shadow-lg max-h-60 overflow-auto z-10">
-                            {searchHistory.map((item, index) => (
+                            {searchHistory.map((item : any , index) => (
                                 <div
                                     key={index}
                                     className={`px-4 lg:py-3 py-2 text-black flex-row items-end bg-white hover:bg-slate-100`}
                                     onClick={() => {
                                         setFocus(false);
-                                        router.push(`/homepage?search=${item.search_name}`);}}>
+                                        router.push(`/homepage?search=${item?.search_name}`);}}>
                                     <div className="flex justify-start flex-row w-[70%] items-end space-x-3">
                                         <AccessTimeIcon className="lg:text-[20px] md:text-[18px] text-[15px] text-gray-500"/>
 
@@ -171,7 +171,7 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
                                 </div>
                                 
                                 <div className="relative mx-1">
-                                    <input type="number" value={pageSearch} onChange={(e) => setPageSearch(e.target.value)} min={1} max={last_page}
+                                    <input type="number" value={pageSearch} onChange={(e) => setPageSearch(Number(e.target.value))} min={1} max={last_page}
                                     className={`w-fit border-[1px] pr-[2px] border-black indent-1 rounded-md ${styles.hideSpinners}`}  onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             if (pageSearch <= last_page && pageSearch > 0){

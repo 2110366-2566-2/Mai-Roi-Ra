@@ -4,14 +4,20 @@ import Modal from './Modal';
 import { useState, useEffect } from "react";
 import getProfile from "@/libs/getProfile";
 
-export default function ParticipantProfileModal({ profile, isProfileModalOpen, closeProfileModal}: { profile: any, isProfileModalOpen:boolean, closeProfileModal:Function }) {
+export default function ParticipantProfileModal({ profile, isProfileModalOpen, closeProfileModal}: { profile: any, isProfileModalOpen:boolean, closeProfileModal:() => void }) {
 
     return (
         <Modal isOpen={isProfileModalOpen}
-                closeModal={closeProfileModal as () => void}
+                closeModal={closeProfileModal}
                 modalsize='!p-0'
                 MarginTop='!mt-0'
-                isNotRound={true}>
+                isNotRound={true}
+                allowOuterclose={null}
+                canScroll={null}
+                title={null}
+                footerContent={null}
+                style={null}
+                >
                 <div>
                 <button onClick={closeProfileModal} className="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-800 z-50">
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,15 +49,18 @@ export default function ParticipantProfileModal({ profile, isProfileModalOpen, c
                     </div>
                     <div className="flex">
                         <ProfileUserInformation
-                            firstNameProp={profile?.first_name}
-                            lastNameProp={profile?.last_name}
-                            addressProp={profile?.address}
-                            districtProp={profile?.district}
-                            provinceProp={profile?.province}
-                            phoneNumberProp={profile?.phone_number}
-                            emailProp={profile?.email}
-                            birthDateProp={profile?.birth_date}
-                            usernameProp={profile?.username}
+                            firstNameProp={profile?.first_name || "First Name"}
+                            lastNameProp={profile?.last_name || "Last Name"}
+                            addressProp={profile?.address || "Address"}
+                            districtProp={profile?.district || "District"}
+                            provinceProp={profile?.province || "Province"}
+                            phoneNumberProp={profile?.phone_number || "Phone Number"}
+                            emailProp={profile?.email || "Email"}
+                            birthDateProp={profile?.birth_date || "Birth Date"}
+                            usernameProp={profile?.username || "Username"}
+                            user_id={null}
+                            emailIsVerified={false}
+                            token={""}
                         ></ProfileUserInformation>
 
                     </div>

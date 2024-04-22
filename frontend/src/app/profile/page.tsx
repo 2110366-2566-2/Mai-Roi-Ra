@@ -11,7 +11,7 @@ import getMyUserEvents from "@/libs/getMyUserEvents";
 import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/auth";
 import EventsList from "@/components/EventsList";
 import isEmailVerified from "@/libs/isEmailVerified";
 import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";
@@ -44,8 +44,8 @@ export default async function Profile() {
   }
 
   let emailIsVerified = false;
-  if (profile.email) {
-    const response = await isEmailVerified(profile.email, session.user.token);
+  if (profile?.email) {
+    const response = await isEmailVerified(profile?.email, session.user.token);
     emailIsVerified = response ? true : false;
   }
 
@@ -69,8 +69,8 @@ export default async function Profile() {
                 <Image
                   className="w-full h-full"
                   src={
-                    profile.user_image
-                      ? profile.user_image
+                    profile?.user_image
+                      ? profile?.user_image
                       : "/img/profile_picture.png"
                   }
                   alt="Profile Image"
@@ -82,21 +82,21 @@ export default async function Profile() {
             </div>
             <div className="flex">
               <ProfileUserInformation
-                firstNameProp={profile.first_name}
-                lastNameProp={profile.last_name}
-                addressProp={profile.address}
-                districtProp={profile.district}
-                provinceProp={profile.province}
-                phoneNumberProp={profile.phone_number}
-                emailProp={profile.email}
-                birthDateProp={profile.birth_date}
-                usernameProp={profile.username}
+                firstNameProp={profile?.first_name}
+                lastNameProp={profile?.last_name}
+                addressProp={profile?.address}
+                districtProp={profile?.district}
+                provinceProp={profile?.province}
+                phoneNumberProp={profile?.phone_number}
+                emailProp={profile?.email}
+                birthDateProp={profile?.birth_date}
+                usernameProp={profile?.username}
                 user_id={session.user.user_id}
                 emailIsVerified={emailIsVerified}
                 token={session.user.token}
               ></ProfileUserInformation>
               <EditProfileButton
-                isEnableNotificationProp={profile.is_enable_notification}
+                isEnableNotificationProp={profile?.is_enable_notification}
                 userIDProp={session.user.user_id}
                 token={session.user.token}
               ></EditProfileButton>

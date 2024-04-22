@@ -2,7 +2,7 @@
 import React, {useState} from "react";
 import Image from 'next/image';
 
-const FAQAccordion = ({ title, answer }) => {
+const FAQAccordion = ({ title, answer }: {title: string, answer: string}) => {
   const [accordionOpen, setAccordionOpen] = useState(false);
 
   return (

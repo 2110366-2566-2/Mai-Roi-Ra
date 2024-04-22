@@ -2,83 +2,77 @@ basePath: /api/v1
 definitions:
   models.Response:
     properties:
-      created_at:
+      createdAt:
         type: string
       detail:
         type: string
-      organizer_id:
+      organizerId:
         type: string
-      post_id:
+      postId:
         type: string
-      updated_at:
+      updatedAt:
         type: string
-    required:
-    - organizer_id
-    - post_id
     type: object
   models.Transaction:
     properties:
-      created_at:
+      createdAt:
         type: string
-      event_id:
+      eventID:
         type: string
       status:
         type: string
-      transaction_amount:
+      transactionAmount:
         type: number
-      transaction_date:
+      transactionDate:
         type: string
-      transaction_id:
+      transactionID:
         type: string
-      transaction_way:
+      transactionWay:
         type: string
-      updated_at:
+      updatedAt:
         type: string
-      user_id:
+      userID:
         type: string
-    required:
-    - event_id
-    - status
-    - transaction_amount
-    - user_id
     type: object
   models.User:
     properties:
       address:
         type: string
-      banner_image:
+      bannerImage:
         type: string
-      birth_date:
+      birthDate:
         type: string
-      created_at:
+      createdAt:
         type: string
       district:
         type: string
       email:
         type: string
-      first_name:
+      firstName:
         type: string
-      is_enable_notification:
+      isEnableNotification:
         type: boolean
-      is_verified:
+      isVerified:
         type: boolean
-      last_name:
+      lastName:
         type: string
-      payment_gateway_customer_id:
+      password:
         type: string
-      phone_number:
+      paymentGatewayCustomerID:
+        type: string
+      phoneNumber:
         type: string
       province:
         type: string
-      register_type:
+      registerType:
         type: string
       role:
         type: string
-      updated_at:
+      updatedAt:
         type: string
-      user_id:
+      userID:
         type: string
-      user_image:
+      userImage:
         type: string
       username:
         type: string
@@ -110,10 +104,10 @@ definitions:
       user_id:
         type: string
     required:
-    - event_id
-    - payment_type
-    - transaction_amount
-    - user_id
+      - event_id
+      - payment_type
+      - transaction_amount
+      - user_id
     type: object
   structure.CreatePostRequest:
     properties:
@@ -133,9 +127,9 @@ definitions:
         example: 9e5d846e-8f41-4a6c-aa48-ecabdf4f0ac3
         type: string
     required:
-    - caption
-    - event_id
-    - user_id
+      - caption
+      - event_id
+      - user_id
     type: object
   structure.CreatePostResponse:
     properties:
@@ -143,7 +137,7 @@ definitions:
         example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
         type: string
     required:
-    - post_id
+      - post_id
     type: object
   structure.CreateProblemRequest:
     properties:
@@ -154,9 +148,9 @@ definitions:
       user_id:
         type: string
     required:
-    - description
-    - problem
-    - user_id
+      - description
+      - problem
+      - user_id
     type: object
   structure.CreateProblemResponse:
     properties:
@@ -178,8 +172,8 @@ definitions:
       refund_reason:
         type: string
     required:
-    - event_id
-    - refund_reason
+      - event_id
+      - refund_reason
     type: object
   structure.CreateRefundResponseList:
     properties:
@@ -200,8 +194,8 @@ definitions:
         example: 1v6v1i1m0z0r1s1c2s1x3w3t4x1m1k1v6
         type: string
     required:
-    - organizer_id
-    - post_id
+      - organizer_id
+      - post_id
     type: object
   structure.CreateUserRequest:
     properties:
@@ -226,14 +220,14 @@ definitions:
       username:
         type: string
     required:
-    - address
-    - district
-    - first_name
-    - last_name
-    - password
-    - province
-    - role
-    - username
+      - address
+      - district
+      - first_name
+      - last_name
+      - password
+      - province
+      - role
+      - username
     type: object
   structure.CreateUserResponse:
     properties:
@@ -242,14 +236,14 @@ definitions:
       user_id:
         type: string
     required:
-    - user_id
+      - user_id
     type: object
   structure.GetAllUsersResponse:
     properties:
       users:
         description: FIXME should not use struct from models
         items:
-          $ref: '#/definitions/models.User'
+          $ref: "#/definitions/models.User"
         type: array
     type: object
   structure.GetEndedEventList:
@@ -279,7 +273,7 @@ definitions:
     properties:
       event_lists:
         items:
-          $ref: '#/definitions/structure.GetEndedEventList'
+          $ref: "#/definitions/structure.GetEndedEventList"
         type: array
     type: object
   structure.GetEventDataByIdResponse:
@@ -290,7 +284,7 @@ definitions:
         type: string
       announcement_list:
         items:
-          $ref: '#/definitions/structure.Announcement'
+          $ref: "#/definitions/structure.Announcement"
         type: array
       city:
         type: string
@@ -354,7 +348,7 @@ definitions:
     properties:
       event_lists:
         items:
-          $ref: '#/definitions/structure.GetEventList'
+          $ref: "#/definitions/structure.GetEventList"
         type: array
       total_events:
         type: integer
@@ -376,14 +370,14 @@ definitions:
     properties:
       participant_list:
         items:
-          $ref: '#/definitions/structure.Participant'
+          $ref: "#/definitions/structure.Participant"
         type: array
     type: object
   structure.GetParticipatedEventListsResponse:
     properties:
       event_list:
         items:
-          $ref: '#/definitions/structure.ParticipatedEvent'
+          $ref: "#/definitions/structure.ParticipatedEvent"
         type: array
     type: object
   structure.GetPaymentIntentByIdResponse:
@@ -443,7 +437,7 @@ definitions:
         type: integer
       post_lists:
         items:
-          $ref: '#/definitions/structure.PostList'
+          $ref: "#/definitions/structure.PostList"
         type: array
       three_rate:
         type: integer
@@ -469,14 +463,14 @@ definitions:
     properties:
       problem_lists:
         items:
-          $ref: '#/definitions/structure.ProblemList'
+          $ref: "#/definitions/structure.ProblemList"
         type: array
     type: object
   structure.GetSearchHistoriesResponse:
     properties:
       search_history:
         items:
-          $ref: '#/definitions/structure.SearchHistory'
+          $ref: "#/definitions/structure.SearchHistory"
         type: array
     type: object
   structure.IsPaidResponse:
@@ -484,14 +478,14 @@ definitions:
       is_paid:
         type: boolean
     required:
-    - is_paid
+      - is_paid
     type: object
   structure.IsRegisteredResponse:
     properties:
       is_registered:
         type: boolean
     required:
-    - is_registered
+      - is_registered
     type: object
   structure.IsReviewedResponse:
     properties:
@@ -570,14 +564,14 @@ definitions:
       username:
         type: string
     required:
-    - address
-    - birth_date
-    - district
-    - first_name
-    - last_name
-    - num_participant
-    - province
-    - username
+      - address
+      - birth_date
+      - district
+      - first_name
+      - last_name
+      - num_participant
+      - province
+      - username
     type: object
   structure.ParticipatedEvent:
     properties:
@@ -596,11 +590,11 @@ definitions:
       start_date:
         type: string
     required:
-    - description
-    - end_date
-    - event_name
-    - location_name
-    - start_date
+      - description
+      - end_date
+      - event_name
+      - location_name
+      - start_date
     type: object
   structure.PostList:
     properties:
@@ -655,10 +649,10 @@ definitions:
       user_id:
         type: string
     required:
-    - amount
-    - event_id
-    - num_participant
-    - user_id
+      - amount
+      - event_id
+      - num_participant
+      - user_id
     type: object
   structure.SearchHistory:
     properties:
@@ -667,8 +661,8 @@ definitions:
       user_id:
         type: string
     required:
-    - search_name
-    - user_id
+      - search_name
+      - user_id
     type: object
   structure.SendAnnouncementRequest:
     properties:
@@ -761,8 +755,8 @@ definitions:
         description: This is the system user ID of the organizer
         type: string
     required:
-    - event_id
-    - organizer_id
+      - event_id
+      - organizer_id
     type: object
   structure.UpdateEventRequest:
     properties:
@@ -789,16 +783,16 @@ definitions:
       status:
         type: string
     required:
-    - activities
-    - city
-    - description
-    - district
-    - end_date
-    - event_name
-    - location_name
-    - participant_fee
-    - start_date
-    - status
+      - activities
+      - city
+      - description
+      - district
+      - end_date
+      - event_name
+      - location_name
+      - participant_fee
+      - start_date
+      - status
     type: object
   structure.UpdateProblemRequest:
     properties:
@@ -815,7 +809,7 @@ definitions:
       status:
         type: string
     required:
-    - problem_id
+      - problem_id
     type: object
   structure.UpdateUserInformationRequest:
     properties:
@@ -834,13 +828,13 @@ definitions:
       user_id:
         type: string
     required:
-    - address
-    - birth_date
-    - district
-    - first_name
-    - last_name
-    - province
-    - user_id
+      - address
+      - birth_date
+      - district
+      - first_name
+      - last_name
+      - province
+      - user_id
     type: object
   structure.UpdateUserRoleRequest:
     properties:
@@ -851,9 +845,9 @@ definitions:
       username:
         type: string
     required:
-    - role
-    - user_id
-    - username
+      - role
+      - user_id
+      - username
     type: object
   structure.VerifyOTPRequest:
     properties:
@@ -887,125 +881,125 @@ paths:
   /announcements:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Sends an announcement email to the specified recipients.
       parameters:
-      - description: Send Announcement Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendAnnouncementRequest'
+        - description: Send Announcement Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendAnnouncementRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Announcement successfully sent
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in sending the announcement
           schema:
             type: object
       summary: Send Announcement
       tags:
-      - announcements
+        - announcements
   /announcements/cancelled_email:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Sends an Cancelled email to the specified recipients.
       parameters:
-      - description: Send CancelledEmail Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendCancelledEmailRequest'
+        - description: Send CancelledEmail Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendCancelledEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: CancelledEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in sending the CancelledEmail
           schema:
             type: object
       summary: Send CancelledEmail
       tags:
-      - announcements
+        - announcements
   /announcements/registered_email:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Sends an Registered email to the specified recipients.
       parameters:
-      - description: Send RegisteredEmail Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendRegisteredEmailRequest'
+        - description: Send RegisteredEmail Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendRegisteredEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: RegisteredEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in sending the RegisteredEmail
           schema:
             type: object
       summary: Send RegisteredEmail
       tags:
-      - announcements
+        - announcements
   /announcements/reminder_email:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Sends an Reminder email to the specified recipients.
       parameters:
-      - description: Send ReminderEmail Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendReminderEmailRequest'
+        - description: Send ReminderEmail Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendReminderEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: ReminderEmail successfully sent
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in sending the ReminderEmail
           schema:
             type: object
       summary: Send ReminderEmail
       tags:
-      - announcements
+        - announcements
   /auth/{provider}/login:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of all participated events of the user
       parameters:
-      - description: provider
-        in: path
-        name: provider
-        required: true
-        type: string
+        - description: provider
+          in: path
+          name: provider
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateUserResponse'
+            $ref: "#/definitions/structure.CreateUserResponse"
         "400":
           description: Bad Request
           schema:
@@ -1016,36 +1010,36 @@ paths:
             type: object
       summary: LoginGoogle
       tags:
-      - user
+        - user
   /auth/users:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of users
       parameters:
-      - description: Filter query
-        in: query
-        name: filter
-        type: string
-      - description: Sort order
-        in: query
-        name: sort
-        type: string
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Items per page
-        in: query
-        name: limit
-        type: integer
+        - description: Filter query
+          in: query
+          name: filter
+          type: string
+        - description: Sort order
+          in: query
+          name: sort
+          type: string
+        - description: Page number
+          in: query
+          name: page
+          type: integer
+        - description: Items per page
+          in: query
+          name: limit
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetAllUsersResponse'
+            $ref: "#/definitions/structure.GetAllUsersResponse"
         "400":
           description: Bad Request
           schema:
@@ -1056,44 +1050,44 @@ paths:
             type: object
       summary: GetAllUsers
       tags:
-      - users
+        - users
   /events:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of events
       parameters:
-      - description: For My events
-        in: query
-        name: organizer_id
-        type: string
-      - description: Status query. i.e. Approved
-        in: query
-        name: filter
-        type: string
-      - description: Sort order. i.e. start_date ASC
-        in: query
-        name: sort
-        type: string
-      - description: Search i.e. Hello
-        in: query
-        name: search
-        type: string
-      - description: offset i.e. 0
-        in: query
-        name: offset
-        type: integer
-      - description: Items per page i.e. 10
-        in: query
-        name: limit
-        type: integer
+        - description: For My events
+          in: query
+          name: organizer_id
+          type: string
+        - description: Status query. i.e. Approved
+          in: query
+          name: filter
+          type: string
+        - description: Sort order. i.e. start_date ASC
+          in: query
+          name: sort
+          type: string
+        - description: Search i.e. Hello
+          in: query
+          name: search
+          type: string
+        - description: offset i.e. 0
+          in: query
+          name: offset
+          type: integer
+        - description: Items per page i.e. 10
+          in: query
+          name: limit
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetEventListsResponse'
+            $ref: "#/definitions/structure.GetEventListsResponse"
         "400":
           description: Bad Request
           schema:
@@ -1104,74 +1098,74 @@ paths:
             type: object
       summary: GetEventLists
       tags:
-      - events
+        - events
     post:
       consumes:
-      - multipart/form-data
+        - multipart/form-data
       description: Create a new event with the provided details.
       parameters:
-      - description: Name of the event
-        in: formData
-        name: event_name
-        required: true
-        type: string
-      - description: Activity of the event
-        in: formData
-        name: activities
-        required: true
-        type: string
-      - description: City of the event
-        in: formData
-        name: city
-        required: true
-        type: string
-      - description: description for the event
-        in: formData
-        name: description
-        required: true
-        type: string
-      - description: district of the event
-        in: formData
-        name: district
-        required: true
-        type: string
-      - description: start_date
-        in: formData
-        name: start_date
-        required: true
-        type: string
-      - description: end date
-        in: formData
-        name: end_date
-        required: true
-        type: string
-      - description: Event image
-        in: formData
-        name: event_image
-        required: true
-        type: file
-      - description: location name
-        in: formData
-        name: location_name
-        required: true
-        type: string
-      - description: organizer_id
-        in: formData
-        name: organizer_id
-        required: true
-        type: string
-      - description: participant fee
-        in: formData
-        name: participant_fee
-        required: true
-        type: string
+        - description: Name of the event
+          in: formData
+          name: event_name
+          required: true
+          type: string
+        - description: Activity of the event
+          in: formData
+          name: activities
+          required: true
+          type: string
+        - description: City of the event
+          in: formData
+          name: city
+          required: true
+          type: string
+        - description: description for the event
+          in: formData
+          name: description
+          required: true
+          type: string
+        - description: district of the event
+          in: formData
+          name: district
+          required: true
+          type: string
+        - description: start_date
+          in: formData
+          name: start_date
+          required: true
+          type: string
+        - description: end date
+          in: formData
+          name: end_date
+          required: true
+          type: string
+        - description: Event image
+          in: formData
+          name: event_image
+          required: true
+          type: file
+        - description: location name
+          in: formData
+          name: location_name
+          required: true
+          type: string
+        - description: organizer_id
+          in: formData
+          name: organizer_id
+          required: true
+          type: string
+        - description: participant fee
+          in: formData
+          name: participant_fee
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateEventResponse'
+            $ref: "#/definitions/structure.CreateEventResponse"
         "400":
           description: Bad Request
           schema:
@@ -1182,20 +1176,20 @@ paths:
             type: object
       summary: Create new event
       tags:
-      - events
+        - events
   /events/{event_id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete an event with the specified ID.
       parameters:
-      - description: Event ID
-        in: path
-        name: event_id
-        required: true
-        type: string
+        - description: Event ID
+          in: path
+          name: event_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -1211,24 +1205,24 @@ paths:
             type: object
       summary: Delete event by ID
       tags:
-      - events
+        - events
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a test message
       parameters:
-      - description: Event ID
-        in: path
-        name: event_id
-        required: true
-        type: string
+        - description: Event ID
+          in: path
+          name: event_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetEventDataByIdResponse'
+            $ref: "#/definitions/structure.GetEventDataByIdResponse"
         "400":
           description: Bad Request
           schema:
@@ -1239,25 +1233,25 @@ paths:
             type: object
       summary: GetEventDataById
       tags:
-      - events
+        - events
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update an existing event with the provided details.
       parameters:
-      - description: Create Event Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.UpdateEventRequest'
+        - description: Create Event Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.UpdateEventRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1268,34 +1262,34 @@ paths:
             type: object
       summary: Update existing event
       tags:
-      - events
+        - events
   /events/{event_id}/verify:
     put:
       consumes:
-      - application/json
+        - application/json
       description: Verify an Event
       parameters:
-      - description: Event ID
-        in: path
-        name: event_id
-        required: true
-        type: string
-      - description: Status
-        in: query
-        name: status
-        required: true
-        type: string
-      - description: Admin ID
-        in: query
-        name: admin_id
-        type: string
+        - description: Event ID
+          in: path
+          name: event_id
+          required: true
+          type: string
+        - description: Status
+          in: query
+          name: status
+          required: true
+          type: string
+        - description: Admin ID
+          in: query
+          name: admin_id
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1306,25 +1300,25 @@ paths:
             type: object
       summary: VerifyEvent
       tags:
-      - events
+        - events
   /events/end/{user_id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of events that are ended by userid
       parameters:
-      - description: User ID
-        in: path
-        name: user_id
-        required: true
-        type: string
+        - description: User ID
+          in: path
+          name: user_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetEndedEventListsResponse'
+            $ref: "#/definitions/structure.GetEndedEventListsResponse"
         "400":
           description: Bad Request
           schema:
@@ -1335,33 +1329,33 @@ paths:
             type: object
       summary: GetEndedEventLists
       tags:
-      - events
+        - events
   /events/participant:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of all participant in the events
       parameters:
-      - description: event_id
-        in: query
-        name: event_id
-        required: true
-        type: string
-      - description: offset i.e. 0
-        in: query
-        name: offset
-        type: integer
-      - description: Items per page i.e. 10
-        in: query
-        name: limit
-        type: integer
+        - description: event_id
+          in: query
+          name: event_id
+          required: true
+          type: string
+        - description: offset i.e. 0
+          in: query
+          name: offset
+          type: integer
+        - description: Items per page i.e. 10
+          in: query
+          name: limit
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetParticipantListsResponse'
+            $ref: "#/definitions/structure.GetParticipantListsResponse"
         "400":
           description: Bad Request
           schema:
@@ -1372,30 +1366,30 @@ paths:
             type: object
       summary: GetParticipantLists
       tags:
-      - events
+        - events
   /events/upload/{event_id}:
     put:
       consumes:
-      - multipart/form-data
+        - multipart/form-data
       description: Update an existing event with the provided details.
       parameters:
-      - description: Event Id
-        in: path
-        name: event_id
-        required: true
-        type: string
-      - description: Event image
-        in: formData
-        name: event_image
-        required: true
-        type: file
+        - description: Event Id
+          in: path
+          name: event_id
+          required: true
+          type: string
+        - description: Event image
+          in: formData
+          name: event_image
+          required: true
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1406,25 +1400,25 @@ paths:
             type: object
       summary: Update existing event's image
       tags:
-      - events
+        - events
   /locations/{location_id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get location by id
       parameters:
-      - description: Location ID
-        in: path
-        name: location_id
-        required: true
-        type: string
+        - description: Location ID
+          in: path
+          name: location_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetLocationByIdResponse'
+            $ref: "#/definitions/structure.GetLocationByIdResponse"
         "400":
           description: Bad Request
           schema:
@@ -1435,26 +1429,26 @@ paths:
             type: object
       summary: GetLocationById
       tags:
-      - locations
+        - locations
   /login:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Logs in a user by their email, phone number, and password.
       parameters:
-      - description: Log in a user
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.LoginUserRequest'
+        - description: Log in a user
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.LoginUserRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.LoginUserResponse'
+            $ref: "#/definitions/structure.LoginUserResponse"
         "400":
           description: Bad Request
           schema:
@@ -1465,26 +1459,26 @@ paths:
             type: object
       summary: Log in a user
       tags:
-      - users
+        - users
   /loginemail:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Logs in a user by their email and password.
       parameters:
-      - description: Log in a user with Email
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.LoginUserEmailRequest'
+        - description: Log in a user with Email
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.LoginUserEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "400":
           description: Bad Request
           schema:
@@ -1495,26 +1489,26 @@ paths:
             type: object
       summary: Log in a user with email
       tags:
-      - users
+        - users
   /loginphone:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Logs in a user by their phone number and password.
       parameters:
-      - description: Log in a user with Phone
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.LoginUserPhoneRequest'
+        - description: Log in a user with Phone
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.LoginUserPhoneRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "400":
           description: Bad Request
           schema:
@@ -1525,20 +1519,21 @@ paths:
             type: object
       summary: Log in a user with phone
       tags:
-      - users
+        - users
   /logout:
     post:
       consumes:
-      - application/json
-      description: Logs out a user by invalidating the session token associated with
+        - application/json
+      description:
+        Logs out a user by invalidating the session token associated with
         the uid.
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Confirms the user has been logged out.
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Returns an error if logout fails.
           schema:
@@ -1547,30 +1542,30 @@ paths:
             type: object
       summary: Log out a user
       tags:
-      - users
+        - users
   /participate/is_registered:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Determine that whether the user has registered in this events
       parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        required: true
-        type: string
-      - description: event_id
-        in: query
-        name: event_id
-        required: true
-        type: string
+        - description: user_id
+          in: query
+          name: user_id
+          required: true
+          type: string
+        - description: event_id
+          in: query
+          name: event_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.IsRegisteredResponse'
+            $ref: "#/definitions/structure.IsRegisteredResponse"
         "400":
           description: Bad Request
           schema:
@@ -1581,26 +1576,26 @@ paths:
             type: object
       summary: IsRegistered
       tags:
-      - participates
+        - participates
   /posts:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create a new post with the provided details
       parameters:
-      - description: CreatePost Request (rating_score must be integer between 1-5).
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.CreatePostRequest'
+        - description: CreatePost Request (rating_score must be integer between 1-5).
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.CreatePostRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreatePostResponse'
+            $ref: "#/definitions/structure.CreatePostResponse"
         "400":
           description: Bad Request
           schema:
@@ -1611,25 +1606,25 @@ paths:
             type: object
       summary: Create a new post
       tags:
-      - posts
+        - posts
   /posts/{post_id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete a post with the specified ID.
       parameters:
-      - description: Post ID
-        in: path
-        name: post_id
-        required: true
-        type: string
+        - description: Post ID
+          in: path
+          name: post_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1640,24 +1635,24 @@ paths:
             type: object
       summary: Delete post by ID
       tags:
-      - posts
+        - posts
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of a specific post by its ID.
       parameters:
-      - description: Post ID
-        in: path
-        name: post_id
-        required: true
-        type: string
+        - description: Post ID
+          in: path
+          name: post_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetPostByIdResponse'
+            $ref: "#/definitions/structure.GetPostByIdResponse"
         "400":
           description: Bad Request
           schema:
@@ -1668,24 +1663,24 @@ paths:
             type: object
       summary: Get post detail
       tags:
-      - posts
+        - posts
   /posts/events/{event_id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of posts by EventId.
       parameters:
-      - description: event_id
-        in: query
-        name: event_id
-        type: string
+        - description: event_id
+          in: query
+          name: event_id
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetPostListsByEventIdResponse'
+            $ref: "#/definitions/structure.GetPostListsByEventIdResponse"
         "400":
           description: Bad Request
           schema:
@@ -1696,30 +1691,30 @@ paths:
             type: object
       summary: Get list of posts by EventId
       tags:
-      - posts
+        - posts
   /posts/is_reviewed:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Determine that whether the user has reviewed in this events
       parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        required: true
-        type: string
-      - description: event_id
-        in: query
-        name: event_id
-        required: true
-        type: string
+        - description: user_id
+          in: query
+          name: user_id
+          required: true
+          type: string
+        - description: event_id
+          in: query
+          name: event_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.IsReviewedResponse'
+            $ref: "#/definitions/structure.IsReviewedResponse"
         "400":
           description: Bad Request
           schema:
@@ -1730,28 +1725,28 @@ paths:
             type: object
       summary: IsReviewed
       tags:
-      - posts
+        - posts
   /problems:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a list of problems filtered by status (Replied or Pending).
       parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        type: string
-      - description: Problem Status (Replied or Pending)
-        in: query
-        name: status
-        type: string
+        - description: user_id
+          in: query
+          name: user_id
+          type: string
+        - description: Problem Status (Replied or Pending)
+          in: query
+          name: status
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetProblemListsResponse'
+            $ref: "#/definitions/structure.GetProblemListsResponse"
         "400":
           description: Bad Request
           schema:
@@ -1762,25 +1757,25 @@ paths:
             type: object
       summary: Get list of problems
       tags:
-      - problems
+        - problems
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create a new problem with the provided details.
       parameters:
-      - description: Create Problem Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.CreateProblemRequest'
+        - description: Create Problem Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.CreateProblemRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateProblemResponse'
+            $ref: "#/definitions/structure.CreateProblemResponse"
         "400":
           description: Bad Request
           schema:
@@ -1791,25 +1786,25 @@ paths:
             type: object
       summary: Create a new problem
       tags:
-      - problems
+        - problems
   /problems/{problem_id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete a problem with the specified ID.
       parameters:
-      - description: Problem ID
-        in: path
-        name: problem_id
-        required: true
-        type: string
+        - description: Problem ID
+          in: path
+          name: problem_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1820,24 +1815,24 @@ paths:
             type: object
       summary: Delete problem by ID
       tags:
-      - problems
+        - problems
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of a specific problem by its ID.
       parameters:
-      - description: Problem ID
-        in: path
-        name: problem_id
-        required: true
-        type: string
+        - description: Problem ID
+          in: path
+          name: problem_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetProblemDetailByIdResponse'
+            $ref: "#/definitions/structure.GetProblemDetailByIdResponse"
         "400":
           description: Bad Request
           schema:
@@ -1848,30 +1843,30 @@ paths:
             type: object
       summary: Get problem detail
       tags:
-      - problems
+        - problems
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update an existing problem with the provided details.
       parameters:
-      - description: Problem ID
-        in: path
-        name: problem_id
-        required: true
-        type: string
-      - description: Update Problem Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.UpdateProblemRequest'
+        - description: Problem ID
+          in: path
+          name: problem_id
+          required: true
+          type: string
+        - description: Update Problem Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.UpdateProblemRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1882,26 +1877,26 @@ paths:
             type: object
       summary: Update existing problem
       tags:
-      - problems
+        - problems
   /refunds:
     post:
       consumes:
-      - application/json
+        - application/json
       description: CreateRefund for user to initiate refund process
       parameters:
-      - description: Refund Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.CreateRefundRequest'
+        - description: Refund Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.CreateRefundRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateRefundResponseList'
+            $ref: "#/definitions/structure.CreateRefundResponseList"
         "400":
           description: Bad Request
           schema:
@@ -1912,26 +1907,26 @@ paths:
             type: object
       summary: CreateRefund
       tags:
-      - refunds
+        - refunds
   /refunds/email:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Send an email to the user about their refund
       parameters:
-      - description: Send Refund Email Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendRefundEmailRequest'
+        - description: Send Refund Email Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendRefundEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.SendRefundEmailResponse'
+            $ref: "#/definitions/structure.SendRefundEmailResponse"
         "400":
           description: Bad Request
           schema:
@@ -1942,26 +1937,26 @@ paths:
             type: object
       summary: Send Refund Email
       tags:
-      - refunds
+        - refunds
   /responses:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create a new response with the provided details.
       parameters:
-      - description: CreateResponse Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.CreateResponseRequest'
+        - description: CreateResponse Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.CreateResponseRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -1972,25 +1967,25 @@ paths:
             type: object
       summary: Create a new response
       tags:
-      - responses
+        - responses
   /responses/{post_id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of a specific response by post ID.
       parameters:
-      - description: Post ID
-        in: path
-        name: post_id
-        required: true
-        type: string
+        - description: Post ID
+          in: path
+          name: post_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: "#/definitions/models.Response"
         "400":
           description: Bad Request
           schema:
@@ -2001,45 +1996,45 @@ paths:
             type: object
       summary: Get response detail
       tags:
-      - responses
+        - responses
   /test:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a test message
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.TestResponse'
+            $ref: "#/definitions/structure.TestResponse"
       summary: GetTest
       tags:
-      - Test
+        - Test
   /transactions/is_paid:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Determine that whether the user has paid in this events
       parameters:
-      - description: organizer_id
-        in: query
-        name: organizer_id
-        required: true
-        type: string
-      - description: event_id
-        in: query
-        name: event_id
-        required: true
-        type: string
+        - description: organizer_id
+          in: query
+          name: organizer_id
+          required: true
+          type: string
+        - description: event_id
+          in: query
+          name: event_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.IsPaidResponse'
+            $ref: "#/definitions/structure.IsPaidResponse"
         "400":
           description: Bad Request
           schema:
@@ -2050,26 +2045,26 @@ paths:
             type: object
       summary: IsPaid
       tags:
-      - transactions
+        - transactions
   /transactions/payment:
     post:
       consumes:
-      - application/json
-      description: 'CreatePayment for user to pay (1: card, 2: PromptPay)'
+        - application/json
+      description: "CreatePayment for user to pay (1: card, 2: PromptPay)"
       parameters:
-      - description: Get PromptPay
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.CreatePaymentRequest'
+        - description: Get PromptPay
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.CreatePaymentRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2080,25 +2075,25 @@ paths:
             type: object
       summary: CreatePayment
       tags:
-      - transactions
+        - transactions
   /transactions/payment-intent/{id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Retrieve details of a payment intent by its ID
       parameters:
-      - description: Payment Intent ID
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: Payment Intent ID
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/structure.GetPaymentIntentByIdResponse'
+            $ref: "#/definitions/structure.GetPaymentIntentByIdResponse"
         "400":
           description: Bad Request
           schema:
@@ -2109,25 +2104,25 @@ paths:
             type: object
       summary: Retrieve Payment Intent by ID
       tags:
-      - transactions
+        - transactions
   /transactions/payment-intent/confirm/{id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Retrieve details of a payment intent by its ID
       parameters:
-      - description: Payment Intent ID
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: Payment Intent ID
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2138,52 +2133,52 @@ paths:
             type: object
       summary: Retrieve Payment Intent by ID
       tags:
-      - transactions
+        - transactions
   /transactions/send_email:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Sends a transaction email to the specified user.
       parameters:
-      - description: Send Transaction Email Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendTransactionEmailRequest'
+        - description: Send Transaction Email Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendTransactionEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Transaction email successfully sent
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in sending the transaction email
           schema:
             type: object
       summary: Send Transaction Email
       tags:
-      - transactions
+        - transactions
   /transactions/transfer:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Transfer the specified amount of money to the organizer's account
       parameters:
-      - description: Transfer to Organizer
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.TransferToOrganizerRequest'
+        - description: Transfer to Organizer
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.TransferToOrganizerRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/models.Transaction'
+            $ref: "#/definitions/models.Transaction"
         "400":
           description: Bad Request
           schema:
@@ -2194,26 +2189,26 @@ paths:
             type: object
       summary: Transfer money to organizer
       tags:
-      - transactions
+        - transactions
   /users:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create a new user with the provided details.
       parameters:
-      - description: Create User Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.CreateUserRequest'
+        - description: Create User Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.CreateUserRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.CreateUserResponse'
+            $ref: "#/definitions/structure.CreateUserResponse"
         "400":
           description: Bad Request
           schema:
@@ -2224,30 +2219,30 @@ paths:
             type: object
       summary: Create new user
       tags:
-      - users
+        - users
   /users/{event_id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Cancel Register an event based on user_id and event_id
       parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        required: true
-        type: string
-      - description: event_id
-        in: path
-        name: event_id
-        required: true
-        type: string
+        - description: user_id
+          in: query
+          name: user_id
+          required: true
+          type: string
+        - description: event_id
+          in: path
+          name: event_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2258,25 +2253,25 @@ paths:
             type: object
       summary: Cancel Register an event
       tags:
-      - users
+        - users
   /users/{user_id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get User from given field (user_id)
       parameters:
-      - description: User ID
-        in: path
-        name: user_id
-        required: true
-        type: string
+        - description: User ID
+          in: path
+          name: user_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "400":
           description: Bad Request
           schema:
@@ -2287,25 +2282,25 @@ paths:
             type: object
       summary: GetUserByUserId
       tags:
-      - users
+        - users
     put:
       consumes:
-      - application/json
+        - application/json
       description: Update User information with the desired input
       parameters:
-      - description: Update User Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.UpdateUserInformationRequest'
+        - description: Update User Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.UpdateUserInformationRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "400":
           description: Bad Request
           schema:
@@ -2316,30 +2311,30 @@ paths:
             type: object
       summary: UpdateUserInformation
       tags:
-      - users
+        - users
   /users/{user_id}/searchevent:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Search the Event
       parameters:
-      - description: user_id
-        in: path
-        name: user_id
-        required: true
-        type: string
-      - description: search
-        in: query
-        name: search
-        required: true
-        type: string
+        - description: user_id
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: search
+          in: query
+          name: search
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2350,25 +2345,25 @@ paths:
             type: object
       summary: SearchEvent
       tags:
-      - users
+        - users
   /users/{user_id}/searchhistory:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get Search History for the User
       parameters:
-      - description: user_id
-        in: path
-        name: user_id
-        required: true
-        type: string
+        - description: user_id
+          in: path
+          name: user_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetSearchHistoriesResponse'
+            $ref: "#/definitions/structure.GetSearchHistoriesResponse"
         "400":
           description: Bad Request
           schema:
@@ -2379,20 +2374,20 @@ paths:
             type: object
       summary: GetSearchHistories
       tags:
-      - users
+        - users
   /users/auth/{provider}/callback:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get info of user from Gmail
       parameters:
-      - description: provider
-        in: path
-        name: provider
-        required: true
-        type: string
+        - description: provider
+          in: path
+          name: provider
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -2408,33 +2403,33 @@ paths:
             type: object
       summary: CallbackGoogle
       tags:
-      - user
+        - user
   /users/events:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get list of all participated events of the user
       parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        required: true
-        type: string
-      - description: offset i.e. 0
-        in: query
-        name: offset
-        type: integer
-      - description: Items per page i.e. 10
-        in: query
-        name: limit
-        type: integer
+        - description: user_id
+          in: query
+          name: user_id
+          required: true
+          type: string
+        - description: offset i.e. 0
+          in: query
+          name: offset
+          type: integer
+        - description: Items per page i.e. 10
+          in: query
+          name: limit
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.GetParticipatedEventListsResponse'
+            $ref: "#/definitions/structure.GetParticipatedEventListsResponse"
         "400":
           description: Bad Request
           schema:
@@ -2445,25 +2440,25 @@ paths:
             type: object
       summary: GetParticipatedEventLists
       tags:
-      - users
+        - users
   /users/notification:
     put:
       consumes:
-      - application/json
+        - application/json
       description: Toggle the enabling notification for user
       parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        required: true
-        type: string
+        - description: user_id
+          in: query
+          name: user_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2474,26 +2469,26 @@ paths:
             type: object
       summary: ToggleNotifications
       tags:
-      - users
+        - users
   /users/participate:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Register an event based on user_id and event_id
       parameters:
-      - description: Create User Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.RegisterEventRequest'
+        - description: Create User Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.RegisterEventRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2504,82 +2499,82 @@ paths:
             type: object
       summary: Register an event
       tags:
-      - users
+        - users
   /users/send_otp_email:
     put:
       consumes:
-      - application/json
+        - application/json
       description: Sends an OTP email to the specified recipients.
       parameters:
-      - description: Send OTP Email Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.SendOTPEmailRequest'
+        - description: Send OTP Email Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.SendOTPEmailRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OTP email successfully sent
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in sending the OTP email
           schema:
             type: object
       summary: Send OTP Email
       tags:
-      - users
+        - users
   /users/update_user_role:
     put:
       consumes:
-      - application/json
+        - application/json
       description: Updates the role of a user based on the provided request.
       parameters:
-      - description: Update User Role Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.UpdateUserRoleRequest'
+        - description: Update User Role Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.UpdateUserRoleRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: User successfully updated
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad request - error in updating user role
           schema:
             type: object
       summary: Update User Role
       tags:
-      - users
+        - users
   /users/upload/{user_id}:
     put:
       consumes:
-      - multipart/form-data
+        - multipart/form-data
       description: updates an user's profile image
       parameters:
-      - description: User Id
-        in: path
-        name: user_id
-        required: true
-        type: string
-      - description: Profile image
-        in: formData
-        name: user_image
-        required: true
-        type: file
+        - description: User Id
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Profile image
+          in: formData
+          name: user_image
+          required: true
+          type: file
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structure.MessageResponse'
+            $ref: "#/definitions/structure.MessageResponse"
         "400":
           description: Bad Request
           schema:
@@ -2590,20 +2585,20 @@ paths:
             type: object
       summary: Update existing user's image
       tags:
-      - users
+        - users
   /users/verification_status:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the verification status of a user by their email.
       parameters:
-      - description: User Email
-        in: query
-        name: email
-        required: true
-        type: string
+        - description: User Email
+          in: query
+          name: email
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Returns the verification status of the user.
@@ -2623,26 +2618,26 @@ paths:
             type: object
       summary: Get User Verification Status
       tags:
-      - users
+        - users
   /users/verify_otp:
     put:
       consumes:
-      - application/json
+        - application/json
       description: Verifies the OTP entered by the user.
       parameters:
-      - description: Verify OTP Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/structure.VerifyOTPRequest'
+        - description: Verify OTP Request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/structure.VerifyOTPRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OTP successfully verified
           schema:
-            $ref: '#/definitions/structure.VerifyOTPResponse'
+            $ref: "#/definitions/structure.VerifyOTPResponse"
         "400":
           description: Bad request - error in verifying the OTP
           schema:
@@ -2653,26 +2648,27 @@ paths:
             type: object
       summary: Verify OTP
       tags:
-      - users
+        - users
   /validate-token:
     get:
       consumes:
-      - application/json
-      description: Validates a user's authentication token and returns the associated
+        - application/json
+      description:
+        Validates a user's authentication token and returns the associated
         user details if valid.
       parameters:
-      - description: Authentication Token
-        in: header
-        name: token
-        required: true
-        type: string
+        - description: Authentication Token
+          in: header
+          name: token
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Returns user details on successful token validation.
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: "#/definitions/models.User"
         "400":
           description: Returns an error if the token is invalid or expired.
           schema:
@@ -2681,7 +2677,7 @@ paths:
             type: object
       summary: Validate user token
       tags:
-      - users
+        - users
 securityDefinitions:
   BasicAuth:
     type: basic

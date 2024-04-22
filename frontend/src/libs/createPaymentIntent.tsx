@@ -4,8 +4,8 @@ export default async function createPaymentIntent(
     transaction_amount: number,
     user_id: string,
     event_id: string,
-    payment_type: number
-    // token: string
+    payment_type: number,
+    token: string
 ) {
     try {
         const jsonBody = JSON.stringify({
@@ -18,7 +18,7 @@ export default async function createPaymentIntent(
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },next: {tags: ['createPaymentIntent']},
             body: jsonBody,
         });

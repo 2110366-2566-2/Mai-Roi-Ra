@@ -386,7 +386,14 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 // GenerateJWTToken generates a new JWT token for authenticated users
 func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
-	var secretKey = []byte("YourSecretKey")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return "", err
+	}
+	secretKey := cfg.App.TokenSecretKey
 
 	claims := jwt.MapClaims{
 		"user_id":      user.UserID,
@@ -405,7 +412,15 @@ func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 }
 
 func validateToken(signedToken string) (string, error) {
-	var secretKey = []byte("secret-key")
+	log.Println("[Service: validateToken]: Called")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return "", err
+	}
+	secretKey := cfg.App.TokenSecretKey
 	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
@@ -485,8 +500,8 @@ func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventList
 		eventData := st.ParticipatedEvent{
 			EventId:      res.EventId,
 			EventName:    res.EventName,
-			StartDate:    res.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
-			EndDate:      res.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
+			StartDate:    utils.TimeToString(res.StartDate),
+			EndDate:      utils.TimeToString(res.EndDate), // Format the date as "YYYY/DD/MM"
 			EventImage:   res.EventImage,
 			LocationName: locName.LocationName,
 			Description:  res.Description,

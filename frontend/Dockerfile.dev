@@ -1,0 +1,26 @@
+# Use a single stage for simplicity, as development typically benefits from faster builds and fewer layers
+FROM node:20-alpine
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package.json and pnpm-lock.yaml
+COPY package.json pnpm-lock.yaml ./
+
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Install all dependencies, not just production ones
+RUN pnpm install
+
+# Copy the rest of your app's source code
+COPY . .
+
+# Set the environment to development
+ENV NODE_ENV development
+
+# Expose the port the Next.js dev server uses by default
+EXPOSE 3000
+
+# Start the Next.js application in development mode
+CMD ["pnpm", "dev"]
