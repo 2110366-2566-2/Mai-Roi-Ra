@@ -8,13 +8,13 @@ export default async function createAnnouncement(
     token: string
 ) {
     try {
-        console.log(event_id,name,header,content);
         const jsonBody = JSON.stringify({
             "content" : content,
             "event_id" : event_id,
             "event_name" : name,
             "subject" : header
         });
+
         console.log(jsonBody);
         const response = await fetch(`${apiBackUrl}/announcements`, { 
             method: "POST",

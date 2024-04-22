@@ -38,13 +38,11 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
     const isMobile = useMediaQuery('(max-width:768px)');
 
     const [loading,setLoading] = useState(false);
-    const [startDate,setStartDate] = useState<Dayjs | null>(dayjs(StartDate.substring(0,4) + '/' + StartDate.substring(4,6) + '/' + StartDate.substring(6,8),  "YYYY/MM/DD"));
-    const [endDate,setEndDate] = useState<Dayjs | null>(dayjs(EndDate.substring(0,4) + '/' + EndDate.substring(4,6) + '/' + EndDate.substring(6,8), "YYYY/MM/DD"));
+    const startDate = dayjs(StartDate.substring(0,4) + '/' + StartDate.substring(4,6) + '/' + StartDate.substring(6,8),  "YYYY/MM/DD");
+    const endDate = dayjs(EndDate.substring(0,4) + '/' + EndDate.substring(4,6) + '/' + EndDate.substring(6,8), "YYYY/MM/DD");
     const router = useRouter();
     const [showModal,setShowModal] = useState(false);
     const [name,setName] = useState(Name);
-    const [activity,setActivity] = useState(Activity)
-    const [price, setPrice] = useState(Price);
     const [location,setLocation] = useState(Location);
     const [district,setDistrict] = useState(District);
     const [province,setProvince] = useState(Province);
@@ -68,35 +66,43 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
         }
     };
 
+    
+
     useEffect(() => {
+        const updateImage = async() => {
+            if (selectedImage) {
+                const formData = new FormData();
+                formData.append('event_id', Id); 
+                formData.append('event_image', selectedImage);
+                console.log(formData);
+                await updateEventImage(Id,formData,user.token);
+            } 
+        }
+
+        const updateInformation = async () => {
+            const startTmp = dayjs(startDate);
+            const endTmp = dayjs(endDate);
+
+            await HandleUpdateEvent(
+                Id,
+                name,
+                Activity,
+                startTmp.format('YYYY/MM/DD'),
+                endTmp.format('YYYY/MM/DD'),
+                Price,
+                location,
+                district,
+                province,
+                description,
+                Status,
+                user.token
+            );
+        }
+
         const updateEvent = async () => {
             if (loading) {
-                const startTmp = dayjs(startDate);
-                const endTmp = dayjs(endDate);
-
-                if (selectedImage) {
-                    const formData = new FormData();
-                    formData.append('event_id', Id); 
-                    formData.append('event_image', selectedImage);
-                    console.log(formData);
-                    await updateEventImage(Id,formData,user.token);
-                } 
-
-                console.log("handle update event hello world");
-                await HandleUpdateEvent(
-                    Id,
-                    name,
-                    activity,
-                    startTmp.format('YYYY/MM/DD'),
-                    endTmp.format('YYYY/MM/DD'),
-                    price,
-                    location,
-                    district,
-                    province,
-                    description,
-                    Status,
-                    user.token
-                );
+                updateImage();
+                updateInformation();
 
                 setShowModal(true);
                 setLoading(false);
@@ -110,11 +116,6 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
             if (name == "") {
                 setError("Event Name Required!");
                 return;
-            } if (activity == ""){
-                setError("Activity Required")
-            } if (price == null) {
-                setError("Price Required");
-                return;
             } if (location == ""){
                 return;
             } if (district == ""){
@@ -123,20 +124,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
             } if (province == "" ){
                 setError("Province Required");
                 return;
-            } const currentDate = dayjs();
-            const startTmp = dayjs(startDate);
-            const endTmp = dayjs(endDate);
-            if (startTmp.isBefore(currentDate) || endTmp.isBefore(currentDate)) {
-                setError("Dates cannot be in the past.");
-                return;
-            }
-    
-            const differenceInDays = endTmp.diff(startTmp, 'day');
-            if (differenceInDays < 0) {
-                setError("End Date cannot before Start Date");
-                return;
-            }
-            if (!price) return;
+            } 
             setLoading(true);
         } catch (err) {
             setError("Create Failed. Please check the constraint");
@@ -169,7 +157,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                             <div className="w-[48%] relative">
                                 <FormControl className="w-full lg:h-[52px] md:h-[45px] h-[40px] relative focus:outline-none">
                                     <InputLabel className="text-[16px] lg:mt-[-2px] md:mt-[-4px] sm:mt-[-6px] mt-[-8px] focus:outline-none">Activity</InputLabel>
-                                    <Select value={activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
+                                    <Select value={Activity} className={`border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full 
                                     lg:text-[17px] md:text-[15px] text-[13px] rounded-md focus:outline-none`} readOnly>
                                         <MenuItem value="Entertainment" className="focus:outline-none">Entertainment</MenuItem>
                                         <MenuItem value="Exercise" className="focus:outline-none">Exercise</MenuItem>
@@ -245,9 +233,9 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md focus:outline-none"
                                 type="number" placeholder="Price"
-                                value={price} min={0} step={10} readOnly/>
+                                value={Price} min={0} step={10} readOnly/>
 
-                                {price != null && (
+                                {Price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">
                                         Price
                                     </div>
@@ -351,7 +339,7 @@ const EditEventForm = ({Id,Name,Activity,StartDate,EndDate,Price,Location,Distri
                         </button>
                     </div>
                 </div>
-                <SuccessModal topic="Save Changes" isVisible={showModal} />
+                <SuccessModal topic="Save Changes" isVisible={showModal}/>
             </form>
             {loading &&
                 <div className={`w-screen z-30 h-screen fixed inset-0 top-0 left-0 flex flex-row justify-center items-center bg-opacity-25 bg-black ${styles.Roboto}`}>

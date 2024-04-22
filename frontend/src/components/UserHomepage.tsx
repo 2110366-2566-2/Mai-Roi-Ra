@@ -1,23 +1,44 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import EventItem from '@/components/EventItem';
 import SearchBar from '@/components/SearchBar';
-import getEvents from '@/libs/getEvents';
-import getUserSearchHistory from '@/libs/getUserSearchHistory';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import { getServerSession } from 'next-auth';
 
-interface Props {
-    page: number;
-    limit: number;
-    search: string;
+interface Event {
+  event_id:string;
+  event_name:string;
+  start_date:string;
+  end_date:string;
+  description:string;
+  status:string;
+  event_image:string;
+  city:string;
+  district:string;
 }
 
-export default async function UserHomepage({page,limit,search} : Props) {
-  const events = await getEvents({offset : page , limit : limit , search : search , filter : "Approved"});
+interface History{
+  user_id:string;
+  search_name:string;
+}
+
+interface Histories {
+  search_history:History[]
+}
+
+interface Events {
+  total_pages:number;
+  total_events:number;
+  event_lists:Event[];
+}
+
+interface Props {
+  page:number;
+  search:string;
+  events:Events;
+  history:Histories;
+}
+
+export default function UserHomepage({page,search,events,history} : Props) {
   const datas = events.event_lists;
-  const session = await getServerSession(authOptions);
-  const user = session?.user;
-  const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id);
+  console.log(history);
 
   return (
     <main className="text-black flex flex-col h-screen overflow-hidden">
@@ -30,18 +51,18 @@ export default async function UserHomepage({page,limit,search} : Props) {
               <div className='py-[5px] md:mt-[20px] mt-[5px] overflow-y-auto'>
               {datas.map((eventItem:any) => (
               <EventItem
-              key={eventItem.event_id}
-              id={eventItem.event_id}
-              name={eventItem.event_name}
-              startDate={eventItem.start_date}
-              endDate={eventItem.end_date}
-              description={eventItem.description}
-              city={eventItem.city}
-              district={eventItem.district}
-              imgSrc={eventItem.event_image}
-              page={0}
-              role="USER"
-              status={eventItem.item}
+                key={eventItem.event_id}
+                id={eventItem.event_id}
+                name={eventItem.event_name}
+                startDate={eventItem.start_date}
+                endDate={eventItem.end_date}
+                description={eventItem.description}
+                city={eventItem.city}
+                district={eventItem.district}
+                imgSrc={eventItem.event_image}
+                page={0}
+                role="USER"
+                status={eventItem.item}
             />
               ))}
               </div> :

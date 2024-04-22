@@ -27,9 +27,6 @@ export default async function UserReviewEventById({ params }: Props) {
     rating.three_rate +
     rating.four_rate +
     rating.five_rate;
-  console.log(rating);
-  console.log(session);
-  console.log(event);
 
   return (
     <div className="w-screen md:h-screen">

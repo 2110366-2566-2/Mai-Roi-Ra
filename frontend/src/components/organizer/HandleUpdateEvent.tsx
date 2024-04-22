@@ -1,6 +1,5 @@
 'use server'
 import { revalidatePath, revalidateTag } from "next/cache"
-import { redirect } from "next/navigation"
 import updateEvent from "@/libs/updateEvent"
 
 export async function HandleUpdateEvent(id:string,name:string,activity:string, startDate:string, endDate:string, price:number, location:string, district:string, 

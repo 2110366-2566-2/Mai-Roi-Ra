@@ -8,10 +8,8 @@ import Image from "next/image";
 import { useState, ChangeEvent, SyntheticEvent, useEffect } from "react";
 import LoadingLine from "./LoadingLine";
 import ReviewModal from "./ReviewModal";
-import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
 import { useRouter } from "next/navigation";
 import SuccessReviewEventModal from "./SuccessReviewEventModal";
-import ResponseReviewModal from "./ResponseReviewModal";
 import responsePost from "@/libs/responsePost";
 import isReviewedEvent from "@/libs/isReviewedEvent";
 
@@ -158,10 +156,6 @@ const CommentBox = ({
   };
 
   const [isWrongResponseInputs, setIsWrongInputsResponse] = useState(false);
-
-  const currentPostId = post_lists.length > 0 ? post_lists[curr].post_id : null;
-  const currentCaption =
-    post_lists.length > 0 ? post_lists[curr].caption : null;
 
   const submitResponse = async (postId: string, responseText: string) => {
     if (responseText) {

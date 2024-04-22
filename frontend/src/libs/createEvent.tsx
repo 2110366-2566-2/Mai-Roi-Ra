@@ -1,8 +1,9 @@
-import { revalidatePath, revalidateTag } from "next/cache";
 import { apiBackUrl } from "../constants";
 
 export default async function createEvent(formData:FormData, token:string) {
     try {
+        console.log(formData);
+        
         const response = await fetch(`${apiBackUrl}/events/`, {
             method: "POST",
             headers: {

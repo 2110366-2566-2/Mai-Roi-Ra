@@ -5,6 +5,8 @@ import getWaitingEvents from "@/libs/getWaitingEvents";
 import getApprovedEvents from "@/libs/getApprovedEvents";
 import getRejectedEvents from "@/libs/getRejectedEvents";
 import UserHomepage from "@/components/UserHomepage";
+import getEvents from "@/libs/getEvents";
+import getUserSearchHistory from "@/libs/getUserSearchHistory";
 
 export default async function Homepage({
   searchParams,
@@ -20,8 +22,11 @@ export default async function Homepage({
   const search = searchParams.search ?? "";
 
   const session = await getServerSession(authOptions);
+  let events;
 
   if (!session || !session.user.token) return null
+  const user = session.user;
+  const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id,user.token);
 
   const waitingEvents = await getWaitingEvents(session!.user.token);
   const waitingEventsDatas = waitingEvents.event_lists;
@@ -31,6 +36,9 @@ export default async function Homepage({
 
   const rejectedEvents = await getRejectedEvents(session!.user.token);
   const rejectedEventsDatas = rejectedEvents.event_lists;
+  if (session?.user.role != "ADMIN") {
+    events = await getEvents({offset : page , limit : limit , search : search , filter : "Approved"});
+  }
 
   return (
     <main className="bg-white text-black h-full">
@@ -41,7 +49,7 @@ export default async function Homepage({
           rejectedEventsDatas={rejectedEventsDatas}
         ></AdminHomepage>
       ) : (
-        <UserHomepage page={page} limit={limit} search={search} />
+        <UserHomepage page={page} search={search} events={events} history={history}/>
       )}
     </main>
   );
