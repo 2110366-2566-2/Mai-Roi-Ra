@@ -37,7 +37,7 @@ const CreateEventForm = () => {
     const [description,setDescription] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>('');
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const createEvent = async () => {
@@ -55,10 +55,10 @@ const CreateEventForm = () => {
                 formData.append('end_date', endTmp.format('YYYY/MM/DD'));
                 formData.append('event_image', selectedImage);
                 formData.append('location_name', location);
-                formData.append('organizer_id', user?.organizer_id);
+                formData.append('organizer_id', user? user.organizer_id : "");
                 formData.append('participant_fee', price.toString());
                 console.log(formData);
-                await HandleCreateEvent(formData,user.token);
+                await HandleCreateEvent(formData,user? user.token : "");
                 setShowModal(true);
                 setLoading(false);
             }
@@ -80,45 +80,58 @@ const CreateEventForm = () => {
         }
     };
 
+    const checkDateConstrain = () => {
+        if (!selectedImage) {
+            setError("Image Required");
+            return false;
+        } 
+        const currentDate = dayjs();
+        const startTmp = dayjs(startDate);
+        const endTmp = dayjs(endDate);
+        if (startTmp.isBefore(currentDate) || endTmp.isBefore(currentDate)) {
+            setError("Dates cannot be in the past.");
+            return false;
+        }
+
+        const differenceInDays = endTmp.diff(startTmp, 'day');
+        if (differenceInDays < 0) {
+            setError("End Date cannot before Start Date");
+            return false;
+        } return true;
+    }
+
+    const checkConstain = () => {
+        if (name == "") {
+            setError("Event Name Required ! ");
+            return false;
+        } if (activity == ""){
+            setError("Activity Required")
+            return false;
+        } if (price == null) {
+            setError("Price Required");
+            return false;
+        } if (location == ""){
+            setError("Location Required");
+            return false;
+        } if (district == ""){
+            setError("District Required");
+            return false;
+        } if (province == "" ){
+            setError("Province Required");
+            return false;
+        } return true;
+    }
+
     const handleSubmit = async () => {
         try {
-            if (name == "") {
-                setError("Event Name Required ! ");
+            if (!checkConstain()) {
                 return;
-            } if (activity == ""){
-                setError("Activity Required")
-            } if (price == null) {
-                setError("Price Required");
-                return;
-            } if (location == ""){
-                setError("Location Required");
-                return;
-            } if (district == ""){
-                setError("District Required");
-                return;
-            } if (province == "" ){
-                setError("Province Required");
-                return;
-            } if (!selectedImage) {
-                setError("Image Required");
-                return;
-            } 
-            const currentDate = dayjs();
-            const startTmp = dayjs(startDate);
-            const endTmp = dayjs(endDate);
-            if (startTmp.isBefore(currentDate) || endTmp.isBefore(currentDate)) {
-                setError("Dates cannot be in the past.");
-                return;
-            }
-    
-            const differenceInDays = endTmp.diff(startTmp, 'day');
-            if (differenceInDays < 0) {
-                setError("End Date cannot before Start Date");
+            } if (!checkDateConstrain()) {
                 return;
             }
             
             if (user) {
-                if (!selectedImage || !price) return;
+                if (!price) return;
                 setLoading(true);
             } 
         } catch (err) {
@@ -229,7 +242,7 @@ const CreateEventForm = () => {
                                 <input className="border-[1px] border-gray-300 lg:py-[15px] md:py-[13px] py-[11px] h-full w-full lg:indent-4 md:indent-4 indent-3 lg:text-[17px] md:text-[15px] text-[13px]
                                 rounded-md"
                                 type="number" placeholder="Price"
-                                value={price} onChange={(e) => setPrice(e.target.value)} min={0} step={10}/>
+                                value={price || ''} onChange={(e) => setPrice(Number(e.target.value))} min={0} step={10}/>
 
                                 {price != null && (
                                     <div className="absolute top-[-8px] px-2 left-2 bg-white transition-all text-xs text-gray-400">

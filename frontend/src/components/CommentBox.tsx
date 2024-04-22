@@ -8,10 +8,8 @@ import Image from "next/image";
 import { useState, ChangeEvent, SyntheticEvent, useEffect } from "react";
 import LoadingLine from "./LoadingLine";
 import ReviewModal from "./ReviewModal";
-import SuccessEmailVerificationModal from "./SuccessEmailVerificationModal";
 import { useRouter } from "next/navigation";
 import SuccessReviewEventModal from "./SuccessReviewEventModal";
-import ResponseReviewModal from "./ResponseReviewModal";
 import responsePost from "@/libs/responsePost";
 import isReviewedEvent from "@/libs/isReviewedEvent";
 
@@ -51,7 +49,7 @@ const CommentBox = ({
 
   const fetchIsReviewed = async () => {
     try {
-      const response = await isReviewedEvent(user_id, event_id);
+      const response = await isReviewedEvent(user_id, event_id, token);
       setIsReviewed(response.is_reviewed);
     } catch (error) {
       console.error("Failed to fetch isReviewedEvent:", error);
@@ -132,11 +130,13 @@ const CommentBox = ({
         }, 4000);
         setIsSubmitLoading(false);
         setSuccessModalText("");
+        router.refresh();
       } catch (error) {
         console.error("Failed to submit review:", error);
       } finally {
         setIsSubmitLoading(false);
         setSuccessModalText("");
+        router.refresh();
       }
     } else {
       setIsWrongInputs(true);
@@ -156,10 +156,6 @@ const CommentBox = ({
   };
 
   const [isWrongResponseInputs, setIsWrongInputsResponse] = useState(false);
-
-  const currentPostId = post_lists.length > 0 ? post_lists[curr].post_id : null;
-  const currentCaption =
-    post_lists.length > 0 ? post_lists[curr].caption : null;
 
   const submitResponse = async (postId: string, responseText: string) => {
     if (responseText) {

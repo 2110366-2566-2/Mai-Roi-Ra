@@ -9,11 +9,13 @@ import LoadingCircular from "./LoadingCircular";
 interface Props {
   isEnableNotificationProp: boolean;
   userIDProp: string;
+  token: string;
 }
 
 export default function EditProfileButton({
   isEnableNotificationProp,
   userIDProp,
+  token,
 }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +27,7 @@ export default function EditProfileButton({
   const handleCheckboxChange = async () => {
     setIsChecked(!isChecked);
     try {
-      await updateEnableNotification(userIDProp);
+      await updateEnableNotification(userIDProp, token);
       setError("");
     } catch (err) {
       setError("Update enable notification error. Server Failed ?");

@@ -19,17 +19,25 @@ import (
 const (
 	// Replace "YourSecretKey" with your actual secret key
 	// Ensure this key is stored securely and not hardcoded in production
-	SecretKey = "YourSecretKey"
 	KeyToken  = "token"
 	//KeyUserID = "userID"
 	KeyRole = "role"
 	KeyUserID = "user_id"
 	MaxAge    = 86400 * 30
-	IsProd    = false
+	IsProd    = true
 )
 
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		cfg, err := config.NewConfig(func() string {
+			return ".env"
+		}())
+		if err != nil {
+			log.Println("[Config]: Error initializing .env")
+			return
+		}
+		SecretKey := cfg.App.TokenSecretKey
+
 		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -137,8 +145,8 @@ func GoogleAuth() gin.HandlerFunc {
 			log.Println("[Config]: Error initializing .env")
 			return
 		}
-		log.Println("Config path from PG:", cfg)
 		// Cookies
+		SecretKey := cfg.App.TokenSecretKey
 		store := sessions.NewCookieStore([]byte(SecretKey))
 		store.MaxAge(MaxAge)
 

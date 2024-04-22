@@ -104,7 +104,7 @@ func (s *RefundService) SendRefundEmail(req *st.SendRefundEmailRequest) (*st.Sen
 		return nil, nil
 	}
 
-	formattedRefundDate := refundModel.RefundDate.Format("2006-01-02")
+	formattedRefundDate := utils.TimeToString(refundModel.RefundDate)
 
 	contentHTML := fmt.Sprintf(`
     <html>

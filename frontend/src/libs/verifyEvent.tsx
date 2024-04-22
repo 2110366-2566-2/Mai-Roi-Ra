@@ -1,16 +1,15 @@
 import { apiBackUrl } from "../constants";
 
-export default async function verifyEvent(event_id: string) {
+export default async function verifyEvent(event_id: string, token: string) {
   try {
     const response = await fetch(
-      `${apiBackUrl}/events/${event_id}/verify?status=Approved`, // Removed extra quote after Approved
+      `http://localhost:8080/api/v1/events/${event_id}/verify?status=Approved`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`, // Uncomment and populate the token as needed
+          Authorization: `Bearer ${token}`,
         },
-        // Removed the next object and body since they are not needed
       }
     );
     if (!response.ok) {
@@ -24,7 +23,6 @@ export default async function verifyEvent(event_id: string) {
 
     return await response.json();
   } catch (error) {
-    // Make sure to log the actual error message from the caught error object
     throw new Error(`Error verifying event: ...`);
   }
 }

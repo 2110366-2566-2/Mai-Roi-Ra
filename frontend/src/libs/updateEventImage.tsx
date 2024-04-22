@@ -9,7 +9,7 @@ export default async function updateEventImage(
     try {
         console.log(formData);
 
-        const response = await fetch(`${apiBackUrl}/events/upload/${id}`, {
+        const response = await fetch(`http://localhost:8080/api/v1/events/upload/${id}`, {
             method: "PUT",
             headers: {
                 Authorization: `Bearer ${token}`

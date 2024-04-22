@@ -7,12 +7,12 @@ type ModalProps = {
   title: string | null;
   children: React.ReactNode; // for the main content of the modal
   footerContent?: React.ReactNode; // optional footer content (like buttons)
-  style: string;
-  modalsize: string;
-  isNotRound: boolean;
-  canScroll: boolean;
-  MarginTop : string;
-  allowOuterclose: boolean;
+  style: string | null;
+  modalsize: string | null;
+  isNotRound: boolean | null;
+  canScroll: boolean | null;
+  MarginTop : string | null;
+  allowOuterclose: boolean | null;
 };
 
 export default function Modal({

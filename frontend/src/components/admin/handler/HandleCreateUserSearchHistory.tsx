@@ -1,7 +1,6 @@
 'use server'
 import createUserSearchHistory from "@/libs/createUserSearchHistory";
 import { revalidatePath, revalidateTag } from "next/cache"
-import { redirect } from "next/navigation";
 
 export async function HandleCreateUserSearchHistory(user_id:string,search:string,token:string){
     console.log(token)
@@ -16,7 +15,6 @@ export async function HandleCreateUserSearchHistory(user_id:string,search:string
     revalidateTag(`searchhistory`);
     revalidatePath(`/homepage?search=${search}`);
     revalidatePath(`/homepage`);
-    redirect(`/homepage?search=${search}`);
 }
 
 

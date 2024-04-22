@@ -4,8 +4,8 @@ export default async function createPaymentIntent(
     transaction_amount: number,
     user_id: string,
     event_id: string,
-    payment_type: number
-    // token: string
+    payment_type: number,
+    token: string
 ) {
     try {
         const jsonBody = JSON.stringify({
@@ -14,11 +14,11 @@ export default async function createPaymentIntent(
             "event_id": event_id,
             "payment_type": payment_type,
           })
-        const response = await fetch(`${apiBackUrl}/transactions/payment`, {
+        const response = await fetch(`http://localhost:8080/api/v1/transactions/payment`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },next: {tags: ['createPaymentIntent']},
             body: jsonBody,
         });

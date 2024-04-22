@@ -7,7 +7,7 @@ import CommentBox from "@/components/CommentBox";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import getReviewEventById from "@/libs/getReviewEventById";
 
 interface Props {
@@ -27,9 +27,6 @@ export default async function UserReviewEventById({ params }: Props) {
     rating.three_rate +
     rating.four_rate +
     rating.five_rate;
-  console.log(rating);
-  console.log(session);
-  console.log(event);
 
   return (
     <div className="w-screen md:h-screen">

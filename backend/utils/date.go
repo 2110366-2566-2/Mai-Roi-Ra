@@ -18,6 +18,11 @@ const (
 	Saturday
 )
 
+type LanguageStruct struct {
+	Th string `json:"th"`
+	En string `json:"en"`
+}
+
 func (w Weekday) String() string {
 	return [...]string{
 		"SUN",
@@ -74,10 +79,6 @@ var ShortDayMapToFullDay = map[string]LanguageStruct{
 		Th: "วันเสาร์",
 		En: "Saturday",
 	},
-}
-
-func ToDateString(t time.Time) string {
-	return t.Format("20060102")
 }
 
 func GetString(s *string) string {

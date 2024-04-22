@@ -3,7 +3,14 @@ import MenuPopup from "./MenuPopup";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from "react";
 
-const Menu = () => {
+interface Props {
+    user_name:string;
+    email:string|null;
+    phone_number:string|null;
+    user_image:string;
+}
+
+const Menu = ({user_name,email,phone_number,user_image} : Props) => {
     const [showModal,setShowModal] = useState<boolean>(false);
 
     return (
@@ -15,7 +22,8 @@ const Menu = () => {
                             onClick={() => setShowModal(true)}/>
                         </div>
               </div>
-              <MenuPopup isVisible={showModal} onClose={()=>setShowModal(false)}/>
+              <MenuPopup isVisible={showModal} onClose={()=>setShowModal(false)}
+              username={user_name} email={email} phone_number={phone_number} user_image={user_image}/>
         </div>
     )
 }
