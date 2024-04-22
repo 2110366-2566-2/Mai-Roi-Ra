@@ -7,7 +7,7 @@ export default async function isRegisteredEvent(
 ) {
   if (!user_id || !event_id) return { is_registered: true };
   const response = await fetch(
-    `${apiBackUrl}/participate/is_registered?user_id=${user_id}&&event_id=${event_id}`,
+    `http://localhost:8080/api/v1/participate/is_registered?user_id=${user_id}&&event_id=${event_id}`,
     {
       method: "GET",
       headers: {

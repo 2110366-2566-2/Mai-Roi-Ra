@@ -15,7 +15,7 @@ export default async function reviewEvent(
       user_id,
     };
 
-    const response = await fetch(`${apiBackUrl}/posts/`, {
+    const response = await fetch(`http://localhost:8080/api/v1/posts/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
