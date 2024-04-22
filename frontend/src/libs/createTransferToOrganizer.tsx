@@ -10,7 +10,7 @@ export default async function createTransferToOrganizer(
             event_id : event_id,
             organizer_id : organizer_id
           })
-        const response = await fetch(`${apiBackUrl}/api/v1/transactions/transfer`, {
+        const response = await fetch(`http://localhost:8080/api/v1/transactions/transfer`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

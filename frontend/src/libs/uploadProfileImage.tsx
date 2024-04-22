@@ -4,7 +4,7 @@ export default async function uploadProfileImage(formData:FormData,token:string)
     try {
         console.log(formData);
         
-        const response = await fetch(`${apiBackUrl}/api/v1/users/upload/${formData.get("user_id")}`, {
+        const response = await fetch(`http://localhost:8080/api/v1/users/upload/${formData.get("user_id")}`, {
             method: "PUT",
             headers: {
                 Authorization: `Bearer ${token}`

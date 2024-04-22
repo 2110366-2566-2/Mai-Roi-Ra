@@ -14,7 +14,7 @@ export default async function createPaymentIntent(
             "event_id": event_id,
             "payment_type": payment_type,
           })
-        const response = await fetch(`${apiBackUrl}/api/v1/transactions/payment`, {
+        const response = await fetch(`http://localhost:8080/api/v1/transactions/payment`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -7,7 +7,7 @@ export default async function getIsOrganizerGotMoney(
 ) {
   if (!organizer_id || !event_id) throw new Error("Failed to fetch isOrganizerGotMoney : missing organizer_id or event_id");
   const response = await fetch(
-    `${apiBackUrl}/api/v1/transactions/is_paid?organizer_id=${organizer_id}&&event_id=${event_id}`,
+    `http://localhost:8080/api/v1/transactions/is_paid?organizer_id=${organizer_id}&&event_id=${event_id}`,
     {
       method: "GET",
       headers: {
