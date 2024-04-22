@@ -1,5 +1,7 @@
 # Use a specific version of golang for the builder stage
 FROM golang:1.21.5-alpine AS builder
+# Set Gin to run in release mode
+ENV GIN_MODE=release
 WORKDIR /usr/src/app
 
 # Copy the local package files to the container's workspace

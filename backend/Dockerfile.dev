@@ -2,19 +2,28 @@ FROM golang:1.21.5-alpine
 
 WORKDIR /usr/src/app
 
+# Install air for live reloading and swag for swagger documentation generation
 RUN go install github.com/cosmtrek/air@v1.41.0
-
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
+# Copy and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy the whole project
 COPY . .
 
+# Generate swagger docs
 RUN swag init
 
+# If there are additional swagger files, copy them to the docs directory
 COPY swagger/ ./docs
 
+# Tidy up the dependencies
 RUN go mod tidy
 
+# Set Gin to run in release mode
+ENV GIN_MODE=release
+
+# Run air with configuration from .air.toml
 CMD ["air", "-c", ".air.toml"]
