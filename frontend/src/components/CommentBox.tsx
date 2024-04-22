@@ -130,11 +130,13 @@ const CommentBox = ({
         }, 4000);
         setIsSubmitLoading(false);
         setSuccessModalText("");
+        router.refresh();
       } catch (error) {
         console.error("Failed to submit review:", error);
       } finally {
         setIsSubmitLoading(false);
         setSuccessModalText("");
+        router.refresh();
       }
     } else {
       setIsWrongInputs(true);
