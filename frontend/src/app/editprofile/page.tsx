@@ -41,18 +41,18 @@ export default async function EditProfile() {
           </div>
 
           <EditProfileForm
-            firstNameProp={profile.first_name}
-            lastNameProp={profile.last_name}
-            addressProp={profile.address}
-            districtProp={profile.district}
-            provinceProp={profile.province}
-            phoneNumberProp={profile.phone_number}
-            emailProp={profile.email}
-            birthDateProp={profile.birth_date}
+            firstNameProp={profile?.first_name}
+            lastNameProp={profile?.last_name}
+            addressProp={profile?.address}
+            districtProp={profile?.district}
+            provinceProp={profile?.province}
+            phoneNumberProp={profile?.phone_number}
+            emailProp={profile?.email}
+            birthDateProp={profile?.birth_date}
             userId={session.user.user_id}
             token={session.user.token}
             firstRegister={false}
-            user_image={profile.user_image}
+            user_image={profile?.user_image}
           ></EditProfileForm>
         </div>
       </Suspense>

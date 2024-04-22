@@ -20,7 +20,8 @@ export default async function UserReviewEventById({ params }: Props) {
 
   if (!session) return;
 
-  const rating = await getReviewEventById(params.id, session.user.user_id);
+  const rating = await getReviewEventById(params.id, session.user.token);
+  
   const count_post =
     rating.one_rate +
     rating.two_rate +
