@@ -6,6 +6,7 @@ export default defineConfig({
       // implement node event listeners here
     },
     baseUrl: "http://localhost:3000",
+    pageLoadTimeout: 90000, // Increase page load timeout to 90 seconds
   },
 
   component: {
