@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,8 @@ const (
 	// Replace "YourSecretKey" with your actual secret key
 	// Ensure this key is stored securely and not hardcoded in production
 	KeyToken  = "token"
+	//KeyUserID = "userID"
+	KeyRole = "role"
 	KeyUserID = "user_id"
 	MaxAge    = 86400 * 30
 	IsProd    = true
@@ -68,8 +71,14 @@ func Authentication() gin.HandlerFunc {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 				return
 			}
+			keyrole, ok := claims["role"].(string)
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+				return
+			}
 			c.Set(KeyToken, tokenString)
 			c.Set(KeyUserID, userID)
+			c.Set(KeyRole, keyrole)
 			fmt.Println("Authentication successful")
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token_2"})
@@ -78,6 +87,54 @@ func Authentication() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func TestAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		CasbinEnforcer, _ := casbin.NewEnforcer("model.conf","policy.csv")
+			// Check authorization using Casbin
+			// If CasbinEnforcer is not initialized, you'll need to initialize it first
+			if CasbinEnforcer == nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "CasbinEnforcer is not initialized"})
+				return
+			}
+		c.Next();
+	}
+}
+
+func Authorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract token from Authorization header
+		CasbinEnforcer, _ := casbin.NewEnforcer("model.conf","policy.csv")
+		// Check authorization using Casbin
+		// If CasbinEnforcer is not initialized, you'll need to initialize it first
+		if CasbinEnforcer == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "CasbinEnforcer is not initialized"})
+			return
+		}
+
+		// Store user's role in the context
+		user_role , _ := c.Get(KeyRole)
+		path := c.Request.URL.Path
+		request := c.Request.Method
+
+		fmt.Println(user_role)
+		fmt.Println(path)
+		fmt.Println(request)
+
+		// Check if the user's role is allowed
+		if res, _ := CasbinEnforcer.Enforce(user_role, path, request); !res {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+			return
+		} 
+
+		fmt.Println("Authorization successful")
+		// Process request
+		c.Next()
+
+	}
+}
+
+
 
 func GoogleAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {

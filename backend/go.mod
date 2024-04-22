@@ -39,6 +39,9 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/aead/poly1305 v0.0.0-20180717145839-3fee0db0b635 // indirect
+	github.com/aws/aws-sdk-go v1.51.4 // indirect
+	github.com/casbin/casbin/v2 v2.85.0 // indirect
+	github.com/casbin/govaluate v1.1.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.11 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.5 // indirect
