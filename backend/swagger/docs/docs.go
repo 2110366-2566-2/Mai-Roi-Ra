@@ -1141,7 +1141,8 @@ const docTemplate = `{
                         "type": "string",
                         "description": "event_id",
                         "name": "event_id",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
