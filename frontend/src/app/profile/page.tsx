@@ -106,23 +106,6 @@ export default async function Profile() {
             <div className="text-gray-800">My events</div>
           </div>
 
-          <div className="pt-8 pl-10">
-            <div className="flex flex-row justify-start w-full">
-              <input
-                type="text"
-                id="search-event"
-                name="search-event"
-                placeholder="Search"
-                className="border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[70%] md:w-[70%] w-[55%] mr-[20px] pl-2"
-              />
-              <button
-                className="border border-slate-400 rounded-xl lg:h-[30px] md:h-[30px] h-[23px] lg:w-[80px] md:w-[80px] w-[65px] hover:scale-105 duration-300
-                lg:ml-[20px] md:ml-[15px] sm:ml-[10px] ml-[10px]"
-              >
-                Filter
-              </button>
-            </div>
-          </div>
           <EventsList datas={datas} role={role}></EventsList>
         </div>
       </Suspense>
