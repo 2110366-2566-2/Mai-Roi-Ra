@@ -69,7 +69,7 @@ func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventControlle
 		eventRoutes.GET("/:id", controller.GetEventDataById)                                                                 // All
 		eventRoutes.PUT("/:id", middleware.Authentication(), middleware.Authorization(), controller.UpdateEvent)             // Organizer , Admin
 		eventRoutes.PUT("/upload/:id", middleware.Authentication(), middleware.Authorization(), controller.UpdateEventImage) // Organizer , Admin
-		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)                                                               // Admin
+		eventRoutes.PUT("/:id/verify", middleware.Authentication(), middleware.Authorization(), controller.VerifyEvent)      // Admin
 		eventRoutes.DELETE("/:id", middleware.Authentication(), middleware.Authorization(), controller.DeleteEventById)      // Organizer , Admin
 		eventRoutes.GET("/participant", controller.GetParticipantLists)                                                      // All
 	}
@@ -97,7 +97,7 @@ func setupUserRoutes(r *gin.RouterGroup, controller *controllers.UserController)
 		userRoutes.DELETE("/:event_id", middleware.Authentication(), middleware.Authorization(), controller.CancelRegisterEvent) // User , Admin
 		userRoutes.PUT("/send_otp_email", controller.SendOTPEmail)                                                               // All
 		userRoutes.PUT("/verify_otp", controller.VerifyOTP)                                                                      // All
-		userRoutes.PUT("/update_user_role", controller.UpdateUserRole)                                                           // Admin
+		userRoutes.PUT("/update_user_role", middleware.Authentication(), middleware.Authorization(), controller.UpdateUserRole)  // Admin
 		userRoutes.GET("/verification_status", controller.GetUserVerificationStatus)                                             // All
 	}
 	loginRoutes := r.Group("")
