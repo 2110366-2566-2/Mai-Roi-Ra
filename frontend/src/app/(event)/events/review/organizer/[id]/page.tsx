@@ -21,7 +21,7 @@ export default async function OrganizerReviewEventById({ params }: Props) {
   if (!session) return;
 
   const user = session.user;
-  const rating = await getReviewEventById(params.id, user.user_id);
+  const rating = await getReviewEventById(params.id, user.token);
   const count_post =
     rating.one_rate +
     rating.two_rate +

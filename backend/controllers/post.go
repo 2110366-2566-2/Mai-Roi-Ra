@@ -52,14 +52,14 @@ func (c *PostController) GetPostById(ctx *gin.Context) {
 // @Tags posts
 // @Accept json
 // @Produce json
-// @Param event_id query string false "event_id"
+// @Param event_id path string true "event_id"
 // @Success 200 {object} st.GetPostListsByEventIdResponse
 // @Failure 400 {object} object "Bad Request"
 // @Failure 500 {object} object "Internal Server Error"
 // @Router /posts/events/{event_id} [get]
 func (c *PostController) GetPostListsByEventId(ctx *gin.Context) {
 	req := &st.EventIdRequest{
-		EventId: ctx.Query("event_id"),
+		EventId: ctx.Param("id"),
 	}
 	log.Println("[CTRL: GetPostListsByEventId] Input:", req)
 	res, err := c.ServiceGateway.PostService.GetPostListsByEventId(req)
