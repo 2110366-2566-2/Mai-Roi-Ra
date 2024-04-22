@@ -9,7 +9,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useSession } from "next-auth/react";
 import { HandleCreateUserSearchHistory } from "./admin/handler/HandleCreateUserSearchHistory";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import styles from '@/styles/InputStyle.module.css';
 import LoadingCircular from "./LoadingCircular";
 
 interface History {
@@ -27,7 +26,6 @@ interface Props {
 const SearchBar = ({page,last_page,search,history} : Props) => {
     const router = useRouter();
     const [loading,setLoading] = useState(false);
-    const pageRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLDivElement>(null);
     const [nextHover,setNextHover] = useState(false);
     const [previousHover,setPreviousHover] = useState(false);
@@ -36,9 +34,6 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
     const [searching,setSearching] = useState("");
     const [focus,setFocus] = useState(false);
     const [searchHover,setSearchHover] = useState(false);
-    const [pageClick,setPageClick] = useState(false);
-    const [pageSearch,setPageSearch] = useState<number>(page);
-    const [error,setError] = useState(false);
     const session = useSession();
     const user = session?.data?.user; 
 
@@ -56,51 +51,28 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
         };
       }, []);
 
-      useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-          if (pageRef.current && !pageRef.current.contains(event.target as Node)) {
-            resetPage();
-          }
-        }
-    
-        document.addEventListener('mousedown', handleClickOutside);
-    
-        return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-        };
-      }, []);
-
     useEffect(() => {
         if (loading) {
             const search = async () => {
-                const temp = searching;
-                setError(false);
-                setFocus(false);
-                if (user != undefined) {
-                    await HandleCreateUserSearchHistory(user? user.user_id : "",temp,user? user.token : "");
-                } setLoading(false);
-                router.push(`/homepage?search=${temp}`);
+                if (searching == ""){
+                    setLoading(false);
+                    router.push(`/homepage`);
+                } else {
+                    const temp = searching;
+                    setFocus(false);
+                    if (user != undefined) {
+                        await HandleCreateUserSearchHistory(user? user.user_id : "",temp,user? user.token : "");
+                    } setLoading(false);
+                    router.push(`/homepage?search=${temp}`);
+                }
             }  
             search();
         }
     }, [loading])
     
-    const handleClickPage = () => {
-        setPageClick(true);
-        if (pageRef.current) {
-            pageRef.current.focus();
-        }
-    }
-
-    const resetPage = () => {
-        setError(false);
-        setPageSearch(page);
-        setPageClick(false);
-    }
 
     const handleSubmit = async () => {
-        if (searching == "") {
-            if (search != "") router.push(`/homepage`);
+        if (searching == "" && search == "") {
             return;
         } else {
             setLoading(true);
@@ -176,52 +148,13 @@ const SearchBar = ({page,last_page,search,history} : Props) => {
                     </div>                  
     
                     <div className="md:w-[40%] w-full flex md:justify-end justify-start flex-row flex-wrap items-center lg:space-x-2 md:space-x-1 space-x-0">
+                    
+                        <div className="text-gray-500 lg:mr-[20px] md:mr-0 mr-[10px] md:text-[15px] text-[12px]" >
+                            Page {page} of {last_page}
+                         </div>
+
                         {
-                            page > 0 && (
-                                pageClick ? 
-                                <div className="text-gray-500 lg:mr-[20px] md:mr-0 mr-[10px] md:text-[15px] text-[12px] flex flex-row" ref={pageRef}>
-                                    <div>
-                                        Page
-                                    </div>
-                                    
-                                    <div className="relative mx-1">
-                                        <input type="number" value={pageSearch} onChange={(e) => setPageSearch(parseInt(e.target.value) || 1)} min={1} max={last_page}
-                                        className={`w-fit border-[1px] pr-[2px] border-black indent-1 rounded-md ${styles.hideSpinners}`}  onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                if (pageSearch <= last_page && pageSearch > 0){
-                                                    setError(false);
-                                                    setPageClick(false);
-                                                    if (search == "") {
-                                                        router.push(`/homepage?offset=${pageSearch}`);
-                                                    } else {
-                                                        router.push(`/homepage?search=${search}&offset=${pageSearch}`);
-                                                    }
-                                                } else {
-                                                    setError(true);
-                                                }
-                                            }
-                                        }}/>
-    
-                                        {
-                                            error && 
-                                                <div className="absolute top-0 mt-[35px] h-fit w-fit p-2 bg-red-100 font-bold text-red-600 text-[10px] rounded shadow-md opacity-60 whitespace-nowrap">
-                                                    Out of range
-                                                </div>
-                                        }
-                                    </div>
-    
-                                    <div>
-                                        of {last_page}
-                                    </div>
-                                </div>
-                                 : <div className="text-gray-500 lg:mr-[20px] md:mr-0 mr-[10px] md:text-[15px] text-[12px]" onClick={handleClickPage}>
-                                    Page {page} of {last_page}
-                                 </div>
-                            )
-                        }
-     
-                        {
-                            page == 1 || page == 0 ? 
+                            page == 1 || page == 0 ?
                             <div className='rounded-full w-[35px] h-[35px] duration-500 flex justify-center flex-row items-center'>
                                 <KeyboardDoubleArrowLeftIcon className="md:text-[25px] text-[17px] text-gray-300"/>
                             </div> : 
