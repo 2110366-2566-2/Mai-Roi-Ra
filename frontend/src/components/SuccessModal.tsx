@@ -2,42 +2,24 @@
 import styles from "@/styles/FontPage.module.css"
 import Image from "next/image"
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { HandleCreateEvent } from "./organizer/HandleCreateEvent";
-import { HandleUpdateEvent } from "./organizer/HandleUpdateEvent";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Props {
-    id:string
-    name:string
-    activity:string
-    startDate:string
-    endDate:string
-    price:number
-    location:string
-    district:string
-    province:string
-    description:string
-    imageSrc:string
     topic:string
     isVisible:boolean
 }
 
-const SuccessModal = ({id,name,activity,startDate,endDate,price,location,district,province,description,
-    imageSrc,topic,isVisible} : Props) => {
+const SuccessModal = ({topic,isVisible} : Props) => {
+    const router = useRouter();
     if (!isVisible) return null;
-    const session = useSession();
-    console.log(session);
+
     const handlerClose = async () => {
-        if (topic == "Event Created"){
-            await HandleCreateEvent(name, activity, startDate, endDate, price? price : 0, location, district, province, description, imageSrc);
-        } else {
-            await HandleUpdateEvent(id,name, activity, startDate, endDate, price, location, district, province, description, imageSrc);
-        }
+        router.push('/profile');
     }
 
     return (
         <div className="w-screen h-screen fixed inset-0 flex flex-row justify-center items-center 
-        bg-opacity-25 bg-black">
+        bg-opacity-25 bg-black z-40">
             <div className="lg:w-[694px] lg:h-[427px] md:w-[500px] md:h-[350px] w-[350px] h-[300px] bg-white pt-[15px] px-[15px] z-40">
                 <div className="relative top-[-5px] right-[-5px] text-end">
                     <CancelOutlinedIcon className="text-3xl icon-large cursor-pointer" onClick={handlerClose}/>

@@ -15,8 +15,8 @@ type IProblemRepository interface {
 	CreateProblem(req *st.CreateProblemRequest) (*models.Problem, error)
 	GetProblemDetailById(problemID string) (*models.Problem, error)
 	GetProblemLists(req *st.GetProblemListsRequest) ([]models.Problem, error)
-	UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error)
-	DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error)
+	UpdateProblem(req *st.UpdateProblemRequest) (*st.MessageResponse, error)
+	DeleteProblemById(req *st.ProblemIdRequest) (*st.MessageResponse, error)
 }
 
 type ProblemRepository struct {
@@ -92,7 +92,7 @@ func (repo *ProblemRepository) GetProblemLists(req *st.GetProblemListsRequest) (
 	return problems, nil
 }
 
-func (repo *ProblemRepository) UpdateProblem(req *st.UpdateProblemRequest) (*st.ProblemResponse, error) {
+func (repo *ProblemRepository) UpdateProblem(req *st.UpdateProblemRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: UpdateProblem] Called")
 	var problem models.Problem
 	if err := repo.DB.Where("problem_id = ?", req.ProblemId).First(&problem).Error; err != nil {
@@ -130,12 +130,12 @@ func (repo *ProblemRepository) UpdateProblem(req *st.UpdateProblemRequest) (*st.
 		return nil, err
 	}
 
-	return &st.ProblemResponse{
+	return &st.MessageResponse{
 		Response: "Update problem successfully",
 	}, nil
 }
 
-func (r *ProblemRepository) DeleteProblemById(req *st.DeleteProblemByIdRequest) (*st.ProblemResponse, error) {
+func (r *ProblemRepository) DeleteProblemById(req *st.ProblemIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: DeleteProblemById]: Called")
 
 	var problemModel models.Problem
@@ -155,7 +155,7 @@ func (r *ProblemRepository) DeleteProblemById(req *st.DeleteProblemByIdRequest) 
 		}
 	}
 
-	return &st.ProblemResponse{
+	return &st.MessageResponse{
 		Response: "Delete problem successfully",
 	}, nil
 }

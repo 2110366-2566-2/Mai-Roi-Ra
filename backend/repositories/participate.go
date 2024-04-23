@@ -16,8 +16,8 @@ type ParticipateRepository struct {
 }
 
 type IParticipateRepository interface {
-	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
-	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
+	RegisterEvent(req *st.RegisterEventRequest) (*st.MessageResponse, error)
+	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.MessageResponse, error)
 	GetParticipantsForEvent(req *st.GetParticipantListsRequest) ([]*models.Participate, error)
 	GetParticipatedEventsForUser(req *st.GetParticipatedEventListsRequest) ([]*models.Participate, error)
 	IsRegistered(req *st.IsRegisteredRequest) (*st.IsRegisteredResponse, error)
@@ -33,7 +33,7 @@ func NewParticipateRepository(
 	}
 }
 
-func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st.MessageResponse, error) {
 	participateModel := models.Participate{
 		UserId:         req.UserId,
 		EventId:        req.EventId,
@@ -54,14 +54,14 @@ func (r *ParticipateRepository) RegisterEvent(req *st.RegisterEventRequest) (*st
 		return nil, err
 	}
 
-	message := st.RegisterEventResponse{
-		Message: "Registered Successful",
+	message := st.MessageResponse{
+		Response: "Registered Successful",
 	}
 
 	return &message, nil
 }
 
-func (r *ParticipateRepository) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error) {
+func (r *ParticipateRepository) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Repo: CancelRegisterEvent]: Called")
 
 	result := r.DB.Where("event_id = ? AND user_id = ?", req.EventId, req.UserId).Delete(&models.Participate{})
@@ -74,8 +74,8 @@ func (r *ParticipateRepository) CancelRegisterEvent(req *st.CancelRegisterEventR
 		return nil, fmt.Errorf("record not found")
 	}
 
-	return &st.RegisterEventResponse{
-		Message: "Cancel successful",
+	return &st.MessageResponse{
+		Response: "Cancel successful",
 	}, nil
 }
 

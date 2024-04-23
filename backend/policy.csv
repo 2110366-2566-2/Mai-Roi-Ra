@@ -1,0 +1,14 @@
+p, USER,/api/v1/users/participate, POST
+p, USER,/api/v1/users/*, DELETE
+p, USER,/api/v1/refunds/, POST
+p, USER,/api/v1/posts/is_reviewed, GET
+p, USER,/api/v1/posts/, POST
+p, ORGANIZER,/api/v1/events/, POST
+p, ORGANIZER,/api/v1/events/*, PUT
+p, ORGANIZER,/api/v1/events/*, DELETE
+p, ORGANIZER,/api/v1/events/upload/*, PUT
+p, ORGANIZER,/api/v1/responses/, POST
+p, ADMIN,/api/v1/*, *
+g, USER,USER
+g, ORGANIZER,ORGANIZER
+g, ADMIN,ADMIN

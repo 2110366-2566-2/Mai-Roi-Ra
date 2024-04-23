@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/constant"
 	st "github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/struct"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/client"
@@ -112,11 +111,18 @@ func (s *StripeService) TransferToOrganizer(amount int64, currency, destinationA
 
 func (s *StripeService) ConfirmPaymentIntent(paymentIntentId string) error {
 	// Set Stripe API key
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Pkg]: Error initializing .env")
+		return nil
+	}
 	paymentMethod := "pm_card_th_credit"
 
-	redirectURL := fmt.Sprintf("%s/homepage", constant.FRONT_END_URL)
+	redirectURL := fmt.Sprintf("%s/homepage", cfg.App.FrontendURL)
 
-	_, err := paymentintent.Confirm(
+	_, err = paymentintent.Confirm(
 		paymentIntentId,
 		&stripe.PaymentIntentConfirmParams{
 			CaptureMethod: stripe.String("automatic"),

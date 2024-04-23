@@ -195,6 +195,7 @@ interface Props {
   closeModal: () => void;
   successModal: boolean;
   setSuccessModal: (value: boolean) => void;
+  token: string;
 }
 
 export default function OTPInput({
@@ -204,6 +205,7 @@ export default function OTPInput({
   closeModal,
   successModal,
   setSuccessModal,
+  token,
 }: Props) {
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -216,7 +218,7 @@ export default function OTPInput({
   const resendOtp = async () => {
     setIsLoading(true);
     try {
-      await sendOTP(email, user_id);
+      await sendOTP(email, user_id, token);
       setIsLoading(false);
     } catch (err) {
       setError("send verify fail!");
@@ -236,7 +238,7 @@ export default function OTPInput({
     setIsLoading(true);
     if (otp.length == 6) {
       try {
-        const response = await verifyOTP(otp, user_id);
+        const response = await verifyOTP(otp, user_id, token);
         if (response.verified) {
           console.log("OTP is verified:", response.verified);
           setFormIsError(true);

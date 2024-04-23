@@ -6,16 +6,15 @@ export default async function participateEvent(
   amount : number,
   event_id: string,
   num_participant : number,
-  user_id : string
+  user_id : string,
+  token: string
 ) {
-
-
   const response = await fetch(`${apiBackUrl}/users/participate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      'Authorization': `Bearer ${token}`
     },
-    // next: { tags: ["ีuserRegister"] },
     body: JSON.stringify({
         amount,
         event_id,

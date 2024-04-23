@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"time"
 
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
@@ -24,11 +25,12 @@ type IEventService interface {
 	CreateEvent(*st.CreateEventRequest) (*st.CreateEventResponse, error)
 	GetEventLists(req *st.GetEventListsRequest) (*st.GetEventListsResponse, error)
 	GetEventListsByStartDate(req *st.GetEventListsByStartDateRequest) (*st.GetEventListsByStartDateResponse, error)
-	GetEventDataById(st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error)
-	UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error)
-	DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error)
+	GetEndedEventLists(req *st.UserIdRequest) (*st.GetEndedEventListsResponse, error)
+	GetEventDataById(st.EventIdRequest) (*st.GetEventDataByIdResponse, error)
+	UpdateEvent(req *st.UpdateEventRequest) (*st.MessageResponse, error)
+	DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error)
 	GetParticipantLists(req *st.GetParticipantListsRequest) (*st.GetParticipantListsResponse, error)
-	VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error)
+	VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error)
 }
 
 func NewEventService(
@@ -64,7 +66,7 @@ func (s *EventService) CreateEvent(req *st.CreateEventRequest) (*st.CreateEventR
 
 	eventImage := req.EventImage
 	eventModel := models.Event{
-		EventId:        utils.GenerateUUID(),
+		EventId:        req.EventId,
 		OrganizerId:    req.OrganizerId,
 		LocationId:     resLocation.LocationId,
 		StartDate:      startDate,
@@ -162,7 +164,110 @@ func (s *EventService) GetEventListsByStartDate(req *st.GetEventListsByStartDate
 	return resLists, nil
 }
 
-func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.GetEventDataByIdResponse, error) {
+func (s *EventService) GetEndedEventLists(req *st.UserIdRequest) (*st.GetEndedEventListsResponse, error) {
+	log.Println("[Service: GetEndedEventLists]: Called")
+
+	eventlists := make([]models.Event, 0)
+
+	resuser, err := s.RepositoryGateway.UserRepository.GetUserByID(req)
+	if err != nil {
+		return nil, err
+	}
+	if resuser.Role == constant.USER {
+		// User
+		reqpart := &st.GetParticipatedEventListsRequest{
+			UserId: req.UserId,
+		}
+		respart, err := s.RepositoryGateway.ParticipateRepository.GetParticipatedEventsForUser(reqpart)
+		if err != nil {
+			return nil, err
+		}
+		for _, v := range respart {
+			event, err := s.RepositoryGateway.EventRepository.GetEventDataById(v.EventId)
+			if err != nil {
+				return nil, err
+			}
+			eventlists = append(eventlists, *event)
+		}
+	} else if resuser.Role == constant.ORGANIZER {
+		// Organizer
+		resorg, err := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(resuser.UserID)
+		if err != nil {
+			return nil, err
+		}
+		reqevent := &st.GetEventListsRequest{
+			OrganizerId: resorg,
+		}
+		resevent, _, _, err := s.RepositoryGateway.EventRepository.GetEventLists(reqevent)
+		if err != nil {
+			return nil, err
+		}
+		for _, v := range resevent {
+			eventlists = append(eventlists, *v)
+		}
+	}
+
+	res := &st.GetEndedEventListsResponse{
+		EventLists: make([]st.GetEndedEventList, 0),
+	}
+
+	for _, v := range eventlists {
+		if time.Now().After(v.EndDate) {
+
+			loc, err := s.RepositoryGateway.LocationRepository.GetLocationById(v.LocationId)
+			if err != nil {
+				return nil, err
+			}
+
+			reqpos := &st.EventIdRequest{
+				EventId: v.EventId,
+			}
+
+			respos, err := s.RepositoryGateway.PostRepository.GetPostListsByEventId(reqpos)
+			if err != nil {
+				return nil, err
+			}
+
+			var countRatings [6]int // Index 0 for posts with no ratings, 1-5 for respective ratings
+			var totalRatings int
+			var totalCount int
+
+			for _, v := range respos {
+				if v.RatingScore >= 1 && v.RatingScore <= 5 {
+					countRatings[v.RatingScore]++
+					totalRatings += v.RatingScore
+				} else {
+					countRatings[0]++
+				}
+				totalCount++
+			}
+
+			var avgRating float64
+			if totalCount > 0 {
+				avgRating = float64(totalRatings) / float64(totalCount)
+				avgRating = math.Round(avgRating*10) / 10
+			}
+
+			in := &st.GetEndedEventList{
+				EventId:     v.EventId,
+				EventName:   v.EventName,
+				StartDate:   v.StartDate.String(),
+				EndDate:     v.EndDate.String(),
+				Description: v.Description,
+				Status:      v.Status,
+				EventImage:  *v.EventImage,
+				City:        loc.City,
+				District:    loc.District,
+				AverageRate: avgRating,
+			}
+			res.EventLists = append(res.EventLists, *in)
+		}
+	}
+
+	return res, nil
+}
+
+func (s *EventService) GetEventDataById(req st.EventIdRequest) (*st.GetEventDataByIdResponse, error) {
 	log.Println("[Service: GetEventDataById]: Called")
 	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
 	if err != nil {
@@ -176,7 +281,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if resEvent.EventImage != nil {
 		eventImage = *resEvent.EventImage
 	}
-	announcementreq := &st.GetAnnouncementListsRequest{
+	announcementreq := &st.EventIdRequest{
 		EventId: req.EventId,
 	}
 	resAnnouncement, err := s.RepositoryGateway.AnnouncementRepository.GetAnnouncementsForEvent(announcementreq)
@@ -187,7 +292,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	if err != nil {
 		return nil, err
 	}
-	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.GetUserByUserIdRequest{
+	orgUserInfo, err := s.RepositoryGateway.UserRepository.GetUserByID(&st.UserIdRequest{
 		UserId: orgUserId,
 	})
 	if err != nil {
@@ -219,7 +324,7 @@ func (s *EventService) GetEventDataById(req st.GetEventDataByIdRequest) (*st.Get
 	return res, nil
 }
 
-func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventResponse, error) {
+func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: UpdateEvent]: Called")
 
 	resEvent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
@@ -264,8 +369,6 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		return nil, errors.New("start date must be before end date")
 	}
 
-	eventImage := req.EventImage
-
 	eventModel := models.Event{
 		EventId:        resEvent.EventId,
 		OrganizerId:    resEvent.OrganizerId,
@@ -279,7 +382,6 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 		EventName:      req.EventName,
 		Deadline:       deadline,
 		Activities:     req.Activities,
-		EventImage:     &eventImage,
 	}
 
 	res, err := s.RepositoryGateway.EventRepository.UpdateEvent(&eventModel)
@@ -290,7 +392,7 @@ func (s *EventService) UpdateEvent(req *st.UpdateEventRequest) (*st.UpdateEventR
 	return res, nil
 }
 
-func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEventResponse, error) {
+func (s *EventService) DeleteEventById(req *st.EventIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: DeleteEvent]: Called")
 
 	resevent, err := s.RepositoryGateway.EventRepository.GetEventDataById(req.EventId)
@@ -315,7 +417,7 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 			UserId:    v.UserId,
 			EventId:   resevent.EventId,
 			EventName: resevent.EventName,
-			EventDate: resevent.StartDate.Format("2006-01-02"),
+			EventDate: utils.TimeToString(resevent.StartDate),
 		}
 		if _, err := announcementService.SendCancelledEmail(reqcancelled); err != nil {
 			log.Println("[Service: Call SendCancelledEmail]:", err)
@@ -362,8 +464,8 @@ func (s *EventService) DeleteEventById(req *st.DeleteEventRequest) (*st.DeleteEv
 		return nil, err
 	}
 
-	res := &st.DeleteEventResponse{
-		Message: "Delete Successful",
+	res := &st.MessageResponse{
+		Response: "Delete Successful",
 	}
 
 	return res, nil
@@ -415,7 +517,7 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 		return err
 	}
 
-	reqId := st.GetUserByUserIdRequest{
+	reqId := st.UserIdRequest{
 		UserId: resUserId,
 	}
 
@@ -506,7 +608,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 		return err
 	}
 
-	reqId := st.GetUserByUserIdRequest{
+	reqId := st.UserIdRequest{
 		UserId: resUserId,
 	}
 
@@ -568,7 +670,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	return nil
 }
 
-func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.VerifyEventResponse, error) {
+func (s *EventService) VerifyEvent(req *st.VerifyEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: VerifyEvent]: Called")
 	if req.Status == constant.APPROVED {
 		err := s.SendApprovalEmail(req.EventId)

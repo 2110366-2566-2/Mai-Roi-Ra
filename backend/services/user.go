@@ -36,27 +36,28 @@ var (
 type IUserService interface {
 	CreateUser(user *st.CreateUserRequest) (*st.CreateUserResponse, error)
 	UpdateUserInformation(req *st.UpdateUserInformationRequest) (*models.User, error)
-	GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.User, error)
+	GetUserByUserId(req *st.UserIdRequest) (*models.User, error)
 	LoginUser(req *st.LoginUserRequest) (*st.LoginUserResponse, error)
-	LogoutUser(req *st.LogoutUserRequest) (*st.UserResponse, error)
+	LogoutUser(req *st.UserIdRequest) (*st.MessageResponse, error)
 	ValidateToken(token string) (*models.User, error)
 	LoginUserEmail(req *st.LoginUserEmailRequest) (*st.LoginUserEmailResponse, error)
 	LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUserPhoneResponse, error)
 	GetAllUsers() (*st.GetAllUsersResponse, error)
 	// AuthMe(token string) (*models.User, error)
-	RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error)
-	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error)
+	RegisterEvent(req *st.RegisterEventRequest) (*st.MessageResponse, error)
+	CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.MessageResponse, error)
 	GetParticipatedEventLists(req *st.GetParticipatedEventListsRequest) (*st.GetParticipatedEventListsResponse, error)
-	ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error)
-	SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error)
+	ToggleNotifications(req *st.UserIdRequest) (*st.MessageResponse, error)
+	SearchEvent(req *st.SearchEventRequest) (*st.MessageResponse, error)
 	GetSearchHistories(userId *string) (*st.GetSearchHistoriesResponse, error)
 	LoginGoogle(c *gin.Context) (*goth.User, error)
 	CallbackGoogle(c *gin.Context) (*string, error)
-	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) // New function to send OTP email
+	SendOTPEmail(req *st.SendOTPEmailRequest) (*st.MessageResponse, error) // New function to send OTP email
 	VerifyOTP(req *st.VerifyOTPRequest) (*st.VerifyOTPResponse, error)
 	GetUserOTP(userId *string) (*string, *time.Time, error)
-	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error)
+	UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.MessageResponse, error)
 	GetUserByEmail(email string) (*models.User, error)
+	UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error)
 }
 
 func NewUserService(repoGateway repository.RepositoryGateway) IUserService {
@@ -145,7 +146,7 @@ func (s *UserService) UpdateUserInformation(req *st.UpdateUserInformationRequest
 	return res, err
 }
 
-func (s *UserService) GetUserByUserId(req *st.GetUserByUserIdRequest) (*models.User, error) {
+func (s *UserService) GetUserByUserId(req *st.UserIdRequest) (*models.User, error) {
 	log.Println("[Service: GetUserByUserId]: Called")
 	res, err := s.RepositoryGateway.UserRepository.GetUserByID(req)
 	if err != nil {
@@ -356,16 +357,16 @@ func (s *UserService) LoginUserPhone(req *st.LoginUserPhoneRequest) (*st.LoginUs
 }
 
 // LogoutUser implements IUserService.
-func (s *UserService) LogoutUser(req *st.LogoutUserRequest) (*st.UserResponse, error) {
-	log.Printf("[Service: LogoutUser]: Attempting to remove token for UserID: %s", req.UserID)
-	err := s.RepositoryGateway.UserRepository.UpdateUserToken(req.UserID, "") // Attempt to remove token
+func (s *UserService) LogoutUser(req *st.UserIdRequest) (*st.MessageResponse, error) {
+	log.Printf("[Service: LogoutUser]: Attempting to remove token for UserID: %s", req.UserId)
+	err := s.RepositoryGateway.UserRepository.UpdateUserToken(req.UserId, "") // Attempt to remove token
 	if err != nil {
-		log.Printf("[Service: LogoutUser]: Failed to remove token for UserID: %s, Error: %v", req.UserID, err)
+		log.Printf("[Service: LogoutUser]: Failed to remove token for UserID: %s, Error: %v", req.UserId, err)
 		return nil, errors.New("failed to remove token")
 	}
 
-	log.Printf("[Service: LogoutUser]: Token removed successfully for UserID: %s", req.UserID)
-	res := &st.UserResponse{
+	log.Printf("[Service: LogoutUser]: Token removed successfully for UserID: %s", req.UserId)
+	res := &st.MessageResponse{
 		Response: "Logout successful",
 	}
 	return res, nil
@@ -385,15 +386,22 @@ func (s *UserService) ValidateToken(token string) (*models.User, error) {
 // GenerateJWTToken generates a new JWT token for authenticated users
 func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	log.Println("[Service: GenerateJWTToken]: Called")
-	var secretKey = []byte("YourSecretKey")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return "", err
+	}
+	secretKey := cfg.App.TokenSecretKey
 
 	claims := jwt.MapClaims{
-		"user_id":      user.UserID,
+		"user_id":      user.UserID,                           // Include the user's ID
+		"username":     user.Username,                         // Include the username
+		"role":         user.Role,                             // Include user's role
+		"email":        user.Email,                            // Include the email
+		"exp":          time.Now().Add(time.Hour * 24).Unix(), // Token expiration time
 		"organizer_id": orgId,
-		"username":     user.Username,
-		"email":        user.Email,
-		"role":         user.Role,
-		"exp":          time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secretKey))
@@ -404,7 +412,15 @@ func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 }
 
 func validateToken(signedToken string) (string, error) {
-	var secretKey = []byte("secret-key")
+	log.Println("[Service: validateToken]: Called")
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return "", err
+	}
+	secretKey := cfg.App.TokenSecretKey
 	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
@@ -418,7 +434,7 @@ func validateToken(signedToken string) (string, error) {
 	return "", errors.New("invalid token")
 }
 
-func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterEventResponse, error) {
+func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: RegisterEvent]: Called")
 	res, err := s.RepositoryGateway.ParticipateRepository.RegisterEvent(req)
 	if err != nil {
@@ -446,7 +462,7 @@ func (s *UserService) RegisterEvent(req *st.RegisterEventRequest) (*st.RegisterE
 	return res, nil
 }
 
-func (s *UserService) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.RegisterEventResponse, error) {
+func (s *UserService) CancelRegisterEvent(req *st.CancelRegisterEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: CancelRegisterEvent]: Called")
 	res, err := s.RepositoryGateway.ParticipateRepository.CancelRegisterEvent(req)
 	if err != nil {
@@ -484,8 +500,8 @@ func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventList
 		eventData := st.ParticipatedEvent{
 			EventId:      res.EventId,
 			EventName:    res.EventName,
-			StartDate:    res.StartDate.Format("2006/02/01"), // Format the date as "YYYY/DD/MM"
-			EndDate:      res.EndDate.Format("2006/02/01"),   // Format the date as "YYYY/DD/MM"
+			StartDate:    utils.TimeToString(res.StartDate),
+			EndDate:      utils.TimeToString(res.EndDate), // Format the date as "YYYY/DD/MM"
 			EventImage:   res.EventImage,
 			LocationName: locName.LocationName,
 			Description:  res.Description,
@@ -496,8 +512,7 @@ func (s *UserService) GetParticipatedEventLists(req *st.GetParticipatedEventList
 	return resLists, nil
 }
 
-// used the same struct as before, cause this function is so ez
-func (s *UserService) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.RegisterEventResponse, error) {
+func (s *UserService) ToggleNotifications(req *st.UserIdRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: ToggleNotifications]: Called")
 	res, err := s.RepositoryGateway.UserRepository.ToggleNotifications(req)
 	if err != nil {
@@ -507,15 +522,15 @@ func (s *UserService) ToggleNotifications(req *st.GetUserByUserIdRequest) (*st.R
 	return res, err
 }
 
-func (s *UserService) SearchEvent(req *st.SearchEventRequest) (*st.SearchEventResponse, error) {
+func (s *UserService) SearchEvent(req *st.SearchEventRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SearchEvent]: Called")
 	res, err := s.RepositoryGateway.SearchRepository.SaveSearchEvent(req)
 	if err != nil {
 		log.Println("[Service: Call repo SaveSearchEvent error]:", err)
 	}
 
-	return &st.SearchEventResponse{
-		Message: *res,
+	return &st.MessageResponse{
+		Response: *res,
 	}, nil
 }
 
@@ -623,7 +638,7 @@ func (s *UserService) CallbackGoogle(c *gin.Context) (*string, error) {
 	return &token, nil
 }
 
-func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmailResponse, error) {
+func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: SendOTPEmail]: Called")
 
 	// Generate OTP
@@ -686,8 +701,8 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.SendOTPEmai
 		return nil, err
 	}
 
-	return &st.SendOTPEmailResponse{
-		Message: "OTP email sent successfully",
+	return &st.MessageResponse{
+		Response: "OTP email sent successfully",
 	}, nil
 }
 
@@ -725,7 +740,7 @@ func (s *UserService) GetUserOTP(userId *string) (*string, *time.Time, error) {
 	return otp, expired, nil
 }
 
-func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.UserResponse, error) {
+func (s *UserService) UpdateUserRole(req *st.UpdateUserRoleRequest) (*st.MessageResponse, error) {
 	log.Println("[Service: UpdateUserRole]: Called")
 	checkOrg, err := s.RepositoryGateway.OrganizerRepository.GetOrganizerIdFromUserId(req.UserId)
 	if err != nil {
@@ -752,6 +767,16 @@ func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	user, err := s.RepositoryGateway.UserRepository.GetUserByEmail(email)
 	if err != nil {
 		log.Println("[Service: GetUserByEmail]: Error retrieving user by email", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func (s *UserService) UpdateUserProfileImage(userId string, url string) (*st.MessageResponse, error) {
+	log.Println("[Service: UpdateUserProfileImage] Called")
+	user, err := s.RepositoryGateway.UserRepository.UpdateUserProfileImage(userId, url)
+	if err != nil {
+		log.Println("[Service: UpdateUserProfileImage] Error calling repo: ", err)
 		return nil, err
 	}
 	return user, nil

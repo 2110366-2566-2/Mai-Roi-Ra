@@ -9,27 +9,23 @@ import (
 
 type Config struct {
 	App        *App
-	MongoDB    *MongoDB
 	PgDB       *PgDB
 	Email      *Email
 	GoogleAuth *GoogleAuth
 	S3         *S3
-	Omise      *Omise
 	Stripe     *Stripe
 }
 
 type App struct {
-	Url     string
-	AppName string
-}
-
-type MongoDB struct {
-	Uri      string
-	Username string
-	Password string
+	AppUrl         string
+	AppPort        string
+	AppName        string
+	FrontendURL    string
+	TokenSecretKey string
 }
 
 type PgDB struct {
+	Host     string
 	Username string
 	Password string
 	DbName   string
@@ -55,11 +51,6 @@ type S3 struct {
 	AwsBucketEventName   string
 }
 
-type Omise struct {
-	PublicKey string
-	SecretKey string
-}
-
 type Stripe struct {
 	PublicKey string
 	SecretKey string
@@ -70,17 +61,21 @@ func NewConfig(path string) (*Config, error) {
 		log.Println("Error loading .env file: ", err)
 		return nil, err
 	}
+	appPort := os.Getenv("PROD_PORT")
+	isProd := os.Getenv("IS_PROD")
+	if isProd == "false" {
+		appPort = os.Getenv("DEV_PORT")
+	}
 	return &Config{
 		App: &App{
-			Url:     os.Getenv("SERVER_HOST"),
-			AppName: os.Getenv("APP_NAME"),
-		},
-		MongoDB: &MongoDB{
-			Uri:      os.Getenv("MONGODB_URI"),
-			Username: os.Getenv("MONGODB_USERNAME"),
-			Password: os.Getenv("MONGODB_PASSWORD"),
+			AppUrl:         os.Getenv("SERVER_HOST"),
+			AppPort:        appPort,
+			AppName:        os.Getenv("APP_NAME"),
+			FrontendURL:    os.Getenv("FRONTEND_URL"),
+			TokenSecretKey: os.Getenv("TOKEN_SECRET_KEY"),
 		},
 		PgDB: &PgDB{
+			Host:     os.Getenv("PG_HOST"),
 			Username: os.Getenv("PG_USER"),
 			Password: os.Getenv("PG_PASSWORD"),
 			DbName:   os.Getenv("PG_DB"),
@@ -102,10 +97,6 @@ func NewConfig(path string) (*Config, error) {
 			AwsSecretKey:         os.Getenv("AWS_SECRET_ACCESS_KEY"),
 			AwsBucketProfileName: os.Getenv("AWS_BUCKET_PROFILE_NAME"),
 			AwsBucketEventName:   os.Getenv("AWS_BUCKET_EVENT_NAME"),
-		},
-		Omise: &Omise{
-			PublicKey: os.Getenv("OMISE_PUBLIC_KEY"),
-			SecretKey: os.Getenv("OMISE_SECRET_KEY"),
 		},
 		Stripe: &Stripe{
 			PublicKey: os.Getenv("STRIPE_PUBLIC_KEY"),

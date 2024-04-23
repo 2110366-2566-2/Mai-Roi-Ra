@@ -1,22 +1,26 @@
 'use client'
 import Image from "next/image";
 import HomeIcon from '@mui/icons-material/HomeOutlined';
-import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PersonIcon from '@mui/icons-material/Person';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 interface Props {
     isVisible:boolean
     onClose:Function
+    username:string;
+    email:string|null;
+    phone_number:string|null;
+    user_image:string;
 }
 
-const MenuPopup = ({isVisible,onClose} : Props) => {
+const MenuPopup = ({isVisible,onClose,username,email,phone_number,user_image} : Props) => {
     const session = useSession();
-    const user = session.data?.user;
     const pathname = usePathname(); 
     const router = useRouter();
+
     if (!isVisible) return null;
 
     const handlerClose = () => {
@@ -51,32 +55,26 @@ const MenuPopup = ({isVisible,onClose} : Props) => {
                          <div className="px-5 mb-[30px]">
                              <div className="rounded-full w-fit h-fit">
                                  <Image className="md:w-[120px] md:h-[120px] w-[60px] h-[60px] rounded-full"
-                                 src="/img/profile_picture.png"
-                                 alt="Filed To Load Image"
-                                 width={300}
-                                 height={300}/>
+                                  src={user_image? user_image : "/img/profile_picture.png"}
+                                  alt="Filed To Load Image"
+                                  width={300}
+                                  height={300}/>
                              </div>
      
                              <div className="md:text-[30px] text-[15px] mt-[10px]">
-                                {
-                                    session?
-                                     user?.first_name:
-                                     "Guest"
-                                }
+                                {username}
                              </div>
      
-                             {
-                                session?
-                                    <div className="text-gray-400 md:text-[15px] text-[12px]">
-                                     {
-                                        user?.email == "" ? user.phone_number :
-                                        user?.email
-                                     } 
-                                    </div>
-                                    : 
-                                    <div className="text-gray-400 md:text-[15px] text-[12px]">
-                                        "Guest"
-                                    </div>
+                            {  email && 
+                                <div className="text-gray-400 md:text-[15px] text-[12px]">
+                                 {email} 
+                                </div>
+                            }
+
+                            {  phone_number && 
+                                <div className="text-gray-400 md:text-[15px] text-[12px]">
+                                 {phone_number} 
+                                </div>
                             }
                              
                          </div>
@@ -90,29 +88,46 @@ const MenuPopup = ({isVisible,onClose} : Props) => {
                                      <HomeIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Home
                                  </div>
                                  <hr/>
-                                 <div className={`px-4 py-2 flex items-center w-full hover:bg-gray-200`}>
-                                     <NotificationsIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Notifications
-                                 </div>
-                                 <hr/>
                                  <div className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
                                     ${pathname === "/profile" ? "text-[#FFAE27]" : ""}`}
                                     onClick={() => {router.push("/profile"); handlerClose;}}>
                                     <PersonIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Profile
                                  </div>
                                  <hr/>
-                                 <div className={`px-4 py-2 flex items-center w-full hover:bg-gray-200`}>
-                                     <SupportAgentIcon className='md:mr-6 mr-3 md:text-[30px] text-[20px]'/>Support and Service
-                                 </div>
+                                 <div
+                                    className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200 ${
+                                        pathname === "/supportandservice" ? "text-[#FFAE27]" : ""}`}
+                                        onClick={() => router.push("/supportandservice")}
+                                    >
+                                    <SupportAgentIcon className="md:mr-6 mr-3 md:text-[30px] text-[20px]" />
+                                    Support and Service
+                                </div>
+                                <hr/>
+                                <div
+                                    className={`px-4 py-2 cursor-pointer flex items-center w-full hover:bg-gray-200
+                                    ${pathname === "/review" ? "text-[#FFAE27]" : ""}`}
+                                    onClick={() => router.push("/review")}>
+                                    <RateReviewIcon className="pt-1 md:mr-6 mr-3 md:text-[30px] text-[20px]" />
+                                    Review
+                                </div>
+
                                  <hr/>
                              </div>
                          </div>
                      </div>
      
-                     <div className="p-4 flex justify-center">
-                         <button className="text-white rounded-full hover:bg-[#F2D57E] bg-[#FFAE27] h-[40px] md:w-[150px] w-[100px]">
-                            Logout
-                         </button>
-                     </div>
+                    <div className="p-4 flex justify-center">
+                        <button
+                        className="text-white rounded-full hover:bg-yellow-500 bg-[#F2D22E] h-[40px] max-h-[150px] w-[70%]"
+                        onClick={() => {
+                            session
+                            ? router.push("/auth/signout")
+                            : router.push("/auth/signin");
+                        }}
+                        >
+                        {session ? <>Log out</> : <>Sign in</>}
+                        </button>
+                    </div>
                  </div>
              </div> : null
            }

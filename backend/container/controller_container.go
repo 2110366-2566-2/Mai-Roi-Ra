@@ -39,8 +39,17 @@ func (c *Container) ControllerProvider() {
 	if err := c.Container.Provide(controllers.NewRefundController); err != nil {
 		c.Error = err
 	}
+
+	if err := c.Container.Provide(controllers.NewPostController); err != nil {
+		c.Error = err
+	}
+
+	if err := c.Container.Provide(controllers.NewResponseController); err != nil {
+		c.Error = err
+	}
 	
 	if err := c.Container.Provide(controllers.NewController); err != nil {
 		c.Error = err
 	}
+	
 }
