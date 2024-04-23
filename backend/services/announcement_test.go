@@ -82,7 +82,20 @@ func TestSendAnnouncementAPI(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"error":"Check your fields: Content must be between 1 and 256 characters. "}`,
 		},
+		{
+			description:    "Invalid Request - Missing Event ID",
+			requestBody:    `{"event_id": "", "event_name": "Annual Gathering", "subject": "New Subject", "content": "Content is here."}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error":"Check your fields: "}`,
+		},
+		{
+			description:    "Invalid Request - Missing Event Name",
+			requestBody:    `{"event_id": "550e8400-e29b-41d4-a716-446655440400", "event_name": "", "subject": "New Subject", "content": "Content is here."}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error":"Check your fields: "}`,
+		},
 	}
+
 
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
