@@ -33,7 +33,7 @@ func NewAWSCloudService(bucket string) *awsService {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil
+		// return nil
 	}
 	session, err := session.NewSession(&aws.Config{
 		Region:      aws.String(cfg.S3.AwsRegion),

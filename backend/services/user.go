@@ -391,7 +391,7 @@ func GenerateJWTToken(user *models.User, orgId string) (string, error) {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return "", err
+		// return "", err
 	}
 	secretKey := cfg.App.TokenSecretKey
 
@@ -418,7 +418,7 @@ func validateToken(signedToken string) (string, error) {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return "", err
+		// return "", err
 	}
 	secretKey := cfg.App.TokenSecretKey
 	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
@@ -659,7 +659,7 @@ func (s *UserService) SendOTPEmail(req *st.SendOTPEmailRequest) (*st.MessageResp
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)
 

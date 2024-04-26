@@ -153,7 +153,7 @@ func (s *TransactionService) SendTransactionEmail(req *st.SendTransactionEmailRe
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 	log.Println("Config path from Gmail:", cfg)
 

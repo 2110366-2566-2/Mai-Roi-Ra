@@ -36,7 +36,7 @@ func main() {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return
+		// return
 	}
 
 	c := container.NewContainer()

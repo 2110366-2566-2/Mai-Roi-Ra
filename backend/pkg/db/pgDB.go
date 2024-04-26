@@ -16,7 +16,7 @@ func InitPgDB() *gorm.DB {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil
+		// return nil
 	}
 	log.Println("Config path from PG:", cfg)
 

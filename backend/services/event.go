@@ -501,7 +501,7 @@ func (s *EventService) SendApprovalEmail(eventId string) error {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return err
+		// return err
 	}
 	log.Println("Config path from Gmail:", cfg)
 
@@ -592,7 +592,7 @@ func (s *EventService) SendRejectionEmail(eventId string) error {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return err
+		// return err
 	}
 	log.Println("Config path from Gmail:", cfg)
 

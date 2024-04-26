@@ -39,7 +39,7 @@ func (s *AnnouncementService) SendAnnouncement(req *st.SendAnnouncementRequest) 
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 	log.Println("Config path from Gmail:", cfg)
 
@@ -200,7 +200,7 @@ func (s *AnnouncementService) SendRegisteredEmail(req *st.SendRegisteredEmailReq
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 	log.Println("Config path from Gmail:", cfg)
 
@@ -317,7 +317,7 @@ func (s *AnnouncementService) SendReminderEmail(req *st.SendReminderEmailRequest
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 	log.Println("Config path from Gmail:", cfg)
 
@@ -424,7 +424,7 @@ func (s *AnnouncementService) SendCancelledEmail(req *st.SendCancelledEmailReque
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 	log.Println("Config path from Gmail:", cfg)
 

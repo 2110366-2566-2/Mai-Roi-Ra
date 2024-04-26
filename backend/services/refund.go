@@ -69,7 +69,7 @@ func (s *RefundService) SendRefundEmail(req *st.SendRefundEmailRequest) (*st.Sen
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return nil, err
+		// return nil, err
 	}
 
 	sender := mail.NewGmailSender(cfg.Email.Name, cfg.Email.Address, cfg.Email.Password)

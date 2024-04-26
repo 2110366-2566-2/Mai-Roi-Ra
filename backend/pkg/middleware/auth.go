@@ -34,7 +34,7 @@ func Authentication() gin.HandlerFunc {
 		}())
 		if err != nil {
 			log.Println("[Config]: Error initializing .env")
-			return
+			// return
 		}
 		SecretKey := cfg.App.TokenSecretKey
 
@@ -143,7 +143,7 @@ func GoogleAuth() gin.HandlerFunc {
 		}())
 		if err != nil {
 			log.Println("[Config]: Error initializing .env")
-			return
+			// return
 		}
 		// Cookies
 		SecretKey := cfg.App.TokenSecretKey

@@ -14,21 +14,23 @@ import (
 )
 
 func setupCORS() gin.HandlerFunc {
-	cfg, err := config.NewConfig(func() string {
-		return ".env"
-	}())
-	if err != nil {
-		log.Println("[Config]: Error initializing .env")
-		return nil
-	}
-	return cors.New(cors.Config{
-		AllowOrigins:     []string{cfg.App.FrontendURL, cfg.App.ProductFrontendURL},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	})
+    cfg, err := config.NewConfig(func() string {
+        return ".env"
+    }())
+    if err != nil {
+        log.Println("[Config]: Error initializing .env")
+        // return nil
+    }
+
+    return cors.New(cors.Config{
+        AllowOrigins:     []string{cfg.App.FrontendURL, cfg.App.ProductFrontendURL},
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-CSRF-Token", "X-Requested-With"},
+        ExposeHeaders:    []string{"Content-Length", "Authorization"},
+        AllowCredentials: true,
+    })
 }
+
 
 func SetupRouter(c *dig.Container) *gin.Engine {
 	r := gin.Default()

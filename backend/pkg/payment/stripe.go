@@ -29,7 +29,7 @@ func NewStripeService() *StripeService {
 	}())
 	if err != nil {
 		log.Println("[Pkg]: Error initializing .env")
-		return nil
+		// return nil
 	}
 	log.Println("Config path from Stripe:", cfg)
 
@@ -116,7 +116,7 @@ func (s *StripeService) ConfirmPaymentIntent(paymentIntentId string) error {
 	}())
 	if err != nil {
 		log.Println("[Pkg]: Error initializing .env")
-		return nil
+		// return nil
 	}
 	paymentMethod := "pm_card_th_credit"
 

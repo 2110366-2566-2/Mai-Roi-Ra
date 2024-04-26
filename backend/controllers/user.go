@@ -510,7 +510,7 @@ func (c *UserController) CallbackGoogle(ctx *gin.Context) {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 	redirectURL := fmt.Sprintf("%s/auth/handle-login", cfg.App.FrontendURL)
 	log.Println("User token at the end:", *token)

@@ -148,7 +148,7 @@ func (s *ProblemService) SendReplyEmail(problemId string) error {
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return err
+		// return err
 	}
 	log.Println("Config path from Gmail:", cfg)
 
@@ -225,7 +225,7 @@ func (s *ProblemService) SendEmailToAdmin(problemType string, description string
 	}())
 	if err != nil {
 		log.Println("[Config]: Error initializing .env")
-		return err
+		// return err
 	}
 	log.Println("Config path from Gmail:", cfg)
 	resAdmins, err := s.RepositoryGateway.UserRepository.GetAllAdmins()
