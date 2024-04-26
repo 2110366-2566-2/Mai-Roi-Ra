@@ -24,7 +24,7 @@ func setupCORS() gin.HandlerFunc {
 
     return cors.New(cors.Config{
         AllowOrigins:     []string{cfg.App.FrontendURL, cfg.App.ProductFrontendURL},
-        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
         AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-CSRF-Token", "X-Requested-With"},
         ExposeHeaders:    []string{"Content-Length", "Authorization"},
         AllowCredentials: true,
