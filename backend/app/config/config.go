@@ -17,11 +17,12 @@ type Config struct {
 }
 
 type App struct {
-	AppUrl         string
-	AppPort        string
-	AppName        string
-	FrontendURL    string
-	TokenSecretKey string
+	AppUrl             string
+	AppPort            string
+	AppName            string
+	FrontendURL        string
+	ProductFrontendURL string
+	TokenSecretKey     string
 }
 
 type PgDB struct {
@@ -68,11 +69,12 @@ func NewConfig(path string) (*Config, error) {
 	}
 	return &Config{
 		App: &App{
-			AppUrl:         os.Getenv("SERVER_HOST"),
-			AppPort:        appPort,
-			AppName:        os.Getenv("APP_NAME"),
-			FrontendURL:    os.Getenv("FRONTEND_URL"),
-			TokenSecretKey: os.Getenv("TOKEN_SECRET_KEY"),
+			AppUrl:             os.Getenv("SERVER_HOST"),
+			AppPort:            appPort,
+			AppName:            os.Getenv("APP_NAME"),
+			FrontendURL:        os.Getenv("FRONTEND_URL"),
+			ProductFrontendURL: os.Getenv("PRODUCT_FRONTEND_URL"),
+			TokenSecretKey:     os.Getenv("TOKEN_SECRET_KEY"),
 		},
 		PgDB: &PgDB{
 			Host:     os.Getenv("PG_HOST"),
