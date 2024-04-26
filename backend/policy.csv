@@ -8,7 +8,5 @@ p, ORGANIZER,/api/v1/events/*, PUT
 p, ORGANIZER,/api/v1/events/*, DELETE
 p, ORGANIZER,/api/v1/events/upload/*, PUT
 p, ORGANIZER,/api/v1/responses/, POST
-p, ADMIN,/api/v1/*, *
 g, USER,USER
 g, ORGANIZER,ORGANIZER
-g, ADMIN,ADMIN

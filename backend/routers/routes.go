@@ -3,9 +3,9 @@ package routers
 import (
 	"log"
 
+	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/app/config"
 	controllers "github.com/2110366-2566-2/Mai-Roi-Ra/backend/controllers"
 	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/middleware"
-	"github.com/2110366-2566-2/Mai-Roi-Ra/backend/pkg/token"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -13,13 +13,16 @@ import (
 	"go.uber.org/dig"
 )
 
-type routers struct {
-	tokenMaker token.Maker
-}
-
 func setupCORS() gin.HandlerFunc {
+	cfg, err := config.NewConfig(func() string {
+		return ".env"
+	}())
+	if err != nil {
+		log.Println("[Config]: Error initializing .env")
+		return nil
+	}
 	return cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{cfg.App.FrontendURL, cfg.App.ProductFrontendURL},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -69,9 +72,10 @@ func setupEventRoutes(r *gin.RouterGroup, controller *controllers.EventControlle
 		eventRoutes.GET("/:id", controller.GetEventDataById)                                                                 // All
 		eventRoutes.PUT("/:id", middleware.Authentication(), middleware.Authorization(), controller.UpdateEvent)             // Organizer , Admin
 		eventRoutes.PUT("/upload/:id", middleware.Authentication(), middleware.Authorization(), controller.UpdateEventImage) // Organizer , Admin
-		eventRoutes.PUT("/:id/verify", middleware.Authentication(), middleware.Authorization(), controller.VerifyEvent)      // Admin
-		eventRoutes.DELETE("/:id", middleware.Authentication(), middleware.Authorization(), controller.DeleteEventById)      // Organizer , Admin
-		eventRoutes.GET("/participant", controller.GetParticipantLists)                                                      // All
+		// eventRoutes.PUT("/:id/verify", middleware.Authentication(), middleware.Authorization(), controller.VerifyEvent)      // Admin
+		eventRoutes.PUT("/:id/verify", controller.VerifyEvent)                                                          // Admin
+		eventRoutes.DELETE("/:id", middleware.Authentication(), middleware.Authorization(), controller.DeleteEventById) // Organizer , Admin
+		eventRoutes.GET("/participant", controller.GetParticipantLists)                                                 // All
 	}
 }
 
