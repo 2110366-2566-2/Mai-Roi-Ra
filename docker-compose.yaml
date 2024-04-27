@@ -1,23 +1,23 @@
 version: "3.9"
 
 services:
-  # frontend:
-  #   container_name: frontend
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile.dev
-  #   env_file:
-  #     - frontend/.env.local
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   depends_on:
-  #     pg_db:
-  #       condition: service_healthy
-  #   networks:
-  #     - mrr
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - frontend/.env.local
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      pg_db:
+        condition: service_healthy
+    networks:
+      - mrr
 
   backend:
     container_name: backend
@@ -78,9 +78,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile.migration
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=MaiRoiRa123
-      - POSTGRES_DB=root
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: MaiRoiRa123
+      POSTGRES_DB: postgres
     depends_on:
       - pg_db
     networks:
