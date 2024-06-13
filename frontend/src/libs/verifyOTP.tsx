@@ -3,7 +3,7 @@ import { apiBackUrl } from "../constants";
 export default async function verifyOTP(
   otp: string,
   user_id: string,
-  token: string
+  token: string,
 ) {
   try {
     const jsonBody = JSON.stringify({
@@ -23,7 +23,7 @@ export default async function verifyOTP(
       throw new Error(
         `Failed to verify OTP: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
 

@@ -92,7 +92,7 @@ const CommentBox = ({
 
   const handleRatingChange = (
     event: SyntheticEvent<Element, Event>,
-    newValue: number | null
+    newValue: number | null,
   ): void => {
     if (newValue !== null) {
       setRatingScore(newValue);
@@ -114,7 +114,7 @@ const CommentBox = ({
           event_id,
           Math.round(ratingScore),
           user_id,
-          token
+          token,
         );
         console.log("Review submitted successfully:", response);
         // Additional logic for handling successful submission
@@ -167,7 +167,7 @@ const CommentBox = ({
           responseText,
           organizer_id, // assuming `user_id` is the organizer's ID in this context
           postId,
-          token
+          token,
         );
         console.log("Response submitted successfully:", response);
         // Additional logic for handling successful submission
@@ -307,7 +307,7 @@ const CommentBox = ({
                         onClick={() =>
                           submitResponse(
                             post.post_id,
-                            responses[post.post_id] || ""
+                            responses[post.post_id] || "",
                           )
                         }
                         disabled={isSubmitResponseLoading}

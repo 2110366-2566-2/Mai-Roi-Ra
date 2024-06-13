@@ -21,13 +21,13 @@ const HandleLogin = () => {
         redirect: false,
         callbackUrl: "/homepage",
       });
-      console.log("HELLO", result)
+      console.log("HELLO", result);
       if (result?.url) {
         // Successfully authenticated, redirect to the callbackUrl or home
-        console.log(session?.user?.username,'skdjfhlasjdhflajsdh')
-        if(session?.user?.username == ""){
+        console.log(session?.user?.username, "skdjfhlasjdhflajsdh");
+        if (session?.user?.username == "") {
           router.replace("/auth/Oauth-register");
-          return ;
+          return;
         }
         router.replace(result.url);
       } else {
@@ -41,9 +41,9 @@ const HandleLogin = () => {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center text-center flex-col">
-        <h1 className="mb-5">Loading...</h1>
-        <LoadingLine />
-      </div> // Show a loading message or spinner while processing
+      <h1 className="mb-5">Loading...</h1>
+      <LoadingLine />
+    </div> // Show a loading message or spinner while processing
   );
 };
 

@@ -1,15 +1,14 @@
-"use client"
+"use client";
 import React from "react";
 import {
   PaymentElement,
   useStripe,
-  useElements
+  useElements,
 } from "@stripe/react-stripe-js";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-
 
   const [message, setMessage] = React.useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -20,7 +19,7 @@ export default function CheckoutForm() {
     }
 
     const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
+      "payment_intent_client_secret",
     );
 
     if (!clientSecret) {
@@ -56,7 +55,7 @@ export default function CheckoutForm() {
 
     setIsLoading(true);
 
-    console.log(elements, stripe)
+    console.log(elements, stripe);
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -85,12 +84,19 @@ export default function CheckoutForm() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit} className="mt-2">
-
       <PaymentElement id="payment-element" options={paymentElementOptions} />
       <div className="flex items-center justify-center">
-        <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-2">
+        <button
+          disabled={isLoading || !stripe || !elements}
+          id="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-2"
+        >
           <span id="button-text">
-            {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+            {isLoading ? (
+              <div className="spinner" id="spinner"></div>
+            ) : (
+              "Pay now"
+            )}
           </span>
         </button>
       </div>

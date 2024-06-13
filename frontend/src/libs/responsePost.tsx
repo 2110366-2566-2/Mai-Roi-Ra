@@ -4,7 +4,7 @@ export default async function responsePost(
   detail: string,
   organizer_id: string,
   post_id: string,
-  token: string
+  token: string,
 ) {
   try {
     const requestBody = {
@@ -27,7 +27,7 @@ export default async function responsePost(
       throw new Error(
         `Failed to post response: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
 

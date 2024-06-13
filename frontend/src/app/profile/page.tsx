@@ -37,7 +37,7 @@ export default async function Profile() {
   } else {
     events = await getMyOrganizerEvents(
       session.user.organizer_id,
-      session.user.token
+      session.user.token,
     );
     datas = events?.event_lists;
     role = "ORGANIZER";

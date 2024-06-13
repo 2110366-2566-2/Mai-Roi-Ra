@@ -1,13 +1,13 @@
-'use server'
-import { revalidatePath, revalidateTag } from "next/cache"
-import { redirect } from "next/navigation"
-import createProblem from "@/libs/createProblem"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth"
+"use server";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
+import createProblem from "@/libs/createProblem";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 
 export async function HandleCreateProblem(
   problem: string,
-  description: string
+  description: string,
 ) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
@@ -17,7 +17,7 @@ export async function HandleCreateProblem(
       user!.user_id,
       problem,
       description,
-      user!.token
+      user!.token,
     );
     console.log(res);
     console.log("Create Problem successful");

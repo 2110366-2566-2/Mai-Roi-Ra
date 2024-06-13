@@ -34,7 +34,7 @@ interface RegisterAccountFormProps {
   handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleConfirmPasswordChange: (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => void;
 
   handleFirstSubmit: (event: React.FormEvent<HTMLFormElement>) => void;

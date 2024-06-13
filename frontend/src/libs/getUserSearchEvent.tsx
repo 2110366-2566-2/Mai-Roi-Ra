@@ -8,29 +8,28 @@ interface EventQueryParams {
 }
 
 export default async function getUserSearchEvent({
-    user_id,
-	search = "",
-	offset = 1,
-	limit = 2,}
-	: EventQueryParams) {
+  user_id,
+  search = "",
+  offset = 1,
+  limit = 2,
+}: EventQueryParams) {
+  const url = new URL(`${apiBackUrl}/users/${user_id}/searchevent`);
 
-	const url = new URL(`${apiBackUrl}/users/${user_id}/searchevent`);
-	
-	offset = (offset-1)*limit;
-	url.searchParams.append('search',search);
-	url.searchParams.append('offset', offset.toString());
-	url.searchParams.append('limit', limit.toString());
+  offset = (offset - 1) * limit;
+  url.searchParams.append("search", search);
+  url.searchParams.append("offset", offset.toString());
+  url.searchParams.append("limit", limit.toString());
 
-	const response = await fetch(url.toString(), {
-		method: "GET",
-		headers: {
-		'Accept': 'application/json', 
-		},
-	});
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
 
-	if (!response.ok) {
-		throw new Error("Failed to fetch search event");
-	}
-	console.log(`success`);
-	return await response.json();
+  if (!response.ok) {
+    throw new Error("Failed to fetch search event");
+  }
+  console.log(`success`);
+  return await response.json();
 }

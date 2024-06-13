@@ -1,9 +1,9 @@
-import SignOutForm from "@/components/SignOutForm"
+import SignOutForm from "@/components/SignOutForm";
 
-export default function SignOut(){
-    return (
-        <div>
-            <SignOutForm/>
-        </div>
-    )
+export default function SignOut() {
+  return (
+    <div>
+      <SignOutForm />
+    </div>
+  );
 }

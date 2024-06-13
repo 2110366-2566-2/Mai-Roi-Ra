@@ -8,7 +8,7 @@ export default async function updateProfile(
   district: string,
   province: string,
   birthDate: string,
-  token: string
+  token: string,
 ) {
   try {
     const jsonBody = JSON.stringify({
@@ -34,7 +34,7 @@ export default async function updateProfile(
       throw new Error(
         `Failed to update profile: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
 

@@ -7,7 +7,7 @@ export default async function replyProblem(
   problem_id: string,
   reply: string,
   status: string,
-  token: string
+  token: string,
 ) {
   try {
     const requestBody = {
@@ -19,21 +19,24 @@ export default async function replyProblem(
       status,
     };
 
-    const response = await fetch(`http://localhost:8080/api/v1/problems/${problem_id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const response = await fetch(
+      `http://localhost:8080/api/v1/problems/${problem_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
       },
-      body: JSON.stringify(requestBody),
-    });
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
         `Failed to update problem: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
 

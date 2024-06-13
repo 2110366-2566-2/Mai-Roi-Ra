@@ -11,7 +11,7 @@ export default async function UpdateProfileAction(
   district: string,
   province: string,
   birthDate: string,
-  token: string
+  token: string,
 ) {
   try {
     console.log(firstName);
@@ -23,7 +23,7 @@ export default async function UpdateProfileAction(
       district,
       province,
       birthDate,
-      token
+      token,
     );
     console.log("Update Booking successful (in Action)");
     console.log(res);

@@ -10,14 +10,14 @@ export default async function rejectEvent(event_id: string, token: string) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, //
         },
-      }
+      },
     );
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
         `Failed to reject event: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
 

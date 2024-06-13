@@ -3,7 +3,7 @@ import { apiBackUrl } from "../constants";
 export default async function isRegisteredEvent(
   user_id: string,
   event_id: string,
-  token: string
+  token: string,
 ) {
   if (!user_id || !event_id) return { is_registered: true };
   const response = await fetch(
@@ -11,9 +11,9 @@ export default async function isRegisteredEvent(
     {
       method: "GET",
       headers: {
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   if (!response.ok) {

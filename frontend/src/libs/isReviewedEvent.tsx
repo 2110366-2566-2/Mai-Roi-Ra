@@ -3,7 +3,7 @@ import { apiBackUrl } from "../constants";
 export default async function isReviewedEvent(
   user_id: string,
   event_id: string,
-  token: string
+  token: string,
 ) {
   if (!user_id || !event_id) return { is_registered: true };
   const response = await fetch(
@@ -13,7 +13,7 @@ export default async function isReviewedEvent(
       headers: {
         authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   if (!response.ok) {

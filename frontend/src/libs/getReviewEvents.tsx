@@ -1,11 +1,11 @@
 import { apiBackUrl } from "../constants";
 
-export default async function getReviewEvents(user_id:string,token:string) {
+export default async function getReviewEvents(user_id: string, token: string) {
   const response = await fetch(`${apiBackUrl}/events/end/${user_id}`, {
     method: "GET",
     next: { tags: ["review_event"] },
     headers: {
-        authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token}`,
     },
   });
 

@@ -12,7 +12,7 @@ export default withAuth({
         "/auth/register",
         "/homepage",
         "/",
-        "/auth/handle-login"
+        "/auth/handle-login",
       ];
 
       // Function to check if the path is a public dynamic path

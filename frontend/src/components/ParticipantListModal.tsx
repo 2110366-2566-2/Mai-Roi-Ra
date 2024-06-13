@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import Modal from "./Modal";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -26,7 +26,6 @@ export default function ParticipantListModal({
   const closeProfileModal = () => {
     setIsProfileModalOpen(false);
   };
-
 
   return (
     <div className="flex flex-col justify-center items-center pt-8">
@@ -74,7 +73,7 @@ export default function ParticipantListModal({
               onClick={() => {
                 setIsProfileModalOpen(true);
                 setClikedParticipant(item);
-                console.log(clickedParticipant, "clickedParticipant")
+                console.log(clickedParticipant, "clickedParticipant");
               }}
             >
               <div className="flex items-center w-full">

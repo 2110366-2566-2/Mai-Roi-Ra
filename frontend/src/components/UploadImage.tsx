@@ -1,10 +1,10 @@
-'use client'
-import { apiBackUrl } from '@/constants';
-import { useState, ChangeEvent, FormEvent } from 'react';
+"use client";
+import { apiBackUrl } from "@/constants";
+import { useState, ChangeEvent, FormEvent } from "react";
 
 const ImageUploadForm: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>('');
+  const [preview, setPreview] = useState<string>("");
 
   // Handle file selection
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -21,17 +21,17 @@ const ImageUploadForm: React.FC = () => {
     if (!selectedImage) return;
 
     const formData = new FormData();
-    formData.append('image', selectedImage);
+    formData.append("image", selectedImage);
 
     // Example: POST request to your server endpoint
     const response = await fetch(`${apiBackUrl}/upload`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
 
     // Clear the form
     setSelectedImage(null);
-    setPreview('');
+    setPreview("");
     event.currentTarget.reset();
 
     // Handle the server response
@@ -40,7 +40,11 @@ const ImageUploadForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4"
+      encType="multipart/form-data"
+    >
       {preview && (
         <div className="w-full h-64 flex justify-center items-center">
           <img src={preview} alt="Preview" className="max-h-full" />

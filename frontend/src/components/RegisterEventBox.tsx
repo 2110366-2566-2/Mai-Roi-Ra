@@ -22,7 +22,7 @@ import createTransferToOrganizer from "@/libs/createTransferToOrganizer";
 import getIsOrganizerGotMoney from "@/libs/isOrganizerGotMoney";
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,
 );
 
 interface Event {
@@ -47,7 +47,7 @@ interface Event {
 
 export default function RegisterEventBox(
   { event }: { event: Event },
-  token: string
+  token: string,
 ) {
   const { data: session } = useSession();
   const [isRegisterable, setIsRegisterable] = useState(false);
@@ -64,15 +64,15 @@ export default function RegisterEventBox(
   useEffect(() => {
     const fetchIsRegisterable = async () => {
       try {
-        if(!session?.user?.user_id) return ;
+        if (!session?.user?.user_id) return;
         const response = await isRegisteredEvent(
           session?.user?.user_id,
           event.event_id,
-          session?.user?.token || ""
+          session?.user?.token || "",
         );
         setIsRegisterable(!response.is_registered);
         console.log("isRegistered:", response.is_registered);
-      } catch (error : any) {
+      } catch (error: any) {
         // Handle the error
         console.log("Error fetching isRegisterable:", error.message);
       }
@@ -89,11 +89,11 @@ export default function RegisterEventBox(
           const response = await getIsOrganizerGotMoney(
             session?.user?.user_id,
             event.event_id,
-            session?.user?.token || ""
+            session?.user?.token || "",
           );
           setIsOrganizerGotMoney(response.is_paid);
           console.log("isOrganizerGotMoney:", response.is_paid);
-        } catch (error : any) {
+        } catch (error: any) {
           // Handle the error
           console.log("Error fetching isOrganizerGotMoney:", error.message);
         }
@@ -199,14 +199,14 @@ export default function RegisterEventBox(
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const options = {
     clientSecret: clientSecret || undefined,
-    appearance: { theme: 'stripe' as const},
+    appearance: { theme: "stripe" as const },
   };
 
   async function handleCreatePaymentIntent(
     transaction_amount: number,
     user_id: string,
     event_id: string,
-    payment_type: number
+    payment_type: number,
   ) {
     try {
       const result = await createPaymentIntent(
@@ -214,7 +214,7 @@ export default function RegisterEventBox(
         user_id,
         event_id,
         2,
-        session?.user?.token || ""
+        session?.user?.token || "",
       );
       console.log(result);
       // Handle the response
@@ -231,7 +231,7 @@ export default function RegisterEventBox(
 
   const handleCreateTransferToOrganizer = async () => {
     try {
-      if(!session?.user?.organizer_id) return ;
+      if (!session?.user?.organizer_id) return;
       const res = await createTransferToOrganizer(
         session?.user.organizer_id,
         event.event_id,
@@ -462,7 +462,7 @@ export default function RegisterEventBox(
                     event.participant_fee * numberOfGuest,
                     session?.user?.user_id,
                     event.event_id,
-                    2
+                    2,
                   );
                 }}
               >
@@ -479,8 +479,8 @@ export default function RegisterEventBox(
                 ? session.user.organizer_id
                   ? "You are organizer. Only user can register"
                   : isRegistrationClosed
-                  ? "The Event has passed"
-                  : null
+                    ? "The Event has passed"
+                    : null
                 : "Please Sign in first"}
             </button>
           )

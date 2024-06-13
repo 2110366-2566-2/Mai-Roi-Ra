@@ -1,14 +1,14 @@
-version: '3.9'
+version: "3.9"
 
 services:
   backend:
     container_name: backend
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.prod
     env_file:
-      - /home/ubuntu/backend/.env
-    ports: 
+      - /Users/natthasithwiriyayothin/Documents/GitHub/Mai-Roi-Ra/backend/.env
+    ports:
       - "80:80"
     volumes:
       - ./:/usr/src/app

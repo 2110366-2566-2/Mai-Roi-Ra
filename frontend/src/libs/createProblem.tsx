@@ -4,7 +4,7 @@ export default async function createProblem(
   user_id: string,
   problem: string,
   description: string,
-  token: string
+  token: string,
 ) {
   try {
     console.log(user_id, problem, description);
@@ -32,7 +32,7 @@ export default async function createProblem(
       throw new Error(
         `Failed to create problem: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
     console.log("Success To Create Problem");

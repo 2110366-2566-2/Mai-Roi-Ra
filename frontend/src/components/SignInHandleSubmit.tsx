@@ -18,7 +18,7 @@ const SignInHandleSubmit = async (
   password: string,
   error: boolean,
   router: any,
-  setIsLoading: Function
+  setIsLoading: Function,
 ) => {
   // Set Default
   e.preventDefault();

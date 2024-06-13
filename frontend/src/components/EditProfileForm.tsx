@@ -84,7 +84,7 @@ export default function EditProfileForm({
 
   // HANDLER for fields
   const handleFirstNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newFirstName = event.target.value;
     setFirstName(newFirstName);
@@ -155,7 +155,7 @@ export default function EditProfileForm({
           district,
           province,
           formattedBirthDate,
-          token || ""
+          token || "",
         );
       } catch (err) {
         setError("Update error. Server Failed ?");
@@ -266,7 +266,7 @@ export default function EditProfileForm({
                 type="text"
                 id="province"
                 name="province"
-                value={province || "" }
+                value={province || ""}
                 onChange={handleProvinceChange}
                 className="w-full px-4 py-4  border rounded-lg text-gray-700 focus:outline-none "
                 placeholder="Province"

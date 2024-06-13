@@ -11,7 +11,7 @@ export default async function userRegister(
   userLastName: string,
   userAddress: string,
   userDistrict: string,
-  userProvince: string
+  userProvince: string,
 ) {
   const emailToSend = userEmail === "" ? null : userEmail;
   const phoneNumberToSend = userPhoneNumber === "" ? null : userPhoneNumber;

@@ -18,7 +18,7 @@ function OTP({
   onChange: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const inputRefs = React.useRef<HTMLInputElement[]>(
-    new Array(length).fill(null)
+    new Array(length).fill(null),
   );
 
   const focusInput = (targetIndex: number) => {
@@ -33,7 +33,7 @@ function OTP({
 
   const handleKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>,
-    currentIndex: number
+    currentIndex: number,
   ) => {
     switch (event.key) {
       case "ArrowUp":
@@ -85,7 +85,7 @@ function OTP({
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    currentIndex: number
+    currentIndex: number,
   ) => {
     let currentValue = event.target.value;
 
@@ -119,14 +119,14 @@ function OTP({
 
   const handleClick = (
     event: React.MouseEvent<HTMLInputElement, MouseEvent>,
-    currentIndex: number
+    currentIndex: number,
   ) => {
     selectInput(currentIndex);
   };
 
   const handlePaste = (
     event: React.ClipboardEvent<HTMLInputElement>,
-    currentIndex: number
+    currentIndex: number,
   ) => {
     event.preventDefault();
     const clipboardData = event.clipboardData;
@@ -377,5 +377,5 @@ const InputElement = styled("input")(
   &:focus-visible {
     outline: 0;
   }
-`
+`,
 );

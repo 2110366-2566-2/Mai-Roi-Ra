@@ -40,7 +40,7 @@ export default function OAuthFirstRegister() {
 
         const profileData = await getProfile(
           session.user.user_id,
-          session.user.token
+          session.user.token,
         );
         setProfile(profileData);
         setLoading(false); // End loading

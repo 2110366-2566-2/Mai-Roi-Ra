@@ -1,16 +1,17 @@
 import CreateEventForm from "@/components/CreateEventForm";
 
 const CreateEvent = () => {
+  return (
+    <div className="lg:pt-8 pt-2 px-10 text-black">
+      <h1 className="font-bold lg:text-5xl text-3xl lg:mb-[50px] md:mb-7 mb-5">
+        Create Event
+      </h1>
 
-    return (
-        <div className='lg:pt-8 pt-2 px-10 text-black'>
-            <h1 className='font-bold lg:text-5xl text-3xl lg:mb-[50px] md:mb-7 mb-5'>Create Event</h1>
-
-            <div className="">
-                <CreateEventForm/>
-            </div>
-        </div>
-    )
-}
+      <div className="">
+        <CreateEventForm />
+      </div>
+    </div>
+  );
+};
 
 export default CreateEvent;

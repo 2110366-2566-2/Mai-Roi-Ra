@@ -5,7 +5,7 @@ export default async function reviewEvent(
   event_id: string,
   rating_score: number,
   user_id: string,
-  token: string
+  token: string,
 ) {
   try {
     const requestBody = {
@@ -29,7 +29,7 @@ export default async function reviewEvent(
       throw new Error(
         `Failed to create post: ${response.status} - ${
           errorData.message || "Unknown error"
-        }`
+        }`,
       );
     }
 

@@ -100,7 +100,7 @@ export default function RegisterForm() {
   };
 
   const handlePhoneNumberChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const validCharacters = /^[0-9]*$/;
     if (validCharacters.test(event.target.value)) {
@@ -123,7 +123,7 @@ export default function RegisterForm() {
   };
 
   const handleConfirmPasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newConfirmPassword = event.target.value;
     setConfirmPasswordTouched(true);
@@ -132,7 +132,7 @@ export default function RegisterForm() {
 
   //---- Handler for second page fields ----//
   const handleFirstNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newFirstName = event.target.value;
     setFirstName(newFirstName);
@@ -227,7 +227,7 @@ export default function RegisterForm() {
           lastName,
           address,
           district,
-          province
+          province,
         );
         setSuccessModal(true);
         setIsLoading(false); // Stop loading

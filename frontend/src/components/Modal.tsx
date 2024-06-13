@@ -11,7 +11,7 @@ type ModalProps = {
   modalsize: string | null;
   isNotRound: boolean | null;
   canScroll: boolean | null;
-  MarginTop : string | null;
+  MarginTop: string | null;
   allowOuterclose: boolean | null;
 };
 
@@ -26,11 +26,15 @@ export default function Modal({
   isNotRound,
   canScroll,
   MarginTop,
-  allowOuterclose
+  allowOuterclose,
 }: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={allowOuterclose ? (()=>closeModal()) : (()=> null)}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        onClose={allowOuterclose ? () => closeModal() : () => null}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -44,7 +48,13 @@ export default function Modal({
         </Transition.Child>
 
         <div className={"fixed inset-0 overflow-y-auto"}>
-          <div className={!style ? "flex min-h-full items-center justify-center p-4 text-center" : style}>
+          <div
+            className={
+              !style
+                ? "flex min-h-full items-center justify-center p-4 text-center"
+                : style
+            }
+          >
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -54,13 +64,17 @@ export default function Modal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className={`w-full max-w-md transform ${canScroll ? "overflow-y-scroll" : "overflow-hidden"} ${isNotRound ? '': 'rounded-2xl'} bg-white p-6 text-left align-middle shadow-xl transition-all ${modalsize ? modalsize : null}`}>
-                {title ? <Dialog.Title
-                  as="h1"
-                  className="text-lg font-medium leading-6 text-gray-900"
-                >
-                  {title}
-                </Dialog.Title> : null}
+              <Dialog.Panel
+                className={`w-full max-w-md transform ${canScroll ? "overflow-y-scroll" : "overflow-hidden"} ${isNotRound ? "" : "rounded-2xl"} bg-white p-6 text-left align-middle shadow-xl transition-all ${modalsize ? modalsize : null}`}
+              >
+                {title ? (
+                  <Dialog.Title
+                    as="h1"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    {title}
+                  </Dialog.Title>
+                ) : null}
                 <div className={`mt-2 ${MarginTop}`}>{children}</div>
 
                 {footerContent && <div className="mt-4">{footerContent}</div>}

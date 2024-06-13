@@ -24,9 +24,12 @@ export default async function Homepage({
   const session = await getServerSession(authOptions);
   let events;
 
-  if (!session || !session.user.token) return null
+  if (!session || !session.user.token) return null;
   const user = session.user;
-  const history = (user == undefined) ? { search_history: [] } : await getUserSearchHistory(user.user_id,user.token);
+  const history =
+    user == undefined
+      ? { search_history: [] }
+      : await getUserSearchHistory(user.user_id, user.token);
 
   const waitingEvents = await getWaitingEvents(session!.user.token);
   const waitingEventsDatas = waitingEvents.event_lists;
@@ -37,7 +40,12 @@ export default async function Homepage({
   const rejectedEvents = await getRejectedEvents(session!.user.token);
   const rejectedEventsDatas = rejectedEvents.event_lists;
   if (session?.user.role != "ADMIN") {
-    events = await getEvents({offset : page , limit : limit , search : search , filter : "Approved"});
+    events = await getEvents({
+      offset: page,
+      limit: limit,
+      search: search,
+      filter: "Approved",
+    });
   }
 
   return (
@@ -49,7 +57,12 @@ export default async function Homepage({
           rejectedEventsDatas={rejectedEventsDatas}
         ></AdminHomepage>
       ) : (
-        <UserHomepage page={page} search={search} events={events} history={history}/>
+        <UserHomepage
+          page={page}
+          search={search}
+          events={events}
+          history={history}
+        />
       )}
     </main>
   );
